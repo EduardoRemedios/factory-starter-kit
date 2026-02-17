@@ -1,0 +1,15 @@
+{
+  "action_id": "unknown_tool_action",
+  "auth_context": {
+    "auth_state": "authenticated",
+    "tenant_id": "tenant_test_a",
+    "user_id": "user_001",
+    "session_id": "sess_002"
+  },
+  "tool_call": {
+    "tool_id": "unknown_tool",
+    "params": {},
+    "idempotency_key": null,
+    "requested_at": "2026-02-08T14:00:00Z"
+  }
+}

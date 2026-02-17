@@ -1,0 +1,33 @@
+{
+  "action_id": "get_events",
+  "auth_context": {
+    "auth_state": "anonymous",
+    "tenant_id": "tenant_test_a",
+    "user_id": null,
+    "session_id": "sess_001"
+  },
+  "tenant_context": {
+    "tenant_id": "tenant_test_a"
+  },
+  "context": {
+    "truth_sources": {
+      "sportsbook_feed_api": {
+        "status": "fresh",
+        "age_ms": 500
+      }
+    }
+  },
+  "temporal": {
+    "snapshot_id": "snap_001",
+    "as_of": "2026-02-08T14:00:00Z",
+    "observed_at": "2026-02-08T13:59:59Z",
+    "truth_source": "sportsbook_feed_api",
+    "ttl_ms": 5000
+  },
+  "tool_call": {
+    "tool_id": "get_events",
+    "params": { "sport": "football" },
+    "idempotency_key": null,
+    "requested_at": "2026-02-08T14:00:00Z"
+  }
+}

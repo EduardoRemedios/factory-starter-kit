@@ -1,0 +1,31 @@
+{
+  "scenario": "Two adapter instances with different ServiceConfig return different data",
+  "tenant_a": {
+    "service_config": {
+      "tenant_id": "tenant_a",
+      "base_url": "https://api.operator-a.com/v1",
+      "auth_mechanism": "api_key",
+      "credentials_ref": "secret_ref_a"
+    },
+    "tool_call": {
+      "tool_id": "get_events",
+      "params": {},
+      "idempotency_key": null,
+      "requested_at": "2026-02-08T14:00:00Z"
+    }
+  },
+  "tenant_b": {
+    "service_config": {
+      "tenant_id": "tenant_b",
+      "base_url": "https://api.operator-b.com/v1",
+      "auth_mechanism": "api_key",
+      "credentials_ref": "secret_ref_b"
+    },
+    "tool_call": {
+      "tool_id": "get_events",
+      "params": {},
+      "idempotency_key": null,
+      "requested_at": "2026-02-08T14:00:00Z"
+    }
+  }
+}

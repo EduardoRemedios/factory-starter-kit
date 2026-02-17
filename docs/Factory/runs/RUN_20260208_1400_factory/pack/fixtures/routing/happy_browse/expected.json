@@ -1,0 +1,26 @@
+{
+  "policy_decision": {
+    "decision": "read_only",
+    "reason_codes": []
+  },
+  "tool_execution": {
+    "adapter_id": "sportsbook_toy_tenant_test_a",
+    "success": true,
+    "error_code": null,
+    "tool_result": {
+      "tool_id": "get_events",
+      "success": true,
+      "data": { "events": [] },
+      "error": null
+    }
+  },
+  "evidence": {
+    "pdr_emitted": true,
+    "ter_emitted": true,
+    "rr_emitted": true,
+    "ter_has_pdr_record_id": true,
+    "all_share_request_id": true,
+    "all_share_action_type": true,
+    "no_secrets_in_ter": true
+  }
+}

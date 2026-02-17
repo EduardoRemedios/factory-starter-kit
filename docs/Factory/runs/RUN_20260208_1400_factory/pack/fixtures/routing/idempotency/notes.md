@@ -1,0 +1,4 @@
+- Tests idempotency: duplicate place_bet with same key returns first result
+- Second call does NOT execute the adapter again
+- Validates the toy adapter respects idempotency_key
+- Covers C-11

@@ -1,0 +1,15 @@
+{
+  "policy_decision": {
+    "decision": "deny"
+  },
+  "tool_execution": {
+    "adapter_id": "none",
+    "success": false,
+    "error_code": "ADAPTER_NOT_MAPPED"
+  },
+  "evidence": {
+    "ter_emitted": true,
+    "ter_adapter_id": "none",
+    "ter_has_tool_call": true
+  }
+}

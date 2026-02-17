@@ -1,0 +1,15 @@
+{
+  "policy_decision": {
+    "decision": "deny",
+    "reason_codes": ["AUTH_REQUIRED"]
+  },
+  "tool_execution": {
+    "adapter_called": false,
+    "ter_emitted": false
+  },
+  "evidence": {
+    "pdr_emitted": true,
+    "rr_emitted": true,
+    "rr_reason_code": "AUTH_REQUIRED"
+  }
+}

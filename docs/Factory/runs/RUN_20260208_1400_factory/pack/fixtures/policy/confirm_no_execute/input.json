@@ -1,0 +1,25 @@
+{
+  "action_id": "place_bet",
+  "auth_context": {
+    "auth_state": "authenticated",
+    "tenant_id": "tenant_test_a",
+    "user_id": "user_001",
+    "session_id": "sess_006"
+  },
+  "context": {
+    "truth_sources": {
+      "sportsbook_feed_api": { "status": "fresh", "age_ms": 200 },
+      "rg_platform_api": { "status": "fresh", "age_ms": 100 }
+    },
+    "pricing_snapshot_id": "snap_003",
+    "pricing_snapshot_freshness_status": "fresh",
+    "market_status": "OPEN"
+  },
+  "temporal": {
+    "snapshot_id": "snap_003",
+    "as_of": "2026-02-08T14:00:00Z",
+    "observed_at": "2026-02-08T13:59:59Z",
+    "truth_source": "sportsbook_feed_api",
+    "ttl_ms": 5000
+  }
+}

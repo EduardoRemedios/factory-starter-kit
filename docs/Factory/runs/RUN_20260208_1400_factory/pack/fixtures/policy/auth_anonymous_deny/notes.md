@@ -1,0 +1,4 @@
+- Tests anonymous user denied execution action with AUTH_REQUIRED
+- No adapter call, no TER emitted
+- PDR + RR emitted with appropriate reason code
+- Covers C-08, AC-04

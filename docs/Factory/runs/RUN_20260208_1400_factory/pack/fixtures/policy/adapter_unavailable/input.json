@@ -1,0 +1,16 @@
+{
+  "action_id": "get_events",
+  "auth_context": {
+    "auth_state": "authenticated",
+    "tenant_id": "tenant_test_a",
+    "user_id": "user_001",
+    "session_id": "sess_004"
+  },
+  "tool_call": {
+    "tool_id": "get_events",
+    "params": { "sport": "football" },
+    "idempotency_key": null,
+    "requested_at": "2026-02-08T14:00:00Z"
+  },
+  "_adapter_behavior": "raise_unavailable"
+}
