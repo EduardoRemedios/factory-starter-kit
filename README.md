@@ -51,6 +51,8 @@ The core operating order is:
 ```text
 your-repo/
 ├── AGENTS.md
+├── CHANGELOG.md
+├── LICENSE
 ├── README.md
 ├── scripts/
 │   ├── knowledge_lint.sh
@@ -87,6 +89,8 @@ your-repo/
 ```
 
 This starter kit intentionally does not ship product-specific run packs or finished project-specific state docs. It ships generic templates and placeholder state docs so adopters can adapt them in their own repository.
+
+The root `CHANGELOG.md` tracks starter-kit releases. The `docs/CHANGELOG.md` file is the project changelog template adopters are expected to replace with their own project history.
 
 ## Setup
 
