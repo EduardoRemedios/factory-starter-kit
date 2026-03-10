@@ -2,6 +2,8 @@
 
 A generic, open-source starter kit for the Factory planning pipeline.
 
+This is a pre-1.0 starter kit. It intentionally ships generic templates and placeholder project-state docs that must be adapted in the adopting repository. It is licensed under Apache-2.0.
+
 This repo is the reusable framework layer:
 - the Factory runner guide
 - the stage/spec contracts
@@ -11,6 +13,20 @@ This repo is the reusable framework layer:
 - starter context docs
 
 You drop it into your own repository and adapt the project-specific spine.
+
+## Maturity
+
+This is a pre-1.0 starter kit.
+
+It intentionally ships generic templates and placeholder project-state docs that must be adapted in the adopting repository.
+
+## Quick Start
+
+First 30 seconds:
+1. Copy this repository into your own repository as the starting framework layer.
+2. Edit `AGENTS.md`, `docs/PROJECT_STATE.md`, `docs/ROADMAP.md`, and `docs/CHANGELOG.md` first.
+3. Run `bash scripts/knowledge_lint.sh`.
+4. If you will use Mission Mode, run `bash scripts/mission_lint.sh <MISSION_ID>`.
 
 ## What This Is
 
@@ -70,7 +86,7 @@ your-repo/
 │           └── TRACEABILITY_MATRIX_TEMPLATE.md
 ```
 
-This starter kit intentionally does not ship product-specific run packs or project-specific state docs.
+This starter kit intentionally does not ship product-specific run packs or finished project-specific state docs. It ships generic templates and placeholder state docs so adopters can adapt them in their own repository.
 
 ## Setup
 
@@ -134,3 +150,7 @@ For a multi-sprint mission:
 - not a second source of truth for your project state
 
 Keep it generic. Keep it reusable. Keep project-specific content in the adopting repo.
+
+## License
+
+This repository is licensed under Apache-2.0. See [LICENSE](LICENSE).
