@@ -3,9 +3,9 @@ set -euo pipefail
 
 # Factory Starter Kit — Knowledge Lint Preflight
 #
-# This script validates that the doc spine required by the Factory pipeline
-# is intact before a run starts. Adapt the required_files list to match
-# your project's canonical documents.
+# This validates the generic Factory doc spine before a run starts.
+# Adapt the required_files list and the pattern checks to match your
+# project's canonical docs if you customize the starter kit.
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
@@ -32,29 +32,29 @@ has_pattern() {
 
 echo "knowledge_lint: starting"
 
-# ============================================================
-# ADAPT THIS LIST to your project's canonical documents.
-# These are the minimum files the Factory pipeline needs
-# to be present and non-empty before a run can start.
-# ============================================================
 required_files=(
   "AGENTS.md"
   "docs/PROJECT_STATE.md"
   "docs/ROADMAP.md"
   "docs/CHANGELOG.md"
   "docs/Factory/ORCHESTRATION.md"
+  "docs/Factory/MISSION_MODE.md"
   "docs/Factory/SCRATCHPAD.md"
   "docs/Factory/Spec/STAGE_CONTRACTS.md"
+  "docs/Factory/Spec/NAMING_CONVENTIONS.md"
   "docs/Factory/Spec/PURPLE_GATE_CHECKLIST.md"
   "docs/Factory/templates/PACK_CHECKLIST_TEMPLATE.md"
   "docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md"
+  "docs/Factory/templates/MISSION_MANIFEST_TEMPLATE.md"
+  "docs/Factory/templates/MISSION_CHECKPOINT_TEMPLATE.md"
+  "docs/Factory/templates/MISSION_COMPLETION_REPORT_TEMPLATE.md"
+  "scripts/mission_lint.sh"
 )
 
 for path in "${required_files[@]}"; do
   require_nonempty_file "$path"
 done
 
-# Validate Scratchpad structure
 has_pattern '^## Active Pitfalls \(Mandatory\)' docs/Factory/SCRATCHPAD.md \
   || fail "missing mandatory 'Active Pitfalls' section in docs/Factory/SCRATCHPAD.md"
 
@@ -70,12 +70,17 @@ pitfall_count="$(
 [[ "$pitfall_count" -ge 1 ]] || fail "Active Pitfalls section must include at least 1 entry"
 [[ "$pitfall_count" -le 12 ]] || fail "Active Pitfalls section exceeds cap of 12 entries (found $pitfall_count)"
 
-# Validate key Factory structural contracts exist
 has_pattern '^## 0\.3 Execution Enablement Contract \(HARD\)$' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing execution enablement contract section"
 
-has_pattern 'EXECUTION_MODE\.txt' docs/Factory/ORCHESTRATION.md \
-  || fail "Orchestration missing run-root execution mode contract"
+has_pattern '^## 0\.4 Mission Mode \(Additive, Optional\)$' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing mission mode section"
+
+has_pattern 'mission_lint\.sh' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing mission-lint guidance"
+
+has_pattern '^## 3\. Mission lifecycle \(HARD\)$' docs/Factory/MISSION_MODE.md \
+  || fail "Mission mode contract missing mission lifecycle section"
 
 echo "knowledge_lint: PASS"
 echo "knowledge_lint: checked_files=${#required_files[@]} active_pitfalls=$pitfall_count"

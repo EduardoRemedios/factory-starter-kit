@@ -24,7 +24,7 @@ v1
 ## Sprint Metadata
 - RUN_ID: RUN_YYYYMMDD_HHMM_TAG
 - Sprint ID: SPRINT_YYYYMMDD_NNN
-- Owner: Eduardo
+- Owner: Project owner
 - Created: YYYY-MM-DD HH:MM (local)
 
 ## Iteration (for envelope review cycles)

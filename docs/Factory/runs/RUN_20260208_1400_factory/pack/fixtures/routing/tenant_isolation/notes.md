@@ -1,4 +1,0 @@
-- Tests tenant isolation: two adapter instances return different data
-- Forces ServiceConfig to be actually used, not decorative
-- Validates adapter_id includes tenant scoping
-- Covers C-10, AC-01

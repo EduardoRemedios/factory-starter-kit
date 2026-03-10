@@ -1,7 +1,0 @@
-- Tests the complete evidence triangle for a confirmed place_bet execution
-- PDR emitted first with allow_execute decision
-- TER emitted with pdr_record_id matching the PDR
-- Final RR emitted with matching request_id and action_type
-- Verifies ordering: PDR → TER → RR
-- Verifies fingerprints present, no secrets, duration_ms populated
-- Covers C-06, C-07, C-12, C-13, AC-03, AC-07

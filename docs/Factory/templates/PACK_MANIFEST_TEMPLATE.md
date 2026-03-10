@@ -22,7 +22,7 @@ v1
 - RUN_ID: RUN_YYYYMMDD_HHMM_TAG
 - Sprint ID: SPRINT_YYYYMMDD_NNN
 - Created: YYYY-MM-DD HH:MM (local)
-- Owner: Eduardo
+- Owner: Project owner
 - Spec Versions:
   - NAMING_CONVENTIONS: v?
   - DEFINITIONS: v?

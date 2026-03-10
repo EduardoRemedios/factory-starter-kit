@@ -1,4 +1,0 @@
-- Tests require_confirmation does NOT trigger adapter call or TER
-- place_bet with valid context → require_confirmation → PDR + decision-only RR
-- No adapter call, no TER emission
-- Covers C-05, AC-05

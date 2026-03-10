@@ -1,4 +1,0 @@
-- Tests adapter unavailable → fail closed → deny + TER
-- TER records AdapterUnavailable error_code
-- RR maps to UPSTREAM_UNAVAILABLE reason code
-- Covers C-02, C-17, AC-06

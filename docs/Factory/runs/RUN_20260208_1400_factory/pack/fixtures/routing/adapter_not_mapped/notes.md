@@ -1,4 +1,0 @@
-- Tests fail-closed when no adapter is mapped for the action
-- TER emitted with adapter_id "none" and error_code ADAPTER_NOT_MAPPED
-- tool_call field present showing what was attempted
-- Covers C-14, C-02, AC-06

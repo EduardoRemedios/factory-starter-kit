@@ -1,4 +1,0 @@
-- Tests happy path: anonymous user browses events via toy sportsbook adapter
-- Validates adapter is called and TER is emitted for read_only actions
-- Confirms evidence triangle is complete even for browse paths
-- Covers C-06, C-10, AC-01, AC-03, AC-07

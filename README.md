@@ -1,160 +1,136 @@
 # Factory Starter Kit
 
-A self-contained copy of the Factory pipeline framework for learning and practice. Drop this into your own repo and use it to plan and govern agentic development work.
+A generic, open-source starter kit for the Factory planning pipeline.
+
+This repo is the reusable framework layer:
+- the Factory runner guide
+- the stage/spec contracts
+- the mission wrapper contract
+- the templates
+- starter lint scripts
+- starter context docs
+
+You drop it into your own repository and adapt the project-specific spine.
 
 ## What This Is
 
-The Factory is a sprint planning pipeline for agentic-first development. It does NOT write code. It produces the *contract* that governs code writing — a sprint pack containing locked intent, constraints, risk analysis, verification plans, and an execution envelope.
+The Factory is a planning and governance pipeline for agentic development.
 
-The pipeline enforces three principles:
-1. **Intent** — Define what you're building and what you're NOT building before writing code.
-2. **Constraints** — Make invariants and fail-closed requirements explicit before design details.
-3. **Verification** — Design checks, fixtures, and traceability before implementation.
+It does not write code by itself. It produces the sprint contract that should govern coding:
+- locked intent
+- explicit constraints
+- risk analysis
+- verification plan
+- traceability
+- execution envelope
 
-## What's Included
+The core operating order is:
+1. intent first
+2. constraints second
+3. verification third
+4. execution last
 
-```
+## What This Starter Kit Includes
+
+```text
 your-repo/
-├── AGENTS.md                          <-- Context map for agents (adapt to your project)
+├── AGENTS.md
+├── README.md
 ├── scripts/
-│   └── knowledge_lint.sh              <-- Pre-run validation script (adapt to your project)
+│   ├── knowledge_lint.sh
+│   └── mission_lint.sh
 ├── docs/
-│   ├── PROJECT_STATE.md               <-- You create this: what exists today
-│   ├── ROADMAP.md                     <-- You create this: where you're going
-│   ├── CHANGELOG.md                   <-- You create this: version history
+│   ├── PROJECT_STATE.md
+│   ├── ROADMAP.md
+│   ├── CHANGELOG.md
+│   ├── onboarding/
+│   │   └── ONBOARDING_GUIDE.md
 │   └── Factory/
-│       ├── ORCHESTRATION.md           <-- How to run the pipeline end-to-end
-│       ├── SCRATCHPAD.md              <-- Cross-run pitfalls index
+│       ├── ORCHESTRATION.md
+│       ├── MISSION_MODE.md
+│       ├── SCRATCHPAD.md
 │       ├── Spec/
-│       │   ├── DEFINITIONS.md         <-- Size caps, impact rubric, deferral rules
-│       │   ├── STAGE_CONTRACTS.md     <-- Entry/exit criteria for every stage
-│       │   ├── NAMING_CONVENTIONS.md  <-- File naming rules
-│       │   └── PURPLE_GATE_CHECKLIST.md <-- Quality gate checklist
-│       ├── templates/                 <-- Artifact skeletons (9 templates)
-│       │   ├── EXECUTION_PROMPT_TEMPLATE.md
-│       │   ├── HANDOFF_STAGE_TEMPLATE.md
-│       │   ├── INTENT_LOCK_REPORT_TEMPLATE.md
-│       │   ├── PACK_AUDIT_REPORT_TEMPLATE.md
-│       │   ├── PACK_CHECKLIST_TEMPLATE.md
-│       │   ├── PACK_MANIFEST_TEMPLATE.md
-│       │   ├── SPRINT_ENVELOPE_REDTEAM_TEMPLATE.md
-│       │   ├── SPRINT_ENVELOPE_TEMPLATE.md
-│       │   └── TRACEABILITY_MATRIX_TEMPLATE.md
-│       └── runs/
-│           └── RUN_20260208_1400_factory/  <-- Example completed run (read-only reference)
-└── docs/
-    └── onboarding/
-        └── ONBOARDING_GUIDE.md        <-- The learning guide
+│       │   ├── DEFINITIONS.md
+│       │   ├── STAGE_CONTRACTS.md
+│       │   ├── NAMING_CONVENTIONS.md
+│       │   └── PURPLE_GATE_CHECKLIST.md
+│       └── templates/
+│           ├── EXECUTION_PROMPT_TEMPLATE.md
+│           ├── HANDOFF_STAGE_TEMPLATE.md
+│           ├── INTENT_LOCK_REPORT_TEMPLATE.md
+│           ├── MISSION_CHECKPOINT_TEMPLATE.md
+│           ├── MISSION_COMPLETION_REPORT_TEMPLATE.md
+│           ├── MISSION_EXECUTION_PROMPT_TEMPLATE.md
+│           ├── MISSION_MANIFEST_TEMPLATE.md
+│           ├── PACK_AUDIT_REPORT_TEMPLATE.md
+│           ├── PACK_CHECKLIST_TEMPLATE.md
+│           ├── PACK_MANIFEST_TEMPLATE.md
+│           ├── SPRINT_ENVELOPE_REDTEAM_TEMPLATE.md
+│           ├── SPRINT_ENVELOPE_TEMPLATE.md
+│           └── TRACEABILITY_MATRIX_TEMPLATE.md
 ```
 
-## Setup Instructions
+This starter kit intentionally does not ship product-specific run packs or project-specific state docs.
 
-### 1. Copy the kit into your repo
+## Setup
 
-Run the export script from the Harmony repo:
-
-```bash
-bash scripts/export_factory_starter_kit.sh /path/to/your-repo
-```
-
-Or manually copy the files following the structure above.
-
-### 2. Create your project's doc spine
-
-The Factory pipeline expects these documents to exist. Create them as simple stubs to start:
-
-**`docs/PROJECT_STATE.md`** — What exists in your project today.
-```markdown
-# PROJECT_STATE.md — Canonical Build State
-> Last updated: YYYY-MM-DD
-
-## What Exists
-(Describe your current codebase, tests, and capabilities)
-
-## What Does NOT Exist Yet
-(List known gaps)
-```
-
-**`docs/ROADMAP.md`** — Where your project is going.
-```markdown
-# ROADMAP.md — Development Roadmap
-> Last updated: YYYY-MM-DD
-
-## Sprints
-(Will be populated as you plan and complete sprints)
-```
-
-**`docs/CHANGELOG.md`** — Version history for your documents.
-```markdown
-# Changelog
-(Add entries as documents are created or updated)
-```
-
-### 3. Adapt AGENTS.md
-
-Edit `AGENTS.md` at your repo root to match your project's structure. Update:
-- The read order to reference your actual documents
-- The canonical commands to match your test runner
-- The change hygiene section to list your canonical docs
-
-### 4. Adapt the knowledge lint script
-
-Edit `scripts/knowledge_lint.sh` to list your project's required files in the `required_files` array. The script validates these files exist and are non-empty before any Factory run starts.
-
-Make it executable:
-```bash
-chmod +x scripts/knowledge_lint.sh
-```
-
-### 5. Verify the setup
+1. Copy or clone the starter kit into your repo.
+2. Adapt `AGENTS.md` to your project.
+3. Fill in `docs/PROJECT_STATE.md`, `docs/ROADMAP.md`, and `docs/CHANGELOG.md`.
+4. Review `docs/Factory/ORCHESTRATION.md` and `docs/Factory/MISSION_MODE.md`.
+5. Adapt `scripts/knowledge_lint.sh` and `scripts/mission_lint.sh` if your project uses different canonical docs or naming.
+6. Run:
 
 ```bash
 bash scripts/knowledge_lint.sh
 ```
 
-If it passes, you're ready to run your first Factory pipeline.
+If you plan to use Mission Mode, also verify:
 
-## Running Your First Factory Pipeline
+```bash
+bash scripts/mission_lint.sh <MISSION_ID>
+```
 
-1. **Write a raw brief.** One page describing what you want to build, what's in scope, what's out of scope, and your hard constraints. See `docs/Factory/runs/RUN_20260208_1400_factory/raw_brief.md` for an example.
+## Project-Specific Adaptation
 
-2. **Start a fresh agent session** (Claude Code CLI, Cursor, or similar).
+You are expected to adapt:
+- `AGENTS.md`
+- `docs/PROJECT_STATE.md`
+- `docs/ROADMAP.md`
+- `docs/CHANGELOG.md`
+- `scripts/knowledge_lint.sh`
+- `scripts/mission_lint.sh` if you use Mission Mode
 
-3. **Prompt the agent to act as Root Planner.** Give it:
-   - `docs/Factory/ORCHESTRATION.md` (the operational playbook)
-   - `docs/Factory/SCRATCHPAD.md` (read Active Pitfalls only)
-   - Your raw brief
-   - Tell it to initialize a run and execute the pipeline stage by stage.
+You should usually keep unchanged:
+- `docs/Factory/Spec/`
+- `docs/Factory/templates/`
+- `docs/Factory/MISSION_MODE.md`
 
-4. **Follow the stages.** The agent will work through A → B → C → D → E → F → G → H → I → J → I2, producing artifacts at each stage.
+You may lightly adapt:
+- `docs/Factory/ORCHESTRATION.md`
+- `docs/Factory/SCRATCHPAD.md`
 
-5. **Review the pack.** When the pipeline completes, review the pack — especially `PACK_CHECKLIST.md`, `PACK_AUDIT_REPORT.md`, and the intent/envelope.
+## Minimal Run Loop
 
-6. **Say Go or No-go.** If the pack is sound, authorize execution. If not, provide feedback and re-run affected stages.
+For a single sprint:
+1. write a raw brief
+2. run knowledge lint
+3. initialize a Factory run
+4. execute stages A → B → C → D → E → F → G → H → I → J → I2
+5. review the pack
+6. approve or reject execution
 
-## The Example Run
+For a multi-sprint mission:
+1. lock the mission unit list and checkpoint
+2. keep `MISSION_MANIFEST.md` as the only authored mission ledger
+3. run mission lint before advancing each already-authorized mission unit
+4. update mission and project state docs in the same closure cycle
 
-The `docs/Factory/runs/RUN_20260208_1400_factory/` directory contains a complete, real Factory run. Use it as a reference to understand what each stage produces. Read the artifacts in this order:
+## What This Repo Should Not Become
 
-1. `raw_brief.md` — The input
-2. `pack/intent.md` — The locked intent
-3. `pack/intent_redteam.md` — Red Team findings
-4. `pack/intent_synthesis.md` — Blue Team hardening
-5. `pack/intent_lock_report.md` — Purple's verdict
-6. `pack/premortem.md` — Failure scenarios
-7. `pack/risk_register.md` — Risks and mitigations
-8. `pack/verification_plan.md` — What to test
-9. `pack/traceability_matrix.md` — Constraint-to-test mapping
-10. `pack/micro_sprints.md` — Execution sequence
-11. The envelope — The execution contract
-12. `pack/PACK_AUDIT_REPORT.md` — Final Purple gate
+- not a copy of another project's product docs
+- not a dump of private run history
+- not a codegen framework
+- not a second source of truth for your project state
 
-## Key Concepts
-
-- **Fail-closed**: When something is ambiguous, the system denies rather than guesses.
-- **Purple Gate**: Quality gate with a checklist of Critical items. All must be YES for PASS.
-- **Bounded deferral**: Something deferred to a future sprint with a hook ID, owner, and scope boundary.
-- **File-touch budget**: The explicit list of files a micro-sprint may create or modify.
-- **Execution mode**: Runs default to `PLANNING_ONLY`. Execution requires explicit authorization.
-
-For the full glossary and learning path, see `docs/onboarding/ONBOARDING_GUIDE.md`.
+Keep it generic. Keep it reusable. Keep project-specific content in the adopting repo.

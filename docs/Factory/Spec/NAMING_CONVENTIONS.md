@@ -1,9 +1,11 @@
-# docs/Factory/Spec/NAMING_CONVENTIONS.md — Doc Factory (v4.2)
+# docs/Factory/Spec/NAMING_CONVENTIONS.md — Doc Factory (v4.4)
 
 ## Version
-v4.2
+v4.4
 
 ## Change Log
+- v4.4 (2026-03-10): Added run-root `MISSION_LINT.txt` naming contract for runs operating under Mission Mode.
+- v4.3 (2026-02-27): Added Mission Mode naming contract (`docs/Factory/missions/<MISSION_ID>/` with required `MISSION_*` artifacts).
 - v4.2 (2026-02-12): Promoted `EXECUTION_PROMPT.md` from optional to required post-I2 PASS + human GO.
 - v4.1 (2026-02-10): Fixed envelope filename contract to `<SPRINT_ID>_ENVELOPE*.md` and added explicit anti-double-prefix rule.
 - v4 (2026-02-08): Updated to reflect Stage J → I2 reordering (STAGE_CONTRACTS v4). No naming changes — handoff filenames unchanged. Added EXECUTION_PROMPT.md as optional run-root artifact.
@@ -11,9 +13,9 @@ v4.2
 - v3 (2026-02-06): Canonicalized Stage I½ to STAGE_I2 (handoff naming), added raw_brief.md + SPRINT_ID.txt requirements explicitly, and aligned required handoff filenames.
 
 ## 0. Applicability (HARD)
-The Factory pipeline (v2) applies to all Harmony sprints from **Phase 1 forward**.
+The Factory pipeline (v2) applies to all governed project sprints after adoption.
 
-Phase 0 sprints (Sprint 00 through Sprint 03) predated the Factory pipeline and were executed manually. Their artifacts live in `docs/sprints/` and follow an earlier, informal convention (envelope + test plan + completion report). Phase 0 artifacts are not governed by these naming conventions and are preserved as-is for traceability.
+Pre-adoption project sprints may predate the Factory pipeline and may follow older conventions. Those artifacts can be preserved as historical references outside the governed Factory naming contract.
 
 All new sprint work MUST use the Factory pipeline. The orchestration guide (`docs/Factory/ORCHESTRATION.md`) describes how to initiate and run the pipeline end-to-end.
 
@@ -21,6 +23,7 @@ All new sprint work MUST use the Factory pipeline. The orchestration guide (`doc
 - Factory specs: `docs/Factory/Spec/`
 - Templates: `docs/Factory/templates/`
 - Runs (output packs): `docs/Factory/runs/`
+- Missions (Mission Mode output): `docs/Factory/missions/`
 
 ## 2. Run directory (HARD)
 Each factory run creates:
@@ -35,10 +38,18 @@ Run root required files:
 - `raw_brief.md`
 - `SPRINT_ID.txt` (created in STAGE_H)
 - `EXECUTION_PROMPT.md` (required post-I2 PASS + human GO, created per ORCHESTRATION.md §6.1)
+- `MISSION_LINT.txt` (required only when the run operates under Mission Mode)
 
 ## 3. Pack directory (HARD)
 The sprint doc pack directory:
 - `docs/Factory/runs/<RUN_ID>/pack/`
+
+## 3.1 Mission directory (HARD, Mission Mode only)
+Each mission creates:
+- `docs/Factory/missions/<MISSION_ID>/`
+
+MISSION_ID format (HARD):
+- `MISSION_YYYYMMDD_NNN` (NNN zero-padded 001..999)
 
 ## 4. Sprint ID (HARD)
 Sprint ID format:
@@ -121,3 +132,10 @@ AREA rules:
 If a file is listed as required above:
 - it must exist with that exact name
 - it must be non-empty
+
+## 9. Mission artifact filenames (HARD, Mission Mode only)
+Within `docs/Factory/missions/<MISSION_ID>/`:
+- `MISSION_MANIFEST.md`
+- `MISSION_CHECKPOINT.md`
+- `MISSION_COMPLETION_REPORT.md`
+- (optional) `MISSION_EXECUTION_PROMPT.md`

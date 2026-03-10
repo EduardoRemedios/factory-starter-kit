@@ -1,9 +1,10 @@
-# docs/Factory/Spec/DEFINITIONS.md — Doc Factory (v3.3)
+# docs/Factory/Spec/DEFINITIONS.md — Doc Factory (v3.4)
 
 ## Version
-v3.3
+v3.4
 
 ## Change Log
+- v3.4 (2026-02-27): Added Mission Mode artifact caps and hard mission wrapper constraints (additive-only, checkpoint gate, and halt/restart integrity controls).
 - v3.3 (2026-02-14): Added execution-mode gating contract so `EXECUTION_PROMPT.md` is required only for `EXECUTION_ENABLED` runs, with `PLANNING_ONLY` as default.
 - v3.2 (2026-02-12): Upgraded execution-prompt generation from recommended to required post-I2 PASS + human GO, and added mandatory template usage (`EXECUTION_PROMPT_TEMPLATE.md`).
 - v3.1 (2026-02-08): Added §14 (execution prompt) and §15 (schema extension guidance). Compatible with STAGE_CONTRACTS v4.
@@ -34,6 +35,10 @@ Caps are per artifact, excluding code blocks.
 - `PACK_AUDIT_REPORT.md`: ≤ 900 words
 - `PACK_MANIFEST.md`: ≤ 600 words
 - `PACK_CHECKLIST.md`: ≤ 800 words
+- `MISSION_MANIFEST.md`: ≤ 700 words
+- `MISSION_CHECKPOINT.md`: ≤ 700 words
+- `MISSION_EXECUTION_PROMPT.md`: ≤ 1,600 words
+- `MISSION_COMPLETION_REPORT.md`: ≤ 900 words
 
 Handoffs:
 - `HANDOFF_STAGE_*.md`: ≤ 500 words, bullets only
@@ -135,3 +140,13 @@ Execution mode defaults to `PLANNING_ONLY` and must be persisted in run-root `EX
 
 ## 15. Schema extension guidance (HARD)
 When a sprint adds new top-level fields to the request payload (e.g., `auth_context`, `tool_call`), the raw brief MUST explicitly list these fields and flag them as schema extensions. The verification plan MUST include a backward-compatibility test (run existing test suite) immediately after any schema change. This prevents the pattern observed in Sprint A where the strict schema validator rejected new fields, causing cascading test failures that were diagnosable but avoidable.
+
+## 16. Mission wrapper constraints (HARD)
+Mission Mode is additive and must not mutate per-unit sprint contracts.
+
+Mission hard constraints:
+1. Mission does not bypass or weaken A→I2 stage gates for any unit.
+2. Mission must have one explicit consolidated checkpoint decision (`GO` or `NO-GO`).
+3. Mission scope ledger must be explicit and immutable during execution unless human re-approval is recorded.
+4. Any unit-level policy or verification failure triggers mission halt.
+5. Mission restart from a failed unit is allowed only if scope ledger, prior evidence integrity, and authorization checkpoint remain valid.

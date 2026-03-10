@@ -27,7 +27,7 @@ v1
 One paragraph: what the execution agent must deliver and what is explicitly out of scope.
 
 ## Required Read Order
-1. `docs/HARMONY_STATE.md`
+1. `docs/PROJECT_STATE.md`
 2. `docs/ROADMAP.md`
 3. `docs/Factory/ORCHESTRATION.md`
 4. `docs/Factory/SCRATCHPAD.md` (read only `## Active Pitfalls (Mandatory)`)
@@ -90,5 +90,5 @@ Add sprint-specific checks:
 - [ ] Scope delivered per envelope and micro-sprints.
 - [ ] Verification commands all PASS.
 - [ ] Evidence artifacts and reports updated.
-- [ ] Required canonical docs updated (`HARMONY_STATE.md`, `ROADMAP.md`, `CHANGELOG.md`) if outcome is GO.
+- [ ] Required canonical docs updated (`PROJECT_STATE.md`, `ROADMAP.md`, `CHANGELOG.md`) if outcome is GO.
 - [ ] Outstanding risks and deferrals explicitly listed.

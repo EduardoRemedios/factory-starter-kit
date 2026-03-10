@@ -1,21 +1,24 @@
-# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.5)
+# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.7)
 
 ## Version
-v4.5
+v4.7
 
 ## Change Log
+- v4.7 (2026-03-10): Added Mission Mode pre-run `mission_lint.sh` contract with run-root `MISSION_LINT.txt` evidence, clarified that Mission Mode keeps one authored mission ledger (`MISSION_MANIFEST.md`), and aligned Stage A/MISSION_WRAPPER requirements to the mission drift hardening rules.
+- v4.6 (2026-02-27): Added additive Mission Mode wrapper contract (manifest/checkpoint/completion artifacts, mission checkpoint gate, mission halt/restart controls) while preserving the canonical sprint A→I2+POST_GATE flow.
 - v4.5 (2026-02-14): Added `EXECUTION_MODE.txt` run contract with `PLANNING_ONLY` default and gated POST_GATE execution prompt generation/downstream fan-out to `EXECUTION_ENABLED` runs only.
 - v4.4 (2026-02-12): Added deterministic skill-invocation contract for critical gates (STAGE_D/STAGE_J/STAGE_I2), and added required post-I2 PASS + human GO execution-prompt generation using `EXECUTION_PROMPT_TEMPLATE.md`.
 - v4.3 (2026-02-11): Added mandatory pre-run knowledge-lint contract (`bash scripts/knowledge_lint.sh`) with required run artifact (`KNOWLEDGE_LINT.txt`) and Stage A entry criterion wiring.
 - v4.2 (2026-02-10): Aligned Stage H/I/I2 envelope artifact references to `<SPRINT_ID>_ENVELOPE*.md` to avoid `SPRINT_SPRINT_*` naming drift.
 - v4.1 (2026-02-09): Added cross-run memory contract: only `SCRATCHPAD.md` `Active Pitfalls` is mandatory pre-run memory; run narratives are run-local in `runs/<RUN_ID>/RETRO.md` and optional. Updated run structure accordingly.
-- v4 (2026-02-08): **Breaking: reordered STAGE_J before STAGE_I2** to resolve circular dependency (I2 requires PACK_CHECKLIST as input, but J produces it). J now runs immediately after STAGE_I, producing PACK_CHECKLIST + PACK_MANIFEST. I2 then audits the complete pack using the checklist. Added execution prompt generation as recommended post-pipeline step. Added lessons from first live run (RUN_20260208_1400_factory).
+- v4 (2026-02-08): **Breaking: reordered STAGE_J before STAGE_I2** to resolve circular dependency (I2 requires PACK_CHECKLIST as input, but J produces it). J now runs immediately after STAGE_I, producing PACK_CHECKLIST + PACK_MANIFEST. I2 then audits the complete pack using the checklist. Added execution prompt generation as recommended post-pipeline step. Added lessons from the first live run.
 - v3 (2026-02-06): Canonicalized Stage I½ to STAGE_I2, removed checklist duplication in audit flow (audit references PACK_CHECKLIST as source-of-truth), added iteration metadata requirements, and aligned template file splits.
 
 ## Global rules (HARD)
 - No stage may start unless its entry criteria pass.
 - No stage may complete unless its exit criteria pass.
 - Pre-run knowledge lint MUST pass (`bash scripts/knowledge_lint.sh`) before STAGE_A starts, and output MUST be persisted at `docs/Factory/runs/<RUN_ID>/KNOWLEDGE_LINT.txt`.
+- If the run is advancing a unit inside an already-authorized mission, pre-run mission lint MUST pass (`bash scripts/mission_lint.sh <MISSION_ID>`) before STAGE_A starts, and output MUST be persisted at `docs/Factory/runs/<RUN_ID>/MISSION_LINT.txt`.
 - Every stage produces `pack/HANDOFF/HANDOFF_STAGE_<STAGE_CODE>.md` containing:
   - Outputs produced (paths)
   - Changes made (bullets)
@@ -30,6 +33,7 @@ v4.5
   - If no relevant skill exists, prompts MUST declare that explicitly and proceed via stage contract only.
 - Run execution mode defaults to `PLANNING_ONLY` and MUST be persisted in run-root `EXECUTION_MODE.txt`.
 - `EXECUTION_PROMPT.md` generation and downstream run fan-out are forbidden unless `EXECUTION_MODE.txt` is `EXECUTION_ENABLED`.
+- Mission Mode (if enabled) is additive and MUST NOT alter per-unit stage entry/exit criteria, authorization contracts, or iteration caps.
 
 ## Iteration metadata (HARD)
 Stages that can run in cycles MUST declare:
@@ -63,6 +67,15 @@ A run produces:
 - `docs/Factory/runs/<RUN_ID>/pack/` (all pack artifacts)
 - `docs/Factory/runs/<RUN_ID>/EXECUTION_PROMPT.md` (required only when `EXECUTION_MODE.txt = EXECUTION_ENABLED` after STAGE_I2 PASS + human GO)
 
+If Mission Mode is enabled, mission root additionally produces:
+- `docs/Factory/missions/<MISSION_ID>/MISSION_MANIFEST.md`
+- `docs/Factory/missions/<MISSION_ID>/MISSION_CHECKPOINT.md`
+- `docs/Factory/missions/<MISSION_ID>/MISSION_COMPLETION_REPORT.md`
+- `docs/Factory/missions/<MISSION_ID>/MISSION_EXECUTION_PROMPT.md` (optional helper artifact)
+
+If the run is advancing a unit inside an already-authorized mission, run root additionally produces:
+- `docs/Factory/runs/<RUN_ID>/MISSION_LINT.txt`
+
 ## Dependency graph (authoritative)
 - STAGE_A produces `intent.md` (draft v1)
 - STAGE_B consumes `intent.md` → produces `intent_redteam.md`
@@ -75,6 +88,7 @@ A run produces:
 - STAGE_I consumes envelope + verification assets → produces envelope red team report and updates artifacts as needed (Red/Blue only)
 - **STAGE_J** consumes full pack → produces `PACK_MANIFEST.md`, `PACK_CHECKLIST.md` (mechanical packaging only, **runs before I2**)
 - **STAGE_I2** consumes full pack + `PACK_CHECKLIST.md` + `PACK_MANIFEST.md` → produces `PACK_AUDIT_REPORT.md` (Purple only, **runs after J**)
+- Mission Mode consumes one or more completed sprint packs and applies a mission-level checkpoint before chained execution.
 
 ## Intent Unlock Protocol (HARD)
 If any downstream stage discovers the locked intent is flawed:
@@ -88,6 +102,7 @@ If any downstream stage discovers the locked intent is flawed:
 Inputs:
 - LOAD: raw brief (captured into run root)
 - DISK: `KNOWLEDGE_LINT.txt` (run root), `EXECUTION_MODE.txt` (run root)
+- DISK: `MISSION_LINT.txt` (run root, already-authorized mission unit runs only)
 
 Outputs:
 - `raw_brief.md`
@@ -96,6 +111,7 @@ Outputs:
 Entry criteria:
 - raw brief content exists and is non-empty.
 - `KNOWLEDGE_LINT.txt` exists in run root and records a successful knowledge-lint preflight.
+- If the run is advancing a unit inside an already-authorized mission: `MISSION_LINT.txt` exists in run root and records a successful mission-lint preflight.
 - `EXECUTION_MODE.txt` exists in run root and contains exactly one value: `PLANNING_ONLY` or `EXECUTION_ENABLED`.
 
 Exit criteria:
@@ -310,3 +326,31 @@ Exit criteria:
 - Prompt is instantiated from `docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md`.
 - Prompt has no unresolved placeholders.
 - Prompt includes deterministic skill routing instructions and stage-aligned guardrails.
+
+---
+
+## MISSION_WRAPPER (additive, optional — not a replacement stage chain)
+Purpose:
+- Wrap multiple completed sprint packs into one mission execution sequence under one consolidated checkpoint.
+
+Mission inputs:
+- DISK: referenced sprint run roots and packs (`docs/Factory/runs/<RUN_ID>/...`)
+- DISK: `docs/Factory/MISSION_MODE.md`
+- LOAD: mission manifest/checkpoint/completion artifacts
+
+Mission outputs:
+- `docs/Factory/missions/<MISSION_ID>/MISSION_MANIFEST.md`
+- `docs/Factory/missions/<MISSION_ID>/MISSION_CHECKPOINT.md`
+- `docs/Factory/missions/<MISSION_ID>/MISSION_COMPLETION_REPORT.md`
+
+Mission hard rules:
+1. Mission does not bypass per-unit A→I2 contracts.
+2. Per-unit iteration caps remain unchanged.
+3. Mission checkpoint must record one explicit GO/NO-GO decision.
+4. Any policy/scope/verification breach in a unit halts mission.
+5. Remaining units after halt are marked skipped/not executed until restart authorization.
+6. `MISSION_MANIFEST.md` remains the authored ledger of record for ordered units, mission unit status, run references, pack paths, and mission evidence links.
+7. If a unit run is advancing an already-authorized mission, pre-run mission lint must pass before STAGE_A begins.
+
+Mission restart rule:
+- Resume from failed unit only if mission scope ledger, prior evidence integrity, and mission checkpoint authorization remain valid.
