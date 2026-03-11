@@ -2,6 +2,8 @@
 
 A generic, open-source starter kit for the Factory planning pipeline.
 
+Conventional sprint planning assumes humans will resolve ambiguity, recover from drift, and apply judgment during execution. Agentic execution amplifies those gaps instead, so weak intent, loose constraints, and vague verification can turn into fast, hard-to-audit wrong work.
+
 This is a pre-1.0 starter kit. It intentionally ships generic templates and placeholder project-state docs that must be adapted in the adopting repository. It is licensed under Apache-2.0.
 
 This repo is the reusable framework layer:
