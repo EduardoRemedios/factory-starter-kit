@@ -94,6 +94,8 @@ The canonical stage order is:
 
 `A → B → C → D → E → F → G → H → I → J → I2`
 
+`I2` is the final audit gate. `J` was inserted later for pack consolidation, and the `I2` name is retained to preserve the stage contract.
+
 Where:
 - A creates intent
 - B/C adversarially review and harden intent

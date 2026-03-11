@@ -139,6 +139,7 @@ For a single sprint:
 2. run knowledge lint
 3. initialize a Factory run
 4. execute stages A → B → C → D → E → F → G → H → I → J → I2
+   `I2` is the final audit gate. `J` was inserted later for pack consolidation, and the `I2` name is retained to preserve the stage contract.
 5. review the pack
 6. approve or reject execution
 
