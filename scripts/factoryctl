@@ -1,0 +1,207 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+import sys
+
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from factory_context_index import (  # noqa: E402
+    FactoryContextIndexError,
+    build_context_index,
+    describe_context,
+    expand_context,
+    format_context_describe,
+    format_context_expand,
+    format_context_recall,
+    format_context_trace,
+    recall_context,
+    trace_context,
+    write_context_report,
+)
+
+
+REPO_ROOT = SCRIPT_DIR.parent
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="factoryctl",
+        description="Factory continuity and context-recall helper.",
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    context_index_parser = subparsers.add_parser(
+        "context-index",
+        help="Build the Factory, Mission, and Product Owner artifact recall index.",
+    )
+    context_index_parser.add_argument("--db-path", default=None, help="Optional override for the SQLite index path.")
+    context_index_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    context_recall_parser = subparsers.add_parser(
+        "context-recall",
+        help="Search indexed Factory, Mission, and Product Owner artifacts.",
+    )
+    context_recall_parser.add_argument("--query", required=True, help="Recall query.")
+    context_recall_parser.add_argument("--scope", default=None, help="Optional path, run, phase, mission, or sprint filter.")
+    context_recall_parser.add_argument("--limit", type=int, default=8, help="Maximum number of matches to return.")
+    context_recall_parser.add_argument("--db-path", default=None, help="Optional override for the SQLite index path.")
+    context_recall_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    context_trace_parser = subparsers.add_parser(
+        "context-trace",
+        help="Trace an exact identifier such as RUN_..., PHASE_..., Pxx-yy, C-..., or FP-....",
+    )
+    context_trace_parser.add_argument("--id", required=True, help="Identifier to trace.")
+    context_trace_parser.add_argument("--scope", default=None, help="Optional path, run, phase, mission, or sprint filter.")
+    context_trace_parser.add_argument("--db-path", default=None, help="Optional override for the SQLite index path.")
+    context_trace_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    context_expand_parser = subparsers.add_parser(
+        "context-expand",
+        help="Expand one indexed chunk by numeric chunk id or one indexed source by path.",
+    )
+    context_expand_parser.add_argument("--ref", required=True, help="Chunk id or indexed source path.")
+    context_expand_parser.add_argument("--db-path", default=None, help="Optional override for the SQLite index path.")
+    context_expand_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    context_describe_parser = subparsers.add_parser(
+        "context-describe",
+        help="Describe indexed source coverage by artifact type and scope.",
+    )
+    context_describe_parser.add_argument("--scope", default=None, help="Optional path, run, phase, mission, or sprint filter.")
+    context_describe_parser.add_argument("--db-path", default=None, help="Optional override for the SQLite index path.")
+    context_describe_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    context_report_parser = subparsers.add_parser(
+        "context-report",
+        help="Generate a scoped context recall report artifact for Factory, PO, or Mission workflows.",
+    )
+    context_report_parser.add_argument(
+        "--profile",
+        required=True,
+        choices=["stage-a", "po-brief", "mission-checkpoint"],
+        help="Report profile.",
+    )
+    context_report_parser.add_argument("--scope", required=True, help="Required path, run, phase, mission, or sprint scope filter.")
+    context_report_parser.add_argument("--output", required=True, help="Output path for the markdown report artifact.")
+    context_report_parser.add_argument("--focus", action="append", default=[], help="Optional focus term; may be repeated.")
+    context_report_parser.add_argument("--trace-id", action="append", default=[], help="Optional exact identifier to trace; may be repeated.")
+    context_report_parser.add_argument("--fallback-scope", action="append", default=[], help="Optional broader scope to try after the requested scope; may be repeated.")
+    context_report_parser.add_argument("--required-ref", action="append", default=[], help="Optional exact identifier or exact source path that must resolve in the final report; may be repeated.")
+    context_report_parser.add_argument("--query", action="append", default=[], help="Optional extra recall query; may be repeated.")
+    context_report_parser.add_argument("--limit", type=int, default=5, help="Maximum matches to include per query.")
+    context_report_parser.add_argument("--db-path", default=None, help="Optional override for the SQLite index path.")
+    context_report_parser.add_argument("--fail-on-weak-coverage", action="store_true", help="Exit non-zero after writing the report if coverage remains WEAK after all attempted scopes.")
+    context_report_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+    root = REPO_ROOT
+
+    try:
+        if args.command == "context-index":
+            payload = build_context_index(root=root, db_path=Path(args.db_path) if args.db_path else None)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"Factory context index rebuilt: {payload['db_path']}")
+                print(f"Sources={payload['source_count']} Chunks={payload['chunk_count']} Facts={payload['fact_count']}")
+            return 0
+
+        if args.command == "context-recall":
+            payload = recall_context(
+                root=root,
+                query=args.query,
+                db_path=Path(args.db_path) if args.db_path else None,
+                scope=args.scope,
+                limit=args.limit,
+            )
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(format_context_recall(payload), end="")
+            return 0
+
+        if args.command == "context-trace":
+            payload = trace_context(
+                root=root,
+                identifier=args.id,
+                db_path=Path(args.db_path) if args.db_path else None,
+                scope=args.scope,
+            )
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(format_context_trace(payload), end="")
+            return 0
+
+        if args.command == "context-expand":
+            payload = expand_context(
+                root=root,
+                ref=args.ref,
+                db_path=Path(args.db_path) if args.db_path else None,
+            )
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(format_context_expand(payload), end="")
+            return 0
+
+        if args.command == "context-describe":
+            payload = describe_context(
+                root=root,
+                db_path=Path(args.db_path) if args.db_path else None,
+                scope=args.scope,
+            )
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(format_context_describe(payload), end="")
+            return 0
+
+        if args.command == "context-report":
+            payload = write_context_report(
+                root=root,
+                output_path=Path(args.output),
+                profile=args.profile,
+                scope=args.scope,
+                focus_terms=args.focus,
+                trace_ids=args.trace_id,
+                fallback_scopes=args.fallback_scope,
+                required_refs=args.required_ref,
+                additional_queries=args.query,
+                limit=args.limit,
+                db_path=Path(args.db_path) if args.db_path else None,
+                fail_on_weak_coverage=args.fail_on_weak_coverage,
+            )
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"Context recall report written: {payload['output_path']}")
+                print(
+                    f"Profile={payload['profile']} RequestedScope={payload['requested_scope']} "
+                    f"EffectiveScope={payload['effective_scope']} Coverage={payload['coverage_verdict']} "
+                    f"Queries={payload['query_count']} Traces={payload['trace_count']}"
+                )
+            return 0
+
+    except FactoryContextIndexError as exc:
+        print(f"ERROR: {exc}")
+        return 2
+
+    parser.print_help()
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

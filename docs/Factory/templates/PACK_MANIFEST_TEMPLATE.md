@@ -9,13 +9,14 @@ VALIDATION:
 - Every listed path MUST exist relative to the run root and MUST be non-empty.
 - Sprint ID in this manifest MUST match ../SPRINT_ID.txt.
 - No placeholders may remain (see DEFINITIONS.md §12).
-- Replace all YYYY-MM-DD and HH:MM with actual values (no date/time placeholders may remain).
+- Replace all YYYY-MM-DD and HH:MM with actual values.
 -->
 
 ## Version
-v1
+v1.1
 
 ## Change Log
+- v1.1 (2026-03-21): Added required run-root `CONTEXT_RECALL_REPORT.md` completeness checks.
 - v1 (YYYY-MM-DD): Initial manifest for this run.
 
 ## Run Metadata
@@ -31,6 +32,7 @@ v1
 
 ## Required Files (Run Root)
 - ../raw_brief.md
+- ../CONTEXT_RECALL_REPORT.md
 - ../SPRINT_ID.txt
 
 ## Required Files (Pack)
@@ -70,13 +72,14 @@ Handoffs:
   - HANDOFF_STAGE_I.md
   - HANDOFF_STAGE_I2.md
   - HANDOFF_STAGE_J.md
-  - (optional) HANDOFF_SUMMARY.md
+  - optional HANDOFF_SUMMARY.md
 
 ## Non-Empty Confirmation (Checklist)
-Mark each item YES/NO. If NO, the pack is invalid.
+Mark each item YES or NO. If NO, the pack is invalid.
 
 Run root:
 - ../raw_brief.md: YES/NO
+- ../CONTEXT_RECALL_REPORT.md: YES/NO
 - ../SPRINT_ID.txt: YES/NO
 
 Pack core:
@@ -118,4 +121,4 @@ Handoffs:
 - HANDOFF_STAGE_J.md: YES/NO
 
 ## Notes
-- Any missing or empty required file = FAIL (pack invalid).
+- Any missing or empty required file = FAIL.

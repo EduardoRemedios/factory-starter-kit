@@ -6,9 +6,6 @@ set -euo pipefail
 # This validates mission continuity from authored mission docs and
 # referenced run artifacts. It intentionally does not maintain a second
 # mission-state file.
-#
-# Adapt the project-state checks if your repo uses different canonical
-# state docs or naming conventions.
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
@@ -26,19 +23,23 @@ require_nonempty_file() {
 MISSION_ID="${1:-}"
 [[ -n "$MISSION_ID" ]] || fail "usage: bash scripts/mission_lint.sh <MISSION_ID>"
 
-MANIFEST="docs/Factory/missions/$MISSION_ID/MISSION_MANIFEST.md"
-CHECKPOINT="docs/Factory/missions/$MISSION_ID/MISSION_CHECKPOINT.md"
+MISSION_ROOT="docs/Factory/missions/$MISSION_ID"
+MANIFEST="$MISSION_ROOT/MISSION_MANIFEST.md"
+RECALL="$MISSION_ROOT/MISSION_CONTEXT_RECALL_REPORT.md"
+CHECKPOINT="$MISSION_ROOT/MISSION_CHECKPOINT.md"
 
 require_nonempty_file "$MANIFEST"
+require_nonempty_file "$RECALL"
 require_nonempty_file "$CHECKPOINT"
 
-python3 - "$MISSION_ID" "$MANIFEST" "$CHECKPOINT" <<'PY'
+python3 - "$MISSION_ID" "$MANIFEST" "$RECALL" "$CHECKPOINT" <<'PY'
 import pathlib
 import re
 import sys
 
-mission_id, manifest_path, checkpoint_path = sys.argv[1:]
+mission_id, manifest_path, recall_path, checkpoint_path = sys.argv[1:]
 manifest = pathlib.Path(manifest_path).read_text()
+recall = pathlib.Path(recall_path).read_text()
 checkpoint = pathlib.Path(checkpoint_path).read_text()
 root = pathlib.Path(".")
 
@@ -73,10 +74,16 @@ def normalize_status(value: str) -> str:
     return raw
 
 
+if "MISSION_CONTEXT_RECALL_REPORT.md" not in recall and "Coverage Verdict:" not in recall:
+    fail("MISSION_CONTEXT_RECALL_REPORT.md does not look like a generated mission recall artifact")
+
+if re.search(r"Coverage Verdict:\s*WEAK", recall):
+    fail("MISSION_CONTEXT_RECALL_REPORT.md records WEAK coverage")
+
 if "## Ordered Mission Units" not in manifest:
     fail("MISSION_MANIFEST.md missing '## Ordered Mission Units'")
 
-if not re.search(r"Decision:\s*GO", checkpoint):
+if not re.search(r"(?m)^\s*-?\s*Decision:\s*GO\s*$", checkpoint):
     fail("MISSION_CHECKPOINT.md missing explicit GO decision")
 
 section_match = re.search(r"^## Ordered Mission Units\s*\n(?P<body>.*?)(?=^## |\Z)", manifest, re.S | re.M)
@@ -116,8 +123,15 @@ for line in table_lines[2:]:
             "sprint_id": sprint_id_match.group(0) if sprint_id_match else None,
             "pack_path": pack_path_match.group(0) if pack_path_match else None,
             "status": normalize_status(cells[headers.index(status_header)]),
+            "raw_status": clean(cells[headers.index(status_header)]),
         }
     )
+
+if [unit["order"] for unit in units] != sorted(unit["order"] for unit in units):
+    fail("mission unit ordering is not strictly increasing")
+
+if any(unit["status"] == "running" for unit in units):
+    fail("mission manifest still has a running unit")
 
 terminal = {"pack_complete", "closed_go"}
 for unit in units:
@@ -132,8 +146,12 @@ for unit in units:
         path = root / expected_pack / relpath
         if not path.is_file() or path.stat().st_size == 0:
             fail(f"missing required pack evidence for order={unit['order']}: {path}")
+    run_root = root / "docs" / "Factory" / "runs" / unit["run_id"]
+    exec_mode_path = run_root / "EXECUTION_MODE.txt"
     if unit["status"] == "closed_go":
-        human_go = root / "docs" / "Factory" / "runs" / unit["run_id"] / "HUMAN_GO.txt"
+        if exec_mode_path.is_file() and exec_mode_path.read_text().strip() != "EXECUTION_ENABLED":
+            fail(f"closed_go unit has non-execution-enabled mode: order={unit['order']}")
+        human_go = run_root / "HUMAN_GO.txt"
         if not human_go.is_file() or human_go.stat().st_size == 0:
             fail(f"closed_go unit missing HUMAN_GO evidence: order={unit['order']}")
 
@@ -143,7 +161,21 @@ if next_planned:
     if predecessor_index >= 0:
         predecessor = units[predecessor_index]
         if predecessor["status"] not in terminal:
-            fail(f"next planned unit order={next_planned['order']} does not follow a terminal predecessor")
+            fail(
+                f"next planned unit order={next_planned['order']} does not follow a terminal predecessor "
+                f"(found {predecessor['raw_status']})"
+            )
+        if predecessor["status"] == "pack_complete" and predecessor["run_id"]:
+            exec_mode = root / "docs" / "Factory" / "runs" / predecessor["run_id"] / "EXECUTION_MODE.txt"
+            if exec_mode.is_file() and exec_mode.read_text().strip() == "EXECUTION_ENABLED":
+                fail(
+                    f"next planned unit order={next_planned['order']} is blocked because predecessor "
+                    f"order={predecessor['order']} is execution-enabled but not closed_go"
+                )
+
+blocked_signal = next((unit for unit in units if unit["status"] == "planning_signal"), None)
+if blocked_signal and next_planned and blocked_signal["order"] < next_planned["order"]:
+    fail("mission has a planning_signal unit ahead of the next executable unit")
 
 closed_go_units = [unit for unit in units if unit["status"] == "closed_go"]
 if closed_go_units:

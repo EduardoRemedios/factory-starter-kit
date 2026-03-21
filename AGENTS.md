@@ -8,11 +8,14 @@ Purpose:
 2. `docs/ROADMAP.md`
 3. `docs/Factory/ORCHESTRATION.md`
 4. `docs/Factory/MISSION_MODE.md` (if using Mission Mode)
-5. `docs/Factory/SCRATCHPAD.md` (read only `## Active Pitfalls (Mandatory)`)
-6. current sprint artifacts in `docs/sprints/` and current run pack in `docs/Factory/runs/<RUN_ID>/pack/`
+5. `docs/Factory/ProductOwner/PO_PROCESS.md` (if working on PO-authored briefs or phase planning)
+6. `docs/Factory/SCRATCHPAD.md` (read only `## Active Pitfalls (Mandatory)`)
+7. current sprint artifacts in `docs/sprints/` and current run pack in `docs/Factory/runs/<RUN_ID>/pack/`
 
 ## 2) Canonical Commands
 - Knowledge lint preflight: `bash scripts/knowledge_lint.sh`
+- Context index refresh: `./scripts/factoryctl context-index`
+- Stage A recall report: `./scripts/factoryctl context-report --profile stage-a --scope <RUN_ID> --output docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
 - Mission continuity preflight: `bash scripts/mission_lint.sh <MISSION_ID>` (only when advancing a unit inside an already-authorized mission)
 - Full test suite: replace with your project’s canonical test command
 
@@ -22,12 +25,20 @@ Purpose:
 - Keep schema-locked boundaries intact.
 - Keep deterministic ordering and evidence-chain integrity in reports and artifacts.
 - Do not create a second authored source of truth for mission state when Mission Mode is active.
+- Keep continuity artifacts as evidence aids, not as replacement authority for the underlying source documents.
 
 ## 4) Factory Run Preconditions
 - Run `bash scripts/knowledge_lint.sh` before Stage A.
 - Persist lint output in run root as `KNOWLEDGE_LINT.txt`.
+- Refresh the recall index and generate `CONTEXT_RECALL_REPORT.md` before Stage A.
 - If the run is advancing a unit inside an already-authorized mission, run `bash scripts/mission_lint.sh <MISSION_ID>` before Stage A and persist output as `MISSION_LINT.txt`.
-- If either lint fails, halt run initialization and fix context drift first.
+- If the raw brief originates from the PO process, confirm it has a Brief Review PASS before entering the Factory.
+- If any required lint or recall artifact is missing or weak, halt run initialization and fix context drift first.
+
+## 4.1) Product Owner Process
+- PO process docs: `docs/Factory/ProductOwner/PO_PROCESS.md`, `docs/Factory/ProductOwner/PO_ROLE_DEFINITION.md`
+- Phase artifacts: `docs/Factory/ProductOwner/phases/<PHASE_ID>/`
+- The PO writes sprint briefs within a locked Phase Intent. The Factory pipeline is unchanged: PO briefs enter as `raw_brief.md` only after passing a Brief Review Cycle.
 
 ## 5) Change Hygiene
 - When sprint outcomes are GO, update in the same cycle:

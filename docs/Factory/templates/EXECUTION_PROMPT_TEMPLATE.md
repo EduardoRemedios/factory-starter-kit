@@ -67,8 +67,8 @@ One paragraph: what the execution agent must deliver and what is explicitly out 
 
 ## Verification Contract (must run before merge)
 - `bash scripts/knowledge_lint.sh`
-- `python3 -m harmony.conformance_harness --matrix docs/CONFORMANCE_TEST_MATRIX.md --profile baseline_adapter --report artifacts/conformance/conformance_report.json`
-- `python3 -m unittest discover -s tests`
+- `<project-specific regression command>`
+- `<project-specific conformance or integration command, if applicable>`
 
 Add sprint-specific checks:
 - VP-X:

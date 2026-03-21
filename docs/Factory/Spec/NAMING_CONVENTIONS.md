@@ -1,43 +1,43 @@
-# docs/Factory/Spec/NAMING_CONVENTIONS.md — Doc Factory (v4.4)
+# docs/Factory/Spec/NAMING_CONVENTIONS.md — Doc Factory (v4.5)
 
 ## Version
-v4.4
+v4.5
 
 ## Change Log
+- v4.5 (2026-03-21): Added required run-root `CONTEXT_RECALL_REPORT.md` and required Mission Mode artifact `MISSION_CONTEXT_RECALL_REPORT.md`.
 - v4.4 (2026-03-10): Added run-root `MISSION_LINT.txt` naming contract for runs operating under Mission Mode.
 - v4.3 (2026-02-27): Added Mission Mode naming contract (`docs/Factory/missions/<MISSION_ID>/` with required `MISSION_*` artifacts).
-- v4.2 (2026-02-12): Promoted `EXECUTION_PROMPT.md` from optional to required post-I2 PASS + human GO.
+- v4.2 (2026-02-12): Promoted `EXECUTION_PROMPT.md` from optional to required post-I2 PASS plus human GO.
 - v4.1 (2026-02-10): Fixed envelope filename contract to `<SPRINT_ID>_ENVELOPE*.md` and added explicit anti-double-prefix rule.
-- v4 (2026-02-08): Updated to reflect Stage J → I2 reordering (STAGE_CONTRACTS v4). No naming changes — handoff filenames unchanged. Added EXECUTION_PROMPT.md as optional run-root artifact.
-- v3.1 (2026-02-07): Added applicability section clarifying that Factory v2 applies from Phase 1 forward.
-- v3 (2026-02-06): Canonicalized Stage I½ to STAGE_I2 (handoff naming), added raw_brief.md + SPRINT_ID.txt requirements explicitly, and aligned required handoff filenames.
+- v4.0 (2026-02-08): Updated to reflect the `STAGE_J -> STAGE_I2` reordering and added `EXECUTION_PROMPT.md` as an optional run-root artifact.
 
 ## 0. Applicability (HARD)
-The Factory pipeline (v2) applies to all governed project sprints after adoption.
+The Factory pipeline applies to all governed project sprints after adoption.
 
-Pre-adoption project sprints may predate the Factory pipeline and may follow older conventions. Those artifacts can be preserved as historical references outside the governed Factory naming contract.
+Pre-adoption project sprints may follow older conventions and can be preserved as historical references outside the governed Factory naming contract.
 
-All new sprint work MUST use the Factory pipeline. The orchestration guide (`docs/Factory/ORCHESTRATION.md`) describes how to initiate and run the pipeline end-to-end.
+All new sprint work MUST use the Factory pipeline.
 
 ## 1. Root locations (HARD)
 - Factory specs: `docs/Factory/Spec/`
 - Templates: `docs/Factory/templates/`
-- Runs (output packs): `docs/Factory/runs/`
-- Missions (Mission Mode output): `docs/Factory/missions/`
+- Product Owner docs: `docs/Factory/ProductOwner/`
+- Runs: `docs/Factory/runs/`
+- Missions: `docs/Factory/missions/`
 
 ## 2. Run directory (HARD)
-Each factory run creates:
+Each Factory run creates:
 - `docs/Factory/runs/<RUN_ID>/`
 
-RUN_ID format (HARD):
+`RUN_ID` format:
 - `RUN_YYYYMMDD_HHMM_<TAG>`
-  - Example: `RUN_20260206_0930_factory`
-  - `<TAG>` default: `factory`
+- default tag: `factory`
 
-Run root required files:
+Run-root required files:
 - `raw_brief.md`
-- `SPRINT_ID.txt` (created in STAGE_H)
-- `EXECUTION_PROMPT.md` (required post-I2 PASS + human GO, created per ORCHESTRATION.md §6.1)
+- `CONTEXT_RECALL_REPORT.md`
+- `SPRINT_ID.txt`
+- `EXECUTION_PROMPT.md` (required post-I2 PASS plus human GO)
 - `MISSION_LINT.txt` (required only when the run operates under Mission Mode)
 
 ## 3. Pack directory (HARD)
@@ -48,15 +48,14 @@ The sprint doc pack directory:
 Each mission creates:
 - `docs/Factory/missions/<MISSION_ID>/`
 
-MISSION_ID format (HARD):
-- `MISSION_YYYYMMDD_NNN` (NNN zero-padded 001..999)
+`MISSION_ID` format:
+- `MISSION_YYYYMMDD_NNN`
 
 ## 4. Sprint ID (HARD)
-Sprint ID format:
-- `SPRINT_YYYYMMDD_NNN` (NNN is zero-padded, 001..999)
-- Assigned in STAGE_H
-- Must be unique across the repository
-- Stored in `docs/Factory/runs/<RUN_ID>/SPRINT_ID.txt`
+`SPRINT_ID` format:
+- `SPRINT_YYYYMMDD_NNN`
+- assigned in `STAGE_H`
+- stored in `docs/Factory/runs/<RUN_ID>/SPRINT_ID.txt`
 
 ## 5. Required artifact filenames (HARD)
 Within `docs/Factory/runs/<RUN_ID>/pack/`:
@@ -75,12 +74,8 @@ Envelope:
 - `<SPRINT_ID>_ENVELOPE.md`
 - `<SPRINT_ID>_ENVELOPE_REDTEAM.md`
 
-Important:
-- `SPRINT_ID` already includes the `SPRINT_` prefix.
-- Do not prepend another `SPRINT_` when constructing envelope filenames.
-
 Verification assets:
-- `fixtures/` (directory)
+- `fixtures/`
 - `traceability_matrix.md`
 
 Pack gates:
@@ -89,7 +84,7 @@ Pack gates:
 - `PACK_CHECKLIST.md`
 
 Handoffs:
-- `HANDOFF/` (directory)
+- `HANDOFF/`
   - `HANDOFF_STAGE_A.md`
   - `HANDOFF_STAGE_B.md`
   - `HANDOFF_STAGE_C.md`
@@ -101,17 +96,22 @@ Handoffs:
   - `HANDOFF_STAGE_I.md`
   - `HANDOFF_STAGE_I2.md`
   - `HANDOFF_STAGE_J.md`
-  - (optional) `HANDOFF_SUMMARY.md`
+  - optional `HANDOFF_SUMMARY.md`
+
+Important:
+- `SPRINT_ID` already includes the `SPRINT_` prefix
+- do not prepend another `SPRINT_` when constructing envelope filenames
 
 ## 6. Versioning (HARD)
 Artifacts may be preserved with suffixes:
-- `*_v1.md`, `*_v2.md`, etc.
+- `*_v1.md`
+- `*_v2.md`
 
-Canonical artifact is always the non-suffixed filename (e.g., `intent.md`) and must match the latest version content.
+The canonical artifact is always the non-suffixed filename and must match the latest version content.
 
 Every artifact must include:
 - `## Version`
-- `## Change Log` (format defined in `DEFINITIONS.md`)
+- `## Change Log`
 
 ## 7. Fixtures naming (HARD)
 Fixtures live under:
@@ -120,13 +120,13 @@ Fixtures live under:
 Each fixture directory contains:
 - `input.json` or `input.yaml`
 - `expected.json` or `expected.yaml`
-- `notes.md` (1–10 bullets max)
+- `notes.md`
 
-AREA rules:
-- Core areas allowed: `intent`, `policy`, `routing`, `verification`, `envelope`
-- Domain areas allowed ONLY IF:
-  1) listed explicitly in `pack/intent.md` under **Scope → Domain Areas**
-  2) recorded in `pack/traceability_matrix.md`
+`AREA` rules:
+- core areas allowed: `intent`, `policy`, `routing`, `verification`, `envelope`
+- domain areas allowed only if:
+  1. listed explicitly in `pack/intent.md` under scope or domain areas
+  2. recorded in `pack/traceability_matrix.md`
 
 ## 8. No naming forks (HARD)
 If a file is listed as required above:
@@ -136,6 +136,7 @@ If a file is listed as required above:
 ## 9. Mission artifact filenames (HARD, Mission Mode only)
 Within `docs/Factory/missions/<MISSION_ID>/`:
 - `MISSION_MANIFEST.md`
+- `MISSION_CONTEXT_RECALL_REPORT.md`
 - `MISSION_CHECKPOINT.md`
 - `MISSION_COMPLETION_REPORT.md`
-- (optional) `MISSION_EXECUTION_PROMPT.md`
+- optional `MISSION_EXECUTION_PROMPT.md`
