@@ -53,6 +53,10 @@ Examples:
 
 Validators should enforce file presence, placeholder rules, size caps, checklist consistency, execution-mode consistency, and evidence completeness. They should not make subjective product decisions.
 
+Use validators at two levels:
+- `stage-lint` after each stage handoff, before the next stage starts
+- `pack-lint` after Stage I2, before human review
+
 ### 4. Extension Packs
 
 Extension packs are optional accelerators around the core workflow.

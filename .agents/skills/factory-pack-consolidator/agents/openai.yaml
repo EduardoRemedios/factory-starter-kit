@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory Pack Consolidator"
+  short_description: "Build manifest and checklist artifacts."
+  default_prompt: "Consolidate a Factory pack by producing PACK_MANIFEST.md and PACK_CHECKLIST.md from the current run artifacts."

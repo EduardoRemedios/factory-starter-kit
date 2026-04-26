@@ -66,7 +66,12 @@ required_files=(
   "scripts/factoryctl"
   "scripts/factory_context_index.py"
   "scripts/factory_pack_lint.py"
+  "scripts/factory_stage_lint.py"
   "scripts/mission_lint.sh"
+  ".agents/skills/factory-root-planner/SKILL.md"
+  ".agents/skills/factory-purple-gate/SKILL.md"
+  ".agents/skills/factory-pack-consolidator/SKILL.md"
+  ".agents/skills/factory-execution-closeout/SKILL.md"
 )
 
 for path in "${required_files[@]}"; do
@@ -112,6 +117,12 @@ has_pattern 'EXECUTION_MODE\.txt' docs/Factory/ORCHESTRATION.md \
 has_pattern 'factoryctl pack-lint --run <RUN_ID>' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing pack-lint validation contract"
 
+has_pattern 'factoryctl stage-lint --run <RUN_ID> --stage <STAGE>' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing stage-lint validation contract"
+
+has_pattern 'factoryctl stage-lint --run <RUN_ID> --stage <STAGE>' AGENTS.md \
+  || fail "AGENTS.md missing stage-lint canonical command"
+
 has_pattern 'gpt-5\.5' docs/Factory/Harnesses/CODEX.md \
   || fail "Codex harness adapter missing GPT-5.5 local model guidance"
 
@@ -135,6 +146,9 @@ has_pattern '^## POST_GATE — Execution Prompt Generation \(execution-enabled r
 
 has_pattern '^## POST_I2_VALIDATION — Pack Lint$' docs/Factory/Spec/STAGE_CONTRACTS.md \
   || fail "Stage contracts missing post-I2 pack-lint validation stage"
+
+has_pattern '^## STAGE_VALIDATION — Stage Lint$' docs/Factory/Spec/STAGE_CONTRACTS.md \
+  || fail "Stage contracts missing stage-lint validation section"
 
 has_pattern '^## MISSION_WRAPPER \(additive, optional — not a replacement stage chain\)$' docs/Factory/Spec/STAGE_CONTRACTS.md \
   || fail "Stage contracts missing mission wrapper section"
@@ -186,6 +200,9 @@ has_pattern '^C9\. Knowledge lint preflight passed and evidence artifact is pres
 
 ./scripts/factoryctl pack-lint --help >/dev/null \
   || fail "factoryctl pack-lint help probe failed"
+
+./scripts/factoryctl stage-lint --help >/dev/null \
+  || fail "factoryctl stage-lint help probe failed"
 
 echo "knowledge_lint: PASS"
 echo "knowledge_lint: checked_files=${#required_files[@]} active_pitfalls=$pitfall_count"

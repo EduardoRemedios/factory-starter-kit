@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add `factoryctl stage-lint` for immediate per-stage handoff and output validation.
+- Add generic Factory role skills for root planning, Purple gate review, pack consolidation, and execution closeout.
+- Harden `factoryctl pack-lint` for non-`SPRINT_` sprint IDs and fixture `notes.md` files.
 - Add `docs/Factory/ARCHITECTURE.md` to define the portable Factory Core, harness adapter, validator, extension pack, and project adapter layer model.
 - Add `factoryctl pack-lint` for deterministic completed-pack validation after Stage I2.
 - Add `docs/Factory/Harnesses/` with Codex-first harness adapter guidance for GPT-5.5 local work, Codex CLI terminal runs, Codex Cloud, plugins, skills, hooks, and connector-backed evidence.

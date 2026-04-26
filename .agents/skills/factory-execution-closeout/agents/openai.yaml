@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory Execution Closeout"
+  short_description: "Close execution against a Factory pack."
+  default_prompt: "Close an execution run by checking implementation evidence against the approved Factory pack and reporting residual risk."
