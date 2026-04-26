@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add `RUN_METRICS_TEMPLATE.md` for lightweight Factory process telemetry after real runs.
 - Add `factoryctl stage-lint` for immediate per-stage handoff and output validation.
 - Add generic Factory role skills for root planning, Purple gate review, pack consolidation, and execution closeout.
 - Harden `factoryctl pack-lint` for non-`SPRINT_` sprint IDs and fixture `notes.md` files.

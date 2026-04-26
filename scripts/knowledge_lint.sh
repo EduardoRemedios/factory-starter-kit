@@ -52,6 +52,7 @@ required_files=(
   "docs/Factory/templates/PACK_MANIFEST_TEMPLATE.md"
   "docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md"
   "docs/Factory/templates/HANDOFF_STAGE_TEMPLATE.md"
+  "docs/Factory/templates/RUN_METRICS_TEMPLATE.md"
   "docs/Factory/templates/MISSION_MANIFEST_TEMPLATE.md"
   "docs/Factory/templates/MISSION_CHECKPOINT_TEMPLATE.md"
   "docs/Factory/templates/MISSION_EXECUTION_PROMPT_TEMPLATE.md"
@@ -122,6 +123,18 @@ has_pattern 'factoryctl stage-lint --run <RUN_ID> --stage <STAGE>' docs/Factory/
 
 has_pattern 'factoryctl stage-lint --run <RUN_ID> --stage <STAGE>' AGENTS.md \
   || fail "AGENTS.md missing stage-lint canonical command"
+
+has_pattern 'RUN_METRICS_TEMPLATE\.md' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing run metrics template guidance"
+
+has_pattern '^## Stage Timing$' docs/Factory/templates/RUN_METRICS_TEMPLATE.md \
+  || fail "Run metrics template missing Stage Timing section"
+
+has_pattern '^## Validator Results$' docs/Factory/templates/RUN_METRICS_TEMPLATE.md \
+  || fail "Run metrics template missing Validator Results section"
+
+has_pattern '^## Drift And Rework$' docs/Factory/templates/RUN_METRICS_TEMPLATE.md \
+  || fail "Run metrics template missing Drift And Rework section"
 
 has_pattern 'gpt-5\.5' docs/Factory/Harnesses/CODEX.md \
   || fail "Codex harness adapter missing GPT-5.5 local model guidance"
