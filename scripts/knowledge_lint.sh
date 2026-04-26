@@ -67,6 +67,7 @@ required_files=(
   "scripts/factoryctl"
   "scripts/factory_context_index.py"
   "scripts/factory_pack_lint.py"
+  "scripts/factory_run_metrics.py"
   "scripts/factory_stage_lint.py"
   "scripts/mission_lint.sh"
   ".agents/skills/factory-root-planner/SKILL.md"
@@ -126,6 +127,12 @@ has_pattern 'factoryctl stage-lint --run <RUN_ID> --stage <STAGE>' AGENTS.md \
 
 has_pattern 'RUN_METRICS_TEMPLATE\.md' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing run metrics template guidance"
+
+has_pattern 'factoryctl metrics-init --run <RUN_ID>' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing metrics-init guidance"
+
+has_pattern 'factoryctl metrics-init --run <RUN_ID>' AGENTS.md \
+  || fail "AGENTS.md missing metrics-init canonical command"
 
 has_pattern '^## Stage Timing$' docs/Factory/templates/RUN_METRICS_TEMPLATE.md \
   || fail "Run metrics template missing Stage Timing section"
@@ -216,6 +223,9 @@ has_pattern '^C9\. Knowledge lint preflight passed and evidence artifact is pres
 
 ./scripts/factoryctl stage-lint --help >/dev/null \
   || fail "factoryctl stage-lint help probe failed"
+
+./scripts/factoryctl metrics-init --help >/dev/null \
+  || fail "factoryctl metrics-init help probe failed"
 
 echo "knowledge_lint: PASS"
 echo "knowledge_lint: checked_files=${#required_files[@]} active_pitfalls=$pitfall_count"

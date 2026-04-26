@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.6
+v1.7
 
 ## Change Log
+- v1.7 (2026-04-26): Added `factoryctl metrics-init` to instantiate `RUN_METRICS.md` from the canonical template.
 - v1.6 (2026-04-26): Added optional `RUN_METRICS.md` run telemetry template for measuring Factory speed, drift, validator failures, harness/model usage, and cleanup burden.
 - v1.5 (2026-04-26): Added stage-lint as an immediate handoff/output validation check after each stage, before final pack-lint.
 - v1.4 (2026-04-26): Added deterministic pack-lint validation after Stage I2 and before human execution review.
@@ -86,6 +87,7 @@ Before a run starts, you need:
    - `./scripts/factoryctl pack-lint --run <RUN_ID>`
 7. optional run telemetry template:
    - `docs/Factory/templates/RUN_METRICS_TEMPLATE.md`
+   - `./scripts/factoryctl metrics-init --run <RUN_ID>`
 8. if using the optional PO lane:
    - `docs/Factory/ProductOwner/PO_PROCESS.md`
    - `docs/Factory/ProductOwner/PO_ROLE_DEFINITION.md`
@@ -115,6 +117,7 @@ The Root Planner should:
 12. if the raw brief came from the optional PO lane:
    - confirm the brief already passed the Brief Review gate
    - treat missing upstream recall or review evidence as blocking
+13. if collecting process telemetry, run `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md`
 
 ## 3. Roles
 The default role split is:
