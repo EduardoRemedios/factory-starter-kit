@@ -1,9 +1,10 @@
-# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.8)
+# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.9)
 
 ## Version
-v4.8
+v4.9
 
 ## Change Log
+- v4.9 (2026-04-26): Added post-I2 pack-lint validation as a deterministic evidence check before human Go or No-go review.
 - v4.8 (2026-03-21): Added mandatory context-recall contracts and run-root `CONTEXT_RECALL_REPORT.md` evidence for Stage A, plus mission-root `MISSION_CONTEXT_RECALL_REPORT.md` continuity evidence for Mission Mode checkpointing.
 - v4.7 (2026-03-10): Added Mission Mode pre-run `mission_lint.sh` contract with run-root `MISSION_LINT.txt` evidence, clarified that Mission Mode keeps one authored mission ledger (`MISSION_MANIFEST.md`), and aligned Stage A and Mission wrapper requirements to the mission drift hardening rules.
 - v4.6 (2026-02-27): Added additive Mission Mode wrapper contract while preserving the canonical sprint `A -> I2` plus `POST_GATE` flow.
@@ -274,6 +275,26 @@ Exit criteria:
 - verdict recorded: PASS, CONDITIONAL PASS, or FAIL
 - no PASS or CONDITIONAL PASS allowed if any `[SCOPE EXPANSION]` remains unapproved
 - `PACK_MANIFEST.md` updated to mark `PACK_AUDIT_REPORT.md` as present and non-empty
+
+## POST_I2_VALIDATION — Pack Lint
+Purpose:
+- run deterministic validation over the completed planning pack before human Go or No-go review
+
+Command:
+- `./scripts/factoryctl pack-lint --run <RUN_ID>`
+
+Checks include:
+- required run-root and pack files exist and are non-empty
+- expected handoffs exist
+- no unresolved placeholders remain
+- word caps are satisfied
+- checklist critical items are `YES`
+- audit verdict is not `FAIL`
+- execution-mode evidence is internally consistent
+
+Exit criteria:
+- `pack-lint` returns PASS before the pack is presented for human execution review
+- if `pack-lint` returns FAIL, defects are fixed in the pack and affected stage handoffs are updated
 
 ## POST_GATE — Execution Prompt Generation (execution-enabled runs only)
 Skip rule:

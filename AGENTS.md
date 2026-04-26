@@ -16,6 +16,7 @@ Purpose:
 - Knowledge lint preflight: `bash scripts/knowledge_lint.sh`
 - Context index refresh: `./scripts/factoryctl context-index`
 - Stage A recall report: `./scripts/factoryctl context-report --profile stage-a --scope <RUN_ID> --output docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
+- Pack validation after I2: `./scripts/factoryctl pack-lint --run <RUN_ID>`
 - Mission continuity preflight: `bash scripts/mission_lint.sh <MISSION_ID>` (only when advancing a unit inside an already-authorized mission)
 - Full test suite: replace with your project’s canonical test command
 
@@ -31,6 +32,7 @@ Purpose:
 - Run `bash scripts/knowledge_lint.sh` before Stage A.
 - Persist lint output in run root as `KNOWLEDGE_LINT.txt`.
 - Refresh the recall index and generate `CONTEXT_RECALL_REPORT.md` before Stage A.
+- After Stage I2, run `./scripts/factoryctl pack-lint --run <RUN_ID>` before presenting the pack for human Go or No-go review.
 - If the run is advancing a unit inside an already-authorized mission, run `bash scripts/mission_lint.sh <MISSION_ID>` before Stage A and persist output as `MISSION_LINT.txt`.
 - If the raw brief originates from the PO process, confirm it has a Brief Review PASS before entering the Factory.
 - If any required lint or recall artifact is missing or weak, halt run initialization and fix context drift first.

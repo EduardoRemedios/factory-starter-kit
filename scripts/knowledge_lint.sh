@@ -37,7 +37,10 @@ required_files=(
   "docs/PROJECT_STATE.md"
   "docs/ROADMAP.md"
   "docs/CHANGELOG.md"
+  "docs/Factory/ARCHITECTURE.md"
   "docs/Factory/ORCHESTRATION.md"
+  "docs/Factory/Harnesses/README.md"
+  "docs/Factory/Harnesses/CODEX.md"
   "docs/Factory/MISSION_MODE.md"
   "docs/Factory/SCRATCHPAD.md"
   "docs/Factory/Spec/DEFINITIONS.md"
@@ -62,6 +65,7 @@ required_files=(
   "docs/Factory/ProductOwner/templates/PHASE_STATE_TEMPLATE.md"
   "scripts/factoryctl"
   "scripts/factory_context_index.py"
+  "scripts/factory_pack_lint.py"
   "scripts/mission_lint.sh"
 )
 
@@ -105,6 +109,21 @@ has_pattern 'mission_lint\.sh' docs/Factory/ORCHESTRATION.md \
 has_pattern 'EXECUTION_MODE\.txt' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing run-root execution mode contract"
 
+has_pattern 'factoryctl pack-lint --run <RUN_ID>' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing pack-lint validation contract"
+
+has_pattern 'gpt-5\.5' docs/Factory/Harnesses/CODEX.md \
+  || fail "Codex harness adapter missing GPT-5.5 local model guidance"
+
+has_pattern 'Codex cloud tasks and code review currently run on `GPT-5\.3-Codex`' docs/Factory/Harnesses/CODEX.md \
+  || fail "Codex harness adapter missing cloud/review model boundary"
+
+has_pattern '^## Codex CLI Terminal Flow$' docs/Factory/Harnesses/CODEX.md \
+  || fail "Codex harness adapter missing CLI terminal flow"
+
+has_pattern '^## Adapter Rule$' docs/Factory/Harnesses/README.md \
+  || fail "Harness adapter README missing adapter rule"
+
 has_pattern '^### 6\.1 Execution Prompt Generation \(execution-enabled runs only\)$' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing execution-enabled post-gate prompt contract"
 
@@ -113,6 +132,9 @@ has_pattern '^## Context recall rule \(HARD\)$' docs/Factory/Spec/STAGE_CONTRACT
 
 has_pattern '^## POST_GATE — Execution Prompt Generation \(execution-enabled runs only\)$' docs/Factory/Spec/STAGE_CONTRACTS.md \
   || fail "Stage contracts missing execution-enabled post-gate execution prompt stage"
+
+has_pattern '^## POST_I2_VALIDATION — Pack Lint$' docs/Factory/Spec/STAGE_CONTRACTS.md \
+  || fail "Stage contracts missing post-I2 pack-lint validation stage"
 
 has_pattern '^## MISSION_WRAPPER \(additive, optional — not a replacement stage chain\)$' docs/Factory/Spec/STAGE_CONTRACTS.md \
   || fail "Stage contracts missing mission wrapper section"
@@ -161,6 +183,9 @@ has_pattern '^C9\. Knowledge lint preflight passed and evidence artifact is pres
 
 ./scripts/factoryctl context-report --help >/dev/null \
   || fail "factoryctl context-report help probe failed"
+
+./scripts/factoryctl pack-lint --help >/dev/null \
+  || fail "factoryctl pack-lint help probe failed"
 
 echo "knowledge_lint: PASS"
 echo "knowledge_lint: checked_files=${#required_files[@]} active_pitfalls=$pitfall_count"

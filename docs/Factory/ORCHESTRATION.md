@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.3
+v1.4
 
 ## Change Log
+- v1.4 (2026-04-26): Added deterministic pack-lint validation after Stage I2 and before human execution review.
 - v1.3 (2026-03-21): Added the generic context-recall contract, Stage A recall artifact workflow, PO-authored brief prerequisite, and stricter run-root evidence expectations.
 - v1.2 (2026-03-18): Added mission recall generation, fallback-scope guidance, required-reference checks, and WEAK-coverage halt semantics to the generic Mission Mode flow.
 - v1.1 (2026-03-15): Added the optional Product Owner pre-Factory lane and aligned the starter kit to the latest generic Factory operating shape.
@@ -79,6 +80,7 @@ Before a run starts, you need:
 6. continuity tooling:
    - `./scripts/factoryctl context-index`
    - `./scripts/factoryctl context-report --profile stage-a`
+   - `./scripts/factoryctl pack-lint --run <RUN_ID>`
 7. if using the optional PO lane:
    - `docs/Factory/ProductOwner/PO_PROCESS.md`
    - `docs/Factory/ProductOwner/PO_ROLE_DEFINITION.md`
@@ -146,6 +148,14 @@ After `I2`, a human reviews the pack and decides:
 - Go
 - No-go with feedback
 
+Before review, run:
+
+```bash
+./scripts/factoryctl pack-lint --run <RUN_ID>
+```
+
+If pack-lint fails, fix the pack defects before asking for Go or No-go.
+
 For `PLANNING_ONLY` runs, the pack is terminal planning evidence.
 
 For `EXECUTION_ENABLED` runs, execution may begin only after explicit human Go.
@@ -185,6 +195,7 @@ Every run should leave behind:
 - `CONTEXT_RECALL_REPORT.md`
 - a complete `pack/`
 - handoff files
+- `pack-lint` PASS output before human Go or No-go review
 - optional `MISSION_LINT.txt` when relevant
 
 Every mission should leave behind:
