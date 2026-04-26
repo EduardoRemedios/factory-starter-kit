@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Add `docs/Factory/ARCHITECTURE.md` to define the portable Factory Core, harness adapter, validator, extension pack, and project adapter layer model.
+- Add `factoryctl pack-lint` for deterministic completed-pack validation after Stage I2.
+
 ## v0.2.0 - 2026-03-21
 
 - Refresh the starter-kit docs and specs to the latest generic Factory, Mission Mode, and optional Product Owner process shape.

@@ -12,6 +12,7 @@ The reusable framework layer:
 - Factory runner guide and stage/spec contracts
 - Mission Mode for bounded multi-sprint chains
 - Context recall tooling and report templates
+- Deterministic pack-lint validation after the final pack audit
 - Optional Product Owner pre-Factory process
 - Starter lint scripts
 - Starter project-state placeholders
@@ -60,6 +61,8 @@ The public starter kit now models four generic layers:
 3. Product Owner lane (optional): Phase Brief -> Phase Intent -> PO sprint brief -> Brief Review PASS -> Factory
 4. Mission Mode (optional): ordered multi-sprint execution under one consolidated checkpoint
 
+See `docs/Factory/ARCHITECTURE.md` for the portable layer model: Factory Core, harness adapters, validators, extension packs, and project adapters.
+
 ## What This Starter Kit Includes
 
 ```text
@@ -71,6 +74,7 @@ your-repo/
 ├── scripts/
 │   ├── factoryctl
 │   ├── factory_context_index.py
+│   ├── factory_pack_lint.py
 │   ├── knowledge_lint.sh
 │   └── mission_lint.sh
 ├── docs/
@@ -80,6 +84,7 @@ your-repo/
 │   ├── onboarding/
 │   │   └── ONBOARDING_GUIDE.md
 │   └── Factory/
+│       ├── ARCHITECTURE.md
 │       ├── ORCHESTRATION.md
 │       ├── MISSION_MODE.md
 │       ├── SCRATCHPAD.md
@@ -169,8 +174,9 @@ For a single sprint:
 4. generate `CONTEXT_RECALL_REPORT.md`
 5. initialize a Factory run
 6. execute stages `A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> I2`
-7. review the pack
-8. approve or reject execution
+7. run `./scripts/factoryctl pack-lint --run <RUN_ID>`
+8. review the pack
+9. approve or reject execution
 
 For a multi-sprint mission:
 1. lock the mission unit list and checkpoint

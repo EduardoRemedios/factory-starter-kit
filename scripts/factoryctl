@@ -24,6 +24,11 @@ from factory_context_index import (  # noqa: E402
     trace_context,
     write_context_report,
 )
+from factory_pack_lint import (  # noqa: E402
+    FactoryPackLintError,
+    format_pack_lint,
+    lint_pack,
+)
 
 
 REPO_ROOT = SCRIPT_DIR.parent
@@ -32,7 +37,7 @@ REPO_ROOT = SCRIPT_DIR.parent
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="factoryctl",
-        description="Factory continuity and context-recall helper.",
+        description="Factory continuity, context-recall, and validation helper.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -99,6 +104,15 @@ def build_parser() -> argparse.ArgumentParser:
     context_report_parser.add_argument("--db-path", default=None, help="Optional override for the SQLite index path.")
     context_report_parser.add_argument("--fail-on-weak-coverage", action="store_true", help="Exit non-zero after writing the report if coverage remains WEAK after all attempted scopes.")
     context_report_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    pack_lint_parser = subparsers.add_parser(
+        "pack-lint",
+        help="Validate a completed Factory run pack after Stage I2.",
+    )
+    pack_lint_group = pack_lint_parser.add_mutually_exclusive_group(required=True)
+    pack_lint_group.add_argument("--run", default=None, help="Run ID or run-root path to validate.")
+    pack_lint_group.add_argument("--pack", default=None, help="Direct path to a run pack directory.")
+    pack_lint_parser.add_argument("--json", action="store_true", help="Print JSON output.")
 
     return parser
 
@@ -195,7 +209,19 @@ def main() -> int:
                 )
             return 0
 
-    except FactoryContextIndexError as exc:
+        if args.command == "pack-lint":
+            payload = lint_pack(
+                root=root,
+                run=args.run,
+                pack_path=Path(args.pack) if args.pack else None,
+            )
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(format_pack_lint(payload), end="")
+            return 0 if payload["status"] == "PASS" else 1
+
+    except (FactoryContextIndexError, FactoryPackLintError) as exc:
         print(f"ERROR: {exc}")
         return 2
 
