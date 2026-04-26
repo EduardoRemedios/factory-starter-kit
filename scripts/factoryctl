@@ -29,6 +29,11 @@ from factory_pack_lint import (  # noqa: E402
     format_pack_lint,
     lint_pack,
 )
+from factory_run_metrics import (  # noqa: E402
+    FactoryRunMetricsError,
+    format_run_metrics,
+    init_run_metrics,
+)
 from factory_stage_lint import (  # noqa: E402
     FactoryStageLintError,
     format_stage_lint,
@@ -131,6 +136,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="Factory stage code to validate.",
     )
     stage_lint_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    metrics_init_parser = subparsers.add_parser(
+        "metrics-init",
+        help="Create RUN_METRICS.md for a Factory run from the canonical template.",
+    )
+    metrics_init_parser.add_argument("--run", required=True, help="Run ID or run-root path.")
+    metrics_init_parser.add_argument("--force", action="store_true", help="Overwrite an existing RUN_METRICS.md.")
+    metrics_init_parser.add_argument("--json", action="store_true", help="Print JSON output.")
 
     return parser
 
@@ -247,7 +260,20 @@ def main() -> int:
                 print(format_stage_lint(payload), end="")
             return 0 if payload["status"] == "PASS" else 1
 
-    except (FactoryContextIndexError, FactoryPackLintError, FactoryStageLintError) as exc:
+        if args.command == "metrics-init":
+            payload = init_run_metrics(root=root, run=args.run, force=args.force)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(format_run_metrics(payload), end="")
+            return 0
+
+    except (
+        FactoryContextIndexError,
+        FactoryPackLintError,
+        FactoryRunMetricsError,
+        FactoryStageLintError,
+    ) as exc:
         print(f"ERROR: {exc}")
         return 2
 

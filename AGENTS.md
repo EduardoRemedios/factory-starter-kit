@@ -18,6 +18,7 @@ Purpose:
 - Stage A recall report: `./scripts/factoryctl context-report --profile stage-a --scope <RUN_ID> --output docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
 - Stage validation after each handoff: `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>`
 - Pack validation after I2: `./scripts/factoryctl pack-lint --run <RUN_ID>`
+- Run metrics initialization: `./scripts/factoryctl metrics-init --run <RUN_ID>`
 - Mission continuity preflight: `bash scripts/mission_lint.sh <MISSION_ID>` (only when advancing a unit inside an already-authorized mission)
 - Full test suite: replace with your project’s canonical test command
 
@@ -36,6 +37,7 @@ Purpose:
 - After each stage handoff, run `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>` before advancing.
 - After Stage I2, run `./scripts/factoryctl pack-lint --run <RUN_ID>` before presenting the pack for human Go or No-go review.
 - For process improvement runs, instantiate `docs/Factory/templates/RUN_METRICS_TEMPLATE.md` as `docs/Factory/runs/<RUN_ID>/RUN_METRICS.md`.
+- Prefer `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md` from the canonical template.
 - If the run is advancing a unit inside an already-authorized mission, run `bash scripts/mission_lint.sh <MISSION_ID>` before Stage A and persist output as `MISSION_LINT.txt`.
 - If the raw brief originates from the PO process, confirm it has a Brief Review PASS before entering the Factory.
 - If any required lint or recall artifact is missing or weak, halt run initialization and fix context drift first.
