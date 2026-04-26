@@ -1,9 +1,10 @@
-# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.9)
+# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.10)
 
 ## Version
-v4.9
+v4.10
 
 ## Change Log
+- v4.10 (2026-04-26): Added stage-lint as a deterministic per-stage handoff/output check before advancing to the next stage.
 - v4.9 (2026-04-26): Added post-I2 pack-lint validation as a deterministic evidence check before human Go or No-go review.
 - v4.8 (2026-03-21): Added mandatory context-recall contracts and run-root `CONTEXT_RECALL_REPORT.md` evidence for Stage A, plus mission-root `MISSION_CONTEXT_RECALL_REPORT.md` continuity evidence for Mission Mode checkpointing.
 - v4.7 (2026-03-10): Added Mission Mode pre-run `mission_lint.sh` contract with run-root `MISSION_LINT.txt` evidence, clarified that Mission Mode keeps one authored mission ledger (`MISSION_MANIFEST.md`), and aligned Stage A and Mission wrapper requirements to the mission drift hardening rules.
@@ -28,6 +29,7 @@ v4.9
   - verification steps recommended
   - exit criteria PASS or FAIL
   - iteration metadata when applicable
+- After each stage writes its handoff, run `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE_CODE>`. If stage-lint fails, do not advance to the next stage until the handoff or expected stage output is fixed.
 - Handoff size caps and change log format are enforced per `DEFINITIONS.md`.
 - For critical gate stages (`STAGE_D`, `STAGE_J`, `STAGE_I2`), stage prompts MUST include deterministic skill invocation when a relevant skill exists:
   - `Use the <skill name> skill.`
@@ -98,6 +100,21 @@ If the run is advancing a unit inside an already-authorized mission, run root ad
 - `STAGE_J` consumes the full pack and produces `PACK_MANIFEST.md` and `PACK_CHECKLIST.md`
 - `STAGE_I2` consumes the full pack plus `PACK_CHECKLIST.md` and `PACK_MANIFEST.md` and produces `PACK_AUDIT_REPORT.md`
 - Mission Mode consumes one or more completed sprint packs and applies a mission-level checkpoint before chained execution
+
+## STAGE_VALIDATION — Stage Lint
+Purpose:
+- deterministically validate one stage handoff and its expected outputs immediately after that stage completes
+- catch malformed handoffs, unresolved placeholders, missing iteration metadata, missing stage outputs, and handoff word-cap drift before later stages build on them
+
+Command:
+- `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE_CODE>`
+
+Exit criteria:
+- `stage_lint: PASS`
+- if stage-lint returns FAIL, fix the stage handoff or expected output before advancing
+
+Authority:
+- stage-lint is a deterministic evidence check; it does not replace Red, Blue, Purple, or human judgment
 
 ## Intent Unlock Protocol (HARD)
 If any downstream stage discovers the locked intent is flawed:

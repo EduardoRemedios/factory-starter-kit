@@ -29,6 +29,11 @@ from factory_pack_lint import (  # noqa: E402
     format_pack_lint,
     lint_pack,
 )
+from factory_stage_lint import (  # noqa: E402
+    FactoryStageLintError,
+    format_stage_lint,
+    lint_stage,
+)
 
 
 REPO_ROOT = SCRIPT_DIR.parent
@@ -113,6 +118,19 @@ def build_parser() -> argparse.ArgumentParser:
     pack_lint_group.add_argument("--run", default=None, help="Run ID or run-root path to validate.")
     pack_lint_group.add_argument("--pack", default=None, help="Direct path to a run pack directory.")
     pack_lint_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    stage_lint_parser = subparsers.add_parser(
+        "stage-lint",
+        help="Validate one Factory stage handoff and its expected outputs.",
+    )
+    stage_lint_parser.add_argument("--run", required=True, help="Run ID or run-root path to validate.")
+    stage_lint_parser.add_argument(
+        "--stage",
+        required=True,
+        choices=["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2"],
+        help="Factory stage code to validate.",
+    )
+    stage_lint_parser.add_argument("--json", action="store_true", help="Print JSON output.")
 
     return parser
 
@@ -221,7 +239,15 @@ def main() -> int:
                 print(format_pack_lint(payload), end="")
             return 0 if payload["status"] == "PASS" else 1
 
-    except (FactoryContextIndexError, FactoryPackLintError) as exc:
+        if args.command == "stage-lint":
+            payload = lint_stage(root=root, run=args.run, stage=args.stage)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(format_stage_lint(payload), end="")
+            return 0 if payload["status"] == "PASS" else 1
+
+    except (FactoryContextIndexError, FactoryPackLintError, FactoryStageLintError) as exc:
         print(f"ERROR: {exc}")
         return 2
 

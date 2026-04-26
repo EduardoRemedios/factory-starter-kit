@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory Purple Gate"
+  short_description: "Adjudicate Factory gates against evidence."
+  default_prompt: "Review Factory artifacts as Purple Gate and issue a checklist-grounded PASS, CONDITIONAL PASS, or FAIL."

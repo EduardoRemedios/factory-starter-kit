@@ -80,7 +80,7 @@ def lint_pack(root: Path, run: str | None = None, pack_path: Path | None = None)
     fixtures_dir = pack_dir / "fixtures"
     if not fixtures_dir.is_dir():
         errors.append("pack/fixtures directory is missing")
-    elif not any(path.is_dir() for path in fixtures_dir.iterdir()):
+    elif not any(path.is_dir() for path in fixtures_dir.rglob("*")):
         errors.append("pack/fixtures must contain at least one fixture directory")
 
     execution_mode = _read_text(run_root / "EXECUTION_MODE.txt").strip()
@@ -238,8 +238,9 @@ def _check_artifact_shapes(
         checked_files.append(str(path))
         text = _read_text(path)
         _check_placeholders(path, text, errors)
-        _check_required_headers(path, text, errors)
-        _check_word_cap(path, text, errors)
+        if not _is_fixture_note(path, pack_dir):
+            _check_required_headers(path, text, errors)
+            _check_word_cap(path, text, errors)
         if path.parent.name == "HANDOFF" and path.name.startswith("HANDOFF_STAGE_"):
             _check_handoff(path, text, errors, warnings)
 
@@ -260,9 +261,9 @@ def _check_required_headers(path: Path, text: str, errors: list[str]) -> None:
 def _check_word_cap(path: Path, text: str, errors: list[str]) -> None:
     cap = WORD_CAPS.get(path.name)
     if cap is None:
-        if path.name.startswith("SPRINT_") and path.name.endswith("_ENVELOPE.md"):
+        if path.name.endswith("_ENVELOPE.md"):
             cap = 1800
-        elif path.name.startswith("SPRINT_") and path.name.endswith("_ENVELOPE_REDTEAM.md"):
+        elif path.name.endswith("_ENVELOPE_REDTEAM.md"):
             cap = 1200
         elif path.name.startswith("HANDOFF_STAGE_"):
             cap = 500
@@ -292,6 +293,14 @@ def _check_handoff(path: Path, text: str, errors: list[str], warnings: list[str]
         errors.append(f"{path} is missing required iteration metadata")
     if re.search(r"^-\s*Skill used \(or `NONE`\):\s*$", text, flags=re.MULTILINE):
         warnings.append(f"{path} may not have instantiated the Skill Routing Contract")
+
+
+def _is_fixture_note(path: Path, pack_dir: Path) -> bool:
+    try:
+        relative = path.relative_to(pack_dir)
+    except ValueError:
+        return False
+    return len(relative.parts) >= 2 and relative.parts[0] == "fixtures" and path.name == "notes.md"
 
 
 def _extract_checklist_answer(text: str, item_id: str) -> str | None:

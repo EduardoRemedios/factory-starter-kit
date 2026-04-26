@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory Root Planner"
+  short_description: "Initialize and coordinate Factory runs."
+  default_prompt: "Initialize a Factory run from a raw brief, enforce prerequisites, and coordinate stages through I2."

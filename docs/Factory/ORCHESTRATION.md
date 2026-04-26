@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.4
+v1.5
 
 ## Change Log
+- v1.5 (2026-04-26): Added stage-lint as an immediate handoff/output validation check after each stage, before final pack-lint.
 - v1.4 (2026-04-26): Added deterministic pack-lint validation after Stage I2 and before human execution review.
 - v1.3 (2026-03-21): Added the generic context-recall contract, Stage A recall artifact workflow, PO-authored brief prerequisite, and stricter run-root evidence expectations.
 - v1.2 (2026-03-18): Added mission recall generation, fallback-scope guidance, required-reference checks, and WEAK-coverage halt semantics to the generic Mission Mode flow.
@@ -80,6 +81,7 @@ Before a run starts, you need:
 6. continuity tooling:
    - `./scripts/factoryctl context-index`
    - `./scripts/factoryctl context-report --profile stage-a`
+   - `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>`
    - `./scripts/factoryctl pack-lint --run <RUN_ID>`
 7. if using the optional PO lane:
    - `docs/Factory/ProductOwner/PO_PROCESS.md`
@@ -142,6 +144,14 @@ Where:
 - I attacks and hardens the envelope
 - J packages the pack
 - I2 performs the final gate
+
+After each stage writes its handoff, run:
+
+```bash
+./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>
+```
+
+If stage-lint fails, fix that stage's handoff or expected outputs before starting the next stage. This keeps the final pack-lint check from becoming a late cleanup pass.
 
 ## 5. Human Decision
 After `I2`, a human reviews the pack and decides:

@@ -88,13 +88,14 @@ CLI run checklist:
 1. `bash scripts/knowledge_lint.sh`
 2. `./scripts/factoryctl context-index`
 3. `./scripts/factoryctl context-report --profile stage-a --scope <RUN_ID> --output docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
-4. run stages `A -> I2`
+4. run stages `A -> I2`, with `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>` after each handoff
 5. `./scripts/factoryctl pack-lint --run <RUN_ID>`
 
 For unattended or scripted validation, use the CLI only for deterministic checks:
 
 ```bash
 bash scripts/knowledge_lint.sh
+./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>
 ./scripts/factoryctl pack-lint --run <RUN_ID>
 ```
 
