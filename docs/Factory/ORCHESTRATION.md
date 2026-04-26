@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.5
+v1.6
 
 ## Change Log
+- v1.6 (2026-04-26): Added optional `RUN_METRICS.md` run telemetry template for measuring Factory speed, drift, validator failures, harness/model usage, and cleanup burden.
 - v1.5 (2026-04-26): Added stage-lint as an immediate handoff/output validation check after each stage, before final pack-lint.
 - v1.4 (2026-04-26): Added deterministic pack-lint validation after Stage I2 and before human execution review.
 - v1.3 (2026-03-21): Added the generic context-recall contract, Stage A recall artifact workflow, PO-authored brief prerequisite, and stricter run-root evidence expectations.
@@ -83,7 +84,9 @@ Before a run starts, you need:
    - `./scripts/factoryctl context-report --profile stage-a`
    - `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>`
    - `./scripts/factoryctl pack-lint --run <RUN_ID>`
-7. if using the optional PO lane:
+7. optional run telemetry template:
+   - `docs/Factory/templates/RUN_METRICS_TEMPLATE.md`
+8. if using the optional PO lane:
    - `docs/Factory/ProductOwner/PO_PROCESS.md`
    - `docs/Factory/ProductOwner/PO_ROLE_DEFINITION.md`
    - `docs/Factory/ProductOwner/templates/`
@@ -203,6 +206,7 @@ Every run should leave behind:
 - run-root metadata
 - `KNOWLEDGE_LINT.txt`
 - `CONTEXT_RECALL_REPORT.md`
+- optional `RUN_METRICS.md` for process telemetry and future Factory improvement
 - a complete `pack/`
 - handoff files
 - `pack-lint` PASS output before human Go or No-go review
