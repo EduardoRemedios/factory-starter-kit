@@ -39,6 +39,8 @@ required_files=(
   "docs/CHANGELOG.md"
   "docs/Factory/ARCHITECTURE.md"
   "docs/Factory/ORCHESTRATION.md"
+  "docs/Factory/Harnesses/README.md"
+  "docs/Factory/Harnesses/CODEX.md"
   "docs/Factory/MISSION_MODE.md"
   "docs/Factory/SCRATCHPAD.md"
   "docs/Factory/Spec/DEFINITIONS.md"
@@ -109,6 +111,18 @@ has_pattern 'EXECUTION_MODE\.txt' docs/Factory/ORCHESTRATION.md \
 
 has_pattern 'factoryctl pack-lint --run <RUN_ID>' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing pack-lint validation contract"
+
+has_pattern 'gpt-5\.5' docs/Factory/Harnesses/CODEX.md \
+  || fail "Codex harness adapter missing GPT-5.5 local model guidance"
+
+has_pattern 'Codex cloud tasks and code review currently run on `GPT-5\.3-Codex`' docs/Factory/Harnesses/CODEX.md \
+  || fail "Codex harness adapter missing cloud/review model boundary"
+
+has_pattern '^## Codex CLI Terminal Flow$' docs/Factory/Harnesses/CODEX.md \
+  || fail "Codex harness adapter missing CLI terminal flow"
+
+has_pattern '^## Adapter Rule$' docs/Factory/Harnesses/README.md \
+  || fail "Harness adapter README missing adapter rule"
 
 has_pattern '^### 6\.1 Execution Prompt Generation \(execution-enabled runs only\)$' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing execution-enabled post-gate prompt contract"

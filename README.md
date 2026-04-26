@@ -13,6 +13,7 @@ The reusable framework layer:
 - Mission Mode for bounded multi-sprint chains
 - Context recall tooling and report templates
 - Deterministic pack-lint validation after the final pack audit
+- Harness adapter guidance for Codex and other AI coding tools
 - Optional Product Owner pre-Factory process
 - Starter lint scripts
 - Starter project-state placeholders
@@ -88,6 +89,9 @@ your-repo/
 │       ├── ORCHESTRATION.md
 │       ├── MISSION_MODE.md
 │       ├── SCRATCHPAD.md
+│       ├── Harnesses/
+│       │   ├── CODEX.md
+│       │   └── README.md
 │       ├── ProductOwner/
 │       │   ├── PO_PROCESS.md
 │       │   ├── PO_ROLE_DEFINITION.md
@@ -129,9 +133,10 @@ The root `CHANGELOG.md` tracks starter-kit releases. The `docs/CHANGELOG.md` fil
 2. Adapt `AGENTS.md` to your project.
 3. Fill in `docs/PROJECT_STATE.md`, `docs/ROADMAP.md`, and `docs/CHANGELOG.md`.
 4. Review `docs/Factory/ORCHESTRATION.md` and `docs/Factory/MISSION_MODE.md`.
-5. If you will use the optional PO lane, review `docs/Factory/ProductOwner/`.
-6. Adapt `scripts/knowledge_lint.sh` and `scripts/mission_lint.sh` if your project uses different canonical docs or naming.
-7. Run:
+5. Review `docs/Factory/Harnesses/` for AI coding tool guidance.
+6. If you will use the optional PO lane, review `docs/Factory/ProductOwner/`.
+7. Adapt `scripts/knowledge_lint.sh` and `scripts/mission_lint.sh` if your project uses different canonical docs or naming.
+8. Run:
 
 ```bash
 bash scripts/knowledge_lint.sh
@@ -158,6 +163,7 @@ You are expected to adapt:
 You should usually keep unchanged:
 - `docs/Factory/Spec/`
 - `docs/Factory/templates/`
+- `docs/Factory/Harnesses/` unless your AI tool stack differs materially
 - `docs/Factory/MISSION_MODE.md`
 - `docs/Factory/ProductOwner/` unless your governance model differs
 

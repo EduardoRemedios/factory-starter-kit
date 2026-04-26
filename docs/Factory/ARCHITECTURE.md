@@ -100,8 +100,7 @@ Factory can support high-compliance domains, but it is not limited to them.
 ## Improvement Roadmap
 
 Near-term portable improvements:
-1. Add a harness-routing guide for Codex, Claude Code, Cursor, and GitHub review usage.
-2. Add optional Codex hook examples that run validators at useful lifecycle points.
-3. Add generic Factory role skills.
-4. Add `RUN_METRICS` guidance for stage timing, model/harness usage, drift indicators, and validator outcomes.
-5. Add a domain-owner operating guide for users who are not developers but need to direct AI coding agents safely.
+1. Add optional Codex hook examples that run validators at useful lifecycle points.
+2. Add generic Factory role skills.
+3. Add `RUN_METRICS` guidance for stage timing, model/harness usage, drift indicators, and validator outcomes.
+4. Add a domain-owner operating guide for users who are not developers but need to direct AI coding agents safely.
