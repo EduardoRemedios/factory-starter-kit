@@ -5,6 +5,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 
 class FactoryPackLintError(Exception):
     """Raised when pack-lint cannot resolve the requested run or pack."""
@@ -34,6 +36,20 @@ PACK_FILES = (
     "PACK_CHECKLIST.md",
     "PACK_AUDIT_REPORT.md",
 )
+
+VERIFICATION_MANIFEST = "verification_manifest.yaml"
+
+VERIFICATION_TIERS = {"V0", "V1", "V2", "V3", "V4"}
+VERIFICATION_CHECK_TYPES = {
+    "artifact",
+    "static",
+    "command",
+    "test",
+    "fixture",
+    "no_touch",
+    "source_revalidation",
+    "manual",
+}
 
 WORD_CAPS = {
     "intent.md": 1200,
@@ -91,6 +107,15 @@ def lint_pack(root: Path, run: str | None = None, pack_path: Path | None = None)
 
     _check_text_contracts(run_root=run_root, pack_dir=pack_dir, sprint_id=sprint_id, execution_mode=execution_mode, errors=errors, warnings=warnings)
     _check_artifact_shapes(pack_dir=pack_dir, checked_files=checked_files, errors=errors, warnings=warnings)
+    _check_verification_manifest(
+        run_root=run_root,
+        pack_dir=pack_dir,
+        sprint_id=sprint_id,
+        execution_mode=execution_mode,
+        checked_files=checked_files,
+        errors=errors,
+        warnings=warnings,
+    )
 
     unique_checked_files = sorted(set(checked_files))
     status = "PASS" if not errors else "FAIL"
@@ -222,6 +247,13 @@ def _check_text_contracts(
     if execution_mode == "EXECUTION_ENABLED" and not (run_root / "EXECUTION_PROMPT.md").exists():
         warnings.append("EXECUTION_ENABLED run has no EXECUTION_PROMPT.md yet; this is expected before human Go")
 
+    manifest_path = pack_dir / VERIFICATION_MANIFEST
+    if execution_mode == "EXECUTION_ENABLED" and not manifest_path.exists():
+        warnings.append(
+            "EXECUTION_ENABLED run has no pack/verification_manifest.yaml; "
+            "this is allowed for legacy packs but expected for new execution packs"
+        )
+
 
 def _check_artifact_shapes(
     pack_dir: Path,
@@ -243,6 +275,121 @@ def _check_artifact_shapes(
             _check_word_cap(path, text, errors)
         if path.parent.name == "HANDOFF" and path.name.startswith("HANDOFF_STAGE_"):
             _check_handoff(path, text, errors, warnings)
+
+
+def _check_verification_manifest(
+    run_root: Path,
+    pack_dir: Path,
+    sprint_id: str,
+    execution_mode: str,
+    checked_files: list[str],
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    path = pack_dir / VERIFICATION_MANIFEST
+    if not path.exists():
+        return
+    checked_files.append(str(path))
+    if not path.is_file():
+        errors.append(f"{path} is not a file")
+        return
+    if path.stat().st_size == 0:
+        errors.append(f"{path} is empty")
+        return
+
+    try:
+        loaded = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        errors.append(f"{path} is not valid YAML: {exc}")
+        return
+
+    if not isinstance(loaded, dict):
+        errors.append(f"{path} must be a YAML mapping")
+        return
+
+    if loaded.get("schema_version") != 1:
+        errors.append(f"{path} schema_version must be 1")
+
+    manifest_run_id = loaded.get("run_id")
+    if manifest_run_id and manifest_run_id != run_root.name:
+        errors.append(f"{path} run_id does not match run root ({run_root.name})")
+    elif not isinstance(manifest_run_id, str) or not manifest_run_id.strip():
+        errors.append(f"{path} run_id must be a non-empty string")
+
+    manifest_sprint_id = loaded.get("sprint_id")
+    if sprint_id and manifest_sprint_id and manifest_sprint_id != sprint_id:
+        errors.append(f"{path} sprint_id does not match SPRINT_ID.txt ({sprint_id})")
+    elif not isinstance(manifest_sprint_id, str) or not manifest_sprint_id.strip():
+        errors.append(f"{path} sprint_id must be a non-empty string")
+
+    manifest_execution_mode = loaded.get("execution_mode")
+    if manifest_execution_mode and manifest_execution_mode != execution_mode:
+        errors.append(f"{path} execution_mode does not match EXECUTION_MODE.txt ({execution_mode})")
+    elif manifest_execution_mode not in {"PLANNING_ONLY", "EXECUTION_ENABLED"}:
+        errors.append(f"{path} execution_mode must be PLANNING_ONLY or EXECUTION_ENABLED")
+
+    checks = loaded.get("checks")
+    if not isinstance(checks, list) or not checks:
+        errors.append(f"{path} checks must be a non-empty list")
+        return
+
+    seen_ids: set[str] = set()
+    for index, check in enumerate(checks, start=1):
+        label = f"{path} checks[{index}]"
+        if not isinstance(check, dict):
+            errors.append(f"{label} must be a mapping")
+            continue
+
+        check_id = check.get("id")
+        if not isinstance(check_id, str) or not check_id.strip():
+            errors.append(f"{label}.id must be a non-empty string")
+        elif check_id in seen_ids:
+            errors.append(f"{label}.id duplicates {check_id}")
+        else:
+            seen_ids.add(check_id)
+
+        tier = check.get("tier")
+        if tier not in VERIFICATION_TIERS:
+            errors.append(f"{label}.tier must be one of {', '.join(sorted(VERIFICATION_TIERS))}")
+
+        check_type = check.get("type")
+        if check_type not in VERIFICATION_CHECK_TYPES:
+            errors.append(f"{label}.type must be one of {', '.join(sorted(VERIFICATION_CHECK_TYPES))}")
+
+        constraint_ids = check.get("constraint_ids")
+        if not isinstance(constraint_ids, list) or not constraint_ids:
+            errors.append(f"{label}.constraint_ids must be a non-empty list")
+        elif not all(isinstance(item, str) and item.strip() for item in constraint_ids):
+            errors.append(f"{label}.constraint_ids must contain only non-empty strings")
+
+        description = check.get("description")
+        if not isinstance(description, str) or not description.strip():
+            errors.append(f"{label}.description must be a non-empty string")
+
+        halt_on_failure = check.get("halt_on_failure")
+        if not isinstance(halt_on_failure, bool):
+            errors.append(f"{label}.halt_on_failure must be true or false")
+
+        evidence_path = check.get("evidence_path")
+        if not isinstance(evidence_path, str) or not evidence_path.strip():
+            errors.append(f"{label}.evidence_path must be a non-empty string")
+
+        command = check.get("command")
+        if check_type in {"static", "command", "test", "no_touch"}:
+            if not isinstance(command, str) or not command.strip():
+                errors.append(f"{label}.command is required for type {check_type}")
+
+        expected = check.get("expected")
+        if not isinstance(expected, str) or not expected.strip():
+            errors.append(f"{label}.expected must be a non-empty string")
+
+        target = check.get("target")
+        if check_type in {"artifact", "fixture", "source_revalidation"}:
+            if not isinstance(target, str) or not target.strip():
+                errors.append(f"{label}.target is required for type {check_type}")
+
+        if tier == "V0" and check_type in {"command", "test"}:
+            warnings.append(f"{label} uses tier V0 with executable type {check_type}; consider V1+")
 
 
 def _check_placeholders(path: Path, text: str, errors: list[str]) -> None:

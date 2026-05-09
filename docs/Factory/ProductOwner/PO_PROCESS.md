@@ -133,6 +133,7 @@ The PO writes a sprint brief. The brief must:
 - stay within the Phase Intent's scope boundaries
 - reference the Phase Intent explicitly
 - include: what to build, the problem, what exists today, scope, out of scope, hard constraints, acceptance criteria
+- include expected proof shape: likely tests or fixtures, likely no-touch paths, and must-fail-closed cases when known
 - tag any requirement not traceable to the Phase Intent as `[PO_INFERRED]`
 - tag any requirement outside the Phase Intent scope as `[SCOPE EXPANSION]` plus BLOCKING
 

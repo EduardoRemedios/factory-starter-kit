@@ -1,9 +1,10 @@
 # Sprint Brief Review Checklist
 
 ## Version
-v1.0
+v1.1
 
 ## Change Log
+- v1.1 (2026-05-09): Added expected proof-shape quality check for left-shifted verification.
 - v1.0 (2026-03-21): Generic starter-kit checklist for the PO-authored sprint brief Purple Gate, including mandatory brief-cycle recall evidence.
 
 ## Purpose
@@ -28,3 +29,4 @@ Q2. Domain context is present where relevant.
 Q3. Requirements tagged `[PO_INFERRED]` are reasonable domain inferences, not scope expansion in disguise.
 Q4. Requirements tagged for human compliance review are clearly marked.
 Q5. The brief builds logically on previous sprint outcomes within the phase, if it is not the first sprint.
+Q6. The brief includes expected proof shape where useful: likely tests, fixtures, no-touch paths, and must-fail-closed cases.

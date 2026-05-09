@@ -6,6 +6,7 @@ VALIDATION:
 - Generate only after STAGE_I2 PASS, explicit human "Go", and `EXECUTION_MODE.txt = EXECUTION_ENABLED`.
 - Must include deterministic skill invocation directives for required execution subflows.
 - Must include hard guardrails, gate checks, and verification command contract.
+- If `pack/verification_manifest.yaml` exists, must include its checks in the verification contract.
 - If external research is in scope, must include run-level source allowlist and evidence metadata rules.
 - No placeholders may remain (see DEFINITIONS.md §12).
 - Replace all YYYY-MM-DD and HH:MM with actual values (no date/time placeholders may remain).
@@ -36,9 +37,10 @@ One paragraph: what the execution agent must deliver and what is explicitly out 
 7. `docs/Factory/runs/<RUN_ID>/pack/risk_register.md`
 8. `docs/Factory/runs/<RUN_ID>/pack/verification_plan.md`
 9. `docs/Factory/runs/<RUN_ID>/pack/traceability_matrix.md`
-10. `docs/Factory/runs/<RUN_ID>/pack/micro_sprints.md`
-11. `docs/Factory/runs/<RUN_ID>/pack/<SPRINT_ID>_ENVELOPE.md`
-12. `docs/Factory/runs/<RUN_ID>/pack/PACK_AUDIT_REPORT.md`
+10. `docs/Factory/runs/<RUN_ID>/pack/verification_manifest.yaml` (if present)
+11. `docs/Factory/runs/<RUN_ID>/pack/micro_sprints.md`
+12. `docs/Factory/runs/<RUN_ID>/pack/<SPRINT_ID>_ENVELOPE.md`
+13. `docs/Factory/runs/<RUN_ID>/pack/PACK_AUDIT_REPORT.md`
 
 ## Skill Routing Contract
 - Required deterministic directives:
@@ -54,6 +56,11 @@ One paragraph: what the execution agent must deliver and what is explicitly out 
 - Separate parity requirements from enhancement ideas.
 
 ## Micro-sprint Execution Sequence
+0. MS-00 (optional verification scaffold):
+   - Objective:
+   - Entry criteria:
+   - Exit criteria:
+   - Stop/Go gate:
 1. MS-01:
    - Objective:
    - Entry criteria:
@@ -73,6 +80,12 @@ One paragraph: what the execution agent must deliver and what is explicitly out 
 Add sprint-specific checks:
 - VP-X:
 - VP-Y:
+
+If `pack/verification_manifest.yaml` exists:
+- Run or satisfy each manifest check in order.
+- Treat any `halt_on_failure: true` failure as a stop condition.
+- Write or preserve evidence at each check's `evidence_path`.
+- Do not replace manifest checks with weaker prose assertions.
 
 ## Troubleshooting and Failure Policy
 - If a gate fails, stop at the gate and report exact failing command plus root cause hypothesis.

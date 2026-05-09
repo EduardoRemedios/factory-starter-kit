@@ -118,7 +118,7 @@ Checkpoint result is binary:
 ## 6. HALT semantics (HARD)
 Mission Mode halts immediately on:
 1. policy violation
-2. failed mandatory verification gate in any unit
+2. failed mandatory verification gate in any unit, including any `pack/verification_manifest.yaml` check marked `halt_on_failure: true`
 3. contradiction with the locked mission scope ledger
 4. missing or inconsistent evidence links across units
 5. unauthorized parallel path activation

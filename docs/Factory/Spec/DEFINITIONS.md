@@ -1,9 +1,10 @@
-# docs/Factory/Spec/DEFINITIONS.md — Doc Factory (v3.4)
+# docs/Factory/Spec/DEFINITIONS.md — Doc Factory (v3.5)
 
 ## Version
-v3.4
+v3.5
 
 ## Change Log
+- v3.5 (2026-05-09): Added verification tiers and optional machine-readable verification manifest guidance for execution-enabled and Mission Mode runs.
 - v3.4 (2026-02-27): Added Mission Mode artifact caps and hard mission wrapper constraints (additive-only, checkpoint gate, and halt/restart integrity controls).
 - v3.3 (2026-02-14): Added execution-mode gating contract so `EXECUTION_PROMPT.md` is required only for `EXECUTION_ENABLED` runs, with `PLANNING_ONLY` as default.
 - v3.2 (2026-02-12): Upgraded execution-prompt generation from recommended to required post-I2 PASS + human GO, and added mandatory template usage (`EXECUTION_PROMPT_TEMPLATE.md`).
@@ -66,6 +67,19 @@ Classify each constraint as:
 - **Low**: readability, formatting, minor ergonomics.
 
 Verification REQUIRED for Critical + High.
+
+## 4.1 Verification tiers
+Stage F must classify verification coverage with one of these tiers:
+
+- **V0 — artifact proof:** document-only or checklist proof; suitable for planning-only constraints.
+- **V1 — static/mechanical check:** grep, schema validation, no-touch scan, lint, or deterministic artifact-shape check.
+- **V2 — focused fixture/test:** targeted unit, fixture, or golden-output proof for a named constraint.
+- **V3 — regression/conformance:** project regression, conformance matrix, integration suite, or cross-module gate.
+- **V4 — live/external proof:** source revalidation, live integration proof, browser/UI proof, or external-provider evidence with metadata.
+
+Critical and High constraints should use the highest practical tier. If a Critical or High constraint remains V0 in an `EXECUTION_ENABLED` or Mission Mode run, Stage F must explain why executable verification is not available.
+
+The optional `pack/verification_manifest.yaml` records runnable verification in machine-readable form. It is expected for new `EXECUTION_ENABLED` and Mission Mode runs when runnable checks exist, but should not be forced onto lightweight planning-only packs unless it materially reduces execution risk.
 
 ## 5. Bounded deferral (HARD)
 A deferral is bounded only if it has all of:

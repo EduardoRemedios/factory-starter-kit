@@ -45,8 +45,10 @@ One paragraph defining mission execution objective and explicit out-of-scope bou
 | 1 | RUN_... | SPRINT_... | checkpoint GO + unit preconditions | unit verification PASS | GO only if PASS |
 | 2 | RUN_... | SPRINT_... | unit1 PASS | unit verification PASS | GO only if PASS |
 
+If a unit pack contains `verification_manifest.yaml`, execute or satisfy those checks as part of the unit exit gate and halt on any check marked `halt_on_failure: true`.
+
 ## HALT Policy
-- Halt immediately on policy violation or unit verification failure.
+- Halt immediately on policy violation or unit verification failure, including failed halt-on-failure manifest checks.
 - When halted: mark current unit failed, remaining units skipped.
 
 ## Restart Policy

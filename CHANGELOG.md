@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add verification-left-shift v1: verification tiers, optional `verification_manifest.yaml`, manifest template, and `pack-lint` manifest validation.
 - Add `factoryctl metrics-init` to instantiate `RUN_METRICS.md` from the canonical template.
 - Add `RUN_METRICS_TEMPLATE.md` for lightweight Factory process telemetry after real runs.
 - Add `factoryctl stage-lint` for immediate per-stage handoff and output validation.

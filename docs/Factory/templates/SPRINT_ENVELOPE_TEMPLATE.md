@@ -7,6 +7,7 @@ VALIDATION:
 - Must include file-touch budgets (per micro-sprint AND total) and they MUST be non-empty (DEFINITIONS.md §7).
 - Any budgets outside DEFINITIONS.md guidance ranges MUST include a one-line justification.
 - Must list required verification steps before merge and reference verification_plan.md and traceability_matrix.md.
+- If verification_manifest.yaml exists, must reference it and summarize how execution should consume it.
 - Must include explicit stop/go gates aligned to micro_sprints.md.
 - Must not introduce new requirements; any new requirement MUST be tagged [SCOPE EXPANSION] and marked BLOCKING.
 - Domain Areas must list only concrete values from intent.md Scope → Domain Areas; no ellipsis or placeholder lists allowed.
@@ -40,6 +41,7 @@ v1
 - risk_register.md
 - premortem.md
 - intent_lock_report.md
+- verification_manifest.yaml (optional)
 
 ## Purpose
 One paragraph: what this sprint will achieve, in plain language.
@@ -83,6 +85,7 @@ Guidance reference: DEFINITIONS.md §7.
 
 ## Execution Plan (micro-sprint sequencing)
 Reference micro_sprints.md; list stop/go points explicitly.
+- Gate 0 (optional MS-00 verification scaffold):
 - Gate 1 (after MS-01): 
 - Gate 2 (after MS-02): 
 
@@ -90,10 +93,18 @@ Reference micro_sprints.md; list stop/go points explicitly.
 References:
 - verification_plan.md
 - traceability_matrix.md
+- verification_manifest.yaml (optional; required to reference here if present)
 
 Required checks:
 - VP-01: 
 - VP-02: 
+
+Verification tier summary:
+- V0 artifact proof:
+- V1 static/mechanical:
+- V2 focused fixture/test:
+- V3 regression/conformance:
+- V4 live/external/source revalidation:
 
 Fixture coverage confirmation:
 - “All Critical/High constraints have at least one fixture/test/check.” (YES/NO at execution time)

@@ -13,6 +13,7 @@ The reusable framework layer:
 - Mission Mode for bounded multi-sprint chains
 - Context recall tooling and report templates
 - Deterministic pack-lint validation after the final pack audit
+- Optional machine-readable verification manifests for execution-enabled and Mission Mode runs
 - Harness adapter guidance for Codex and other AI coding tools
 - Optional Product Owner pre-Factory process
 - Starter lint scripts
@@ -31,9 +32,16 @@ It is intentionally generic. It should contain the process layer, not your priva
 First 30 seconds:
 1. Copy this repository into your own repository as the starting framework layer.
 2. Edit `AGENTS.md`, `docs/PROJECT_STATE.md`, `docs/ROADMAP.md`, and `docs/CHANGELOG.md` first.
-3. Run `bash scripts/knowledge_lint.sh`.
-4. Build the continuity index with `./scripts/factoryctl context-index`.
-5. If you will use Mission Mode, run `bash scripts/mission_lint.sh <MISSION_ID>`.
+3. Install the script dependency with `python3 -m pip install -r requirements.txt`.
+4. Run `bash scripts/knowledge_lint.sh`.
+5. Build the continuity index with `./scripts/factoryctl context-index`.
+6. If you will use Mission Mode, run `bash scripts/mission_lint.sh <MISSION_ID>`.
+
+Dependency command:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
 
 ## What This Is
 
@@ -44,6 +52,7 @@ It does not write code by itself. It produces the sprint contract that should go
 - explicit constraints
 - risk analysis
 - verification plan
+- optional verification manifest for runnable checks
 - traceability
 - execution envelope
 
@@ -51,16 +60,18 @@ The core operating order is:
 1. intent first
 2. constraints second
 3. verification third
-4. continuity recall before each gate that depends on prior decisions
-5. execution last
+4. executable verification inventory when the run will execute code
+5. continuity recall before each gate that depends on prior decisions
+6. execution last
 
 ## Process Layers
 
-The public starter kit now models four generic layers:
+The public starter kit now models five generic layers:
 1. Core Factory pipeline: `raw_brief.md -> A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> I2`
 2. Context recall layer: indexed recall reports before Stage A, mission checkpointing, and PO brief review
 3. Product Owner lane (optional): Phase Brief -> Phase Intent -> PO sprint brief -> Brief Review PASS -> Factory
 4. Mission Mode (optional): ordered multi-sprint execution under one consolidated checkpoint
+5. Verification manifest (optional): compact runnable check inventory for execution-enabled and Mission Mode units
 
 See `docs/Factory/ARCHITECTURE.md` for the portable layer model: Factory Core, harness adapters, validators, extension packs, and project adapters.
 
@@ -72,6 +83,7 @@ your-repo/
 ├── CHANGELOG.md
 ├── LICENSE
 ├── README.md
+├── requirements.txt
 ├── scripts/
 │   ├── factoryctl
 │   ├── factory_context_index.py
@@ -120,7 +132,8 @@ your-repo/
 │           ├── PACK_MANIFEST_TEMPLATE.md
 │           ├── SPRINT_ENVELOPE_REDTEAM_TEMPLATE.md
 │           ├── SPRINT_ENVELOPE_TEMPLATE.md
-│           └── TRACEABILITY_MATRIX_TEMPLATE.md
+│           ├── TRACEABILITY_MATRIX_TEMPLATE.md
+│           └── VERIFICATION_MANIFEST_TEMPLATE.yaml
 ```
 
 This starter kit intentionally does not ship product-specific run packs, finished state docs, historical missions, or real PO phase artifacts.
@@ -139,6 +152,7 @@ The root `CHANGELOG.md` tracks starter-kit releases. The `docs/CHANGELOG.md` fil
 8. Run:
 
 ```bash
+python3 -m pip install -r requirements.txt
 bash scripts/knowledge_lint.sh
 ./scripts/factoryctl context-index
 ```
@@ -180,9 +194,10 @@ For a single sprint:
 4. generate `CONTEXT_RECALL_REPORT.md`
 5. initialize a Factory run
 6. execute stages `A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> I2`
-7. run `./scripts/factoryctl pack-lint --run <RUN_ID>`
-8. review the pack
-9. approve or reject execution
+7. for execution-enabled or mission units, create `pack/verification_manifest.yaml` when runnable checks exist
+8. run `./scripts/factoryctl pack-lint --run <RUN_ID>`
+9. review the pack
+10. approve or reject execution
 
 For a multi-sprint mission:
 1. lock the mission unit list and checkpoint

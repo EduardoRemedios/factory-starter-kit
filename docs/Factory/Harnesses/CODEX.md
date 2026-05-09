@@ -205,10 +205,10 @@ Before sending work to Cloud:
 1. `pack-lint` passes.
 2. Human Go is explicit.
 3. `EXECUTION_MODE.txt` is `EXECUTION_ENABLED`.
-4. The cloud task prompt includes the execution envelope, micro-sprints, verification plan, file-touch budget, and stop/go rules.
+4. The cloud task prompt includes the execution envelope, micro-sprints, verification plan, `verification_manifest.yaml` if present, file-touch budget, and stop/go rules.
 
 For PR review:
-- ask review to compare the diff against the pack and verification plan
+- ask review to compare the diff against the pack, verification plan, and `verification_manifest.yaml` if present
 - require evidence paths for claimed compliance
 - do not treat PR review as a substitute for project tests or merge preflight
 

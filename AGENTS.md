@@ -19,6 +19,7 @@ Purpose:
 - Stage validation after each handoff: `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>`
 - Pack validation after I2: `./scripts/factoryctl pack-lint --run <RUN_ID>`
 - Run metrics initialization: `./scripts/factoryctl metrics-init --run <RUN_ID>`
+- Install script dependencies: `python3 -m pip install -r requirements.txt`
 - Mission continuity preflight: `bash scripts/mission_lint.sh <MISSION_ID>` (only when advancing a unit inside an already-authorized mission)
 - Full test suite: replace with your project’s canonical test command
 
@@ -36,6 +37,7 @@ Purpose:
 - Refresh the recall index and generate `CONTEXT_RECALL_REPORT.md` before Stage A.
 - After each stage handoff, run `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>` before advancing.
 - After Stage I2, run `./scripts/factoryctl pack-lint --run <RUN_ID>` before presenting the pack for human Go or No-go review.
+- For new execution-enabled or Mission Mode runs, create `pack/verification_manifest.yaml` when runnable verification checks exist; `pack-lint` validates it when present.
 - For process improvement runs, instantiate `docs/Factory/templates/RUN_METRICS_TEMPLATE.md` as `docs/Factory/runs/<RUN_ID>/RUN_METRICS.md`.
 - Prefer `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md` from the canonical template.
 - If the run is advancing a unit inside an already-authorized mission, run `bash scripts/mission_lint.sh <MISSION_ID>` before Stage A and persist output as `MISSION_LINT.txt`.

@@ -24,6 +24,7 @@ v1
 - <SPRINT_ID>_ENVELOPE.md
 - traceability_matrix.md
 - verification_plan.md
+- verification_manifest.yaml (optional)
 - micro_sprints.md
 - PACK_CHECKLIST.md
 - PACK_MANIFEST.md
@@ -34,6 +35,7 @@ v1
 ## Checklist Reference (source-of-truth)
 - Checklist: PACK_CHECKLIST.md
 - Manifest: PACK_MANIFEST.md
+- Verification manifest: verification_manifest.yaml (YES/NO/NA)
 
 ## Critical Failures (only if any Critical item is NO)
 If any Critical checklist item is NO, list them with evidence:
@@ -66,6 +68,8 @@ If any Quality item in PACK_CHECKLIST is NO, explain briefly:
 Bullets confirming:
 - scope boundaries match (intent ↔ envelope ↔ micro-sprints)
 - verification obligations match constraint severity
+- verification tiers are explicit for Critical/High constraints
+- verification manifest is valid if present
 - no drift introduced during envelope hardening
 
 ## Final Notes (short)

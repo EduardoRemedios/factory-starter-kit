@@ -1,9 +1,10 @@
-# docs/Factory/Spec/NAMING_CONVENTIONS.md — Doc Factory (v4.5)
+# docs/Factory/Spec/NAMING_CONVENTIONS.md — Doc Factory (v4.6)
 
 ## Version
-v4.5
+v4.6
 
 ## Change Log
+- v4.6 (2026-05-09): Added optional `verification_manifest.yaml` verification asset for execution-enabled and Mission Mode runs.
 - v4.5 (2026-03-21): Added required run-root `CONTEXT_RECALL_REPORT.md` and required Mission Mode artifact `MISSION_CONTEXT_RECALL_REPORT.md`.
 - v4.4 (2026-03-10): Added run-root `MISSION_LINT.txt` naming contract for runs operating under Mission Mode.
 - v4.3 (2026-02-27): Added Mission Mode naming contract (`docs/Factory/missions/<MISSION_ID>/` with required `MISSION_*` artifacts).
@@ -77,6 +78,7 @@ Envelope:
 Verification assets:
 - `fixtures/`
 - `traceability_matrix.md`
+- optional `verification_manifest.yaml`
 
 Pack gates:
 - `PACK_AUDIT_REPORT.md`

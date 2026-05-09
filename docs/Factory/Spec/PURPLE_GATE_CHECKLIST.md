@@ -1,9 +1,10 @@
-# docs/Factory/Spec/PURPLE_GATE_CHECKLIST.md — v3.2
+# docs/Factory/Spec/PURPLE_GATE_CHECKLIST.md — v3.3
 
 ## Version
-v3.2
+v3.3
 
 ## Change Log
+- v3.3 (2026-05-09): Updated C4 to require verification tier coverage and recognize optional verification manifests.
 - v3.2 (2026-02-11): Added Critical item C9 requiring successful knowledge-lint preflight evidence before PASS/CONDITIONAL PASS.
 - v3.1 (2026-02-08): Confirmed compatibility with Stage J → I2 reordering (STAGE_CONTRACTS v4). No item changes — PACK_CHECKLIST is now produced by STAGE_J (before Purple audit), which is the correct dependency order.
 - v3 (2026-02-06): Clarified that PACK_CHECKLIST is the run-specific instantiation of this spec and is the source-of-truth for item answers.
@@ -15,7 +16,7 @@ This spec defines the canonical item set; the run-specific checklist must match 
 C1. All required artifacts exist at required paths and are non-empty.
 C2. intent.md is contract-grade per DEFINITIONS.md §8.
 C3. No unresolved Critical findings remain from intent or envelope red teams.
-C4. Every Critical/High constraint has verification coverage (traceability complete).
+C4. Every Critical/High constraint has verification coverage and a verification tier (traceability complete; manifest valid if present).
 C5. Sprint envelope includes file-touch budgets and they are non-empty.
 C6. Micro-sprints include entry/exit criteria and stop/go gates.
 C7. No unbounded deferrals exist.

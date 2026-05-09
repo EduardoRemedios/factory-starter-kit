@@ -34,6 +34,7 @@ echo "knowledge_lint: starting"
 
 required_files=(
   "AGENTS.md"
+  "requirements.txt"
   "docs/PROJECT_STATE.md"
   "docs/ROADMAP.md"
   "docs/CHANGELOG.md"
@@ -53,6 +54,7 @@ required_files=(
   "docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md"
   "docs/Factory/templates/HANDOFF_STAGE_TEMPLATE.md"
   "docs/Factory/templates/RUN_METRICS_TEMPLATE.md"
+  "docs/Factory/templates/VERIFICATION_MANIFEST_TEMPLATE.yaml"
   "docs/Factory/templates/MISSION_MANIFEST_TEMPLATE.md"
   "docs/Factory/templates/MISSION_CHECKPOINT_TEMPLATE.md"
   "docs/Factory/templates/MISSION_EXECUTION_PROMPT_TEMPLATE.md"
@@ -142,6 +144,15 @@ has_pattern '^## Validator Results$' docs/Factory/templates/RUN_METRICS_TEMPLATE
 
 has_pattern '^## Drift And Rework$' docs/Factory/templates/RUN_METRICS_TEMPLATE.md \
   || fail "Run metrics template missing Drift And Rework section"
+
+has_pattern '^schema_version: 1$' docs/Factory/templates/VERIFICATION_MANIFEST_TEMPLATE.yaml \
+  || fail "Verification manifest template missing schema_version"
+
+has_pattern 'verification_manifest\.yaml' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing verification manifest guidance"
+
+has_pattern 'verification_manifest\.yaml' docs/Factory/Spec/STAGE_CONTRACTS.md \
+  || fail "Stage contracts missing verification manifest guidance"
 
 has_pattern 'gpt-5\.5' docs/Factory/Harnesses/CODEX.md \
   || fail "Codex harness adapter missing GPT-5.5 local model guidance"

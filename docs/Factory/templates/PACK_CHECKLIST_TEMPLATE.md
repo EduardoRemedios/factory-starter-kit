@@ -27,7 +27,7 @@ v1.1
 C1. All required artifacts exist and are non-empty. | Answer: YES/NO | Evidence: PACK_MANIFEST.md
 C2. intent.md is contract-grade per DEFINITIONS.md §8. | Answer: YES/NO | Evidence: intent.md
 C3. No unresolved Critical findings remain from intent or envelope red teams. | Answer: YES/NO | Evidence: intent_redteam.md; <SPRINT_ID>_ENVELOPE_REDTEAM.md
-C4. Every Critical/High constraint has verification coverage (traceability complete). | Answer: YES/NO | Evidence: traceability_matrix.md
+C4. Every Critical/High constraint has verification coverage and a verification tier (traceability complete). | Answer: YES/NO | Evidence: traceability_matrix.md; verification_manifest.yaml if present
 C5. Sprint envelope includes file-touch budgets and they are non-empty. | Answer: YES/NO | Evidence: <SPRINT_ID>_ENVELOPE.md
 C6. Micro-sprints include entry/exit criteria and stop/go gates. | Answer: YES/NO | Evidence: micro_sprints.md
 C7. No unbounded deferrals exist. | Answer: YES/NO | Evidence: intent_lock_report.md; PACK_AUDIT_REPORT.md

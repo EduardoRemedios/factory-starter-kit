@@ -1,9 +1,10 @@
-# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.10)
+# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.11)
 
 ## Version
-v4.10
+v4.11
 
 ## Change Log
+- v4.11 (2026-05-09): Added Stage F verification tiers and optional `verification_manifest.yaml` for execution-enabled and Mission Mode runs.
 - v4.10 (2026-04-26): Added stage-lint as a deterministic per-stage handoff/output check before advancing to the next stage.
 - v4.9 (2026-04-26): Added post-I2 pack-lint validation as a deterministic evidence check before human Go or No-go review.
 - v4.8 (2026-03-21): Added mandatory context-recall contracts and run-root `CONTEXT_RECALL_REPORT.md` evidence for Stage A, plus mission-root `MISSION_CONTEXT_RECALL_REPORT.md` continuity evidence for Mission Mode checkpointing.
@@ -93,7 +94,7 @@ If the run is advancing a unit inside an already-authorized mission, run root ad
 - `STAGE_C` consumes `intent.md` and `intent_redteam.md`, updates `intent.md`, and produces `intent_synthesis.md`
 - `STAGE_D` consumes intent docs and produces `intent_lock_report.md`
 - `STAGE_E` consumes locked `intent.md` and produces `premortem.md` and `risk_register.md`
-- `STAGE_F` consumes locked `intent.md` and `risk_register.md` and produces `fixtures/`, `verification_plan.md`, and `traceability_matrix.md`
+- `STAGE_F` consumes locked `intent.md` and `risk_register.md` and produces `fixtures/`, `verification_plan.md`, `traceability_matrix.md`, and optional `verification_manifest.yaml`
 - `STAGE_G` consumes `intent.md`, `risk_register.md`, and `verification_plan.md` and produces `micro_sprints.md`
 - `STAGE_H` consumes `intent.md`, `micro_sprints.md`, and `verification_plan.md` and produces `<SPRINT_ID>_ENVELOPE.md` and `SPRINT_ID.txt`
 - `STAGE_I` consumes the envelope and verification assets and produces the envelope red-team report plus any hardened revisions
@@ -209,16 +210,20 @@ Outputs:
 - `pack/fixtures/…`
 - `pack/verification_plan.md`
 - `pack/traceability_matrix.md`
+- optional `pack/verification_manifest.yaml` for `EXECUTION_ENABLED` and Mission Mode runs
 
 Exit criteria:
 - every Critical or High constraint has at least one fixture, test, or check
+- every Critical or High constraint has a verification tier (`V0` through `V4`) in `verification_plan.md` or `traceability_matrix.md`
+- any Critical or High `V0` coverage in an `EXECUTION_ENABLED` or Mission Mode run has an explicit explanation
 - traceability matrix is complete for Critical and High items
 - fixtures follow naming conventions
+- if `verification_manifest.yaml` exists, it is valid per `VERIFICATION_MANIFEST_TEMPLATE.yaml` and `factoryctl pack-lint`
 
 ## STAGE_G — Micro-sprint Sequencing
 Inputs:
 - `LOAD`: `pack/intent.md`, `pack/risk_register.md`, `pack/verification_plan.md`
-- `DISK`: `pack/traceability_matrix.md`, `pack/intent_synthesis.md`
+- `DISK`: `pack/traceability_matrix.md`, optional `pack/verification_manifest.yaml`, `pack/intent_synthesis.md`
 
 Outputs:
 - `pack/micro_sprints.md`
@@ -230,7 +235,7 @@ Exit criteria:
 ## STAGE_H — Sprint Envelope
 Inputs:
 - `LOAD`: `pack/intent.md`, `pack/micro_sprints.md`, `pack/verification_plan.md`
-- `DISK`: `pack/traceability_matrix.md`
+- `DISK`: `pack/traceability_matrix.md`, optional `pack/verification_manifest.yaml`
 
 Outputs:
 - `SPRINT_ID.txt`
@@ -239,12 +244,13 @@ Outputs:
 Exit criteria:
 - envelope includes file-touch budget fields per micro-sprint and in total
 - envelope includes verification steps required before merge and references `verification_plan.md` and `traceability_matrix.md`
+- envelope references `verification_manifest.yaml` when one exists
 - sprint ID conforms to naming conventions and is written to `SPRINT_ID.txt`
 
 ## STAGE_I — Red/Blue on Envelope + Verification
 Inputs:
 - `LOAD`: `pack/<SPRINT_ID>_ENVELOPE.md`, `pack/verification_plan.md`, `pack/traceability_matrix.md`, `pack/micro_sprints.md`
-- `DISK`: `pack/fixtures/`, `pack/risk_register.md`, `pack/intent_lock_report.md`
+- `DISK`: `pack/fixtures/`, optional `pack/verification_manifest.yaml`, `pack/risk_register.md`, `pack/intent_lock_report.md`
 
 Outputs:
 - `pack/<SPRINT_ID>_ENVELOPE_REDTEAM.md`

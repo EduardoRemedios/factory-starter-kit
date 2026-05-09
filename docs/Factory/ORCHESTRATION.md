@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.7
+v1.8
 
 ## Change Log
+- v1.8 (2026-05-09): Added verification-left-shift v1 guidance: Stage F verification tiers, optional `verification_manifest.yaml`, and MS-00 verification scaffold for execution runs.
 - v1.7 (2026-04-26): Added `factoryctl metrics-init` to instantiate `RUN_METRICS.md` from the canonical template.
 - v1.6 (2026-04-26): Added optional `RUN_METRICS.md` run telemetry template for measuring Factory speed, drift, validator failures, harness/model usage, and cleanup burden.
 - v1.5 (2026-04-26): Added stage-lint as an immediate handoff/output validation check after each stage, before final pack-lint.
@@ -23,9 +24,10 @@ Use this order by default:
 1. intent framing
 2. constraint lock
 3. verification design
-4. bounded research if needed
-5. continuity recall before gates that depend on prior decisions
-6. execution last
+4. executable verification inventory when execution risk justifies it
+5. bounded research if needed
+6. continuity recall before gates that depend on prior decisions
+7. execution last
 
 ## 0.2 External Research Safety Protocol (HARD for research-heavy runs)
 If a run includes external research:
@@ -64,6 +66,18 @@ The optional Product Owner process sits upstream of the Factory. It governs:
 3. Brief Review PASS before any PO-authored brief becomes `raw_brief.md`
 
 The Factory pipeline itself is unchanged. PO-authored briefs enter the same Stage A path after they pass their upstream review gate.
+
+## 0.6 Verification Left-Shift (Optional, Execution-Focused)
+Stage F should classify verification with tiers:
+- `V0` artifact proof
+- `V1` static or mechanical check
+- `V2` focused fixture or test
+- `V3` regression or conformance gate
+- `V4` live, browser, external, or source-revalidation proof
+
+For `EXECUTION_ENABLED` and Mission Mode runs, Stage F should produce `pack/verification_manifest.yaml` when runnable checks exist. The manifest is optional so planning-only packs stay lightweight, but if it exists `pack-lint` validates its schema.
+
+Execution micro-sprints may start with `MS-00 Verification Scaffold`: land or confirm tests, fixtures, no-touch checks, or static validators before feature implementation begins.
 
 ## 1. Prerequisites
 Before a run starts, you need:
@@ -145,7 +159,7 @@ Where:
 - A creates intent
 - B/C adversarially review and harden intent
 - D locks intent
-- E/F/G design risk and verification
+- E/F/G design risk, verification tiers, and execution proof shape
 - H writes the execution envelope
 - I attacks and hardens the envelope
 - J packages the pack
@@ -176,13 +190,15 @@ For `PLANNING_ONLY` runs, the pack is terminal planning evidence.
 
 For `EXECUTION_ENABLED` runs, execution may begin only after explicit human Go.
 
+If `pack/verification_manifest.yaml` exists, `pack-lint` validates it. If an execution-enabled pack has runnable checks but no manifest, treat that as a process smell even when legacy compatibility keeps the lint result non-blocking.
+
 ## 6. Post-Factory Execution
 The Factory does not execute the sprint. It produces the contract for execution.
 
 ### 6.1 Execution Prompt Generation (execution-enabled runs only)
 If the run is `EXECUTION_ENABLED` and the pack passes:
 1. generate `EXECUTION_PROMPT.md`
-2. include reading order, micro-sprints, constraints, verification commands, and an exit checklist
+2. include reading order, micro-sprints, constraints, verification commands, `verification_manifest.yaml` checks when present, and an exit checklist
 3. do not generate it for `PLANNING_ONLY` runs
 4. do not initialize downstream runs unless fan-out was explicitly approved
 

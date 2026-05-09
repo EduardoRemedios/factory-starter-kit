@@ -105,6 +105,5 @@ Factory can support high-compliance domains, but it is not limited to them.
 
 Near-term portable improvements:
 1. Add optional Codex hook examples that run validators at useful lifecycle points.
-2. Add generic Factory role skills.
-3. Add `RUN_METRICS` guidance for stage timing, model/harness usage, drift indicators, and validator outcomes.
-4. Add a domain-owner operating guide for users who are not developers but need to direct AI coding agents safely.
+2. Add a domain-owner operating guide for users who are not developers but need to direct AI coding agents safely.
+3. Expand verification manifest examples after real execution-enabled usage.

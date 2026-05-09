@@ -53,6 +53,7 @@ Envelope:
 Verification Assets:
 - fixtures/ (directory; must exist; must contain at least 1 fixture directory)
 - traceability_matrix.md
+- verification_manifest.yaml (optional; if present, must be non-empty and valid)
 
 Pack Gates:
 - PACK_AUDIT_REPORT.md
@@ -100,6 +101,8 @@ Verification assets:
 - fixtures/ exists: YES/NO
 - fixtures/ contains ≥1 fixture: YES/NO
 - traceability_matrix.md: YES/NO
+- verification_manifest.yaml present: YES/NO
+- verification_manifest.yaml valid if present: YES/NO/NA
 
 Pack gates:
 - PACK_AUDIT_REPORT.md: YES/NO
