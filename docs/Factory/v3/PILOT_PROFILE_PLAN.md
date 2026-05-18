@@ -1,9 +1,10 @@
 # Factory v3 Pilot Profile Plan
 
 ## Version
-v0.1
+v0.2
 
 ## Change Log
+- v0.2 (2026-05-18): Added a real-branch advisory lint pilot profile and finding classification expectations.
 - v0.1 (2026-05-18): Initial pilot profile plan for Factory v3 research.
 
 ## Status
@@ -58,6 +59,12 @@ Define how to stress-test Factory v3 research artifacts before promotion. Pilots
 - Evidence: run metrics or reviewer estimate.
 - Pass signal: overhead is justified by risk reduction.
 
+### Profile P6 - Real-Branch Advisory Lint Review
+- Target: a bounded branch that changes only `docs/Factory/v3/` research artifacts.
+- Method: Run `python3 scripts/factory_v3_advisory_lint.py --target docs/Factory/v3 --json` after the doc change, then manually classify every finding.
+- Evidence: pilot report under the relevant Factory run evidence path, including branch name, revision, command result, checked files, classification table, and residual risks.
+- Pass signal: advisory output remains non-blocking with `blocking_effect: none`, no Factory v2 gate wiring is introduced, and findings are classified as `accepted`, `false_positive`, `needs_more_context`, or `deferred`.
+
 ## Metrics
 Capture:
 - number of warnings
@@ -68,6 +75,7 @@ Capture:
 - docs changed after pilot
 - boundary violations found
 - reviewer confidence
+- finding classifications: `accepted`, `false_positive`, `needs_more_context`, and `deferred`
 
 ## Pilot Exit Criteria
 A pilot may pass only if:
@@ -89,4 +97,3 @@ Fail the pilot if:
 
 ## Next Step
 Use pilot evidence to refine the v3 docs before writing any validator code.
-

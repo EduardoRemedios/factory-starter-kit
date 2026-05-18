@@ -14,13 +14,15 @@
 - Advisory lint fixtures exist under `tests/fixtures/factory_v3_advisory_lint/` for clean, warning, promotion-claim, and pilot boundary-stressor cases.
 - Factory v3 advisory lint execution closeout evidence exists at `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/EXECUTION_CLOSEOUT.md`.
 - The first deterministic advisory lint pilot report exists at `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/PILOT_USAGE_REPORT.md`.
+- The first real-branch advisory lint pilot report exists at `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/REAL_BRANCH_PILOT_REPORT.md`.
 
 ## Current Tracking Snapshot
 
-- Current `main` evidence head: `7c5d05a Add Factory v3 advisory lint closeout evidence`.
+- Current `main` evidence head: `b272eed Update Factory v3 canonical tracking docs`.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
-- Latest pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
+- Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
+- Latest real-branch pilot result: `docs/Factory/v3` returns `ADVISORY_PASS` with 0 findings after a bounded research-doc change.
 - Latest clean-doc result: `docs/Factory/v3` returns `ADVISORY_PASS`.
 
 ## What Does NOT Exist Yet
@@ -28,7 +30,7 @@
 - Factory v3 is not promoted for release.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
-- No real-branch false-positive review has been completed yet; the current pilot is a deterministic stressor fixture, not a production-quality signal study.
+- No non-empty real-branch warning review has been completed yet; the first real-branch pilot produced no findings to classify.
 
 ## How to Verify
 
