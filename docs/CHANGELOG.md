@@ -5,4 +5,5 @@
 - Added optional standalone Factory v3 advisory lint prototype at `scripts/factory_v3_advisory_lint.py`.
 - Added deterministic advisory lint fixtures for clean, warning, and promotion-claim cases.
 - Added execution closeout evidence and a deterministic pilot usage fixture for Factory v3 advisory lint.
+- Recorded canonical tracking state for the advisory lint prototype, closeout evidence, pilot result, and next blocked/allowed steps.
 - Kept Factory v3 advisory lint non-blocking and outside all required Factory v2 gates.
