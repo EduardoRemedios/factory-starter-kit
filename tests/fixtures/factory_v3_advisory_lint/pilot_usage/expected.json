@@ -1,0 +1,103 @@
+{
+  "blocking_effect": "none",
+  "checked_artifacts": [
+    "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/README.md",
+    "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/SHADOW_SCHEMA_CANDIDATES.md"
+  ],
+  "findings": [
+    {
+      "id": "V3-A002",
+      "message": "v3 document does not clearly state research-only or non-enforcing posture",
+      "path": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/README.md",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_high"
+    },
+    {
+      "id": "V3-A002",
+      "message": "v3 document does not clearly state research-only or non-enforcing posture",
+      "path": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/SHADOW_SCHEMA_CANDIDATES.md",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_high"
+    },
+    {
+      "id": "V3-A003",
+      "message": "possible required v2 gate wiring language found",
+      "path": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/README.md",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_critical"
+    },
+    {
+      "id": "V3-A003",
+      "message": "shadow schema candidate lacks explicit required-validator isolation language",
+      "path": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/SHADOW_SCHEMA_CANDIDATES.md",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_critical"
+    },
+    {
+      "id": "V3-A004",
+      "message": "AEGIS optionality is missing or contradicted",
+      "path": "<target>",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_critical"
+    },
+    {
+      "id": "V3-A005",
+      "message": "possible runtime-kernel authority claim found",
+      "path": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/README.md",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_critical"
+    },
+    {
+      "id": "V3-A006",
+      "message": "promotion or release language lacks evidence and explicit human release approval",
+      "path": "<target>",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_high"
+    }
+  ],
+  "generated_at": "not_recorded",
+  "promotion_level": "research",
+  "recommended_next_steps": [
+    "Review findings manually; this report is non-blocking.",
+    "Classify each finding as accepted, rejected_false_positive, needs_more_context, or deferred.",
+    "Do not promote any v3 check without Factory v2 governance and explicit human release approval."
+  ],
+  "report_id": "factory-v3-advisory-lint",
+  "review_notes": "",
+  "review_status": "needs_human_review",
+  "status": "ADVISORY_FAIL_NON_BLOCKING",
+  "target": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3",
+  "warnings": [
+    {
+      "id": "V3-A002",
+      "message": "v3 document does not clearly state research-only or non-enforcing posture",
+      "path": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/README.md",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_high"
+    },
+    {
+      "id": "V3-A002",
+      "message": "v3 document does not clearly state research-only or non-enforcing posture",
+      "path": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/SHADOW_SCHEMA_CANDIDATES.md",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_high"
+    },
+    {
+      "id": "V3-A006",
+      "message": "promotion or release language lacks evidence and explicit human release approval",
+      "path": "<target>",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_high"
+    }
+  ]
+}
