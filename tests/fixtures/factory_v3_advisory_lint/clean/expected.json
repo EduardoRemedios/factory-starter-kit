@@ -1,0 +1,19 @@
+{
+  "blocking_effect": "none",
+  "checked_artifacts": [
+    "tests/fixtures/factory_v3_advisory_lint/clean/input/docs/Factory/v3/README.md",
+    "tests/fixtures/factory_v3_advisory_lint/clean/input/docs/Factory/v3/SHADOW_SCHEMA_CANDIDATES.md"
+  ],
+  "findings": [],
+  "generated_at": "not_recorded",
+  "promotion_level": "research",
+  "recommended_next_steps": [
+    "No advisory findings. Keep v3 artifacts research-only until promoted."
+  ],
+  "report_id": "factory-v3-advisory-lint",
+  "review_notes": "",
+  "review_status": "not_required",
+  "status": "ADVISORY_PASS",
+  "target": "tests/fixtures/factory_v3_advisory_lint/clean/input/docs/Factory/v3",
+  "warnings": []
+}

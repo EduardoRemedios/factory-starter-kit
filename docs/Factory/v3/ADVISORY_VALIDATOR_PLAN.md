@@ -1,13 +1,14 @@
 # Factory v3 Advisory Validator Plan
 
 ## Version
-v0.1
+v0.2
 
 ## Change Log
+- v0.2 (2026-05-18): Recorded the standalone advisory lint prototype and fixture verification command shape.
 - v0.1 (2026-05-18): Initial non-enforcing validator plan for Factory v3 research.
 
 ## Status
-Research only. This plan does not implement a validator and does not change Factory v2 gates.
+Research only. The standalone prototype is advisory and does not change Factory v2 gates.
 
 ## Purpose
 Define optional Factory v3 advisory checks before any code is written. The checks should help evaluate v3 concepts without blocking Factory v2 runs.
@@ -23,14 +24,15 @@ It must not be called by:
 - Mission cursor lint
 - merge preflight
 
-## Candidate Command
-Potential future command:
+## Prototype Command
+Current standalone advisory prototype:
 
 ```bash
-./scripts/factoryctl v3-advisory-lint --target <path>
+python3 scripts/factory_v3_advisory_lint.py --target docs/Factory/v3
+python3 scripts/factory_v3_advisory_lint.py --target docs/Factory/v3 --json
 ```
 
-This command is a candidate only. It is not implemented by this plan.
+This command is optional and non-blocking. It is not called by `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, or merge preflight.
 
 ## Candidate Checks
 
@@ -71,15 +73,26 @@ This command is a candidate only. It is not implemented by this plan.
 - Expected output: warning if promotion language lacks evidence.
 
 ## Candidate Output Shape
-The future advisory report may include:
-- `status`: `ADVISORY_PASS`, `ADVISORY_WARN`, or `ADVISORY_FAIL`
+The advisory report includes:
+- `status`: `ADVISORY_PASS`, `ADVISORY_WARN`, or `ADVISORY_FAIL_NON_BLOCKING`
+- `blocking_effect`: always `none`
+- `promotion_level`: currently `research`
 - `checked_artifacts`
 - `findings`
 - `warnings`
-- `non_blocking_result`
 - `recommended_next_steps`
+- review fields for later human classification
 
 The output must clearly say it is advisory and non-blocking.
+
+## Fixture Verification
+The prototype includes deterministic fixtures:
+
+```bash
+python3 scripts/factory_v3_advisory_lint.py --target tests/fixtures/factory_v3_advisory_lint/clean/input/docs/Factory/v3 --expect tests/fixtures/factory_v3_advisory_lint/clean/expected.json --json
+python3 scripts/factory_v3_advisory_lint.py --target tests/fixtures/factory_v3_advisory_lint/warning/input/docs/Factory/v3 --expect tests/fixtures/factory_v3_advisory_lint/warning/expected.json --json
+python3 scripts/factory_v3_advisory_lint.py --target tests/fixtures/factory_v3_advisory_lint/promotion_claim/input/docs/Factory/v3 --expect tests/fixtures/factory_v3_advisory_lint/promotion_claim/expected.json --json
+```
 
 ## Evidence To Capture
 For each advisory run, capture:
@@ -102,9 +115,8 @@ Before any advisory check becomes required:
 - human release approval must name the promoted check
 
 ## Out Of Scope
-- Implementing the command.
 - Adding JSON schemas.
 - Editing required validators.
 - Blocking v2 runs.
 - Enforcing runtime behavior.
-
+- Adding a `factoryctl` subcommand.

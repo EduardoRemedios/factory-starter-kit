@@ -1,0 +1,39 @@
+{
+  "blocking_effect": "none",
+  "checked_artifacts": [
+    "tests/fixtures/factory_v3_advisory_lint/warning/input/docs/Factory/v3/README.md",
+    "tests/fixtures/factory_v3_advisory_lint/warning/input/docs/Factory/v3/SHADOW_SCHEMA_CANDIDATES.md"
+  ],
+  "findings": [
+    {
+      "id": "V3-A002",
+      "message": "v3 document does not clearly state research-only or non-enforcing posture",
+      "path": "tests/fixtures/factory_v3_advisory_lint/warning/input/docs/Factory/v3/README.md",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_high"
+    }
+  ],
+  "generated_at": "not_recorded",
+  "promotion_level": "research",
+  "recommended_next_steps": [
+    "Review findings manually; this report is non-blocking.",
+    "Classify each finding as accepted, rejected_false_positive, needs_more_context, or deferred.",
+    "Do not promote any v3 check without Factory v2 governance and explicit human release approval."
+  ],
+  "report_id": "factory-v3-advisory-lint",
+  "review_notes": "",
+  "review_status": "needs_human_review",
+  "status": "ADVISORY_WARN",
+  "target": "tests/fixtures/factory_v3_advisory_lint/warning/input/docs/Factory/v3",
+  "warnings": [
+    {
+      "id": "V3-A002",
+      "message": "v3 document does not clearly state research-only or non-enforcing posture",
+      "path": "tests/fixtures/factory_v3_advisory_lint/warning/input/docs/Factory/v3/README.md",
+      "review_notes": "",
+      "review_status": "needs_human_review",
+      "severity": "advisory_high"
+    }
+  ]
+}
