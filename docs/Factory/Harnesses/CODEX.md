@@ -1,9 +1,10 @@
 # Codex Harness Adapter
 
 ## Version
-v0.1
+v0.2
 
 ## Change Log
+- v0.2 (2026-05-18): Added optional Mission Goal Continuity adapter guidance for derived mission cursors; external goals remain non-authoritative.
 - v0.1 (2026-04-26): Initial Codex adapter for GPT-5.5 local work, Codex App/Desktop, Codex CLI, Codex Cloud, skills, plugins, hooks, and connector-backed evidence.
 
 ## Purpose
@@ -211,6 +212,31 @@ For PR review:
 - ask review to compare the diff against the pack, verification plan, and `verification_manifest.yaml` if present
 - require evidence paths for claimed compliance
 - do not treat PR review as a substitute for project tests or merge preflight
+
+## Mission Goal Continuity (Experimental)
+
+Codex goal/bookmark features may be used only as compact Mission Mode resume aids for long-running, multi-session work.
+
+Repository rule:
+- repository artifacts -> `MISSION_CURSOR.json` -> Codex goal/bookmark
+
+Forbidden direction:
+- Codex goal/bookmark -> repository truth
+
+Required behavior:
+1. Read mission truth first: `MISSION_MANIFEST.md`, `MISSION_CHECKPOINT.md`, `MISSION_CONTEXT_RECALL_REPORT.md`, current run root, current unit pack, latest handoff, and latest non-cursor validator output.
+2. Read `MISSION_CURSOR.json` only as a derived resume cursor.
+3. Run `bash scripts/mission_cursor_lint.sh <MISSION_ID>` before continuing.
+4. Continue only if cursor lint passes, `EXECUTION_MODE.txt` permits the action, and no halt condition is active.
+5. Halt on weak recall, failed validator, missing evidence, unresolved scope expansion, policy/schema boundary drift, external credential dependency, or required human checkpoint.
+
+Approved goal/bookmark shape:
+
+```text
+Continue Mission Mode for <MISSION_ID>. Disk is source of truth; this goal is not authority. Current unit: <UNIT_ID>. Next legal action: <ACTION>. Before acting, read MISSION_CURSOR.json, MISSION_MANIFEST.md, MISSION_CHECKPOINT.md, MISSION_CONTEXT_RECALL_REPORT.md, current unit pack, latest handoff, and validator output. Continue only if mission_cursor_lint passes and EXECUTION_MODE permits. Halt on scope expansion, weak recall, failed validator, missing evidence, policy/schema boundary change, external credential dependency, or required human checkpoint.
+```
+
+Do not use this adapter first on auth, wallet, KYC, regulated execution paths, schema boundary changes, or irreversible actions.
 
 ## External Signals
 

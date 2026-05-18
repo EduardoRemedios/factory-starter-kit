@@ -1,9 +1,10 @@
 # docs/Factory/MISSION_MODE.md — Mission Mode (Factory Extension)
 
 ## Version
-v1.3
+v1.4
 
 ## Change Log
+- v1.4 (2026-05-18): Added optional Codex Mission Goal Continuity adapter with derived `MISSION_CURSOR.json` and `mission_cursor_lint.sh`; preserved `MISSION_MANIFEST.md` as the only authored mission ledger.
 - v1.3 (2026-03-21): Added ordered fallback-scope handling, exact required-reference checks, and WEAK-coverage halt semantics for mission recall generation.
 - v1.2 (2026-03-15): Added mandatory `MISSION_CONTEXT_RECALL_REPORT.md` generation before mission checkpointing and downstream unit planning.
 - v1.1 (2026-03-10): Added mission manifest ledger-of-record rule, normalized mission unit status semantics, same-cycle mission update discipline, and derived mission continuity preflight guidance (`mission_lint.sh`) while preserving additive Mission Mode behavior.
@@ -179,6 +180,7 @@ Required mission artifacts:
 
 Optional mission execution helper:
 - `MISSION_EXECUTION_PROMPT.md`
+- `MISSION_CURSOR.json` (Codex Mission Goal Continuity adapter only; derived resume cursor, not authored mission truth)
 
 These artifacts must follow standard Factory rules:
 - version and changelog
@@ -208,6 +210,44 @@ Before mission checkpointing or authorizing the next downstream unit:
    - `docs/Factory/runs`
    - `docs`
 6. if the written report still records `Coverage Verdict: WEAK` after attempted scopes, halt checkpoint adjudication until recall coverage is repaired
+
+### 11.3 Codex Mission Goal Continuity adapter (experimental)
+Some repositories may use Codex goal or bookmark features as a compact Mission Mode resume aid for long-running, multi-session work.
+
+This adapter is optional and does not change the core Factory A-to-I2 process.
+
+Adapter artifacts:
+- `docs/Factory/missions/<MISSION_ID>/MISSION_CURSOR.json`
+- `scripts/mission_cursor_lint.sh`
+- `docs/Factory/templates/MISSION_CURSOR_TEMPLATE.json`
+
+`MISSION_CURSOR.json` is a derived mission resume cursor. It records the current mission, current unit, current unit status, next legal action, execution mode, latest non-cursor validator evidence, and source artifact fingerprints. It exists so an agent session can re-ground before continuing.
+
+Hard rules:
+1. `MISSION_MANIFEST.md` remains the only authored mission ledger.
+2. `MISSION_CURSOR.json` is not authority, not evidence, and not execution authorization.
+3. `MISSION_CURSOR.json` may be deleted and regenerated from mission/run artifacts.
+4. Any external goal, task bookmark, or chat summary is only a compact bookmark mirrored from `MISSION_CURSOR.json`.
+5. The valid direction is repository artifacts -> `MISSION_CURSOR.json` -> external bookmark.
+6. The reverse direction is forbidden; an external bookmark must never update repository truth.
+7. Before any continuation uses this adapter, run `bash scripts/mission_cursor_lint.sh <MISSION_ID>`.
+8. If mission cursor lint fails, halt continuation and repair the underlying artifact mismatch or regenerate the cursor from valid artifacts.
+9. If `halt_required` is true, the only legal next action is `halt`.
+
+Closed `next_legal_action` set:
+- `read_mission_artifacts`
+- `read_current_unit_pack`
+- `initialize_unit_factory_run`
+- `run_mission_lint`
+- `run_unit_validator`
+- `execute_unit_micro_sprint`
+- `update_unit_handoff`
+- `update_manifest_from_unit_evidence`
+- `advance_to_next_unit`
+- `await_human_checkpoint`
+- `halt`
+
+The adapter must not be used first on auth, wallet, KYC, regulated execution paths, schema boundary changes, or irreversible actions.
 
 ## 12. Restart policy
 Resume from a failed unit only when:

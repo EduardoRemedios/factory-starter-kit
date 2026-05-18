@@ -6,11 +6,13 @@ Purpose:
 ## 1) Read Order (mandatory)
 1. `docs/PROJECT_STATE.md`
 2. `docs/ROADMAP.md`
-3. `docs/Factory/ORCHESTRATION.md`
-4. `docs/Factory/MISSION_MODE.md` (if using Mission Mode)
-5. `docs/Factory/ProductOwner/PO_PROCESS.md` (if working on PO-authored briefs or phase planning)
-6. `docs/Factory/SCRATCHPAD.md` (read only `## Active Pitfalls (Mandatory)`)
-7. current sprint artifacts in `docs/sprints/` and current run pack in `docs/Factory/runs/<RUN_ID>/pack/`
+3. `docs/Factory/ARCHITECTURE.md`
+4. `docs/Factory/ORCHESTRATION.md`
+5. `docs/Factory/MISSION_MODE.md` (if using Mission Mode)
+6. `docs/Factory/AEGIS_BOUNDARY.md` (if working on Factory v3, autonomy governance, AEGIS-compatible repos, or runtime-kernel boundaries)
+7. `docs/Factory/ProductOwner/PO_PROCESS.md` (if working on PO-authored briefs or phase planning)
+8. `docs/Factory/SCRATCHPAD.md` (read only `## Active Pitfalls (Mandatory)`)
+9. current sprint artifacts in `docs/sprints/` and current run pack in `docs/Factory/runs/<RUN_ID>/pack/`
 
 ## 2) Canonical Commands
 - Knowledge lint preflight: `bash scripts/knowledge_lint.sh`
@@ -19,8 +21,13 @@ Purpose:
 - Stage validation after each handoff: `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>`
 - Pack validation after I2: `./scripts/factoryctl pack-lint --run <RUN_ID>`
 - Run metrics initialization: `./scripts/factoryctl metrics-init --run <RUN_ID>`
+- Task memory initialization (optional): `./scripts/factoryctl memory-init`
+- Repo cartographer scan (optional): `./scripts/cartographer`
+- Agent Loop Bridge fixture validation (optional): `python3 scripts/agent_loop_bridge_validate.py tests/fixtures/agent_loop_bridge/valid_handoff.json --json`
 - Install script dependencies: `python3 -m pip install -r requirements.txt`
 - Mission continuity preflight: `bash scripts/mission_lint.sh <MISSION_ID>` (only when advancing a unit inside an already-authorized mission)
+- Mission cursor lint (optional Codex Mission Goal Continuity adapter): `bash scripts/mission_cursor_lint.sh <MISSION_ID>`
+- Merge preflight: define/adapt `bash scripts/merge_preflight.sh` in adopting repos; see `docs/Factory/MERGE_PROTOCOL.md`
 - Full test suite: replace with your project’s canonical test command
 
 ## 3) Hard Guardrails
@@ -30,6 +37,7 @@ Purpose:
 - Keep deterministic ordering and evidence-chain integrity in reports and artifacts.
 - Do not create a second authored source of truth for mission state when Mission Mode is active.
 - Keep continuity artifacts as evidence aids, not as replacement authority for the underlying source documents.
+- If an adopting repo has AEGIS or another autonomy governance kernel, do not duplicate kernel authority, policy, evidence, lease, or runtime-action behavior inside Factory.
 
 ## 4) Factory Run Preconditions
 - Run `bash scripts/knowledge_lint.sh` before Stage A.
@@ -40,7 +48,10 @@ Purpose:
 - For new execution-enabled or Mission Mode runs, create `pack/verification_manifest.yaml` when runnable verification checks exist; `pack-lint` validates it when present.
 - For process improvement runs, instantiate `docs/Factory/templates/RUN_METRICS_TEMPLATE.md` as `docs/Factory/runs/<RUN_ID>/RUN_METRICS.md`.
 - Prefer `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md` from the canonical template.
+- Optional task memory and cartographer outputs are advisory artifacts only; they do not replace Factory source artifacts, pack-lint, stage-lint, or human Go/No-go.
+- For Factory v3 or AEGIS-compatible work, read `docs/Factory/AEGIS_BOUNDARY.md` before changing mission governance, authority leases, evidence, runtime verification, or escalation semantics.
 - If the run is advancing a unit inside an already-authorized mission, run `bash scripts/mission_lint.sh <MISSION_ID>` before Stage A and persist output as `MISSION_LINT.txt`.
+- If using the optional Codex Mission Goal Continuity adapter, run `bash scripts/mission_cursor_lint.sh <MISSION_ID>` before continuing from `MISSION_CURSOR.json` or an external goal/bookmark; `MISSION_CURSOR.json` is a derived resume cursor, not mission truth.
 - If the raw brief originates from the PO process, confirm it has a Brief Review PASS before entering the Factory.
 - If any required lint or recall artifact is missing or weak, halt run initialization and fix context drift first.
 

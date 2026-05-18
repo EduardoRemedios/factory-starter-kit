@@ -1,9 +1,10 @@
 # docs/Factory/Spec/NAMING_CONVENTIONS.md — Doc Factory (v4.6)
 
 ## Version
-v4.6
+v4.7
 
 ## Change Log
+- v4.7 (2026-05-18): Added optional `MISSION_CURSOR.json` naming for the Codex Mission Goal Continuity adapter; it is a derived resume cursor, not an authored mission-state artifact.
 - v4.6 (2026-05-09): Added optional `verification_manifest.yaml` verification asset for execution-enabled and Mission Mode runs.
 - v4.5 (2026-03-21): Added required run-root `CONTEXT_RECALL_REPORT.md` and required Mission Mode artifact `MISSION_CONTEXT_RECALL_REPORT.md`.
 - v4.4 (2026-03-10): Added run-root `MISSION_LINT.txt` naming contract for runs operating under Mission Mode.
@@ -142,3 +143,4 @@ Within `docs/Factory/missions/<MISSION_ID>/`:
 - `MISSION_CHECKPOINT.md`
 - `MISSION_COMPLETION_REPORT.md`
 - optional `MISSION_EXECUTION_PROMPT.md`
+- optional `MISSION_CURSOR.json` (derived resume cursor for Codex Mission Goal Continuity adapter only)

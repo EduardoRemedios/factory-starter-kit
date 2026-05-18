@@ -39,6 +39,14 @@ from factory_stage_lint import (  # noqa: E402
     format_stage_lint,
     lint_stage,
 )
+from factory_task_memory import (  # noqa: E402
+    TaskMemoryError,
+    bootstrap_task_memory,
+    format_suggestion_text,
+    log_task,
+    review_task_memory,
+    suggest_task,
+)
 
 
 REPO_ROOT = SCRIPT_DIR.parent
@@ -47,9 +55,46 @@ REPO_ROOT = SCRIPT_DIR.parent
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="factoryctl",
-        description="Factory continuity, context-recall, and validation helper.",
+        description="Factory continuity, context-recall, validation, and optional task-memory helper.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
+
+    memory_init_parser = subparsers.add_parser(
+        "memory-init",
+        help="Initialize optional task-memory directories, default runbooks, and journal.",
+    )
+    memory_init_parser.add_argument("--force", action="store_true", help="Rewrite default runbooks and clear journal.")
+    memory_init_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    memory_suggest_parser = subparsers.add_parser(
+        "memory-suggest",
+        help="Classify a task and print the best runbook checklist.",
+    )
+    memory_suggest_parser.add_argument("--task", required=True, help="Task description to classify.")
+    memory_suggest_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    memory_log_parser = subparsers.add_parser(
+        "memory-log",
+        help="Append one task outcome to the optional task-memory journal.",
+    )
+    memory_log_parser.add_argument("--task", required=True, help="Task description.")
+    memory_log_parser.add_argument(
+        "--outcome",
+        required=True,
+        choices=["success", "partial", "blocked"],
+        help="Task result status.",
+    )
+    memory_log_parser.add_argument("--notes", default="", help="Short lessons learned or failure details.")
+    memory_log_parser.add_argument("--runbook", default=None, help="Optional explicit runbook id.")
+    memory_log_parser.add_argument("--duration-minutes", type=int, default=None, help="Optional duration in minutes.")
+    memory_log_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    memory_review_parser = subparsers.add_parser(
+        "memory-review",
+        help="Summarize task-memory journal trends and optionally write a review report.",
+    )
+    memory_review_parser.add_argument("--no-write-report", action="store_true", help="Print summary without writing a markdown report.")
+    memory_review_parser.add_argument("--json", action="store_true", help="Print JSON output.")
 
     context_index_parser = subparsers.add_parser(
         "context-index",
@@ -154,6 +199,49 @@ def main() -> int:
     root = REPO_ROOT
 
     try:
+        if args.command == "memory-init":
+            payload = bootstrap_task_memory(root=root, force=args.force)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"Task memory initialized: {payload['journal_path']}")
+                for path in payload["runbooks_written"]:
+                    print(f"Runbook written: {path}")
+            return 0
+
+        if args.command == "memory-suggest":
+            payload = suggest_task(root=root, task=args.task)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(format_suggestion_text(payload))
+            return 0
+
+        if args.command == "memory-log":
+            payload = log_task(
+                root=root,
+                task=args.task,
+                outcome=args.outcome,
+                notes=args.notes,
+                runbook_id=args.runbook,
+                duration_minutes=args.duration_minutes,
+            )
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"Task memory logged: {payload['entry_id']} runbook={payload['runbook_id']} outcome={payload['outcome']}")
+            return 0
+
+        if args.command == "memory-review":
+            payload = review_task_memory(root=root, write_report=not args.no_write_report)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(payload["report"], end="")
+                if payload["report_path"]:
+                    print(f"\nReport written: {payload['report_path']}")
+            return 0
+
         if args.command == "context-index":
             payload = build_context_index(root=root, db_path=Path(args.db_path) if args.db_path else None)
             if args.json:
@@ -273,6 +361,7 @@ def main() -> int:
         FactoryPackLintError,
         FactoryRunMetricsError,
         FactoryStageLintError,
+        TaskMemoryError,
     ) as exc:
         print(f"ERROR: {exc}")
         return 2

@@ -14,6 +14,12 @@ The reusable framework layer:
 - Context recall tooling and report templates
 - Deterministic pack-lint validation after the final pack audit
 - Optional machine-readable verification manifests for execution-enabled and Mission Mode runs
+- Optional Mission Cursor continuity guard for long Codex/agent sessions
+- Tool-agnostic merge authorization protocol guidance
+- Optional task-memory runbook helper through `factoryctl`
+- Optional repo cartographer advisory scan
+- Generic review-only Agent Loop Bridge harness pattern
+- Factory v3 / AEGIS boundary crosswalk for repos that also use a lower-level autonomy governance kernel
 - Harness adapter guidance for Codex and other AI coding tools
 - Optional Product Owner pre-Factory process
 - Starter lint scripts
@@ -27,6 +33,21 @@ This is a pre-1.0 starter kit.
 
 It is intentionally generic. It should contain the process layer, not your private run history or your product-specific docs.
 
+## Factory Version Posture
+
+This repository currently ships the Factory v2 operating core:
+- the `A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> I2` planning pipeline
+- Mission Mode as an additive wrapper for bounded multi-sprint chains
+- deterministic stage-lint, pack-lint, context recall, verification manifest, and merge authorization guidance
+- optional support helpers such as task memory, Repo Cartographer, Mission Cursor continuity, and Agent Loop Bridge
+
+The repository also includes early Factory v3 boundary notes. These do not replace the v2 pipeline. They define how a future mission-governed autonomous-execution model should avoid duplicating lower-level autonomy governance kernels such as AEGIS.
+
+In short:
+- Factory v2 remains the usable process in this starter kit.
+- Recent updates generalize lessons from downstream Factory usage back into the starter kit.
+- Factory v3 work is currently represented as strategic boundary guidance, especially `docs/Factory/AEGIS_BOUNDARY.md`.
+
 ## Quick Start
 
 First 30 seconds:
@@ -35,7 +56,10 @@ First 30 seconds:
 3. Install the script dependency with `python3 -m pip install -r requirements.txt`.
 4. Run `bash scripts/knowledge_lint.sh`.
 5. Build the continuity index with `./scripts/factoryctl context-index`.
-6. If you will use Mission Mode, run `bash scripts/mission_lint.sh <MISSION_ID>`.
+6. Optional: initialize task memory with `./scripts/factoryctl memory-init`.
+7. Optional: run an advisory repo scan with `./scripts/cartographer`.
+8. If you will use Mission Mode, run `bash scripts/mission_lint.sh <MISSION_ID>`.
+9. If you will use Mission Cursor continuity, run `bash scripts/mission_cursor_lint.sh <MISSION_ID>` before resuming from the cursor.
 
 Dependency command:
 
@@ -66,12 +90,17 @@ The core operating order is:
 
 ## Process Layers
 
-The public starter kit now models five generic layers:
+The public starter kit now models ten generic layers:
 1. Core Factory pipeline: `raw_brief.md -> A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> I2`
 2. Context recall layer: indexed recall reports before Stage A, mission checkpointing, and PO brief review
 3. Product Owner lane (optional): Phase Brief -> Phase Intent -> PO sprint brief -> Brief Review PASS -> Factory
 4. Mission Mode (optional): ordered multi-sprint execution under one consolidated checkpoint
 5. Verification manifest (optional): compact runnable check inventory for execution-enabled and Mission Mode units
+6. Mission Cursor continuity (optional): derived resume cursor plus lint gate for long-running agent sessions
+7. Task memory (optional): local runbook suggestion and outcome journal for repeat work
+8. Repo Cartographer (optional): advisory snapshot reports for repository state, drift, verification, and traceability
+9. Agent Loop Bridge (optional): review-only structured handoffs between agent lanes
+10. External governance-kernel boundary (optional): AEGIS-compatible SDLC mission governance without duplicating runtime enforcement
 
 See `docs/Factory/ARCHITECTURE.md` for the portable layer model: Factory Core, harness adapters, validators, extension packs, and project adapters.
 
@@ -88,8 +117,18 @@ your-repo/
 │   ├── factoryctl
 │   ├── factory_context_index.py
 │   ├── factory_pack_lint.py
+│   ├── factory_run_metrics.py
+│   ├── factory_stage_lint.py
+│   ├── factory_task_memory.py
+│   ├── agent_loop_bridge_validate.py
+│   ├── cartographer
 │   ├── knowledge_lint.sh
+│   ├── mission_cursor_lint.sh
 │   └── mission_lint.sh
+├── tools/
+│   └── repo_cartographer/
+│       ├── README.md
+│       └── run.py
 ├── docs/
 │   ├── PROJECT_STATE.md
 │   ├── ROADMAP.md
@@ -98,10 +137,15 @@ your-repo/
 │   │   └── ONBOARDING_GUIDE.md
 │   └── Factory/
 │       ├── ARCHITECTURE.md
+│       ├── AEGIS_BOUNDARY.md
+│       ├── MERGE_PROTOCOL.md
 │       ├── ORCHESTRATION.md
 │       ├── MISSION_MODE.md
 │       ├── SCRATCHPAD.md
+│       ├── TASK_MEMORY.md
 │       ├── Harnesses/
+│       │   ├── AGENT_LOOP_BRIDGE.md
+│       │   ├── AGENT_LOOP_BRIDGE_MANUAL_RUNBOOK.md
 │       │   ├── CODEX.md
 │       │   └── README.md
 │       ├── ProductOwner/
@@ -125,6 +169,7 @@ your-repo/
 │           ├── INTENT_LOCK_REPORT_TEMPLATE.md
 │           ├── MISSION_CHECKPOINT_TEMPLATE.md
 │           ├── MISSION_COMPLETION_REPORT_TEMPLATE.md
+│           ├── MISSION_CURSOR_TEMPLATE.json
 │           ├── MISSION_EXECUTION_PROMPT_TEMPLATE.md
 │           ├── MISSION_MANIFEST_TEMPLATE.md
 │           ├── PACK_AUDIT_REPORT_TEMPLATE.md
@@ -146,10 +191,11 @@ The root `CHANGELOG.md` tracks starter-kit releases. The `docs/CHANGELOG.md` fil
 2. Adapt `AGENTS.md` to your project.
 3. Fill in `docs/PROJECT_STATE.md`, `docs/ROADMAP.md`, and `docs/CHANGELOG.md`.
 4. Review `docs/Factory/ORCHESTRATION.md` and `docs/Factory/MISSION_MODE.md`.
-5. Review `docs/Factory/Harnesses/` for AI coding tool guidance.
-6. If you will use the optional PO lane, review `docs/Factory/ProductOwner/`.
-7. Adapt `scripts/knowledge_lint.sh` and `scripts/mission_lint.sh` if your project uses different canonical docs or naming.
-8. Run:
+5. If your repository uses AEGIS or another autonomy governance kernel, review `docs/Factory/AEGIS_BOUNDARY.md`.
+6. Review `docs/Factory/Harnesses/` for AI coding tool guidance.
+7. If you will use the optional PO lane, review `docs/Factory/ProductOwner/`.
+8. Adapt `scripts/knowledge_lint.sh`, `scripts/mission_lint.sh`, and `scripts/mission_cursor_lint.sh` if your project uses different canonical docs or naming.
+9. Run:
 
 ```bash
 python3 -m pip install -r requirements.txt
@@ -163,6 +209,12 @@ If you plan to use Mission Mode, also verify:
 bash scripts/mission_lint.sh <MISSION_ID>
 ```
 
+If you plan to use Mission Cursor continuity, verify before every cursor-based resume:
+
+```bash
+bash scripts/mission_cursor_lint.sh <MISSION_ID>
+```
+
 ## Project-Specific Adaptation
 
 You are expected to adapt:
@@ -172,6 +224,7 @@ You are expected to adapt:
 - `docs/CHANGELOG.md`
 - `scripts/knowledge_lint.sh`
 - `scripts/mission_lint.sh` if you use Mission Mode
+- `scripts/mission_cursor_lint.sh` if you use Mission Cursor continuity with a customized mission table
 - the default recall source patterns in `scripts/factory_context_index.py` if your repo uses materially different canonical paths
 
 You should usually keep unchanged:
@@ -204,7 +257,8 @@ For a multi-sprint mission:
 2. keep `MISSION_MANIFEST.md` as the only authored mission ledger
 3. refresh mission recall before checkpointing or authorizing the next unit
 4. run mission lint before advancing each already-authorized mission unit
-5. update mission and project state docs in the same closure cycle
+5. run mission cursor lint before resuming from `MISSION_CURSOR.json`, if using the optional cursor adapter
+6. update mission and project state docs in the same closure cycle
 
 For a PO-authored planning lane:
 1. lock a Phase Intent
@@ -219,6 +273,7 @@ For a PO-authored planning lane:
 - not a dump of private run history
 - not a codegen framework
 - not a second source of truth for your project state
+- not a second autonomy governance kernel when your repo already has one
 - not a place where generic process docs silently fork from the tooling and lint contracts
 
 Keep it generic. Keep it reusable. Keep project-specific content in the adopting repo.

@@ -1,9 +1,10 @@
 # docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.11)
 
 ## Version
-v4.11
+v4.12
 
 ## Change Log
+- v4.12 (2026-05-18): Added optional Codex Mission Goal Continuity adapter lint contract for derived `MISSION_CURSOR.json`; it does not alter core stage contracts or mission ledger authority.
 - v4.11 (2026-05-09): Added Stage F verification tiers and optional `verification_manifest.yaml` for execution-enabled and Mission Mode runs.
 - v4.10 (2026-04-26): Added stage-lint as a deterministic per-stage handoff/output check before advancing to the next stage.
 - v4.9 (2026-04-26): Added post-I2 pack-lint validation as a deterministic evidence check before human Go or No-go review.
@@ -22,6 +23,7 @@ v4.11
 - No stage may complete unless its exit criteria pass.
 - Pre-run knowledge lint MUST pass (`bash scripts/knowledge_lint.sh`) before `STAGE_A` starts, and output MUST be persisted at `docs/Factory/runs/<RUN_ID>/KNOWLEDGE_LINT.txt`.
 - If the run is advancing a unit inside an already-authorized mission, pre-run mission lint MUST pass (`bash scripts/mission_lint.sh <MISSION_ID>`) before `STAGE_A` starts, and output MUST be persisted at `docs/Factory/runs/<RUN_ID>/MISSION_LINT.txt`.
+- If the optional Codex Mission Goal Continuity adapter is enabled, mission cursor lint MUST pass (`bash scripts/mission_cursor_lint.sh <MISSION_ID>`) before an agent continues from `MISSION_CURSOR.json` or an external goal/bookmark. This check is additive and does not replace `mission_lint.sh`.
 - Every stage produces `pack/HANDOFF/HANDOFF_STAGE_<STAGE_CODE>.md` containing:
   - outputs produced
   - changes made
@@ -84,6 +86,7 @@ If Mission Mode is enabled, mission root additionally produces:
 - `docs/Factory/missions/<MISSION_ID>/MISSION_CHECKPOINT.md`
 - `docs/Factory/missions/<MISSION_ID>/MISSION_COMPLETION_REPORT.md`
 - `docs/Factory/missions/<MISSION_ID>/MISSION_EXECUTION_PROMPT.md` (optional)
+- `docs/Factory/missions/<MISSION_ID>/MISSION_CURSOR.json` (optional derived resume cursor for Codex Mission Goal Continuity adapter)
 
 If the run is advancing a unit inside an already-authorized mission, run root additionally produces:
 - `docs/Factory/runs/<RUN_ID>/MISSION_LINT.txt`

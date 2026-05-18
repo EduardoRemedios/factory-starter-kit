@@ -1,9 +1,10 @@
 # Factory Harness Adapters
 
 ## Version
-v0.1
+v0.2
 
 ## Change Log
+- v0.2 (2026-05-18): Added generic Agent Loop Bridge adapter references for structured cross-agent handoffs.
 - v0.1 (2026-04-26): Initial harness adapter guidance for running the same Factory contracts across Codex, Claude Code, Cursor, and GitHub review workflows.
 
 ## Purpose
@@ -39,6 +40,11 @@ Harness-specific docs may optimize how an agent works, but they must preserve:
 | GitHub code review | PR review against a Factory pack or checklist | Review evidence, do not replace pack-lint or merge gates |
 | Claude Code | Alternate local agent harness | Use same `AGENTS.md`, run the same validators, and avoid harness-specific contract drift |
 | Cursor | IDE-local agent harness | Use same `AGENTS.md`, run the same validators, and avoid IDE-only hidden state |
+
+## Related Adapters
+
+- [Agent Loop Bridge](AGENT_LOOP_BRIDGE.md): review-only structured handoff pattern between producer and reviewer agent lanes, with PR/CI and Factory artifact evidence.
+- [Agent Loop Bridge Manual Runbook](AGENT_LOOP_BRIDGE_MANUAL_RUNBOOK.md): manual Phase 1 runbook with capability preflight, validator usage, and review-only hard stops.
 
 ## Mandatory Cross-Harness Rules
 

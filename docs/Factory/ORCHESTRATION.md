@@ -1,9 +1,12 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.8
+v1.11
 
 ## Change Log
+- v1.11 (2026-05-18): Added Factory v3 / AEGIS boundary guidance for repositories that also use a lower-level autonomy governance kernel.
+- v1.10 (2026-05-18): Added optional support-helper guidance for task memory, Repo Cartographer, and Agent Loop Bridge.
+- v1.9 (2026-05-18): Added optional Codex Mission Goal Continuity adapter guidance for derived `MISSION_CURSOR.json` and `mission_cursor_lint.sh`; core Factory flow remains unchanged.
 - v1.8 (2026-05-09): Added verification-left-shift v1 guidance: Stage F verification tiers, optional `verification_manifest.yaml`, and MS-00 verification scaffold for execution runs.
 - v1.7 (2026-04-26): Added `factoryctl metrics-init` to instantiate `RUN_METRICS.md` from the canonical template.
 - v1.6 (2026-04-26): Added optional `RUN_METRICS.md` run telemetry template for measuring Factory speed, drift, validator failures, harness/model usage, and cleanup burden.
@@ -56,8 +59,9 @@ Rules:
 1. Mission Mode does not replace the single-sprint A→I2 flow.
 2. `MISSION_MANIFEST.md` remains the only authored mission ledger.
 3. If you are advancing a unit inside an already-authorized mission, run `bash scripts/mission_lint.sh <MISSION_ID>` before Stage A and persist output as `MISSION_LINT.txt` in the run root.
-4. Mission updates must happen in the same closure cycle as the underlying unit evidence.
-5. If mission continuity is unclear, halt instead of guessing.
+4. The optional Codex Mission Goal Continuity adapter may use a derived `MISSION_CURSOR.json`, but the cursor is never mission authority.
+5. Mission updates must happen in the same closure cycle as the underlying unit evidence.
+6. If mission continuity is unclear, halt instead of guessing.
 
 ## 0.5 Product Owner Lane (Optional, Upstream of Factory)
 The optional Product Owner process sits upstream of the Factory. It governs:
@@ -79,6 +83,26 @@ For `EXECUTION_ENABLED` and Mission Mode runs, Stage F should produce `pack/veri
 
 Execution micro-sprints may start with `MS-00 Verification Scaffold`: land or confirm tests, fixtures, no-touch checks, or static validators before feature implementation begins.
 
+## 0.7 Support Helpers (Optional, Advisory)
+The starter kit includes optional support helpers:
+- Task memory: `./scripts/factoryctl memory-init`, `memory-suggest`, `memory-log`, and `memory-review`.
+- Repo Cartographer: `./scripts/cartographer` for advisory repository snapshots.
+- Agent Loop Bridge: `docs/Factory/Harnesses/AGENT_LOOP_BRIDGE.md` and `scripts/agent_loop_bridge_validate.py` for review-only structured handoffs.
+
+These helpers are advisory. They do not replace Factory source artifacts, stage-lint, pack-lint, merge preflight, or human Go/No-go.
+
+## 0.8 External Governance Kernel Boundary (Optional, HARD when present)
+Some repositories may use a lower-level autonomy governance kernel such as AEGIS.
+
+When such a kernel exists:
+1. Factory remains the SDLC mission-governance layer for coding-agent work.
+2. The external kernel remains the runtime authority, policy, evidence, and proof layer.
+3. Factory must not create a second source of truth for runtime authority, evidence, leases, or mission state.
+4. Factory artifacts may map to kernel inputs through an explicit project adapter.
+5. Any change to kernel authority, policy, evidence, safety, sandbox, ledger, verification, or runtime-action paths defaults to high-risk Factory governance.
+
+Before adding Factory v3 mission-governance features that overlap with a kernel, review `docs/Factory/AEGIS_BOUNDARY.md`.
+
 ## 1. Prerequisites
 Before a run starts, you need:
 1. a raw brief
@@ -87,6 +111,8 @@ Before a run starts, you need:
    - `docs/ROADMAP.md`
    - `docs/CHANGELOG.md`
 3. the Factory docs:
+   - `docs/Factory/ARCHITECTURE.md`
+   - `docs/Factory/AEGIS_BOUNDARY.md`
    - `docs/Factory/ORCHESTRATION.md`
    - `docs/Factory/MISSION_MODE.md`
    - `docs/Factory/SCRATCHPAD.md`
@@ -102,7 +128,14 @@ Before a run starts, you need:
 7. optional run telemetry template:
    - `docs/Factory/templates/RUN_METRICS_TEMPLATE.md`
    - `./scripts/factoryctl metrics-init --run <RUN_ID>`
-8. if using the optional PO lane:
+8. optional Codex Mission Goal Continuity adapter:
+   - `scripts/mission_cursor_lint.sh`
+   - `docs/Factory/templates/MISSION_CURSOR_TEMPLATE.json`
+9. optional support helpers:
+   - `scripts/cartographer`
+   - `scripts/agent_loop_bridge_validate.py`
+   - `docs/Factory/Harnesses/AGENT_LOOP_BRIDGE.md`
+10. if using the optional PO lane:
    - `docs/Factory/ProductOwner/PO_PROCESS.md`
    - `docs/Factory/ProductOwner/PO_ROLE_DEFINITION.md`
    - `docs/Factory/ProductOwner/templates/`
@@ -128,10 +161,14 @@ The Root Planner should:
    - run `bash scripts/mission_lint.sh <MISSION_ID>`
    - persist `MISSION_LINT.txt`
    - halt if mission lint fails
-12. if the raw brief came from the optional PO lane:
+12. if the optional Codex Mission Goal Continuity adapter is enabled:
+   - confirm `docs/Factory/missions/<MISSION_ID>/MISSION_CURSOR.json` exists before using it
+   - run `bash scripts/mission_cursor_lint.sh <MISSION_ID>` before continuing from the cursor or any external goal/bookmark
+   - halt if mission cursor lint fails; repair source artifacts or regenerate the cursor from valid artifacts
+13. if the raw brief came from the optional PO lane:
    - confirm the brief already passed the Brief Review gate
    - treat missing upstream recall or review evidence as blocking
-13. if collecting process telemetry, run `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md`
+14. if collecting process telemetry, run `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md`
 
 ## 3. Roles
 The default role split is:
@@ -209,6 +246,7 @@ If Mission Mode is active:
 3. run mission lint before advancing an already-authorized unit
 4. update the mission manifest when a unit reaches `pack_complete` or `closed_go`
 5. update project state docs in the same cycle for GO closures
+6. if using `MISSION_CURSOR.json`, run `bash scripts/mission_cursor_lint.sh <MISSION_ID>` before continuing and treat the cursor as a derived resume aid only
 
 ## 7. Error Handling
 Halt when:
@@ -218,6 +256,7 @@ Halt when:
 - a downstream artifact contradicts locked intent
 - execution is attempted without authorization
 - mission continuity is broken or ambiguous
+- mission cursor lint fails or the cursor contradicts mission source artifacts
 - a PO-authored brief enters the Factory without upstream Brief Review PASS
 
 ## 8. Minimal Output Set

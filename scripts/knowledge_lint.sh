@@ -39,7 +39,12 @@ required_files=(
   "docs/ROADMAP.md"
   "docs/CHANGELOG.md"
   "docs/Factory/ARCHITECTURE.md"
+  "docs/Factory/AEGIS_BOUNDARY.md"
+  "docs/Factory/MERGE_PROTOCOL.md"
   "docs/Factory/ORCHESTRATION.md"
+  "docs/Factory/TASK_MEMORY.md"
+  "docs/Factory/Harnesses/AGENT_LOOP_BRIDGE.md"
+  "docs/Factory/Harnesses/AGENT_LOOP_BRIDGE_MANUAL_RUNBOOK.md"
   "docs/Factory/Harnesses/README.md"
   "docs/Factory/Harnesses/CODEX.md"
   "docs/Factory/MISSION_MODE.md"
@@ -56,6 +61,7 @@ required_files=(
   "docs/Factory/templates/RUN_METRICS_TEMPLATE.md"
   "docs/Factory/templates/VERIFICATION_MANIFEST_TEMPLATE.yaml"
   "docs/Factory/templates/MISSION_MANIFEST_TEMPLATE.md"
+  "docs/Factory/templates/MISSION_CURSOR_TEMPLATE.json"
   "docs/Factory/templates/MISSION_CHECKPOINT_TEMPLATE.md"
   "docs/Factory/templates/MISSION_EXECUTION_PROMPT_TEMPLATE.md"
   "docs/Factory/templates/MISSION_COMPLETION_REPORT_TEMPLATE.md"
@@ -71,7 +77,14 @@ required_files=(
   "scripts/factory_pack_lint.py"
   "scripts/factory_run_metrics.py"
   "scripts/factory_stage_lint.py"
+  "scripts/factory_task_memory.py"
+  "scripts/agent_loop_bridge_validate.py"
+  "scripts/cartographer"
+  "scripts/mission_cursor_lint.sh"
   "scripts/mission_lint.sh"
+  "tools/repo_cartographer/run.py"
+  "tools/repo_cartographer/README.md"
+  "tests/fixtures/agent_loop_bridge/valid_handoff.json"
   ".agents/skills/factory-root-planner/SKILL.md"
   ".agents/skills/factory-purple-gate/SKILL.md"
   ".agents/skills/factory-pack-consolidator/SKILL.md"
@@ -115,6 +128,9 @@ has_pattern 'CONTEXT_RECALL_REPORT\.md' docs/Factory/ORCHESTRATION.md \
 has_pattern 'mission_lint\.sh' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing mission-lint contract"
 
+has_pattern 'mission_cursor_lint\.sh' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing mission-cursor lint contract"
+
 has_pattern 'EXECUTION_MODE\.txt' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing run-root execution mode contract"
 
@@ -135,6 +151,30 @@ has_pattern 'factoryctl metrics-init --run <RUN_ID>' docs/Factory/ORCHESTRATION.
 
 has_pattern 'factoryctl metrics-init --run <RUN_ID>' AGENTS.md \
   || fail "AGENTS.md missing metrics-init canonical command"
+
+has_pattern 'factoryctl memory-init' AGENTS.md \
+  || fail "AGENTS.md missing task-memory canonical command"
+
+has_pattern 'factoryctl memory-suggest' docs/Factory/TASK_MEMORY.md \
+  || fail "Task memory docs missing memory-suggest command"
+
+has_pattern 'scripts/cartographer' AGENTS.md \
+  || fail "AGENTS.md missing cartographer canonical command"
+
+has_pattern 'factory\.handoff\.v1' docs/Factory/Harnesses/AGENT_LOOP_BRIDGE.md \
+  || fail "Agent Loop Bridge docs missing handoff event type"
+
+has_pattern 'Factory v3 should be AEGIS-compatible but not AEGIS-dependent' docs/Factory/AEGIS_BOUNDARY.md \
+  || fail "AEGIS boundary doc missing compatibility rule"
+
+has_pattern 'second runtime governance kernel' docs/Factory/ARCHITECTURE.md \
+  || fail "Architecture missing runtime-kernel non-goal"
+
+has_pattern '^## 0\.8 External Governance Kernel Boundary \(Optional, HARD when present\)$' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing external governance kernel boundary section"
+
+python3 scripts/agent_loop_bridge_validate.py tests/fixtures/agent_loop_bridge/valid_handoff.json --json >/dev/null \
+  || fail "Agent Loop Bridge validator fixture probe failed"
 
 has_pattern '^## Stage Timing$' docs/Factory/templates/RUN_METRICS_TEMPLATE.md \
   || fail "Run metrics template missing Stage Timing section"
@@ -199,6 +239,21 @@ has_pattern 'CONTEXT_RECALL_REPORT\.md' docs/Factory/Spec/NAMING_CONVENTIONS.md 
 has_pattern 'MISSION_CONTEXT_RECALL_REPORT\.md' docs/Factory/MISSION_MODE.md \
   || fail "Mission mode contract missing mission context recall evidence"
 
+has_pattern 'MISSION_CURSOR\.json' docs/Factory/MISSION_MODE.md \
+  || fail "Mission mode contract missing mission cursor adapter guidance"
+
+has_pattern 'MISSION_CURSOR\.json' docs/Factory/Spec/NAMING_CONVENTIONS.md \
+  || fail "Naming conventions missing mission cursor artifact name"
+
+has_pattern 'MISSION_CURSOR\.json' docs/Factory/Spec/STAGE_CONTRACTS.md \
+  || fail "Stage contracts missing mission cursor artifact contract"
+
+has_pattern '"cursor_kind": "derived_resume_cursor"' docs/Factory/templates/MISSION_CURSOR_TEMPLATE.json \
+  || fail "Mission cursor template missing derived cursor kind"
+
+has_pattern 'Merge preflight passed\. Would you like to merge\?' docs/Factory/MERGE_PROTOCOL.md \
+  || fail "Merge protocol missing canonical merge authorization prompt"
+
 has_pattern '^### 2\.2\.1 Mission unit status semantics$' docs/Factory/MISSION_MODE.md \
   || fail "Mission mode contract missing mission unit status semantics section"
 
@@ -237,6 +292,15 @@ has_pattern '^C9\. Knowledge lint preflight passed and evidence artifact is pres
 
 ./scripts/factoryctl metrics-init --help >/dev/null \
   || fail "factoryctl metrics-init help probe failed"
+
+./scripts/factoryctl memory-init --help >/dev/null \
+  || fail "factoryctl memory-init help probe failed"
+
+./scripts/factoryctl memory-suggest --help >/dev/null \
+  || fail "factoryctl memory-suggest help probe failed"
+
+./scripts/cartographer --help >/dev/null \
+  || fail "cartographer help probe failed"
 
 echo "knowledge_lint: PASS"
 echo "knowledge_lint: checked_files=${#required_files[@]} active_pitfalls=$pitfall_count"

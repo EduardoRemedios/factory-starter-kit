@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- Add optional Mission Cursor continuity support: `MISSION_CURSOR_TEMPLATE.json`, `mission_cursor_lint.sh`, manifest `Unit ID` support, and generic Codex goal/bookmark guidance.
+- Add generic tool-agnostic merge authorization protocol guidance in `docs/Factory/MERGE_PROTOCOL.md`.
+- Add optional task-memory support through `factoryctl memory-init`, `memory-suggest`, `memory-log`, and `memory-review`.
+- Add generic Repo Cartographer advisory scans under `scripts/cartographer` and `tools/repo_cartographer/`.
+- Add generic Agent Loop Bridge review-only handoff docs and deterministic JSON fixture validator.
+- Add `docs/Factory/AEGIS_BOUNDARY.md` to align Factory v3 mission governance with AEGIS-style autonomy-kernel primitives without duplicating runtime enforcement.
 - Add verification-left-shift v1: verification tiers, optional `verification_manifest.yaml`, manifest template, and `pack-lint` manifest validation.
 - Add `factoryctl metrics-init` to instantiate `RUN_METRICS.md` from the canonical template.
 - Add `RUN_METRICS_TEMPLATE.md` for lightweight Factory process telemetry after real runs.

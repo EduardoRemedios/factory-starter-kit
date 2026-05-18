@@ -1,9 +1,11 @@
 # Factory Architecture
 
 ## Version
-v0.1
+v0.3
 
 ## Change Log
+- v0.3 (2026-05-18): Added Factory v3 / AEGIS boundary guidance so mission governance can align with autonomy-kernel primitives without duplicating runtime enforcement.
+- v0.2 (2026-05-18): Added task memory, Repo Cartographer, and Agent Loop Bridge as optional extension examples.
 - v0.1 (2026-04-26): Initial portable architecture model for Factory Core, harness adapters, validators, extension packs, and project adapters.
 
 ## Purpose
@@ -21,6 +23,7 @@ Factory Core is the portable kernel:
 - artifact templates
 - execution-mode rules
 - Mission Mode rules
+- Factory v3 / external governance-kernel boundary rules
 - context recall contract
 - Product Owner lane contract
 - pack audit requirements
@@ -63,6 +66,9 @@ Extension packs are optional accelerators around the core workflow.
 
 Examples:
 - role-specific skills for Root Planner, Purple Gate, Pack Consolidator, and Execution Closeout
+- task-memory runbook helpers
+- Repo Cartographer advisory scans
+- Agent Loop Bridge review-only handoff validators
 - Codex hook examples
 - GitHub PR review helpers
 - Slack or email status helpers
@@ -84,6 +90,14 @@ Each adopting repository owns its project adapter:
 
 Project adapters are allowed to be opinionated. Factory Core should remain neutral.
 
+### 6. External Governance Kernels
+
+Some adopting repositories may already have a lower-level governance runtime such as AEGIS: a system that enforces autonomy leases, policy gates, runtime evidence, sandboxing, verification, or production action mediation.
+
+Factory must not duplicate those kernel responsibilities. In those repositories, Factory should act as the SDLC mission-governance profile that produces coding-agent contracts and evidence, while the lower-level kernel remains the runtime authority and proof layer.
+
+See `docs/Factory/AEGIS_BOUNDARY.md` for the required boundary and crosswalk.
+
 ## Source-Of-Truth Rule
 
 Generic Factory improvements should be authored in the starter-kit repository first, then imported into downstream projects.
@@ -98,6 +112,7 @@ Factory is not:
 - a project management suite
 - a private run-history archive
 - a product-specific compliance framework
+- a second runtime governance kernel
 
 Factory can support high-compliance domains, but it is not limited to them.
 

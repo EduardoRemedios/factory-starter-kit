@@ -11,9 +11,10 @@ VALIDATION:
 -->
 
 ## Version
-v2
+v3
 
 ## Change Log
+- v3 (2026-05-18): Added `Unit ID` column for optional derived mission resume cursor validation.
 - v2 (2026-03-10): Normalized mission unit status vocabulary to distinguish planning-only pack closure from execution GO and to explicitly allow `planning_signal` units.
 - v1 (YYYY-MM-DD): Initial mission manifest.
 
@@ -32,10 +33,10 @@ One paragraph describing the mission objective and boundaries.
 - Lock Timestamp:
 
 ## Ordered Mission Units
-| Order | RUN_ID | SPRINT_ID | Pack Path | Depends On | Status (planned/running/pack_complete/closed_go/failed/skipped/planning_signal) |
-|---:|---|---|---|---|---|
-| 1 | RUN_... | SPRINT_... | docs/Factory/runs/<RUN_ID>/pack | none | planned |
-| 2 | RUN_... | SPRINT_... | docs/Factory/runs/<RUN_ID>/pack | 1 | planned |
+| Order | Unit ID | RUN_ID | SPRINT_ID | Pack Path | Depends On | Status (planned/running/pack_complete/closed_go/failed/skipped/planning_signal) |
+|---:|---|---|---|---|---|---|
+| 1 | UNIT-01 | RUN_... | SPRINT_... | docs/Factory/runs/<RUN_ID>/pack | none | planned |
+| 2 | UNIT-02 | RUN_... | SPRINT_... | docs/Factory/runs/<RUN_ID>/pack | 1 | planned |
 
 Status semantics:
 - `pack_complete` is the terminal state for planning-only units after pack closure.
