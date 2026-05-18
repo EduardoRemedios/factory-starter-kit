@@ -15,11 +15,12 @@
 | SPRINT_20260518_003 | Factory v3 advisory lint prototype | Done | 2026-05-18 | `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/pack/PACK_AUDIT_REPORT.md`; `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/EXECUTION_CLOSEOUT.md`; `scripts/factory_v3_advisory_lint.py` |
 | SPRINT_20260518_004 | Factory v3 advisory lint pilot evidence | Done | 2026-05-18 | `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/PILOT_USAGE_REPORT.md`; `tests/fixtures/factory_v3_advisory_lint/pilot_usage/expected.json` |
 | SPRINT_20260518_005 | Factory v3 real-branch advisory lint pilot | Done | 2026-05-18 | `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/REAL_BRANCH_PILOT_REPORT.md`; `docs/Factory/v3/PILOT_PROFILE_PLAN.md` |
+| SPRINT_20260518_006 | Factory v3 non-empty advisory lint pilot | Done | 2026-05-18 | `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/REAL_BRANCH_WARNING_PILOT_REPORT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| Non-empty real-branch warning review | Next | Run the standalone advisory lint on a future actual Factory v3 docs branch that produces findings, then classify accepted, false-positive, needs-more-context, and deferred outcomes. |
-| Advisory check expansion | Blocked | Wait for additional real-branch pilot evidence before adding more checks. |
+| Promotion-evidence real-branch warning review | Next | Exercise a future real-doc branch that tests promotion-evidence warnings without retaining unsafe release language. |
+| Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |
 | `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack, false-positive review evidence, and explicit human release approval. |

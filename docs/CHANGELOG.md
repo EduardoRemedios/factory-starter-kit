@@ -7,4 +7,5 @@
 - Added execution closeout evidence and a deterministic pilot usage fixture for Factory v3 advisory lint.
 - Recorded canonical tracking state for the advisory lint prototype, closeout evidence, pilot result, and next blocked/allowed steps.
 - Added the first real-branch advisory lint pilot report with zero findings and no matcher tuning.
+- Added a non-empty real-branch advisory lint pilot report with 2 accepted findings, remediation, and no matcher tuning.
 - Kept Factory v3 advisory lint non-blocking and outside all required Factory v2 gates.
