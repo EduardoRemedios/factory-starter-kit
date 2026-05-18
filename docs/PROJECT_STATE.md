@@ -20,7 +20,7 @@
 
 ## Current Tracking Snapshot
 
-- Current `main` evidence head: `b272eed Update Factory v3 canonical tracking docs`.
+- Current tracked evidence: `SPRINT_20260518_007` promotion-evidence advisory lint pilot plan.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -55,6 +55,7 @@ python3 scripts/factory_v3_advisory_lint.py --target tests/fixtures/factory_v3_a
 # Verify the relevant Factory packs still lint
 ./scripts/factoryctl pack-lint --run RUN_20260518_1155_v3_advisory_validator_design
 ./scripts/factoryctl pack-lint --run RUN_20260518_1235_v3_advisory_lint_impl_plan
+./scripts/factoryctl pack-lint --run RUN_20260518_1508_v3_promotion_evidence_plan
 
 # Run your test suite
 # (add your project's test command here)
