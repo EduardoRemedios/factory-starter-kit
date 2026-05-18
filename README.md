@@ -22,6 +22,7 @@ The reusable framework layer:
 - Factory v3 / AEGIS boundary crosswalk for repos that also use a lower-level autonomy governance kernel
 - Harness adapter guidance for Codex and other AI coding tools
 - Optional Product Owner pre-Factory process
+- Factory v3 research-only notes under `docs/Factory/v3/`
 - Starter lint scripts
 - Starter project-state placeholders
 
@@ -41,12 +42,14 @@ This repository currently ships the Factory v2 operating core:
 - deterministic stage-lint, pack-lint, context recall, verification manifest, and merge authorization guidance
 - optional support helpers such as task memory, Repo Cartographer, Mission Cursor continuity, and Agent Loop Bridge
 
-The repository also includes early Factory v3 boundary notes. These do not replace the v2 pipeline. They define how a future mission-governed autonomous-execution model should avoid duplicating lower-level autonomy governance kernels such as AEGIS.
+The repository also includes Factory v3 research and boundary notes. These do not replace the v2 pipeline. They define how a future mission-governed autonomous-execution model should be researched, stress-tested, evaluated, and eventually promoted without duplicating lower-level autonomy governance kernels such as AEGIS.
 
 In short:
 - Factory v2 remains the usable process in this starter kit.
 - Recent updates generalize lessons from downstream Factory usage back into the starter kit.
-- Factory v3 work is currently represented as strategic boundary guidance, especially `docs/Factory/AEGIS_BOUNDARY.md`.
+- Factory v3 work is currently research/design only under `docs/Factory/v3/` and boundary guidance in `docs/Factory/AEGIS_BOUNDARY.md`.
+- Factory v3 is AEGIS-compatible but not AEGIS-dependent; AEGIS is not required to use this starter kit.
+- Factory v3 may only be promoted after it has been planned, evaluated, and hardened through Factory v2 governance.
 
 ## Quick Start
 
@@ -162,7 +165,7 @@ your-repo/
 │       │   ├── STAGE_CONTRACTS.md
 │       │   ├── NAMING_CONVENTIONS.md
 │       │   └── PURPLE_GATE_CHECKLIST.md
-│       └── templates/
+│       ├── templates/
 │           ├── CONTEXT_RECALL_REPORT_TEMPLATE.md
 │           ├── EXECUTION_PROMPT_TEMPLATE.md
 │           ├── HANDOFF_STAGE_TEMPLATE.md
@@ -178,7 +181,16 @@ your-repo/
 │           ├── SPRINT_ENVELOPE_REDTEAM_TEMPLATE.md
 │           ├── SPRINT_ENVELOPE_TEMPLATE.md
 │           ├── TRACEABILITY_MATRIX_TEMPLATE.md
-│           └── VERIFICATION_MANIFEST_TEMPLATE.yaml
+│       │   └── VERIFICATION_MANIFEST_TEMPLATE.yaml
+│       └── v3/
+│           ├── README.md
+│           ├── STRATEGY.md
+│           ├── NON_GOALS_AND_BOUNDARIES.md
+│           ├── CONCEPT_CANDIDATES.md
+│           ├── SHADOW_SCHEMA_CANDIDATES.md
+│           ├── ADVISORY_VALIDATOR_PLAN.md
+│           ├── PILOT_PROFILE_PLAN.md
+│           └── PROMOTION_CRITERIA.md
 ```
 
 This starter kit intentionally does not ship product-specific run packs, finished state docs, historical missions, or real PO phase artifacts.

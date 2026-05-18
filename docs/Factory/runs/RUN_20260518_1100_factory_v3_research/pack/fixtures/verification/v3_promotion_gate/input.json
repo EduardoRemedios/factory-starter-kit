@@ -1,0 +1,10 @@
+{
+  "factory_v2_core_intact": true,
+  "v3_docs_research_only": true,
+  "shadow_schemas_enforced": false,
+  "advisory_validator_results_captured": true,
+  "pilot_feedback_captured": true,
+  "aegis_dependency_introduced": false,
+  "runtime_kernel_behavior_introduced": false,
+  "human_release_approval": false
+}
