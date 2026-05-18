@@ -8,4 +8,5 @@
 - Recorded canonical tracking state for the advisory lint prototype, closeout evidence, pilot result, and next blocked/allowed steps.
 - Added the first real-branch advisory lint pilot report with zero findings and no matcher tuning.
 - Added a non-empty real-branch advisory lint pilot report with 2 accepted findings, remediation, and no matcher tuning.
+- Added a planning-only Factory v2 pack for the next promotion-evidence advisory lint pilot.
 - Kept Factory v3 advisory lint non-blocking and outside all required Factory v2 gates.
