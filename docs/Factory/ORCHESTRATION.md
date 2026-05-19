@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.11
+v1.12
 
 ## Change Log
+- v1.12 (2026-05-19): Added SIMPLE-CODE-GATE v2 as a planning and execution guardrail for implementation work.
 - v1.11 (2026-05-18): Added Factory v3 / AEGIS boundary guidance for repositories that also use a lower-level autonomy governance kernel.
 - v1.10 (2026-05-18): Added optional support-helper guidance for task memory, Repo Cartographer, and Agent Loop Bridge.
 - v1.9 (2026-05-18): Added optional Codex Mission Goal Continuity adapter guidance for derived `MISSION_CURSOR.json` and `mission_cursor_lint.sh`; core Factory flow remains unchanged.
@@ -102,6 +103,16 @@ When such a kernel exists:
 5. Any change to kernel authority, policy, evidence, safety, sandbox, ledger, verification, or runtime-action paths defaults to high-risk Factory governance.
 
 Before adding Factory v3 mission-governance features that overlap with a kernel, review `docs/Factory/AEGIS_BOUNDARY.md`.
+
+## 0.9 SIMPLE-CODE-GATE (v2)
+For code-changing runs, planning and execution must apply root `AGENTS.md` section `3.1) SIMPLE-CODE-GATE (v2)`.
+
+Required effect:
+1. Prefer the smallest clear, behavior-preserving change.
+2. Avoid code bloat, awkward abstraction layers, brittle request-path mutation, dependency creep, and silent failure swallowing.
+3. Add abstractions only when they remove real duplication, name a stable domain concept, reduce branching or call-site complexity, and have a clear owner/boundary.
+4. Do not add generic frameworks, registries, strategy layers, plugin seams, or broad indirection for speculative future variation.
+5. If complexity or duplication is intentionally accepted, bind it to a verification hook, deferred decision, scale metric, repeated pattern, or business condition.
 
 ## 1. Prerequisites
 Before a run starts, you need:
@@ -235,7 +246,7 @@ The Factory does not execute the sprint. It produces the contract for execution.
 ### 6.1 Execution Prompt Generation (execution-enabled runs only)
 If the run is `EXECUTION_ENABLED` and the pack passes:
 1. generate `EXECUTION_PROMPT.md`
-2. include reading order, micro-sprints, constraints, verification commands, `verification_manifest.yaml` checks when present, and an exit checklist
+2. include reading order, micro-sprints, constraints, SIMPLE-CODE-GATE v2 for code-changing work, verification commands, `verification_manifest.yaml` checks when present, and an exit checklist
 3. do not generate it for `PLANNING_ONLY` runs
 4. do not initialize downstream runs unless fan-out was explicitly approved
 

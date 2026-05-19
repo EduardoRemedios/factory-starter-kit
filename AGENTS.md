@@ -39,6 +39,29 @@ Purpose:
 - Keep continuity artifacts as evidence aids, not as replacement authority for the underlying source documents.
 - If an adopting repo has AEGIS or another autonomy governance kernel, do not duplicate kernel authority, policy, evidence, lease, or runtime-action behavior inside Factory.
 
+## 3.1) SIMPLE-CODE-GATE (v2)
+Core Directive:
+- Implement the smallest clear, behavior-preserving change.
+- Prefer direct, readable, local code over cleverness or premature abstraction.
+
+Banned List:
+- No Code Bloat: avoid copy-paste chunks, awkward abstraction layers, and bloated multi-purpose helpers.
+- No Spooky Action: avoid brittle request-path mutation, hidden side effects, or passing unvalidated junk through middleware/boundary layers.
+- No Dependency Creep: use the standard library and existing repo utilities first. Do not introduce external packages unless explicitly authorized and justified.
+- No Silent Failures: do not swallow exceptions or return ambiguous `None`/empty fallbacks just to keep a path limping along. Fail fast for invalid config/init/state. In runtime policy paths, fail closed explicitly with reason codes, evidence, and tests.
+
+Abstraction Firewall:
+- Add an abstraction or helper only when it passes all four checks:
+  1. Removes real, existing duplication.
+  2. Names a stable domain concept.
+  3. Reduces branching or call-site complexity.
+  4. Has a clear owner/boundary in the current architecture.
+
+Future-Proofing and Context:
+- Do not add generic frameworks, registries, strategy layers, plugin seams, or broad indirection just because future variation is possible.
+- If future variation is uncertain, keep the code explicit and document the specific scale metric, repeated pattern, or business condition that will trigger a refactor.
+- Comments must explain why, not what. No line-by-line narration of obvious logic.
+
 ## 4) Factory Run Preconditions
 - Run `bash scripts/knowledge_lint.sh` before Stage A.
 - Persist lint output in run root as `KNOWLEDGE_LINT.txt`.

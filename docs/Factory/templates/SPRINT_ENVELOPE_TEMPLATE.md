@@ -10,6 +10,7 @@ VALIDATION:
 - If verification_manifest.yaml exists, must reference it and summarize how execution should consume it.
 - Must include explicit stop/go gates aligned to micro_sprints.md.
 - Must not introduce new requirements; any new requirement MUST be tagged [SCOPE EXPANSION] and marked BLOCKING.
+- For code-changing sprints, must include SIMPLE-CODE-GATE v2 as an implementation constraint.
 - Domain Areas must list only concrete values from intent.md Scope → Domain Areas; no ellipsis or placeholder lists allowed.
 - Must include Iteration metadata for envelope review: Iteration: k of max 2 (used in STAGE_I cycles).
 - No placeholders may remain (see DEFINITIONS.md §12).
@@ -17,9 +18,10 @@ VALIDATION:
 -->
 
 ## Version
-v1
+v1.1
 
 ## Change Log
+- v1.1 (2026-05-19): Added SIMPLE-CODE-GATE v2 implementation constraint.
 - v1 (YYYY-MM-DD): Initial sprint envelope created for this run.
 
 ## Sprint Metadata
@@ -65,6 +67,15 @@ List only values explicitly allowed by intent.md Scope → Domain Areas.
 Every Critical/High constraint must appear in traceability_matrix.md.
 - C-01 (Critical/High/Medium/Low): 
 - C-02: 
+
+### SIMPLE-CODE-GATE (v2) Constraint (for code-changing sprints)
+- Implement the smallest clear, behavior-preserving change.
+- Prefer direct, readable, local code over cleverness or premature abstraction.
+- Avoid copy-paste chunks, awkward abstraction layers, bloated multi-purpose helpers, brittle request-path mutation, hidden side effects, dependency creep, and silent failure swallowing.
+- Add abstractions only when they remove real duplication, name a stable domain concept, reduce branching or call-site complexity, and have a clear owner/boundary.
+- Do not add generic frameworks, registries, strategy layers, plugin seams, or broad indirection for speculative future variation.
+- If future variation is uncertain, keep the code explicit and document the specific scale metric, repeated pattern, or business condition that will trigger a refactor.
+- Comments must explain why, not what.
 
 ## Evidence / Receipts Expectations (if applicable)
 - None

@@ -1,9 +1,10 @@
-# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.11)
+# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.13)
 
 ## Version
-v4.12
+v4.13
 
 ## Change Log
+- v4.13 (2026-05-19): Added SIMPLE-CODE-GATE v2 to Stage H and post-gate execution prompt contracts for code-changing runs.
 - v4.12 (2026-05-18): Added optional Codex Mission Goal Continuity adapter lint contract for derived `MISSION_CURSOR.json`; it does not alter core stage contracts or mission ledger authority.
 - v4.11 (2026-05-09): Added Stage F verification tiers and optional `verification_manifest.yaml` for execution-enabled and Mission Mode runs.
 - v4.10 (2026-04-26): Added stage-lint as a deterministic per-stage handoff/output check before advancing to the next stage.
@@ -38,6 +39,7 @@ v4.12
   - `Use the <skill name> skill.`
   - If no relevant skill exists, prompts MUST declare that explicitly and proceed via the stage contract only.
 - Run execution mode defaults to `PLANNING_ONLY` and MUST be persisted in run-root `EXECUTION_MODE.txt`.
+- Code-changing runs MUST apply SIMPLE-CODE-GATE v2 from root `AGENTS.md`: smallest clear behavior-preserving change, no code bloat, no spooky action, no dependency creep, no silent failures, and no awkward or speculative abstractions.
 - `EXECUTION_PROMPT.md` generation and downstream run fan-out are forbidden unless `EXECUTION_MODE.txt` is `EXECUTION_ENABLED`.
 - Mission Mode, if enabled, is additive and MUST NOT alter per-unit stage entry and exit criteria, authorization contracts, or iteration caps.
 
@@ -248,6 +250,7 @@ Exit criteria:
 - envelope includes file-touch budget fields per micro-sprint and in total
 - envelope includes verification steps required before merge and references `verification_plan.md` and `traceability_matrix.md`
 - envelope references `verification_manifest.yaml` when one exists
+- for code-changing sprints, envelope includes SIMPLE-CODE-GATE v2 as an implementation constraint
 - sprint ID conforms to naming conventions and is written to `SPRINT_ID.txt`
 
 ## STAGE_I — Red/Blue on Envelope + Verification
@@ -342,6 +345,7 @@ Exit criteria:
 - prompt is instantiated from `docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md`
 - prompt has no unresolved placeholders
 - prompt includes deterministic skill routing instructions and stage-aligned guardrails
+- for code-changing execution, prompt includes SIMPLE-CODE-GATE v2 and an exit-checklist item for accepted complexity
 
 ## MISSION_WRAPPER (additive, optional — not a replacement stage chain)
 Purpose:

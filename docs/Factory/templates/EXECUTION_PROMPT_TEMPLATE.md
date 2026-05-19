@@ -6,6 +6,7 @@ VALIDATION:
 - Generate only after STAGE_I2 PASS, explicit human "Go", and `EXECUTION_MODE.txt = EXECUTION_ENABLED`.
 - Must include deterministic skill invocation directives for required execution subflows.
 - Must include hard guardrails, gate checks, and verification command contract.
+- Must include SIMPLE-CODE-GATE v2 for code-changing execution.
 - If `pack/verification_manifest.yaml` exists, must include its checks in the verification contract.
 - If external research is in scope, must include run-level source allowlist and evidence metadata rules.
 - No placeholders may remain (see DEFINITIONS.md §12).
@@ -13,9 +14,10 @@ VALIDATION:
 -->
 
 ## Version
-v1
+v1.1
 
 ## Change Log
+- v1.1 (2026-05-19): Added SIMPLE-CODE-GATE v2 implementation guardrail.
 - v1 (YYYY-MM-DD): Initial execution prompt for this run.
 
 ## Run Metadata
@@ -54,6 +56,25 @@ One paragraph: what the execution agent must deliver and what is explicitly out 
 - Keep schema-locked boundaries intact.
 - Keep deterministic ordering and evidence-chain integrity intact.
 - Separate parity requirements from enhancement ideas.
+
+## SIMPLE-CODE-GATE (v2)
+Core Directive:
+- Implement the smallest clear, behavior-preserving change.
+- Prefer direct, readable, local code over cleverness or premature abstraction.
+
+Banned List:
+- No Code Bloat: avoid copy-paste chunks, awkward abstraction layers, and bloated multi-purpose helpers.
+- No Spooky Action: avoid brittle request-path mutation, hidden side effects, or passing unvalidated junk through middleware/boundary layers.
+- No Dependency Creep: use the standard library and existing repo utilities first. Do not introduce external packages unless explicitly authorized and justified.
+- No Silent Failures: do not swallow exceptions or return ambiguous `None`/empty fallbacks just to keep a path limping along. Fail fast for invalid config/init/state. In runtime policy paths, fail closed explicitly with reason codes, evidence, and tests.
+
+Abstraction Firewall:
+- Add an abstraction or helper only when it removes real existing duplication, names a stable domain concept, reduces branching or call-site complexity, and has a clear owner/boundary in the current architecture.
+
+Future-Proofing and Context:
+- Do not add generic frameworks, registries, strategy layers, plugin seams, or broad indirection just because future variation is possible.
+- If future variation is uncertain, keep the code explicit and document the specific scale metric, repeated pattern, or business condition that will trigger a refactor.
+- Comments must explain why, not what. No line-by-line narration of obvious logic.
 
 ## Micro-sprint Execution Sequence
 0. MS-00 (optional verification scaffold):
@@ -101,6 +122,7 @@ If `pack/verification_manifest.yaml` exists:
 
 ## Final Exit Checklist
 - [ ] Scope delivered per envelope and micro-sprints.
+- [ ] SIMPLE-CODE-GATE v2 satisfied or any accepted complexity explicitly documented.
 - [ ] Verification commands all PASS.
 - [ ] Evidence artifacts and reports updated.
 - [ ] Required canonical docs updated (`PROJECT_STATE.md`, `ROADMAP.md`, `CHANGELOG.md`) if outcome is GO.
