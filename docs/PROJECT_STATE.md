@@ -19,10 +19,11 @@
 - A planning-only Factory v2 pack for the next promotion-evidence advisory lint pilot exists at `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/pack/PACK_AUDIT_REPORT.md`.
 - Promotion-evidence pilot evidence exists at `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/PROMOTION_EVIDENCE_PILOT_REPORT.md`.
 - Bounded `V3-A006` matcher tuning closeout evidence exists at `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/A006_MATCHER_TUNING_CLOSEOUT.md`.
+- Post-tuning `V3-A006` real-doc smoke evidence exists at `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/POST_TUNING_A006_SMOKE_REPORT.md`.
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: bounded `V3-A006` matcher tuning closeout.
+- Current tracked evidence: post-tuning `V3-A006` real-doc smoke report.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -31,6 +32,7 @@
 - Latest planning result: promotion-evidence pilot plan pack returns `PASS` and remains `PLANNING_ONLY`.
 - Latest promotion-evidence pilot result: temporary local release claim returned `ADVISORY_PASS` with 0 findings; this is classified as a `V3-A006` false negative / missed signal.
 - Latest matcher tuning result: `V3-A006` now evaluates local promotion or release claim paragraphs and the masked promotion-claim fixture returns `ADVISORY_WARN`.
+- Latest post-tuning smoke result: temporary local release claim returns `ADVISORY_WARN` with accepted `V3-A006` at `docs/Factory/v3/PROMOTION_CRITERIA.md`; final docs return `ADVISORY_PASS`.
 - Latest clean-doc result: `docs/Factory/v3` returns `ADVISORY_PASS`.
 
 ## What Does NOT Exist Yet

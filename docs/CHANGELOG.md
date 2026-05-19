@@ -3,6 +3,7 @@
 ## 2026-05-19
 - Added promotion-evidence advisory lint pilot evidence that classifies a missed `V3-A006` signal and recommends bounded matcher tuning in a later run.
 - Tuned `V3-A006` promotion-evidence matching to catch local release claims masked by target-wide evidence language, with a regression fixture.
+- Added post-tuning `V3-A006` real-doc smoke evidence confirming local release claims are caught while final Factory v3 docs remain clean.
 
 ## 2026-05-18
 - Added Factory v3 Level 0 research evidence and advisory validator design packs.
