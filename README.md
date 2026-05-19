@@ -14,7 +14,7 @@ The reusable framework layer:
 - Context recall tooling and report templates
 - Deterministic pack-lint validation after the final pack audit
 - Optional machine-readable verification manifests for execution-enabled and Mission Mode runs
-- SIMPLE-CODE-GATE v2 for small, direct, behavior-preserving implementation and anti-bloat/anti-awkward-abstraction review
+- SIMPLE-CODE-GATE v2 mandatory guardrail for small, direct, behavior-preserving implementation across Factory v2 and v3
 - Optional Mission Cursor continuity guard for long Codex/agent sessions
 - Tool-agnostic merge authorization protocol guidance
 - Optional task-memory runbook helper through `factoryctl`

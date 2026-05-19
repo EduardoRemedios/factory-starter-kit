@@ -4,7 +4,7 @@
 v4.13
 
 ## Change Log
-- v4.13 (2026-05-19): Added SIMPLE-CODE-GATE v2 to Stage H and post-gate execution prompt contracts for code-changing runs.
+- v4.13 (2026-05-19): Added SIMPLE-CODE-GATE v2 to Stage H and post-gate execution prompt contracts for Factory v2 and v3 code-changing runs.
 - v4.12 (2026-05-18): Added optional Codex Mission Goal Continuity adapter lint contract for derived `MISSION_CURSOR.json`; it does not alter core stage contracts or mission ledger authority.
 - v4.11 (2026-05-09): Added Stage F verification tiers and optional `verification_manifest.yaml` for execution-enabled and Mission Mode runs.
 - v4.10 (2026-04-26): Added stage-lint as a deterministic per-stage handoff/output check before advancing to the next stage.
@@ -39,7 +39,7 @@ v4.13
   - `Use the <skill name> skill.`
   - If no relevant skill exists, prompts MUST declare that explicitly and proceed via the stage contract only.
 - Run execution mode defaults to `PLANNING_ONLY` and MUST be persisted in run-root `EXECUTION_MODE.txt`.
-- Code-changing runs MUST apply SIMPLE-CODE-GATE v2 from root `AGENTS.md`: smallest clear behavior-preserving change, no code bloat, no spooky action, no dependency creep, no silent failures, and no awkward or speculative abstractions.
+- Factory v2 and Factory v3 code-changing runs MUST apply SIMPLE-CODE-GATE v2 from root `AGENTS.md`: smallest clear behavior-preserving change, no code bloat, no spooky action, no dependency creep, no silent failures, and no awkward or speculative abstractions.
 - `EXECUTION_PROMPT.md` generation and downstream run fan-out are forbidden unless `EXECUTION_MODE.txt` is `EXECUTION_ENABLED`.
 - Mission Mode, if enabled, is additive and MUST NOT alter per-unit stage entry and exit criteria, authorization contracts, or iteration caps.
 

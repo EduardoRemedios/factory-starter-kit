@@ -10,6 +10,7 @@
 
 - Factory v2 remains the canonical planning process.
 - Factory v3 exists as a research-only documentation track under `docs/Factory/v3/`.
+- SIMPLE-CODE-GATE v2 exists as a mandatory cross-version implementation guardrail for both Factory v2 and Factory v3 code-changing work.
 - A standalone, optional Factory v3 advisory lint prototype exists at `scripts/factory_v3_advisory_lint.py`.
 - Advisory lint fixtures exist under `tests/fixtures/factory_v3_advisory_lint/` for clean, warning, promotion-claim, and pilot boundary-stressor cases.
 - Factory v3 advisory lint execution closeout evidence exists at `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/EXECUTION_CLOSEOUT.md`.
@@ -23,7 +24,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: post-tuning `V3-A006` real-doc smoke report.
+- Current tracked evidence: cross-version SIMPLE-CODE-GATE v2 mandatory guidance update.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.

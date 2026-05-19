@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Add SIMPLE-CODE-GATE v2 to root agent guidance, Factory orchestration, stage contracts, sprint envelope templates, execution prompts, and mission execution prompts.
+- Add SIMPLE-CODE-GATE v2 as mandatory cross-version implementation guidance for Factory v2 and v3 in root agent guidance, Factory orchestration, stage contracts, sprint envelope templates, execution prompts, and mission execution prompts.
 - Add optional Mission Cursor continuity support: `MISSION_CURSOR_TEMPLATE.json`, `mission_cursor_lint.sh`, manifest `Unit ID` support, and generic Codex goal/bookmark guidance.
 - Add generic tool-agnostic merge authorization protocol guidance in `docs/Factory/MERGE_PROTOCOL.md`.
 - Add optional task-memory support through `factoryctl memory-init`, `memory-suggest`, `memory-log`, and `memory-review`.

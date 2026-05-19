@@ -40,6 +40,10 @@ Purpose:
 - If an adopting repo has AEGIS or another autonomy governance kernel, do not duplicate kernel authority, policy, evidence, lease, or runtime-action behavior inside Factory.
 
 ## 3.1) SIMPLE-CODE-GATE (v2)
+Availability:
+- Mandatory cross-version implementation guardrail for both Factory v2 and Factory v3 code-changing work.
+- Applies to planning, execution, and review wherever Factory controls implementation scope.
+
 Core Directive:
 - Implement the smallest clear, behavior-preserving change.
 - Prefer direct, readable, local code over cleverness or premature abstraction.

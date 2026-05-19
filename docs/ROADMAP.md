@@ -20,6 +20,7 @@
 | SPRINT_20260519_008 | Factory v3 promotion-evidence advisory lint pilot | Done | 2026-05-19 | `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/PROMOTION_EVIDENCE_PILOT_REPORT.md` |
 | SPRINT_20260519_009 | Factory v3 `V3-A006` matcher tuning | Done | 2026-05-19 | `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/A006_MATCHER_TUNING_CLOSEOUT.md`; `tests/fixtures/factory_v3_advisory_lint/masked_promotion_claim/expected.json` |
 | SPRINT_20260519_010 | Factory v3 post-tuning `V3-A006` smoke pilot | Done | 2026-05-19 | `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/POST_TUNING_A006_SMOKE_REPORT.md` |
+| SPRINT_20260519_011 | Cross-version SIMPLE-CODE-GATE v2 mandatory guidance | Done | 2026-05-19 | `AGENTS.md`; `docs/Factory/ORCHESTRATION.md`; `docs/Factory/Spec/STAGE_CONTRACTS.md`; `docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md`; `docs/Factory/templates/MISSION_EXECUTION_PROMPT_TEMPLATE.md`; `docs/Factory/templates/SPRINT_ENVELOPE_TEMPLATE.md` |
 
 ## Next Candidates
 
