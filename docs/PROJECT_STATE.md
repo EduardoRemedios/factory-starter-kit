@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the current state of the build. Updated after every sprint.
 >
-> **Last updated:** 2026-05-18
+> **Last updated:** 2026-05-19
 
 ---
 
@@ -17,16 +17,18 @@
 - The first real-branch advisory lint pilot report exists at `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/REAL_BRANCH_PILOT_REPORT.md`.
 - The first non-empty real-branch advisory lint pilot report exists at `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/REAL_BRANCH_WARNING_PILOT_REPORT.md`.
 - A planning-only Factory v2 pack for the next promotion-evidence advisory lint pilot exists at `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/pack/PACK_AUDIT_REPORT.md`.
+- Promotion-evidence pilot evidence exists at `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/PROMOTION_EVIDENCE_PILOT_REPORT.md`.
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: `SPRINT_20260518_007` promotion-evidence advisory lint pilot plan.
+- Current tracked evidence: promotion-evidence advisory lint pilot report.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
 - Latest real-branch pilot result: `docs/Factory/v3` returns `ADVISORY_PASS` with 0 findings after a bounded research-doc change.
 - Latest non-empty real-branch pilot result: temporary real-doc drift returns `ADVISORY_FAIL_NON_BLOCKING` with 2 accepted findings and `blocking_effect: none`; final docs return `ADVISORY_PASS` after remediation.
 - Latest planning result: promotion-evidence pilot plan pack returns `PASS` and remains `PLANNING_ONLY`.
+- Latest promotion-evidence pilot result: temporary local release claim returned `ADVISORY_PASS` with 0 findings; this is classified as a `V3-A006` false negative / missed signal.
 - Latest clean-doc result: `docs/Factory/v3` returns `ADVISORY_PASS`.
 
 ## What Does NOT Exist Yet
@@ -35,7 +37,7 @@
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
 - No advisory check expansion has been approved yet; current real-branch evidence supports continued standalone advisory use only.
-- No promotion-evidence pilot execution has been approved yet; the planning pack is ready for human review only.
+- No `V3-A006` matcher tuning has been implemented yet; pilot evidence supports a bounded future matcher-tuning run.
 
 ## How to Verify
 

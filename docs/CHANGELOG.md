@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-05-19
+- Added promotion-evidence advisory lint pilot evidence that classifies a missed `V3-A006` signal and recommends bounded matcher tuning in a later run.
+
 ## 2026-05-18
 - Added Factory v3 Level 0 research evidence and advisory validator design packs.
 - Added optional standalone Factory v3 advisory lint prototype at `scripts/factory_v3_advisory_lint.py`.
