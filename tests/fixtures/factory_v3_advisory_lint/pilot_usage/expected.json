@@ -56,7 +56,7 @@
     {
       "id": "V3-A006",
       "message": "promotion or release language lacks evidence and explicit human release approval",
-      "path": "<target>",
+      "path": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/README.md",
       "review_notes": "",
       "review_status": "needs_human_review",
       "severity": "advisory_high"
@@ -94,7 +94,7 @@
     {
       "id": "V3-A006",
       "message": "promotion or release language lacks evidence and explicit human release approval",
-      "path": "<target>",
+      "path": "tests/fixtures/factory_v3_advisory_lint/pilot_usage/input/docs/Factory/v3/README.md",
       "review_notes": "",
       "review_status": "needs_human_review",
       "severity": "advisory_high"

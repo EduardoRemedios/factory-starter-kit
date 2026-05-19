@@ -29,6 +29,14 @@ REQUIRED_GATE_PATTERNS = (
     re.compile(r"\bv3\s+advisory\s+lint\s+is\s+required\s+by\s+(?:knowledge_lint|stage-lint|pack-lint)", re.IGNORECASE),
 )
 
+PROMOTION_CLAIM_PATTERNS = (
+    re.compile(
+        r"\bfactory\s+v3\s+release\s+(?:is\s+)?(?:ready|approved|released|promoted|active|available)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\bfactory\s+v3\s+(?:is\s+)?promoted\s+now\b", re.IGNORECASE),
+)
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(
@@ -68,7 +76,7 @@ def lint_target(target: Path) -> dict[str, Any]:
     _check_aegis_optionality(all_text, findings)
     _check_runtime_boundary(texts, findings)
     _check_required_gate_wiring(texts, findings)
-    _check_promotion_evidence(all_text, findings)
+    _check_promotion_evidence(texts, findings)
 
     findings = sorted(findings, key=lambda item: (item["id"], item["path"], item["message"]))
     warnings = [item for item in findings if item["severity"] in {"advisory_high", "advisory_medium"}]
@@ -216,20 +224,24 @@ def _check_required_gate_wiring(texts: dict[Path, str], findings: list[dict[str,
                 break
 
 
-def _check_promotion_evidence(all_text: str, findings: list[dict[str, str]]) -> None:
-    lowered = all_text.lower()
-    mentions_promotion = "factory v3 release" in lowered or "promote" in lowered or "promotion" in lowered
-    has_evidence = "evidence" in lowered
-    has_human_release = "human release approval" in lowered or "explicit human release" in lowered
-    if mentions_promotion and (not has_evidence or not has_human_release):
-        findings.append(
-            _finding(
-                "V3-A006",
-                "advisory_high",
-                "<target>",
-                "promotion or release language lacks evidence and explicit human release approval",
-            )
-        )
+def _check_promotion_evidence(texts: dict[Path, str], findings: list[dict[str, str]]) -> None:
+    for path, text in texts.items():
+        for paragraph in _paragraphs(text):
+            if not any(pattern.search(paragraph) for pattern in PROMOTION_CLAIM_PATTERNS):
+                continue
+            lowered = paragraph.lower()
+            has_evidence = "evidence" in lowered
+            has_human_release = "human release approval" in lowered or "explicit human release" in lowered
+            if not has_evidence or not has_human_release:
+                findings.append(
+                    _finding(
+                        "V3-A006",
+                        "advisory_high",
+                        path.as_posix(),
+                        "promotion or release language lacks evidence and explicit human release approval",
+                    )
+                )
+                break
 
 
 def _status(findings: list[dict[str, str]]) -> str:
@@ -263,6 +275,10 @@ def _read_text(path: Path) -> str:
         return path.read_text(encoding="utf-8")
     except OSError:
         return ""
+
+
+def _paragraphs(text: str) -> list[str]:
+    return [paragraph.strip() for paragraph in re.split(r"\n\s*\n", text) if paragraph.strip()]
 
 
 def _finding(check_id: str, severity: str, path: str, message: str) -> dict[str, str]:

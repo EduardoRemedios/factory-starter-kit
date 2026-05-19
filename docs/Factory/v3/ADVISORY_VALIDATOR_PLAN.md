@@ -1,9 +1,10 @@
 # Factory v3 Advisory Validator Plan
 
 ## Version
-v0.2
+v0.3
 
 ## Change Log
+- v0.3 (2026-05-19): Tuned `V3-A006` to evaluate local promotion or release claims and added masked promotion-claim fixture coverage.
 - v0.2 (2026-05-18): Recorded the standalone advisory lint prototype and fixture verification command shape.
 - v0.1 (2026-05-18): Initial non-enforcing validator plan for Factory v3 research.
 
@@ -67,10 +68,10 @@ This command is optional and non-blocking. It is not called by `factoryctl`, `kn
 - Expected output: warning if Factory claims kernel-owned behavior.
 
 ### V3-A006 - Promotion Evidence
-- Check: Confirm any v3 release or promotion claim references eval evidence and explicit human release approval.
+- Check: Confirm local v3 release or promotion claims reference eval evidence and explicit human release approval.
 - Severity: advisory high.
 - Blocks v2: no.
-- Expected output: warning if promotion language lacks evidence.
+- Expected output: warning if local promotion or release language lacks evidence and explicit human release approval.
 
 ## Candidate Output Shape
 The advisory report includes:
@@ -92,6 +93,7 @@ The prototype includes deterministic fixtures:
 python3 scripts/factory_v3_advisory_lint.py --target tests/fixtures/factory_v3_advisory_lint/clean/input/docs/Factory/v3 --expect tests/fixtures/factory_v3_advisory_lint/clean/expected.json --json
 python3 scripts/factory_v3_advisory_lint.py --target tests/fixtures/factory_v3_advisory_lint/warning/input/docs/Factory/v3 --expect tests/fixtures/factory_v3_advisory_lint/warning/expected.json --json
 python3 scripts/factory_v3_advisory_lint.py --target tests/fixtures/factory_v3_advisory_lint/promotion_claim/input/docs/Factory/v3 --expect tests/fixtures/factory_v3_advisory_lint/promotion_claim/expected.json --json
+python3 scripts/factory_v3_advisory_lint.py --target tests/fixtures/factory_v3_advisory_lint/masked_promotion_claim/input/docs/Factory/v3 --expect tests/fixtures/factory_v3_advisory_lint/masked_promotion_claim/expected.json --json
 ```
 
 ## Evidence To Capture
