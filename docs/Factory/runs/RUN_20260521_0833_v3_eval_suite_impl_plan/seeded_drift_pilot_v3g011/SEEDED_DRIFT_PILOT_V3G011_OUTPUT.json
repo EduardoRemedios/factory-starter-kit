@@ -1,0 +1,42 @@
+{
+  "blocking_effect": "none",
+  "checked_files": [
+    "docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g011/fixture_run/pack/PACK_AUDIT_REPORT.md",
+    "docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g011/fixture_run/pack/intent.md",
+    "docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g011/fixture_run/raw_brief.md"
+  ],
+  "false_negative_review": {
+    "items": [],
+    "status": "not_reviewed"
+  },
+  "false_positive_review": {
+    "items": [],
+    "status": "not_reviewed"
+  },
+  "findings": [
+    {
+      "id": "V3-G011",
+      "message": "SIMPLE-CODE-GATE violation found",
+      "path": "docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g011/fixture_run/raw_brief.md",
+      "severity": "advisory_high"
+    }
+  ],
+  "generated_at": "not_recorded",
+  "promotion_decision": "not_authorized",
+  "recommended_next_steps": [
+    "Review findings manually; this report is advisory and non-blocking.",
+    "Classify findings as accepted, false_positive, needs_more_context, or deferred.",
+    "Do not treat this eval output as Factory v3 promotion approval."
+  ],
+  "report_id": "factory-v3-operational-readiness-eval",
+  "status": "ADVISORY_WARN",
+  "target": "docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g011/fixture_run",
+  "warnings": [
+    {
+      "id": "V3-G011",
+      "message": "SIMPLE-CODE-GATE violation found",
+      "path": "docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g011/fixture_run/raw_brief.md",
+      "severity": "advisory_high"
+    }
+  ]
+}

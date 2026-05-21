@@ -27,12 +27,13 @@
 | SPRINT_20260521_015 | V3 operational-readiness real-run shadow pilot | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md` |
 | SPRINT_20260521_016 | V3 operational-readiness seeded drift pilot | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot/SEEDED_DRIFT_PILOT_REPORT.md` |
 | SPRINT_20260521_017 | V3 runtime-boundary seeded drift pilot | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g009/SEEDED_DRIFT_PILOT_V3G009_REPORT.md` |
+| SPRINT_20260521_018 | V3 halt-behavior and SIMPLE-CODE-GATE seeded drift pilots | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g005/SEEDED_DRIFT_PILOT_V3G005_REPORT.md`; `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g011/SEEDED_DRIFT_PILOT_V3G011_REPORT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |
-| Additional seeded V3 operational-readiness drift pilots | Next | Add seeded pilots for verification halt, continuity, and SIMPLE-CODE-GATE violations. |
+| V3 operational-readiness evidence rollup | Next | Summarize clean shadow and seeded drift pilot evidence before deciding whether to add broader natural-language detection. |
 | Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |
 | `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack, false-positive review evidence, and explicit human release approval. |

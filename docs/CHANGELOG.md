@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-05-21
+- Added seeded V3 operational-readiness drift pilot reports for `V3-G005` verification halt behavior and `V3-G011` SIMPLE-CODE-GATE detection.
 - Added second seeded V3 operational-readiness drift pilot report with accepted `V3-G009` runtime-boundary detection and non-blocking output.
 - Added first seeded V3 operational-readiness drift pilot report with accepted `V3-G007` detection and non-blocking output.
 - Added the first real-run V3 operational-readiness shadow pilot report; the standalone eval returned `ADVISORY_PASS` and did not authorize promotion.
