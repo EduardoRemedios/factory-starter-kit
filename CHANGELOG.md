@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add first seeded V3 operational-readiness drift pilot report with accepted `V3-G007` detection.
 - Add first real-run V3 operational-readiness shadow pilot report for the standalone eval runner.
 - Add standalone Factory v3 operational-readiness eval runner, golden fixtures, and decision report template.
 - Add an execution-enabled Factory v2 implementation-plan pack for the standalone V3 operational-readiness eval suite.

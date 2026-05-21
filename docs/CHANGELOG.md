@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-05-21
+- Added first seeded V3 operational-readiness drift pilot report with accepted `V3-G007` detection and non-blocking output.
 - Added the first real-run V3 operational-readiness shadow pilot report; the standalone eval returned `ADVISORY_PASS` and did not authorize promotion.
 - Added standalone Factory v3 operational-readiness eval runner, golden fixtures, and decision report template; the runner is advisory and not wired into required Factory gates.
 - Added an execution-enabled Factory v2 implementation-plan pack for the standalone V3 operational-readiness eval suite; code changes still require post-I2 human GO.
