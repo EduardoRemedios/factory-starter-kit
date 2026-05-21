@@ -19,6 +19,7 @@
 - A V3 operational-readiness decision report template exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_TEMPLATE.md`.
 - A V3 operational-readiness evidence rollup exists at `docs/Factory/v3/OPERATIONAL_READINESS_EVIDENCE_ROLLUP.md`.
 - A Factory v2 planning pack for the V3 eval evolution decision exists at `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md`.
+- An execution-enabled V3 confidence pilot batch exists at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
 - The first seeded V3 operational-readiness drift pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot/SEEDED_DRIFT_PILOT_REPORT.md`.
 - The second seeded V3 operational-readiness drift pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g009/SEEDED_DRIFT_PILOT_V3G009_REPORT.md`.
@@ -36,7 +37,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: V3 eval evolution decision pack for the confidence path toward operational V3 use.
+- Current tracked evidence: V3 confidence pilot batch execution closeout.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -56,11 +57,13 @@
 - Latest SIMPLE-CODE-GATE seeded drift pilot result: run-shaped over-abstraction fixture returns `ADVISORY_WARN` with accepted `V3-G011` and `blocking_effect: none`.
 - Latest V3 operational-readiness evidence rollup result: NO-GO for V3 operational promotion; GO for continued V3 advisory shadowing under V2 authority; next decision is whether to keep deterministic trigger-marker coverage or design broader natural-language drift detection.
 - Latest V3 eval evolution planning result: `RUN_20260521_0939_v3_eval_evolution_decision_plan` pack returns `PASS`, selects a staged combined path, and defines confidence thresholds for future operational V3 use while retaining V2 authority.
+- Latest V3 confidence pilot batch result: `RUN_20260521_0948_v3_confidence_pilot_execution` returns READY; two additional real-run shadows pass, seeded V3-G003/G006/G010/G014 and controlled V3-G005 are accepted, V3-G012/V3-G013 positive routing passes, and V3 remains not operationally promoted.
 
 ## What Does NOT Exist Yet
 
 - Factory v3 is not promoted for release.
 - Factory v3 does not yet have enough real-run pilot evidence, interruption/reentry evidence, failed-verification halt evidence, or V2 fallback evidence to become an optional operational mode.
+- Factory v3 still lacks a real failed-command halt pilot, a real authored-artifact interruption/reentry pilot, broader natural-language false-positive measurement, and a V3-G011 severity policy decision.
 - Factory v3 has no approved operational profile yet; a future decision report must still name exact evidence paths, revisions, residual risks, and human approval.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
@@ -93,6 +96,8 @@ python3 scripts/factory_v3_operational_readiness_eval.py --target docs/Factory/v
 ./scripts/factoryctl pack-lint --run RUN_20260518_1508_v3_promotion_evidence_plan
 ./scripts/factoryctl pack-lint --run RUN_20260521_0815_v3_operational_readiness_eval_plan
 ./scripts/factoryctl pack-lint --run RUN_20260521_0833_v3_eval_suite_impl_plan
+./scripts/factoryctl pack-lint --run RUN_20260521_0939_v3_eval_evolution_decision_plan
+./scripts/factoryctl pack-lint --run RUN_20260521_0948_v3_confidence_pilot_execution
 
 # Run your test suite
 # (add your project's test command here)

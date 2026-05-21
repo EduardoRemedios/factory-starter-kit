@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add execution-enabled V3 confidence pilot batch with additional real shadows, seeded drift evidence, positive routing pilots, and natural-language detection design.
 - Add a Factory v2 planning pack for the V3 eval evolution decision, selecting a staged confidence path toward future operational V3 use.
 - Add Factory v3 operational-readiness evidence rollup across the clean shadow pilot and seeded drift pilots, retaining NO-GO for V3 operational promotion.
 - Add seeded V3 operational-readiness drift pilot reports for `V3-G005` verification halt behavior and `V3-G011` SIMPLE-CODE-GATE detection.

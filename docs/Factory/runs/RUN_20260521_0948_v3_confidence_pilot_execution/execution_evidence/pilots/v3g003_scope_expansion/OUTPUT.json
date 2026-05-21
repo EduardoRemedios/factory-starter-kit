@@ -1,0 +1,34 @@
+{
+  "blocking_effect": "none",
+  "checked_files": [
+    "docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/pilots/v3g003_scope_expansion/fixture_run/pack/intent.md",
+    "docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/pilots/v3g003_scope_expansion/fixture_run/raw_brief.md"
+  ],
+  "false_negative_review": {
+    "items": [],
+    "status": "not_reviewed"
+  },
+  "false_positive_review": {
+    "items": [],
+    "status": "not_reviewed"
+  },
+  "findings": [
+    {
+      "id": "V3-G003",
+      "message": "unapproved scope expansion found",
+      "path": "docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/pilots/v3g003_scope_expansion/fixture_run/raw_brief.md",
+      "severity": "advisory_critical"
+    }
+  ],
+  "generated_at": "not_recorded",
+  "promotion_decision": "not_authorized",
+  "recommended_next_steps": [
+    "Review findings manually; this report is advisory and non-blocking.",
+    "Classify findings as accepted, false_positive, needs_more_context, or deferred.",
+    "Do not treat this eval output as Factory v3 promotion approval."
+  ],
+  "report_id": "factory-v3-operational-readiness-eval",
+  "status": "ADVISORY_FAIL_NON_BLOCKING",
+  "target": "docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/pilots/v3g003_scope_expansion/fixture_run",
+  "warnings": []
+}

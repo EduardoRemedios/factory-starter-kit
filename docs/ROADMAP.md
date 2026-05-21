@@ -30,13 +30,14 @@
 | SPRINT_20260521_018 | V3 halt-behavior and SIMPLE-CODE-GATE seeded drift pilots | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g005/SEEDED_DRIFT_PILOT_V3G005_REPORT.md`; `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g011/SEEDED_DRIFT_PILOT_V3G011_REPORT.md` |
 | SPRINT_20260521_019 | V3 operational-readiness evidence rollup | Done | 2026-05-21 | `docs/Factory/v3/OPERATIONAL_READINESS_EVIDENCE_ROLLUP.md` |
 | SPRINT_20260521_020 | V3 eval evolution decision pack | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md` |
+| SPRINT_20260521_021 | V3 confidence pilot batch execution | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| V3 confidence pilot execution pack | Next | Plan and run the next confidence pilots: interruption/reentry, V2 fallback, failed-verification halt, additional real shadow scans, and remaining seeded drift cases. |
+| V3 natural-language advisory detection pilot | Next | Implement only a bounded candidate layer with false-positive corpus and no gate effect, if approved. |
+| V3 real reentry and failed-command halt pilot | Next | Prove operational behavior from authored artifacts and actual halt-on-failure execution before any operational profile decision. |
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |
-| Bounded natural-language detection design | Next | Design broader advisory drift detection only with a false-positive budget and human classification loop. |
 | Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |
 | `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack, false-positive review evidence, and explicit human release approval. |
