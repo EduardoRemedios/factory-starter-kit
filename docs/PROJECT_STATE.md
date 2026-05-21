@@ -17,6 +17,7 @@
 - A standalone Factory v3 operational-readiness eval runner exists at `scripts/factory_v3_operational_readiness_eval.py`.
 - Golden operational-readiness eval fixtures exist at `tests/fixtures/factory_v3_operational_readiness_eval/`.
 - A V3 operational-readiness decision report template exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_TEMPLATE.md`.
+- A V3 operational-readiness evidence rollup exists at `docs/Factory/v3/OPERATIONAL_READINESS_EVIDENCE_ROLLUP.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
 - The first seeded V3 operational-readiness drift pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot/SEEDED_DRIFT_PILOT_REPORT.md`.
 - The second seeded V3 operational-readiness drift pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g009/SEEDED_DRIFT_PILOT_V3G009_REPORT.md`.
@@ -34,7 +35,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: seeded V3 operational-readiness halt and SIMPLE-CODE-GATE pilot reports.
+- Current tracked evidence: V3 operational-readiness evidence rollup across the clean shadow pilot and seeded drift pilots.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -52,11 +53,12 @@
 - Latest runtime-boundary seeded drift pilot result: run-shaped runtime-kernel authority fixture returns `ADVISORY_FAIL_NON_BLOCKING` with accepted `V3-G009` and `blocking_effect: none`.
 - Latest halt-behavior seeded drift pilot result: run-shaped verification-halt fixture returns `ADVISORY_FAIL_NON_BLOCKING` with accepted `V3-G005` and `blocking_effect: none`.
 - Latest SIMPLE-CODE-GATE seeded drift pilot result: run-shaped over-abstraction fixture returns `ADVISORY_WARN` with accepted `V3-G011` and `blocking_effect: none`.
+- Latest V3 operational-readiness evidence rollup result: NO-GO for V3 operational promotion; GO for continued V3 advisory shadowing under V2 authority; next decision is whether to keep deterministic trigger-marker coverage or design broader natural-language drift detection.
 
 ## What Does NOT Exist Yet
 
 - Factory v3 is not promoted for release.
-- Factory v3 does not yet have operational-readiness fixtures, a V3 mission-envelope eval suite, or enough real-run pilot evidence to become an optional operational mode.
+- Factory v3 does not yet have enough real-run pilot evidence, interruption/reentry evidence, failed-verification halt evidence, or V2 fallback evidence to become an optional operational mode.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
 - No advisory check expansion has been approved yet; current real-branch evidence supports continued standalone advisory use only.

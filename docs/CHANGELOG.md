@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-05-21
+- Added Factory v3 operational-readiness evidence rollup across the clean shadow pilot and seeded drift pilots; V3 remains research-only and V2 remains authoritative.
 - Added seeded V3 operational-readiness drift pilot reports for `V3-G005` verification halt behavior and `V3-G011` SIMPLE-CODE-GATE detection.
 - Added second seeded V3 operational-readiness drift pilot report with accepted `V3-G009` runtime-boundary detection and non-blocking output.
 - Added first seeded V3 operational-readiness drift pilot report with accepted `V3-G007` detection and non-blocking output.
