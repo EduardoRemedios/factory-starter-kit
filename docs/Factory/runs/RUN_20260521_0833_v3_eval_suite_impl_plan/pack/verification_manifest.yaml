@@ -1,0 +1,32 @@
+schema_version: 1
+run_id: RUN_20260521_0833_v3_eval_suite_impl_plan
+sprint_id: SPRINT_20260521_014
+execution_mode: EXECUTION_ENABLED
+checks:
+  - id: VP-01
+    tier: V2
+    type: fixture
+    constraint_ids: [C-03, C-05]
+    description: Run golden fixture regression for all V3-G001 through V3-G014 cases.
+    halt_on_failure: true
+    evidence_path: docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/execution_evidence/vp01_fixture_regression.json
+    target: tests/fixtures/factory_v3_operational_readiness_eval
+    expected: all fixture cases match expected results
+  - id: VP-02
+    tier: V2
+    type: fixture
+    constraint_ids: [C-01, C-02, C-06]
+    description: Verify advisory output shape and promotion non-authorization fields.
+    halt_on_failure: true
+    evidence_path: docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/execution_evidence/vp02_output_contract.json
+    target: tests/fixtures/factory_v3_operational_readiness_eval
+    expected: advisory-only output contains required review fields
+  - id: VP-05
+    tier: V1
+    type: static
+    constraint_ids: [C-01]
+    description: Confirm the new runner is not wired into required Factory gates.
+    halt_on_failure: true
+    evidence_path: docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/execution_evidence/vp05_no_gate_wiring.txt
+    command: rg -n "factory_v3_operational_readiness_eval" scripts/knowledge_lint.sh scripts/factory_stage_lint.py scripts/factory_pack_lint.py scripts/factoryctl || true
+    expected: no required-gate invocation

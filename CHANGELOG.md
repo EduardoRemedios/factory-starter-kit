@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add standalone Factory v3 operational-readiness eval runner, golden fixtures, and decision report template.
+- Add an execution-enabled Factory v2 implementation-plan pack for the standalone V3 operational-readiness eval suite.
+- Add a Factory v2 planning pack for the V3 operational-readiness eval suite, including pre-mortem, verification plan, golden fixture inventory, Red/Blue review, and Purple audit.
+- Add Factory v3 operational-readiness pre-mortem and eval plan for judging optional V3 operational use while retaining V2.
 - Add SIMPLE-CODE-GATE v2 as mandatory cross-version implementation guidance for Factory v2 and v3 in root agent guidance, Factory orchestration, stage contracts, sprint envelope templates, execution prompts, and mission execution prompts.
 - Add optional Mission Cursor continuity support: `MISSION_CURSOR_TEMPLATE.json`, `mission_cursor_lint.sh`, manifest `Unit ID` support, and generic Codex goal/bookmark guidance.
 - Add generic tool-agnostic merge authorization protocol guidance in `docs/Factory/MERGE_PROTOCOL.md`.

@@ -22,6 +22,7 @@ This namespace captures future Factory v3 thinking before it is promoted into an
 - Identify concepts that may later become shadow schema candidates.
 - Design advisory validators before any enforcement.
 - Capture evals, stress tests, pilot evidence, and promotion criteria.
+- Plan operational-readiness evals before any optional V3 operating profile is promoted.
 
 ## Non-authority Rule
 Files in this directory are not authoritative for Factory runs unless a future release explicitly promotes them.
@@ -46,3 +47,14 @@ Factory v3 may only be promoted after it has been planned, evaluated, and harden
 
 Promotion requires evidence, not confidence by narrative.
 
+## Key Research Artifacts
+- `STRATEGY.md`
+- `NON_GOALS_AND_BOUNDARIES.md`
+- `PROMOTION_CRITERIA.md`
+- `OPERATIONAL_READINESS_EVAL_PLAN.md`
+- `OPERATIONAL_READINESS_DECISION_REPORT_TEMPLATE.md`
+
+## Advisory Eval Tooling
+- `scripts/factory_v3_advisory_lint.py` checks research-posture and promotion-evidence drift in V3 docs.
+- `scripts/factory_v3_operational_readiness_eval.py` checks standalone operational-readiness fixture scenarios and emits advisory-only reports.
+- These tools are not wired into required Factory v2 gates and do not authorize V3 promotion.

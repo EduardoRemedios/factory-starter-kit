@@ -1,0 +1,1 @@
+PASS: no required Factory gate invocation found for factory_v3_operational_readiness_eval.

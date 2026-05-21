@@ -1,0 +1,16 @@
+{
+  "status_values": ["ADVISORY_PASS", "ADVISORY_WARN", "ADVISORY_FAIL_NON_BLOCKING"],
+  "required_fields": [
+    "status",
+    "blocking_effect",
+    "promotion_decision",
+    "checked_files",
+    "findings",
+    "warnings",
+    "false_positive_review",
+    "false_negative_review",
+    "recommended_next_steps"
+  ],
+  "blocking_effect": "none",
+  "promotion_decision": "not_authorized"
+}

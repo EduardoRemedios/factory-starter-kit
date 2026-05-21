@@ -2,7 +2,7 @@
 
 > **Purpose:** Sprint-level plan and milestone sequence.
 >
-> **Last updated:** 2026-05-19
+> **Last updated:** 2026-05-21
 
 ---
 
@@ -21,11 +21,15 @@
 | SPRINT_20260519_009 | Factory v3 `V3-A006` matcher tuning | Done | 2026-05-19 | `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/A006_MATCHER_TUNING_CLOSEOUT.md`; `tests/fixtures/factory_v3_advisory_lint/masked_promotion_claim/expected.json` |
 | SPRINT_20260519_010 | Factory v3 post-tuning `V3-A006` smoke pilot | Done | 2026-05-19 | `docs/Factory/runs/RUN_20260518_1508_v3_promotion_evidence_plan/POST_TUNING_A006_SMOKE_REPORT.md` |
 | SPRINT_20260519_011 | Cross-version SIMPLE-CODE-GATE v2 mandatory guidance | Done | 2026-05-19 | `AGENTS.md`; `docs/Factory/ORCHESTRATION.md`; `docs/Factory/Spec/STAGE_CONTRACTS.md`; `docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md`; `docs/Factory/templates/MISSION_EXECUTION_PROMPT_TEMPLATE.md`; `docs/Factory/templates/SPRINT_ENVELOPE_TEMPLATE.md` |
+| SPRINT_20260521_012 | Factory v3 operational-readiness eval planning | Done | 2026-05-21 | `docs/Factory/v3/OPERATIONAL_READINESS_EVAL_PLAN.md` |
+| SPRINT_20260521_013 | Factory v3 operational-readiness eval suite planning pack | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0815_v3_operational_readiness_eval_plan/pack/PACK_AUDIT_REPORT.md` |
+| SPRINT_20260521_014 | Standalone V3 operational-readiness eval suite implementation | Done | 2026-05-21 | `scripts/factory_v3_operational_readiness_eval.py`; `tests/fixtures/factory_v3_operational_readiness_eval/expected.json`; `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/EXECUTION_CLOSEOUT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |
+| V3 operational-readiness shadow pilot | Next | Run the standalone eval suite against one real V3 shadow planning scenario and classify all findings. |
 | Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |
 | `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack, false-positive review evidence, and explicit human release approval. |

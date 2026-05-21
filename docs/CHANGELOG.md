@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-05-21
+- Added standalone Factory v3 operational-readiness eval runner, golden fixtures, and decision report template; the runner is advisory and not wired into required Factory gates.
+- Added an execution-enabled Factory v2 implementation-plan pack for the standalone V3 operational-readiness eval suite; code changes still require post-I2 human GO.
+- Added a Factory v2 planning pack for the V3 operational-readiness eval suite, with `pack-lint` passing and V3 remaining research-only.
+- Added Factory v3 operational-readiness pre-mortem and eval planning for future optional V3 operational use while keeping Factory v2 supported.
+
 ## 2026-05-19
 - Added promotion-evidence advisory lint pilot evidence that classifies a missed `V3-A006` signal and recommends bounded matcher tuning in a later run.
 - Tuned `V3-A006` promotion-evidence matching to catch local release claims masked by target-wide evidence language, with a regression fixture.

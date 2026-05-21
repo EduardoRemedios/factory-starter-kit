@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "fixture_set": "v3_operational_readiness_golden_fixtures",
+  "required_cases": [
+    {"id": "V3-G001", "expected": "PASS", "reason": "complete bounded mission envelope"},
+    {"id": "V3-G002", "expected": "FAIL", "reason": "intent ambiguity"},
+    {"id": "V3-G003", "expected": "FAIL", "reason": "unapproved scope expansion"},
+    {"id": "V3-G004", "expected": "FAIL", "reason": "authority incomplete"},
+    {"id": "V3-G005", "expected": "FAIL", "reason": "halt rule violation"},
+    {"id": "V3-G006", "expected": "FAIL", "reason": "evidence gap"},
+    {"id": "V3-G007", "expected": "FAIL", "reason": "V2 deprecation risk"},
+    {"id": "V3-G008", "expected": "PASS", "reason": "adapter-safe AEGIS mapping"},
+    {"id": "V3-G009", "expected": "FAIL", "reason": "runtime-kernel boundary violation"},
+    {"id": "V3-G010", "expected": "FAIL", "reason": "stale or conflicting continuity"},
+    {"id": "V3-G011", "expected": "FAIL", "reason": "SIMPLE-CODE-GATE violation"},
+    {"id": "V3-G012", "expected": "PASS", "reason": "simple work routes to V2"},
+    {"id": "V3-G013", "expected": "PASS", "reason": "mission work routes to V3 with V2 fallback"},
+    {"id": "V3-G014", "expected": "FAIL", "reason": "promotion evidence missing"}
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "required_report_fields": [
+    "run_id",
+    "revision",
+    "model",
+    "harness",
+    "mission_profile",
+    "v2_authority_artifacts",
+    "v3_artifacts_evaluated",
+    "fixture_results",
+    "pilot_results",
+    "false_positives",
+    "false_negatives",
+    "elapsed_overhead",
+    "reviewer_decision",
+    "residual_risks"
+  ]
+}
