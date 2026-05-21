@@ -19,6 +19,7 @@
 - A V3 operational-readiness decision report template exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_TEMPLATE.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
 - The first seeded V3 operational-readiness drift pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot/SEEDED_DRIFT_PILOT_REPORT.md`.
+- The second seeded V3 operational-readiness drift pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g009/SEEDED_DRIFT_PILOT_V3G009_REPORT.md`.
 - A standalone, optional Factory v3 advisory lint prototype exists at `scripts/factory_v3_advisory_lint.py`.
 - Advisory lint fixtures exist under `tests/fixtures/factory_v3_advisory_lint/` for clean, warning, promotion-claim, and pilot boundary-stressor cases.
 - Factory v3 advisory lint execution closeout evidence exists at `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/EXECUTION_CLOSEOUT.md`.
@@ -32,7 +33,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: first seeded V3 operational-readiness drift pilot report.
+- Current tracked evidence: second seeded V3 operational-readiness drift pilot report.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -47,6 +48,7 @@
 - Latest V3 eval-suite implementation result: standalone operational-readiness fixture regression passes; real `docs/Factory/v3` smoke returns `ADVISORY_PASS`; runner remains advisory and outside required gates.
 - Latest V3 operational-readiness shadow pilot result: real implementation-plan run root returns `ADVISORY_PASS` with 0 findings and `promotion_decision: not_authorized`.
 - Latest seeded drift pilot result: run-shaped V2 deprecation fixture returns `ADVISORY_FAIL_NON_BLOCKING` with accepted `V3-G007` and `blocking_effect: none`.
+- Latest runtime-boundary seeded drift pilot result: run-shaped runtime-kernel authority fixture returns `ADVISORY_FAIL_NON_BLOCKING` with accepted `V3-G009` and `blocking_effect: none`.
 
 ## What Does NOT Exist Yet
 

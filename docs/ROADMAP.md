@@ -26,12 +26,13 @@
 | SPRINT_20260521_014 | Standalone V3 operational-readiness eval suite implementation | Done | 2026-05-21 | `scripts/factory_v3_operational_readiness_eval.py`; `tests/fixtures/factory_v3_operational_readiness_eval/expected.json`; `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260521_015 | V3 operational-readiness real-run shadow pilot | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md` |
 | SPRINT_20260521_016 | V3 operational-readiness seeded drift pilot | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot/SEEDED_DRIFT_PILOT_REPORT.md` |
+| SPRINT_20260521_017 | V3 runtime-boundary seeded drift pilot | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/seeded_drift_pilot_v3g009/SEEDED_DRIFT_PILOT_V3G009_REPORT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |
-| Additional seeded V3 operational-readiness drift pilots | Next | Add seeded pilots for runtime-kernel boundary, verification halt, continuity, and SIMPLE-CODE-GATE violations. |
+| Additional seeded V3 operational-readiness drift pilots | Next | Add seeded pilots for verification halt, continuity, and SIMPLE-CODE-GATE violations. |
 | Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |
 | `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack, false-positive review evidence, and explicit human release approval. |
