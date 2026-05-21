@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add Factory v3 operational decision checklist capturing remaining evidence required before any V3 operational-use decision.
 - Add execution-enabled V3 confidence pilot batch with additional real shadows, seeded drift evidence, positive routing pilots, and natural-language detection design.
 - Add a Factory v2 planning pack for the V3 eval evolution decision, selecting a staged confidence path toward future operational V3 use.
 - Add Factory v3 operational-readiness evidence rollup across the clean shadow pilot and seeded drift pilots, retaining NO-GO for V3 operational promotion.

@@ -1,0 +1,65 @@
+# Factory v3 Operational Decision Checklist
+
+## Version
+v0.1
+
+## Change Log
+- v0.1 (2026-05-21): Initial high-level checklist of evidence still required before deciding whether Factory v3 can be used operationally.
+
+## Status
+Decision-prep checklist only. This document does not promote Factory v3, deprecate Factory v2, authorize operational use, or wire V3 checks into required gates.
+
+## Purpose
+Provide the high-level checklist that must be satisfied before making a decision on operational Factory v3 use.
+
+Factory v3 can move out of research mode only when the remaining evidence shows that V3 preserves the relevant Factory v2 safety guarantees for a named operational profile, while Factory v2 remains supported and available as fallback.
+
+## Current Posture
+- Factory v3 status: Level 0 research only.
+- V2 status: authoritative and supported.
+- V3 eval runner status: standalone advisory only.
+- Latest confidence signal: improved after the confidence pilot batch, but not sufficient for operational use.
+
+## Decision Checklist
+
+| ID | Check | Required Evidence | Status |
+|---|---|---|---|
+| C-01 | Real failed-command halt behavior is proven. | A pilot where a halt-on-failure verification command actually fails, execution stops, evidence is preserved, and the closeout records the halt. | OPEN |
+| C-02 | Real interruption/reentry behavior is proven. | A pilot that resumes from authored Factory artifacts after interruption and halts on stale, weak, or conflicting derived continuity. | OPEN |
+| C-03 | Natural-language advisory detection is implemented and measured. | A bounded candidate layer with a clean corpus, classified findings, and measured false positives within budget. | OPEN |
+| C-04 | V3-G011 severity policy is decided. | A documented rule for when SIMPLE-CODE-GATE violations are advisory warnings versus operational blockers for selected V3 profiles. | OPEN |
+| C-05 | Operational profile is named and bounded. | A concrete profile defining eligible work types, excluded work, authority limits, verification expectations, and V2 fallback triggers. | OPEN |
+| C-06 | V2 fallback remains explicit. | Operational profile and decision report state when work must stay on or return to Factory v2. | OPEN |
+| C-07 | V2 guarantee preservation matrix is complete. | Decision report maps collapsed V2 ceremony to equivalent V3 guarantees with no unresolved critical gaps. | OPEN |
+| C-08 | False-positive and false-negative review is complete. | Human classification of real shadow, seeded, positive routing, and natural-language findings. | OPEN |
+| C-09 | AEGIS/runtime-kernel boundary review passes. | Evidence that V3 remains coding-governance only and does not claim runtime proof, production mediation, or kernel authority. | OPEN |
+| C-10 | Operational-readiness decision report is complete. | Report names exact artifact paths, revisions, pilot results, residual risks, and human release approval. | OPEN |
+
+## Already Satisfied Or Partially Satisfied
+
+| Area | Evidence | Status |
+|---|---|---|
+| Clean real-run shadow scans | Three clean V2-authoritative shadow scans exist across prior pilots and `RUN_20260521_0948_v3_confidence_pilot_execution`. | PARTIAL |
+| Seeded negative detection | V3-G003, V3-G005, V3-G006, V3-G007, V3-G009, V3-G010, V3-G011, and V3-G014 have seeded evidence. | PARTIAL |
+| Positive routing | V3-G012 and V3-G013 pass as positive routing cases. | PARTIAL |
+| Natural-language design | Bounded design and false-positive budget exist at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/NATURAL_LANGUAGE_DETECTION_DESIGN.md`. | PARTIAL |
+
+## Decision Rule
+Do not approve operational Factory v3 use until every `OPEN` checklist item is either:
+- completed with evidence paths, or
+- explicitly waived by the human sponsor with rationale and residual risk.
+
+No waiver may remove these hard requirements:
+- V2 remains supported and available as fallback.
+- V3 must not claim runtime-kernel authority.
+- Verification failure must halt for any operational profile.
+- Human release approval must name the exact operational profile being promoted.
+
+## Recommended Next Work
+Prioritize in this order:
+
+1. Real failed-command halt pilot.
+2. Real authored-artifact interruption/reentry pilot.
+3. Bounded natural-language advisory detection implementation with false-positive corpus.
+4. V3-G011 severity policy decision.
+5. Operational profile and decision report drafting.

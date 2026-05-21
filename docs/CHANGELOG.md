@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-05-21
+- Added Factory v3 operational decision checklist capturing the remaining evidence gates before any V3 operational-use decision.
 - Added execution-enabled V3 confidence pilot batch with two additional clean real shadows, seeded V3-G003/G006/G010/G014 evidence, controlled V3-G005 halt evidence, V3-G012/V3-G013 positive routing passes, and a bounded natural-language detection design.
 - Added a Factory v2 planning pack for the V3 eval evolution decision; the pack selects a staged confidence path toward future operational V3 use while keeping V2 authoritative.
 - Added Factory v3 operational-readiness evidence rollup across the clean shadow pilot and seeded drift pilots; V3 remains research-only and V2 remains authoritative.

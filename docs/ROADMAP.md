@@ -31,6 +31,7 @@
 | SPRINT_20260521_019 | V3 operational-readiness evidence rollup | Done | 2026-05-21 | `docs/Factory/v3/OPERATIONAL_READINESS_EVIDENCE_ROLLUP.md` |
 | SPRINT_20260521_020 | V3 eval evolution decision pack | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md` |
 | SPRINT_20260521_021 | V3 confidence pilot batch execution | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md` |
+| SPRINT_20260521_022 | V3 operational decision checklist | Done | 2026-05-21 | `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md` |
 
 ## Next Candidates
 

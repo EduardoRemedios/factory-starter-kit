@@ -18,6 +18,7 @@
 - Golden operational-readiness eval fixtures exist at `tests/fixtures/factory_v3_operational_readiness_eval/`.
 - A V3 operational-readiness decision report template exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_TEMPLATE.md`.
 - A V3 operational-readiness evidence rollup exists at `docs/Factory/v3/OPERATIONAL_READINESS_EVIDENCE_ROLLUP.md`.
+- A V3 operational decision checklist exists at `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md`.
 - A Factory v2 planning pack for the V3 eval evolution decision exists at `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md`.
 - An execution-enabled V3 confidence pilot batch exists at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
@@ -37,7 +38,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: V3 confidence pilot batch execution closeout.
+- Current tracked evidence: V3 operational decision checklist.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -58,6 +59,7 @@
 - Latest V3 operational-readiness evidence rollup result: NO-GO for V3 operational promotion; GO for continued V3 advisory shadowing under V2 authority; next decision is whether to keep deterministic trigger-marker coverage or design broader natural-language drift detection.
 - Latest V3 eval evolution planning result: `RUN_20260521_0939_v3_eval_evolution_decision_plan` pack returns `PASS`, selects a staged combined path, and defines confidence thresholds for future operational V3 use while retaining V2 authority.
 - Latest V3 confidence pilot batch result: `RUN_20260521_0948_v3_confidence_pilot_execution` returns READY; two additional real-run shadows pass, seeded V3-G003/G006/G010/G014 and controlled V3-G005 are accepted, V3-G012/V3-G013 positive routing passes, and V3 remains not operationally promoted.
+- Latest V3 decision-checklist result: `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md` records the remaining OPEN items before any operational V3 decision.
 
 ## What Does NOT Exist Yet
 
