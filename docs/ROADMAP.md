@@ -24,12 +24,13 @@
 | SPRINT_20260521_012 | Factory v3 operational-readiness eval planning | Done | 2026-05-21 | `docs/Factory/v3/OPERATIONAL_READINESS_EVAL_PLAN.md` |
 | SPRINT_20260521_013 | Factory v3 operational-readiness eval suite planning pack | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0815_v3_operational_readiness_eval_plan/pack/PACK_AUDIT_REPORT.md` |
 | SPRINT_20260521_014 | Standalone V3 operational-readiness eval suite implementation | Done | 2026-05-21 | `scripts/factory_v3_operational_readiness_eval.py`; `tests/fixtures/factory_v3_operational_readiness_eval/expected.json`; `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/EXECUTION_CLOSEOUT.md` |
+| SPRINT_20260521_015 | V3 operational-readiness real-run shadow pilot | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |
-| V3 operational-readiness shadow pilot | Next | Run the standalone eval suite against one real V3 shadow planning scenario and classify all findings. |
+| Seeded V3 operational-readiness drift pilot | Next | Run the standalone eval suite against a copied or temporary drift fixture to verify useful non-blocking findings on real-run-shaped content. |
 | Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |
 | `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack, false-positive review evidence, and explicit human release approval. |

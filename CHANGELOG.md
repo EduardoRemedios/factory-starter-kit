@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add first real-run V3 operational-readiness shadow pilot report for the standalone eval runner.
 - Add standalone Factory v3 operational-readiness eval runner, golden fixtures, and decision report template.
 - Add an execution-enabled Factory v2 implementation-plan pack for the standalone V3 operational-readiness eval suite.
 - Add a Factory v2 planning pack for the V3 operational-readiness eval suite, including pre-mortem, verification plan, golden fixture inventory, Red/Blue review, and Purple audit.

@@ -17,6 +17,7 @@
 - A standalone Factory v3 operational-readiness eval runner exists at `scripts/factory_v3_operational_readiness_eval.py`.
 - Golden operational-readiness eval fixtures exist at `tests/fixtures/factory_v3_operational_readiness_eval/`.
 - A V3 operational-readiness decision report template exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_TEMPLATE.md`.
+- The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
 - A standalone, optional Factory v3 advisory lint prototype exists at `scripts/factory_v3_advisory_lint.py`.
 - Advisory lint fixtures exist under `tests/fixtures/factory_v3_advisory_lint/` for clean, warning, promotion-claim, and pilot boundary-stressor cases.
 - Factory v3 advisory lint execution closeout evidence exists at `docs/Factory/runs/RUN_20260518_1235_v3_advisory_lint_impl_plan/EXECUTION_CLOSEOUT.md`.
@@ -30,7 +31,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: standalone V3 operational-readiness eval suite implementation closeout.
+- Current tracked evidence: first real-run V3 operational-readiness shadow pilot report.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -43,6 +44,7 @@
 - Latest clean-doc result: `docs/Factory/v3` returns `ADVISORY_PASS`.
 - Latest V3 operational-readiness planning result: `RUN_20260521_0815_v3_operational_readiness_eval_plan` pack returns `PASS` and remains `PLANNING_ONLY`.
 - Latest V3 eval-suite implementation result: standalone operational-readiness fixture regression passes; real `docs/Factory/v3` smoke returns `ADVISORY_PASS`; runner remains advisory and outside required gates.
+- Latest V3 operational-readiness shadow pilot result: real implementation-plan run root returns `ADVISORY_PASS` with 0 findings and `promotion_decision: not_authorized`.
 
 ## What Does NOT Exist Yet
 
