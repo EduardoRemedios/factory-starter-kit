@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add bounded `V3-OP-001` profile candidate and V2 guarantee preservation matrix.
 - Add cross-version SIMPLE-CODE-GATE severity policy and mark V3 operational checklist C-04 complete.
 - Add opt-in V3 natural-language advisory detection pilot with clean false-positive corpus and drift corpus measurement.
 - Add execution-enabled V3 real halt and reentry pilot evidence; C-01 and C-02 are now marked DONE in the operational decision checklist.

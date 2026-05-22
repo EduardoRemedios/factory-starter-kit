@@ -28,9 +28,9 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | C-02 | Real interruption/reentry behavior is proven. | `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/execution_evidence/reentry_valid/result.json` and `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/execution_evidence/reentry_stale_cursor/result.json` show authored-artifact resume and stale cursor halt. | DONE |
 | C-03 | Natural-language advisory detection is implemented and measured. | `docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/execution_evidence/NL_DETECTION_MEASUREMENT_REPORT.md` shows opt-in pilot detection with 0 false positives across 10 clean artifacts and expected drift IDs detected. | DONE |
 | C-04 | V3-G011 severity policy is decided. | `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md` defines cross-version blocker, advisory-high, and no-finding rules; V3-G011 remains advisory in research mode and becomes blocker-class for future operational V3 profiles when the policy's blocker conditions are met. | DONE |
-| C-05 | Operational profile is named and bounded. | A concrete profile defining eligible work types, excluded work, authority limits, verification expectations, and V2 fallback triggers. | OPEN |
-| C-06 | V2 fallback remains explicit. | Operational profile and decision report state when work must stay on or return to Factory v2. | OPEN |
-| C-07 | V2 guarantee preservation matrix is complete. | Decision report maps collapsed V2 ceremony to equivalent V3 guarantees with no unresolved critical gaps. | OPEN |
+| C-05 | Operational profile is named and bounded. | `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md` defines `V3-OP-001`, including eligible work, exclusions, authority limits, verification expectations, and fallback triggers. | DONE |
+| C-06 | V2 fallback remains explicit. | `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md` requires V2 fallback for ambiguity, scope expansion, missing authority, failed verification, stale evidence, unresolved SIMPLE-CODE-GATE blockers, runtime/kernel scope, and human request. | DONE |
+| C-07 | V2 guarantee preservation matrix is complete. | `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md` maps V2 guarantees to V3-OP-001 controls with no unresolved critical profile-definition gaps. | DONE |
 | C-08 | False-positive and false-negative review is complete. | Human classification of real shadow, seeded, positive routing, and natural-language findings. | OPEN |
 | C-09 | AEGIS/runtime-kernel boundary review passes. | Evidence that V3 remains coding-governance only and does not claim runtime proof, production mediation, or kernel authority. | OPEN |
 | C-10 | Operational-readiness decision report is complete. | Report names exact artifact paths, revisions, pilot results, residual risks, and human release approval. | OPEN |
@@ -46,6 +46,7 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | Real halt and reentry behavior | C-01 and C-02 evidence exists at `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/EXECUTION_CLOSEOUT.md`. | DONE |
 | Natural-language pilot measurement | C-03 evidence exists at `docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/EXECUTION_CLOSEOUT.md`. | DONE |
 | SIMPLE-CODE-GATE severity policy | C-04 evidence exists at `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md` and `docs/Factory/runs/RUN_20260522_0948_v3_g011_severity_policy/EXECUTION_CLOSEOUT.md`. | DONE |
+| Bounded profile and V2 guarantee matrix | C-05, C-06, and C-07 evidence exists at `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`, `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`, and `docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/EXECUTION_CLOSEOUT.md`. | DONE |
 
 ## Decision Rule
 Do not approve operational Factory v3 use until every `OPEN` checklist item is either:
@@ -61,8 +62,6 @@ No waiver may remove these hard requirements:
 ## Recommended Next Work
 Prioritize in this order:
 
-1. Operational profile boundary drafting.
-2. V2 guarantee preservation matrix completion.
-3. False-positive and false-negative review rollup.
-4. AEGIS/runtime-kernel boundary review.
-5. Operational-readiness decision report drafting.
+1. False-positive and false-negative review rollup.
+2. AEGIS/runtime-kernel boundary review for `V3-OP-001`.
+3. Operational-readiness decision report drafting.

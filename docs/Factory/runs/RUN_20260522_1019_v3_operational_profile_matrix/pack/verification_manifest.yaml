@@ -1,0 +1,49 @@
+schema_version: 1
+run_id: RUN_20260522_1019_v3_operational_profile_matrix
+sprint_id: SPRINT_20260522_026
+execution_mode: EXECUTION_ENABLED
+
+checks:
+  - id: VM-001
+    tier: V1
+    type: static
+    constraint_ids:
+      - VP-01
+    description: Knowledge lint passes after profile and matrix update.
+    command: bash scripts/knowledge_lint.sh
+    expected: Command exits 0.
+    halt_on_failure: true
+    evidence_path: execution_evidence/verification/knowledge_lint_final.txt
+
+  - id: VM-002
+    tier: V1
+    type: static
+    constraint_ids:
+      - VP-02
+    description: V3 advisory lint remains quiet.
+    command: python3 scripts/factory_v3_advisory_lint.py --target docs/Factory/v3 --json
+    expected: Command exits 0 with ADVISORY_PASS.
+    halt_on_failure: true
+    evidence_path: execution_evidence/verification/factory_v3_advisory_lint_docs_v3.json
+
+  - id: VM-003
+    tier: V2
+    type: test
+    constraint_ids:
+      - VP-03
+    description: V3 operational-readiness eval remains quiet.
+    command: python3 scripts/factory_v3_operational_readiness_eval.py --target docs/Factory/v3 --json
+    expected: Command exits 0 with ADVISORY_PASS.
+    halt_on_failure: true
+    evidence_path: execution_evidence/verification/docs_v3_default_eval.json
+
+  - id: VM-004
+    tier: V2
+    type: test
+    constraint_ids:
+      - VP-04
+    description: Natural-language pilot remains quiet on current V3 docs.
+    command: python3 scripts/factory_v3_operational_readiness_eval.py --target docs/Factory/v3 --nl-pilot --json
+    expected: Command exits 0 with ADVISORY_PASS.
+    halt_on_failure: true
+    evidence_path: execution_evidence/verification/docs_v3_nl_pilot.json

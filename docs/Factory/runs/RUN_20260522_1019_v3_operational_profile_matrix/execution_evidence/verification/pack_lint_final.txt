@@ -1,0 +1,4 @@
+pack_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix
+pack_dir=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/pack
+checked_files=32 errors=0 warnings=0
