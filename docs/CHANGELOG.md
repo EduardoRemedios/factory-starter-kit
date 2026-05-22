@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-05-22
+- Added `V3-OP-001` operational-readiness decision report; C-10 is now ready for explicit human release approval.
 - Added `V3-OP-001` AEGIS/runtime-kernel boundary review; C-09 is now marked DONE in the V3 operational checklist.
 - Added `V3-OP-001` finding classification rollup for real shadow, seeded drift, positive routing, and natural-language evidence; C-08 is now marked DONE in the V3 operational checklist.
 - Added bounded `V3-OP-001` operational profile candidate and V2 guarantee preservation matrix; C-05, C-06, and C-07 are now marked DONE in the V3 operational checklist.

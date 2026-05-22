@@ -38,12 +38,14 @@
 | SPRINT_20260522_026 | V3 operational profile and guarantee matrix | Done | 2026-05-22 | `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`; `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260522_027 | V3-OP-001 finding classification rollup | Done | 2026-05-22 | `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260522_028 | V3-OP-001 AEGIS/runtime-kernel boundary review | Done | 2026-05-22 | `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/EXECUTION_CLOSEOUT.md` |
+| SPRINT_20260522_029 | V3-OP-001 operational-readiness decision report | Done | 2026-05-22 | `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1150_v3_decision_report/EXECUTION_CLOSEOUT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| V3 operational-readiness decision report | Next | Draft the final decision report after C-09 is complete; do not promote without explicit human release approval. |
+| V3-OP-001 explicit release decision | Next | Human sponsor must explicitly approve or reject optional operational use; approval must name profile, commit or release tag, V2 fallback, and residual-risk acceptance. |
+| V3 user guide for Codex users | Next | Explain how users with V2 experience choose V3, run a bounded mission, fall back to V2, and apply the process to examples such as a new online slot game. |
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |
 | Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |
-| `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack, false-positive review evidence, and explicit human release approval. |
+| `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack and explicit human release approval for gate integration. |

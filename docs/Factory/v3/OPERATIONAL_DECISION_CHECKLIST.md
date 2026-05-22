@@ -33,7 +33,7 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | C-07 | V2 guarantee preservation matrix is complete. | `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md` maps V2 guarantees to V3-OP-001 controls with no unresolved critical profile-definition gaps. | DONE |
 | C-08 | False-positive and false-negative review is complete. | `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md` classifies real shadow, seeded drift, positive routing, and natural-language evidence for `V3-OP-001`, with 0 known false positives and 0 known false negatives in measured seeded/natural-language cases. | DONE |
 | C-09 | AEGIS/runtime-kernel boundary review passes. | `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md` confirms `V3-OP-001` remains coding-governance only, AEGIS remains optional, ordinary non-AEGIS repositories remain supported, and runtime-kernel authority remains outside Factory. | DONE |
-| C-10 | Operational-readiness decision report is complete. | Report names exact artifact paths, revisions, pilot results, residual risks, and human release approval. | OPEN |
+| C-10 | Operational-readiness decision report is complete. | `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md` names exact evidence paths, baseline revision, pilot results, residual risks, and the explicit human release-approval requirement. Release approval is not recorded yet. | READY FOR APPROVAL |
 
 ## Already Satisfied Or Partially Satisfied
 
@@ -49,9 +49,10 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | Bounded profile and V2 guarantee matrix | C-05, C-06, and C-07 evidence exists at `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`, `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`, and `docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/EXECUTION_CLOSEOUT.md`. | DONE |
 | Finding classification rollup | C-08 evidence exists at `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md` and `docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup/EXECUTION_CLOSEOUT.md`. | DONE |
 | AEGIS/runtime-kernel boundary review | C-09 evidence exists at `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md` and `docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/EXECUTION_CLOSEOUT.md`. | DONE |
+| Operational-readiness decision report | C-10 report exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md` and recommends human release review while keeping approval separate. | READY FOR APPROVAL |
 
 ## Decision Rule
-Do not approve operational Factory v3 use until every `OPEN` checklist item is either:
+Do not approve operational Factory v3 use until every `OPEN` or `READY FOR APPROVAL` checklist item is either:
 - completed with evidence paths, or
 - explicitly waived by the human sponsor with rationale and residual risk.
 
@@ -64,4 +65,5 @@ No waiver may remove these hard requirements:
 ## Recommended Next Work
 Prioritize in this order:
 
-1. Operational-readiness decision report drafting.
+1. Explicit human release decision for `V3-OP-001`.
+2. User guide for Codex users adopting V3 from V2.

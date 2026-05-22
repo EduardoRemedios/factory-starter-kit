@@ -131,7 +131,8 @@ Completed decision-prep evidence:
 
 - false-positive and false-negative review
 - AEGIS/runtime-kernel boundary review
+- operational-readiness decision report
 
 Remaining dependency:
 
-- operational-readiness decision report with explicit human release approval
+- explicit human release approval naming `V3-OP-001`

@@ -27,7 +27,7 @@ The review checks whether the profile remains an SDLC coding-governance profile 
 
 The profile is suitable for ordinary repositories without AEGIS because it uses process artifacts, verification commands, evidence paths, halt rules, and V2 fallback. It is also compatible with repositories that have an AEGIS-like kernel because it does not duplicate kernel-owned runtime authority, policy, leases, proof, or production action behavior.
 
-This result does not approve operational use. C-10 still must produce a final decision report with exact evidence paths, residual risks, and explicit human release approval.
+This result does not approve operational use. The C-10 decision report still must preserve the explicit human release-approval requirement.
 
 ## Source Review
 
@@ -104,12 +104,12 @@ Decision basis:
 - Ordinary non-AEGIS repositories remain supported.
 - Repositories with a lower-level kernel can map Factory artifacts through adapters without duplicating kernel authority.
 - Factory v2 remains authoritative until a future release decision.
-- C-10 remains required before operational use.
+- Explicit human release approval remains required before operational use.
 
 ## Residual Risk
 - This review is document and evidence based. It does not test a live AEGIS adapter.
 - Broad production false-negative discovery remains outside the current measured evidence set.
-- Final operational release still requires C-10 with exact evidence paths, residual risks, and explicit human approval.
+- Final operational release still requires explicit human approval.
 
 ## Next Step
-Draft the C-10 operational-readiness decision report for `V3-OP-001`.
+Ask for an explicit human release decision for `V3-OP-001`.

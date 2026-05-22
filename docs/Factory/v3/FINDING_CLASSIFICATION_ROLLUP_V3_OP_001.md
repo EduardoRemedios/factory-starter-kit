@@ -111,5 +111,4 @@ The evidence supports:
 This does not prove broad production discovery. The operational decision report must still carry that residual risk unless additional live operational pilots are added.
 
 ## Remaining Operational-Readiness Work
-- C-09: complete AEGIS/runtime-kernel boundary review for `V3-OP-001`.
-- C-10: produce the operational-readiness decision report with exact evidence paths, residual risks, and explicit human release approval.
+- C-10: human release approval remains required before any operational use.
