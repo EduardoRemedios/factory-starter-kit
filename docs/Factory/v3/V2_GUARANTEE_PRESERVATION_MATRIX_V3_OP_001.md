@@ -42,6 +42,8 @@ The relevant Factory v2 guarantees are preserved for the narrow `V3-OP-001` prof
 This result is not an operational promotion. It only means the profile definition is sufficiently bounded for the next readiness steps.
 
 ## Remaining Decision Work
-- Classify false positives and false negatives across real shadow, seeded, positive-routing, and natural-language evidence.
-- Complete AEGIS/runtime-kernel boundary review for the profile.
+Completed decision-prep evidence now includes false-positive and false-negative classification plus AEGIS/runtime-kernel boundary review for the profile.
+
+Remaining decision work:
+
 - Produce an operational-readiness decision report with exact evidence paths and explicit human release approval before any operational use.

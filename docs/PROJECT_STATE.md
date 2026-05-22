@@ -25,6 +25,7 @@
 - A bounded V3 operational profile candidate exists at `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`.
 - A V2 guarantee preservation matrix for that profile exists at `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`.
 - A V3 finding classification rollup for `V3-OP-001` exists at `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md`.
+- A V3 AEGIS/runtime-kernel boundary review for `V3-OP-001` exists at `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md`.
 - A Factory v2 planning pack for the V3 eval evolution decision exists at `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md`.
 - An execution-enabled V3 confidence pilot batch exists at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
@@ -44,7 +45,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: V3-OP-001 finding classification rollup closeout.
+- Current tracked evidence: V3-OP-001 AEGIS/runtime-kernel boundary review closeout.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -71,12 +72,13 @@
 - Latest V3-G011 policy result: `RUN_20260522_0948_v3_g011_severity_policy` returns READY; C-04 is DONE with a cross-version SIMPLE-CODE-GATE severity policy for ordinary repos, plus an optional runtime-kernel addendum for repos with AEGIS-like governance.
 - Latest V3 profile result: `RUN_20260522_1019_v3_operational_profile_matrix` returns READY; C-05, C-06, and C-07 are DONE with `V3-OP-001` bounded code change profile, explicit V2 fallback triggers, and a V2 guarantee preservation matrix.
 - Latest V3 finding-classification result: `RUN_20260522_1052_v3_fp_fn_rollup` returns READY; C-08 is DONE with accepted clean shadows, seeded drift findings, positive routing, natural-language pilot evidence, and no known false positives or measured seeded/natural-language false negatives.
+- Latest V3 boundary-review result: `RUN_20260522_1120_v3_boundary_review` returns READY; C-09 is DONE with evidence that `V3-OP-001` remains coding-governance only, keeps AEGIS optional, supports ordinary non-AEGIS repositories, and does not claim runtime-kernel authority.
 
 ## What Does NOT Exist Yet
 
 - Factory v3 is not promoted for release.
-- Factory v3 does not yet have enough final release evidence to become an optional operational mode, even though C-01 through C-08 are now complete for `V3-OP-001`.
-- Factory v3 still lacks AEGIS/runtime-kernel boundary review for `V3-OP-001` and a final operational-readiness decision report.
+- Factory v3 does not yet have enough final release evidence to become an optional operational mode, even though C-01 through C-09 are now complete for `V3-OP-001`.
+- Factory v3 still lacks a final operational-readiness decision report.
 - Factory v3 has no approved operational profile yet; a future decision report must still name exact evidence paths, revisions, residual risks, and human approval.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
@@ -116,6 +118,7 @@ python3 scripts/factory_v3_operational_readiness_eval.py --target docs/Factory/v
 ./scripts/factoryctl pack-lint --run RUN_20260522_0948_v3_g011_severity_policy
 ./scripts/factoryctl pack-lint --run RUN_20260522_1019_v3_operational_profile_matrix
 ./scripts/factoryctl pack-lint --run RUN_20260522_1052_v3_fp_fn_rollup
+./scripts/factoryctl pack-lint --run RUN_20260522_1120_v3_boundary_review
 
 # Run your test suite
 # (add your project's test command here)

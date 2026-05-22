@@ -125,8 +125,13 @@ Closeout for a future operational use of this profile must name:
 - human release or closeout decision
 
 ## Promotion Dependencies
-This candidate profile cannot be used operationally until the remaining operational decision checklist items pass:
+This candidate profile cannot be used operationally until the remaining operational decision checklist items pass.
+
+Completed decision-prep evidence:
 
 - false-positive and false-negative review
 - AEGIS/runtime-kernel boundary review
+
+Remaining dependency:
+
 - operational-readiness decision report with explicit human release approval
