@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Update README entry points so adopters can discover optional `V3-OP-001` operational use and the V3 user guide.
 - Record optional `V3-OP-001` operational release approval and add the V3 Codex user guide with starter templates.
 - Add `V3-OP-001` operational-readiness decision report and mark V3 operational checklist C-10 ready for explicit approval.
 - Add `V3-OP-001` AEGIS/runtime-kernel boundary review and mark V3 operational checklist C-09 complete.

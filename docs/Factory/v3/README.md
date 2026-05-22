@@ -1,31 +1,38 @@
-# Factory v3 Research
+# Factory v3
 
 ## Version
-v0.1
+v0.2
 
 ## Change Log
+- v0.2 (2026-05-22): Updated status after optional `V3-OP-001` operational release approval and user-guide addition.
 - v0.1 (2026-05-18): Initial research-only namespace for Factory v3 planning.
 
 ## Status
-Factory v3 is research and design only.
+Factory v3 has one approved optional operational profile:
 
-This directory does not replace Factory v2, alter the `A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> I2` planning pipeline, or change any required validator behavior.
+- `V3-OP-001 Bounded Code Change`
 
-Factory v2 remains the current usable operating process in this starter kit.
+Approval is recorded at `OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.
+
+This directory does not make Factory v3 the default mode, deprecate Factory v2, alter the `A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> I2` planning pipeline, or change any required validator behavior.
+
+Factory v2 remains supported and available as fallback.
+
+The prior research and decision-prep evidence remains part of the approval basis; V3 docs remain non-enforcing for required repository gates unless a future integration run explicitly changes that.
 
 ## Purpose
-This namespace captures future Factory v3 thinking before it is promoted into any operating contract. The current research direction is mission-governed autonomous execution for coding agents, evaluated through the existing Factory v2 process.
+This namespace captures Factory v3 operating guidance, release evidence, starter templates, and continuing research for mission-governed autonomous execution by coding agents.
 
 ## Current Scope
-- Define strategic v3 direction.
+- Provide user guidance for optional `V3-OP-001` use.
+- Provide starter templates for V3 mission envelopes, closeout, fallback review, and SIMPLE-CODE-GATE review.
 - Preserve the AEGIS and runtime-kernel boundary.
-- Identify concepts that may later become shadow schema candidates.
-- Design advisory validators before any enforcement.
-- Capture evals, stress tests, pilot evidence, and promotion criteria.
-- Plan operational-readiness evals before any optional V3 operating profile is promoted.
+- Keep V2 fallback explicit.
+- Capture evals, stress tests, pilot evidence, decision reports, and promotion criteria.
+- Continue research for any future V3 profile before promotion.
 
 ## Non-authority Rule
-Files in this directory are not authoritative for Factory runs unless a future release explicitly promotes them.
+Files in this directory are authoritative only for the approved optional `V3-OP-001` profile unless a future release explicitly promotes another profile.
 
 They do not change:
 - `docs/Factory/ORCHESTRATION.md`
@@ -35,26 +42,43 @@ They do not change:
 - `scripts/factory_pack_lint.py`
 - `scripts/knowledge_lint.sh`
 
+They also do not approve payment, authentication, compliance, production deployment, infrastructure authority, runtime-kernel authority, or production action mediation.
+
 ## Relationship To AEGIS
 Factory v3 should be AEGIS-compatible but not AEGIS-dependent.
 
 If an adopting repository uses AEGIS or another lower-level autonomy governance kernel, Factory should act as the SDLC mission-governance profile for coding work while the kernel remains the runtime authority and proof layer.
 
-If an adopting repository does not use AEGIS, Factory v2 remains usable without it.
+If an adopting repository does not use AEGIS, Factory v2 and optional `V3-OP-001` remain usable without it.
+
+## Approved Profile
+Use `V3-OP-001` only for bounded code-changing work where:
+
+- the objective is clear,
+- files or modules can be named,
+- commands and verification are known,
+- dependencies are authorized,
+- V2 fallback triggers are explicit,
+- no payment, authentication, compliance, deployment, runtime-kernel, or infrastructure concern is implicated.
+
+Start with `USER_GUIDE.md`.
 
 ## Promotion Rule
-Factory v3 may only be promoted after it has been planned, evaluated, and hardened using Factory v2 governance.
-
-Promotion requires evidence, not confidence by narrative.
+Any V3 profile beyond `V3-OP-001`, any default-mode promotion, or any required-gate integration requires evidence, human approval, and Factory governance.
 
 ## Key Research Artifacts
+- `USER_GUIDE.md`
+- `OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`
+- `OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`
+- `OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md`
 - `STRATEGY.md`
 - `NON_GOALS_AND_BOUNDARIES.md`
 - `PROMOTION_CRITERIA.md`
 - `OPERATIONAL_READINESS_EVAL_PLAN.md`
 - `OPERATIONAL_READINESS_DECISION_REPORT_TEMPLATE.md`
+- `templates/`
 
 ## Advisory Eval Tooling
 - `scripts/factory_v3_advisory_lint.py` checks research-posture and promotion-evidence drift in V3 docs.
 - `scripts/factory_v3_operational_readiness_eval.py` checks standalone operational-readiness fixture scenarios and emits advisory-only reports.
-- These tools are not wired into required Factory v2 gates and do not authorize V3 promotion.
+- These tools are not wired into required Factory v2 gates and do not authorize broader V3 promotion.

@@ -23,7 +23,7 @@ The reusable framework layer:
 - Factory v3 / AEGIS boundary crosswalk for repos that also use a lower-level autonomy governance kernel
 - Harness adapter guidance for Codex and other AI coding tools
 - Optional Product Owner pre-Factory process
-- Factory v3 research-only notes under `docs/Factory/v3/`
+- Factory v3 optional `V3-OP-001` operational profile, user guide, starter templates, and research/evidence docs under `docs/Factory/v3/`
 - Starter lint scripts
 - Starter project-state placeholders
 
@@ -43,14 +43,15 @@ This repository currently ships the Factory v2 operating core:
 - deterministic stage-lint, pack-lint, context recall, verification manifest, and merge authorization guidance
 - optional support helpers such as task memory, Repo Cartographer, Mission Cursor continuity, and Agent Loop Bridge
 
-The repository also includes Factory v3 research and boundary notes. These do not replace the v2 pipeline. They define how a future mission-governed autonomous-execution model should be researched, stress-tested, evaluated, and eventually promoted without duplicating lower-level autonomy governance kernels such as AEGIS.
+The repository also includes Factory v3. The first narrow profile, `V3-OP-001 Bounded Code Change`, is approved for optional operational use. It does not replace the v2 pipeline, make V3 the default mode, or wire V3 checks into required gates. V2 remains supported and available as fallback.
 
 In short:
-- Factory v2 remains the usable process in this starter kit.
+- Factory v2 remains the default and fallback process in this starter kit.
+- Factory v3 `V3-OP-001` is approved for optional bounded-code-change use.
 - Recent updates generalize lessons from downstream Factory usage back into the starter kit.
-- Factory v3 work is currently research/design only under `docs/Factory/v3/` and boundary guidance in `docs/Factory/AEGIS_BOUNDARY.md`.
+- Factory v3 operating guidance lives in `docs/Factory/v3/USER_GUIDE.md`, with release approval at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.
 - Factory v3 is AEGIS-compatible but not AEGIS-dependent; AEGIS is not required to use this starter kit.
-- Factory v3 may only be promoted after it has been planned, evaluated, and hardened through Factory v2 governance.
+- No V3 profile beyond `V3-OP-001` is approved. Broader V3 promotion still requires evidence, human approval, and Factory governance.
 
 ## Quick Start
 
@@ -185,13 +186,17 @@ your-repo/
 │       │   └── VERIFICATION_MANIFEST_TEMPLATE.yaml
 │       └── v3/
 │           ├── README.md
+│           ├── USER_GUIDE.md
+│           ├── OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md
+│           ├── OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md
 │           ├── STRATEGY.md
 │           ├── NON_GOALS_AND_BOUNDARIES.md
 │           ├── CONCEPT_CANDIDATES.md
 │           ├── SHADOW_SCHEMA_CANDIDATES.md
 │           ├── ADVISORY_VALIDATOR_PLAN.md
 │           ├── PILOT_PROFILE_PLAN.md
-│           └── PROMOTION_CRITERIA.md
+│           ├── PROMOTION_CRITERIA.md
+│           └── templates/
 ```
 
 This starter kit intentionally does not ship product-specific run packs, finished state docs, historical missions, or real PO phase artifacts.
