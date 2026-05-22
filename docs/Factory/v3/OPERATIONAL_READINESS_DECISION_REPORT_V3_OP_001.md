@@ -25,7 +25,7 @@ This document supports optional operational use of `V3-OP-001` only. It does not
 ## Scope
 - V3 profile evaluated: `V3-OP-001 Bounded Code Change`
 - V2 fallback retained: YES
-- AEGIS dependency introduced: NO
+- separate governance kernel dependency introduced: NO
 - Runtime-kernel authority introduced: NO
 - Required-gate integration introduced: NO
 - Factory v2 deprecation introduced: NO
@@ -54,7 +54,7 @@ Operational use is approved only within this release scope:
 | C-06 | `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md` | V2 fallback triggers are explicit. |
 | C-07 | `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/EXECUTION_CLOSEOUT.md` | V2 guarantees are preserved for the narrow profile definition. |
 | C-08 | `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup/EXECUTION_CLOSEOUT.md` | Finding classifications complete for current evidence set. |
-| C-09 | `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/EXECUTION_CLOSEOUT.md` | Boundary review passes for decision-prep purposes. |
+| C-09 | `docs/Factory/v3/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY_REVIEW_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/EXECUTION_CLOSEOUT.md` | Boundary review passes for decision-prep purposes. |
 
 ## Pilot Results
 
@@ -75,7 +75,7 @@ Operational use is approved only within this release scope:
 | Verification failure behavior tested. | YES | `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/EXECUTION_CLOSEOUT.md` |
 | Interruption and reentry behavior tested. | YES | `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/EXECUTION_CLOSEOUT.md` |
 | V2 fallback behavior tested. | YES | `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/pilots/v3g012_v2_fallback/REPORT.md`; `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/pilots/v3g013_v3_with_fallback/REPORT.md` |
-| AEGIS boundary review passes. | YES | `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md` |
+| external-kernel boundary review passes. | YES | `docs/Factory/v3/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY_REVIEW_V3_OP_001.md` |
 | SIMPLE-CODE-GATE remains mandatory for code-changing work. | YES | `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md` |
 | Human release approval recorded. | YES | `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md` |
 
@@ -86,7 +86,7 @@ Operational use is approved only within this release scope:
 | Broad production false-negative discovery is not measured. | Accept only for narrow `V3-OP-001`; collect more real-use evidence after optional release. |
 | Current release target is optional profile use, not default Factory mode. | Keep V2 authoritative and available as fallback. |
 | V3 checks remain standalone advisory only. | Do not wire into required gates without a later Factory run and explicit approval. |
-| No live AEGIS adapter was tested. | Accept because `V3-OP-001` does not require AEGIS and does not claim kernel behavior. |
+| No live external governance kernel adapter was tested. | Accept because `V3-OP-001` does not require external governance kernel and does not claim kernel behavior. |
 | User-facing operating instructions are new. | Use `docs/Factory/v3/USER_GUIDE.md` for initial trials and update it from real project feedback. |
 
 ## Release Conditions
@@ -101,7 +101,7 @@ Operational use must stay within these conditions:
 - rollback rule: return to Factory v2 on ambiguity, failed verification, stale evidence, missing authority, or human request.
 
 ## Decision Rationale
-C-01 through C-09 provide enough evidence for optional operational use of `V3-OP-001`: real halt and reentry behavior have been tested, natural-language detection has been measured, SIMPLE-CODE-GATE severity is defined, the profile is bounded, V2 fallback is explicit, V2 guarantees are mapped, finding classifications are complete for the current evidence set, and the AEGIS/runtime-kernel boundary passes. The explicit release approval is now recorded.
+C-01 through C-09 provide enough evidence for optional operational use of `V3-OP-001`: real halt and reentry behavior have been tested, natural-language detection has been measured, SIMPLE-CODE-GATE severity is defined, the profile is bounded, V2 fallback is explicit, V2 guarantees are mapped, finding classifications are complete for the current evidence set, and the external-kernel boundary passes. The explicit release approval is now recorded.
 
 ## No-Go Carry-Forward
 If release approval is not granted, carry forward:

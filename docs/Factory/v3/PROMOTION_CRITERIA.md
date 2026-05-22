@@ -20,7 +20,7 @@ Before any v3 artifact becomes authoritative, there must be:
 - clear list of artifacts being promoted
 - pilot evidence from advisory or shadow use
 - false-positive and false-negative review for advisory checks
-- AEGIS boundary review
+- external-kernel boundary review
 - public README language explaining the release posture
 - migration guidance for existing v2 users
 - explicit human release approval
@@ -65,7 +65,7 @@ Promotion evidence should include:
 ## Hard No-go Conditions
 Do not promote if:
 - Factory v2 behavior would change without explicit approval
-- AEGIS would become required
+- external governance kernel would become required
 - Factory would duplicate runtime-kernel authority
 - shadow schemas would become required without advisory evidence
 - promotion language lacks exact artifact paths
@@ -81,7 +81,7 @@ Promotion level:
 Artifacts promoted:
 Evidence paths:
 Known residual risks:
-AEGIS dependency introduced: yes | no
+separate governance kernel dependency introduced: yes | no
 Runtime-kernel behavior introduced: yes | no
 Human approver:
 Date:

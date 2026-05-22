@@ -32,7 +32,7 @@ The human sponsor approved the following release decision in the Codex thread on
 - CI or merge-preflight integration
 - Runtime-kernel authority
 - Production action mediation
-- AEGIS dependency
+- separate governance kernel dependency
 - Payment, authentication, regulated-action, compliance, infrastructure, or production deployment authority
 
 ## Residual Risks Accepted
@@ -45,7 +45,7 @@ Key accepted limits:
 - Broad production false-negative discovery is not measured.
 - `V3-OP-001` is optional profile use, not default Factory mode.
 - V3 checks remain standalone advisory only.
-- No live AEGIS adapter was tested.
+- No live external governance kernel adapter was tested.
 - User guidance must be followed before broad adoption.
 
 ## Rollback And Fallback Rule

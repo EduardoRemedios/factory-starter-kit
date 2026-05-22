@@ -25,11 +25,15 @@
 - A bounded V3 operational profile candidate exists at `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`.
 - A V2 guarantee preservation matrix for that profile exists at `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`.
 - A V3 finding classification rollup for `V3-OP-001` exists at `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md`.
-- A V3 AEGIS/runtime-kernel boundary review for `V3-OP-001` exists at `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md`.
+- A V3 external-kernel boundary review for `V3-OP-001` exists at `docs/Factory/v3/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY_REVIEW_V3_OP_001.md`.
 - A V3 operational-readiness decision report for `V3-OP-001` exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md`.
 - Optional operational release approval for `V3-OP-001` exists at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.
 - A V3 Codex user guide exists at `docs/Factory/v3/USER_GUIDE.md`.
 - V3 starter templates exist under `docs/Factory/v3/templates/`.
+- A V3 full-vision document exists at `docs/Factory/v3/VISION.md`.
+- A V3 roadmap from `V3-OP-001` to the full mission-governance runtime vision exists at `docs/Factory/v3/ROADMAP_TO_FULL_VISION.md`.
+- A V3 roadmap-level pre-mortem and golden-fixture backlog exists at `docs/Factory/v3/ROADMAP_PREMORTEM.md`.
+- A Phase 1 V3 real-project trial capture template exists at `docs/Factory/v3/templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md`.
 - A Factory v2 planning pack for the V3 eval evolution decision exists at `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md`.
 - An execution-enabled V3 confidence pilot batch exists at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
@@ -49,7 +53,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: V3-OP-001 operational release approval and user guide closeout.
+- Current tracked evidence: V3-OP-001 operational release approval, user guide closeout, V3 full-vision roadmap, roadmap pre-mortem, and Phase 1 trial capture template.
 - Factory v3 status: optional operational use approved for `V3-OP-001` only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -73,10 +77,10 @@
 - Latest V3 decision-checklist result: `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md` records C-01 through C-09 as DONE and C-10 as ready for explicit approval.
 - Latest V3 real behavior pilot result: `RUN_20260522_0824_v3_real_halt_reentry_pilot` returns READY; C-01 and C-02 are DONE with run-local evidence for nonzero halt/no-continuation, authored-artifact resume, and stale-cursor halt.
 - Latest V3 natural-language pilot result: `RUN_20260522_0836_v3_nl_detection_pilot` returns READY; C-03 is DONE with opt-in pilot mode, 0 false positives across 10 clean artifacts, and expected drift IDs detected.
-- Latest V3-G011 policy result: `RUN_20260522_0948_v3_g011_severity_policy` returns READY; C-04 is DONE with a cross-version SIMPLE-CODE-GATE severity policy for ordinary repos, plus an optional runtime-kernel addendum for repos with AEGIS-like governance.
+- Latest V3-G011 policy result: `RUN_20260522_0948_v3_g011_severity_policy` returns READY; C-04 is DONE with a cross-version SIMPLE-CODE-GATE severity policy for ordinary repos, plus an optional runtime-kernel addendum for repos with separate governance kernels.
 - Latest V3 profile result: `RUN_20260522_1019_v3_operational_profile_matrix` returns READY; C-05, C-06, and C-07 are DONE with `V3-OP-001` bounded code change profile, explicit V2 fallback triggers, and a V2 guarantee preservation matrix.
 - Latest V3 finding-classification result: `RUN_20260522_1052_v3_fp_fn_rollup` returns READY; C-08 is DONE with accepted clean shadows, seeded drift findings, positive routing, natural-language pilot evidence, and no known false positives or measured seeded/natural-language false negatives.
-- Latest V3 boundary-review result: `RUN_20260522_1120_v3_boundary_review` returns READY; C-09 is DONE with evidence that `V3-OP-001` remains coding-governance only, keeps AEGIS optional, supports ordinary non-AEGIS repositories, and does not claim runtime-kernel authority.
+- Latest V3 boundary-review result: `RUN_20260522_1120_v3_boundary_review` returns READY; C-09 is DONE with evidence that `V3-OP-001` remains coding-governance only, keeps separate governance kernels optional, supports ordinary non-kernel repositories, and does not claim runtime-kernel authority.
 - Latest V3 decision-report result: `RUN_20260522_1150_v3_decision_report` returned READY for explicit human release approval and is now superseded by the release approval recorded in `RUN_20260522_1220_v3_release_user_guide`.
 - Latest V3 release result: `RUN_20260522_1220_v3_release_user_guide` records optional operational approval for `V3-OP-001` at commit `f07fa11`, keeps Factory v2 as fallback, and adds user guidance plus starter templates.
 
@@ -85,6 +89,9 @@
 - Factory v3 is not the default Factory mode.
 - No Factory v3 profile beyond `V3-OP-001` is approved for operational use.
 - Factory v3 user guidance is new and should be refined after real project trials.
+- Factory v3 full-vision roadmap exists, but its later phases are not implemented or approved.
+- Factory v3 roadmap pre-mortem exists, but its proposed fixtures are a backlog and not yet implemented.
+- Phase 1 trial capture template exists, but no real-project Phase 1 trial batch has been completed with it yet.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
 - No advisory check expansion has been approved yet; current real-branch evidence supports continued standalone advisory use only.

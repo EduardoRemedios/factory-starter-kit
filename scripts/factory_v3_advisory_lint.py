@@ -73,7 +73,7 @@ def lint_target(target: Path) -> dict[str, Any]:
     _check_stage_order(all_text, findings)
     _check_research_posture(texts, findings)
     _check_shadow_schema_isolation(texts, findings)
-    _check_aegis_optionality(all_text, findings)
+    _check_external_governance_kernel_optionality(all_text, findings)
     _check_runtime_boundary(texts, findings)
     _check_required_gate_wiring(texts, findings)
     _check_promotion_evidence(texts, findings)
@@ -171,17 +171,19 @@ def _check_shadow_schema_isolation(texts: dict[Path, str], findings: list[dict[s
             )
 
 
-def _check_aegis_optionality(all_text: str, findings: list[dict[str, str]]) -> None:
+def _check_external_governance_kernel_optionality(all_text: str, findings: list[dict[str, str]]) -> None:
     lowered = all_text.lower()
     has_optional_language = (
-        "aegis-compatible but not aegis-dependent" in lowered
-        or "aegis is not required" in lowered
-        or "aegis optional" in lowered
+        "compatible with external governance kernels but does not require one" in lowered
+        or "no external governance kernel is required" in lowered
+        or "separate governance kernel remains optional" in lowered
     )
     has_dependency_claim = (
-        "aegis is required to use" in lowered
-        or "factory v3 requires aegis" in lowered
-        or "starter kit requires aegis" in lowered
+        "external governance kernel is required to use" in lowered
+        or "requires external governance kernel to use" in lowered
+        or "factory v3 requires an external governance kernel" in lowered
+        or "starter kit requires an external governance kernel" in lowered
+        or "factory v3 requires a separate governance kernel" in lowered
     )
     if has_dependency_claim or not has_optional_language:
         findings.append(
@@ -189,7 +191,7 @@ def _check_aegis_optionality(all_text: str, findings: list[dict[str, str]]) -> N
                 "V3-A004",
                 "advisory_critical",
                 "<target>",
-                "AEGIS optionality is missing or contradicted",
+                "external governance kernel optionality is missing or contradicted",
             )
         )
 

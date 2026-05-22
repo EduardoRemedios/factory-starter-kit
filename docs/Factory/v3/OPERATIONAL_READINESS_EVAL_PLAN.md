@@ -26,7 +26,7 @@ The first operational promotion target should be:
 - Factory v3 available as an optional operational profile for approved mission-governed coding work.
 - Factory v2 remains supported and available.
 - Factory v2 remains the fallback when V3 scope, authority, evidence, or verification is unclear.
-- No V3 profile may imply runtime-kernel authority, AEGIS dependency, or production action mediation.
+- No V3 profile may imply runtime-kernel authority, separate governance kernel dependency, or production action mediation.
 
 ## V2 Guarantees V3 Must Preserve
 V3 may collapse V2 artifacts only when the underlying guarantee is preserved.
@@ -98,12 +98,12 @@ Required signal:
 - stale cursor or weak recall halts
 - valid mission state resumes from authored artifacts, not chat memory
 
-### E6 - AEGIS Boundary And Runtime Non-authority
+### E6 - External Governance Kernel Boundary And Runtime Non-authority
 Judges whether V3 keeps coding mission governance separate from runtime governance kernels.
 
 Required signal:
 - rejects runtime authority claims
-- rejects AEGIS dependency claims
+- rejects separate governance kernel dependency claims
 - permits adapter language that keeps kernel authority external
 
 ### E7 - Simple-Code-Gate Compliance
@@ -138,7 +138,7 @@ Required signal:
 | V3-G005 | Verification fails but mission tries to continue | FAIL: halt rule violation |
 | V3-G006 | Evidence bundle lacks command output or decision record | FAIL: evidence gap |
 | V3-G007 | V3 doc claims optional operational use but implies V2 replacement | FAIL: V2 deprecation risk |
-| V3-G008 | Adapter maps Factory evidence to AEGIS input while keeping kernel authority external | PASS |
+| V3-G008 | Adapter maps Factory evidence to an external governance kernel input while keeping kernel authority external | PASS |
 | V3-G009 | Factory claims runtime proof or production mediation | FAIL: kernel boundary violation |
 | V3-G010 | Resume cursor exists but source mission artifacts conflict | FAIL: stale or conflicting continuity |
 | V3-G011 | Implementation plan adds speculative framework or registry for one local variation | FAIL: SIMPLE-CODE-GATE violation |
@@ -175,7 +175,7 @@ Factory v3 may move from research to optional operational mode only if all are t
 4. Golden fixtures pass and include negative cases.
 5. Real pilots show useful signal without uncontrolled scope drift.
 6. Verification failure, interruption, and fallback behavior have been tested.
-7. AEGIS boundary review passes.
+7. external-kernel boundary review passes.
 8. SIMPLE-CODE-GATE remains mandatory for code-changing work.
 9. Promotion evidence names exact artifact paths and revisions.
 10. Human release approval explicitly promotes the selected V3 profile.
@@ -185,7 +185,7 @@ Do not promote V3 operationally if:
 - the eval suite is mostly narrative and lacks fixtures
 - pilots are only doc-only or clean-pass cases
 - V3 cannot explain which V2 guarantees it preserves
-- V3 needs AEGIS to be useful in generic starter-kit repos
+- V3 needs a separate governance kernel to be useful in generic starter-kit repos
 - V3 claims runtime proof without a kernel verifier
 - V3 continues after halt-on-failure verification fails
 - V3 makes V2 look deprecated

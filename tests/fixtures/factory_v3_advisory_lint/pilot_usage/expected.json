@@ -39,7 +39,7 @@
     },
     {
       "id": "V3-A004",
-      "message": "AEGIS optionality is missing or contradicted",
+      "message": "external governance kernel optionality is missing or contradicted",
       "path": "<target>",
       "review_notes": "",
       "review_status": "needs_human_review",

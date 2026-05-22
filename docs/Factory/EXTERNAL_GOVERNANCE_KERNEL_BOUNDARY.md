@@ -1,24 +1,27 @@
-# docs/Factory/AEGIS_BOUNDARY.md - Factory v3 / AEGIS Boundary
+# docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md - Factory v3 / External Governance Kernel Boundary
 
 ## Version
-v0.1
+v0.2
 
 ## Change Log
-- v0.1 (2026-05-18): Initial boundary and crosswalk for aligning Factory v3 mission governance with AEGIS-style autonomy governance without duplicating a runtime kernel.
+- v0.2 (2026-05-22): Reworded the boundary for public starter-kit readers without relying on private system names.
+- v0.1 (2026-05-18): Initial boundary and crosswalk for aligning Factory v3 mission governance with external governance kernels without duplicating a runtime kernel.
 
 ## Purpose
 
-Factory v3 is moving toward mission-governed autonomous execution: bounded authority, executable constraints, continuous verification, escalation semantics, and replayable evidence for long-running coding agents.
+Factory v3 is moving toward mission-governed autonomous execution for coding agents: bounded authority, executable constraints, continuous verification, escalation semantics, and replayable evidence.
 
-AEGIS-style systems already define many of those primitives at a deeper runtime layer. This document prevents Factory from becoming a second governance kernel by defining the boundary between:
-- Factory as an SDLC mission-governance profile for software delivery work
-- AEGIS as a constitutional autonomy kernel or runtime enforcement layer for consequential systems
+Some adopting repositories may also have a separate autonomy governance kernel. That kernel might enforce production policy, runtime authority, evidence, sandboxing, verification, or regulated-action controls.
+
+This document prevents Factory from becoming a second governance kernel by defining the boundary between:
+- Factory as an SDLC mission-governance profile for software delivery work.
+- A project-owned governance kernel as the runtime enforcement layer for deployed or consequential autonomous behavior.
 
 ## Core Boundary
 
 Factory governs coding missions.
 
-AEGIS governs autonomous system behavior at runtime.
+A project-owned governance kernel governs deployed autonomous system behavior at runtime.
 
 Factory should define portable repo-level contracts for agentic software delivery:
 - mission objective
@@ -39,17 +42,17 @@ Factory should not implement a general runtime autonomy kernel:
 
 ## Strategic Rule
 
-Factory v3 should be AEGIS-compatible but not AEGIS-dependent.
+Factory v3 should be compatible with external governance kernels, but it must not require one.
 
 This means:
 1. Factory may reuse compatible vocabulary such as mission envelope, authority lease, gates, evidence, reentry, revocation, and rollback.
 2. Factory artifacts should stay lightweight enough for any repository to adopt.
-3. If an adopting repository has AEGIS or another governance kernel, Factory should treat it as the lower-level enforcement substrate.
-4. If an adopting repository does not have AEGIS, Factory should still provide useful SDLC governance through documents, templates, validators, and harness adapters.
+3. If an adopting repository has a separate governance kernel, Factory should treat it as the lower-level enforcement substrate.
+4. If an adopting repository does not have a separate governance kernel, Factory should still provide useful SDLC governance through documents, templates, validators, and harness adapters.
 
 ## Crosswalk
 
-| Factory v3 concept | AEGIS-style concept | Factory ownership | Kernel ownership |
+| Factory v3 concept | External kernel concept | Factory ownership | Kernel ownership |
 | --- | --- | --- | --- |
 | Mission primitive | Operational Contract / Mission Envelope | Define the coding objective, repo scope, execution mode, and completion conditions | Enforce runtime action authority for consequential system operations |
 | Authority lease | Autonomy Lease | Bound agent authority over files, commands, tools, time, cost, and dependencies | Bound autonomous runtime authority over domain actions |
@@ -64,7 +67,7 @@ This means:
 Factory must not duplicate kernel behavior when a lower-level governance runtime exists.
 
 Do not add Factory features that attempt to become:
-- a second AEGIS ledger
+- a second project-kernel ledger
 - a second constitutional policy engine
 - a second runtime autonomy gate
 - a second domain-action mediation layer
@@ -101,7 +104,7 @@ Factory does not own cognition continuity:
 
 ## Governance Intensity Guidance
 
-When a coding mission changes or integrates with an AEGIS-like kernel, default to heavier Factory governance:
+When a coding mission changes or integrates with a separate governance kernel, default to heavier Factory governance:
 - kernel, policy, evidence, safety, sandbox, ledger, verification, authority, or runtime-action paths require HEAVY governance
 - generated docs, examples, and non-execution research may use LIGHT or STANDARD governance if they do not change contracts
 - schema changes to authority, evidence, lease, or mission-envelope artifacts require explicit compatibility review
@@ -110,7 +113,7 @@ The goal is not to slow all work. The goal is to prevent accidental mutation of 
 
 ## Adoption Pattern
 
-For repos that use AEGIS or a similar kernel:
+For repos that use a separate governance kernel:
 1. Keep Factory as the SDLC mission-governance layer.
 2. Keep the kernel as the runtime authority and proof layer.
 3. Add a project adapter that maps Factory artifact fields to kernel primitives.

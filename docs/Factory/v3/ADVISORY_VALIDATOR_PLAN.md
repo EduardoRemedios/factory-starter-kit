@@ -55,11 +55,11 @@ This command is optional and non-blocking. It is not called by `factoryctl`, `kn
 - Blocks v2: no.
 - Expected output: warning if a v3 candidate is wired into required v2 validators.
 
-### V3-A004 - AEGIS Optionality
-- Check: Confirm public docs do not make AEGIS a dependency.
+### V3-A004 - External Governance Kernel Optionality
+- Check: Confirm public docs do not make external governance kernel a dependency.
 - Severity: advisory critical.
 - Blocks v2: no.
-- Expected output: warning if docs imply AEGIS is required.
+- Expected output: warning if docs imply external governance kernel is required.
 
 ### V3-A005 - Runtime Kernel Boundary
 - Check: Confirm v3 docs do not claim runtime authority, production action mediation, cryptographic proof, or autonomous system enforcement.
@@ -113,7 +113,7 @@ Before any advisory check becomes required:
 - pilot evidence must show useful signal
 - false-positive and false-negative behavior must be reviewed
 - public docs must explain the behavior
-- the change must not make AEGIS required
+- the change must not make external governance kernel required
 - human release approval must name the promoted check
 
 ## Out Of Scope

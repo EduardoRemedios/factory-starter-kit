@@ -2,10 +2,13 @@
 
 ## Unreleased
 
+- Add Factory v3 Phase 1 trial capture template for real-project `V3-OP-001` evidence collection.
+- Add Factory v3 roadmap pre-mortem with roadmap failure modes, watchpoints, and golden-fixture backlog.
+- Add Factory v3 vision and phased roadmap from optional `V3-OP-001` use to the full mission-governance runtime vision.
 - Update README entry points so adopters can discover optional `V3-OP-001` operational use and the V3 user guide.
 - Record optional `V3-OP-001` operational release approval and add the V3 Codex user guide with starter templates.
 - Add `V3-OP-001` operational-readiness decision report and mark V3 operational checklist C-10 ready for explicit approval.
-- Add `V3-OP-001` AEGIS/runtime-kernel boundary review and mark V3 operational checklist C-09 complete.
+- Add `V3-OP-001` external-kernel boundary review and mark V3 operational checklist C-09 complete.
 - Add `V3-OP-001` finding classification rollup and mark V3 operational checklist C-08 complete.
 - Add bounded `V3-OP-001` profile candidate and V2 guarantee preservation matrix.
 - Add cross-version SIMPLE-CODE-GATE severity policy and mark V3 operational checklist C-04 complete.
@@ -29,7 +32,7 @@
 - Add optional task-memory support through `factoryctl memory-init`, `memory-suggest`, `memory-log`, and `memory-review`.
 - Add generic Repo Cartographer advisory scans under `scripts/cartographer` and `tools/repo_cartographer/`.
 - Add generic Agent Loop Bridge review-only handoff docs and deterministic JSON fixture validator.
-- Add `docs/Factory/AEGIS_BOUNDARY.md` to align Factory v3 mission governance with AEGIS-style autonomy-kernel primitives without duplicating runtime enforcement.
+- Add `docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md` to align Factory v3 mission governance with external governance kernel autonomy-kernel primitives without duplicating runtime enforcement.
 - Add verification-left-shift v1: verification tiers, optional `verification_manifest.yaml`, manifest template, and `pack-lint` manifest validation.
 - Add `factoryctl metrics-init` to instantiate `RUN_METRICS.md` from the canonical template.
 - Add `RUN_METRICS_TEMPLATE.md` for lightweight Factory process telemetry after real runs.

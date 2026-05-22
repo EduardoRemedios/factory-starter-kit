@@ -20,10 +20,10 @@ The reusable framework layer:
 - Optional task-memory runbook helper through `factoryctl`
 - Optional repo cartographer advisory scan
 - Generic review-only Agent Loop Bridge harness pattern
-- Factory v3 / AEGIS boundary crosswalk for repos that also use a lower-level autonomy governance kernel
+- Factory v3 external-kernel boundary crosswalk for repos that also use a lower-level autonomy governance kernel
 - Harness adapter guidance for Codex and other AI coding tools
 - Optional Product Owner pre-Factory process
-- Factory v3 optional `V3-OP-001` operational profile, user guide, starter templates, and research/evidence docs under `docs/Factory/v3/`
+- Factory v3 optional `V3-OP-001` operational profile, user guide, starter templates, full-vision roadmap, and research/evidence docs under `docs/Factory/v3/`
 - Starter lint scripts
 - Starter project-state placeholders
 
@@ -50,7 +50,7 @@ In short:
 - Factory v3 `V3-OP-001` is approved for optional bounded-code-change use.
 - Recent updates generalize lessons from downstream Factory usage back into the starter kit.
 - Factory v3 operating guidance lives in `docs/Factory/v3/USER_GUIDE.md`, with release approval at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.
-- Factory v3 is AEGIS-compatible but not AEGIS-dependent; AEGIS is not required to use this starter kit.
+- Factory v3 is compatible with external governance kernels but does not require one.
 - No V3 profile beyond `V3-OP-001` is approved. Broader V3 promotion still requires evidence, human approval, and Factory governance.
 
 ## Quick Start
@@ -105,7 +105,7 @@ The public starter kit now models ten generic layers:
 7. Task memory (optional): local runbook suggestion and outcome journal for repeat work
 8. Repo Cartographer (optional): advisory snapshot reports for repository state, drift, verification, and traceability
 9. Agent Loop Bridge (optional): review-only structured handoffs between agent lanes
-10. External governance-kernel boundary (optional): AEGIS-compatible SDLC mission governance without duplicating runtime enforcement
+10. External governance-kernel boundary (optional): SDLC mission governance for repos with separate governance kernels, without duplicating runtime enforcement
 
 See `docs/Factory/ARCHITECTURE.md` for the portable layer model: Factory Core, harness adapters, validators, extension packs, and project adapters.
 
@@ -142,7 +142,7 @@ your-repo/
 │   │   └── ONBOARDING_GUIDE.md
 │   └── Factory/
 │       ├── ARCHITECTURE.md
-│       ├── AEGIS_BOUNDARY.md
+│       ├── EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md
 │       ├── MERGE_PROTOCOL.md
 │       ├── ORCHESTRATION.md
 │       ├── MISSION_MODE.md
@@ -186,6 +186,9 @@ your-repo/
 │       │   └── VERIFICATION_MANIFEST_TEMPLATE.yaml
 │       └── v3/
 │           ├── README.md
+│           ├── VISION.md
+│           ├── ROADMAP_TO_FULL_VISION.md
+│           ├── ROADMAP_PREMORTEM.md
 │           ├── USER_GUIDE.md
 │           ├── OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md
 │           ├── OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md
@@ -197,6 +200,11 @@ your-repo/
 │           ├── PILOT_PROFILE_PLAN.md
 │           ├── PROMOTION_CRITERIA.md
 │           └── templates/
+│               ├── V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md
+│               ├── V3_MISSION_ENVELOPE_TEMPLATE.md
+│               ├── V3_CLOSEOUT_TEMPLATE.md
+│               ├── V3_FALLBACK_REVIEW_TEMPLATE.md
+│               └── V3_SIMPLE_CODE_GATE_REVIEW_TEMPLATE.md
 ```
 
 This starter kit intentionally does not ship product-specific run packs, finished state docs, historical missions, or real PO phase artifacts.
@@ -209,7 +217,7 @@ The root `CHANGELOG.md` tracks starter-kit releases. The `docs/CHANGELOG.md` fil
 2. Adapt `AGENTS.md` to your project.
 3. Fill in `docs/PROJECT_STATE.md`, `docs/ROADMAP.md`, and `docs/CHANGELOG.md`.
 4. Review `docs/Factory/ORCHESTRATION.md` and `docs/Factory/MISSION_MODE.md`.
-5. If your repository uses AEGIS or another autonomy governance kernel, review `docs/Factory/AEGIS_BOUNDARY.md`.
+5. If your repository uses a separate autonomy governance kernel, review `docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md`.
 6. Review `docs/Factory/Harnesses/` for AI coding tool guidance.
 7. If you will use the optional PO lane, review `docs/Factory/ProductOwner/`.
 8. Adapt `scripts/knowledge_lint.sh`, `scripts/mission_lint.sh`, and `scripts/mission_cursor_lint.sh` if your project uses different canonical docs or naming.

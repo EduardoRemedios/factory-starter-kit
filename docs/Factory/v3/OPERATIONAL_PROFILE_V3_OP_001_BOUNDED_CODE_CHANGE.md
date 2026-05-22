@@ -14,7 +14,7 @@ The prior research evidence remains the basis for approval; this profile remains
 ## Purpose
 Define the first narrow Factory v3 operational profile candidate so remaining readiness work can be judged against a concrete profile instead of abstract V3 ambition.
 
-This profile is designed for ordinary software repositories. It does not assume AEGIS or another runtime governance kernel exists.
+This profile is designed for ordinary software repositories. It does not assume a separate runtime governance kernel exists.
 
 ## Profile Identity
 - Profile ID: `V3-OP-001`
@@ -51,7 +51,7 @@ Work must not use this profile when any condition is true:
 - The work affects production deployment, runtime action mediation, regulated action paths, payment flows, authentication policy, data migration, security boundary behavior, or infrastructure authority without a separate heavier Factory profile.
 - Verification cannot be run or cannot produce evidence.
 - The task requires broad product discovery, open-ended design, or multiple unresolved stakeholder decisions.
-- The task needs AEGIS or another runtime kernel to prove safety.
+- The task needs a separate runtime kernel to prove safety.
 - The task would make Factory v2 appear unavailable or unsupported.
 
 ## Required Mission Envelope Fields
@@ -78,7 +78,7 @@ It does not authorize:
 
 - runtime-kernel authority
 - production action mediation
-- AEGIS dependency
+- separate governance kernel dependency
 - CI or required-gate wiring
 - V2 deprecation
 - unbounded autonomous execution
@@ -132,7 +132,7 @@ This profile can be used operationally within the approved optional `V3-OP-001` 
 Completed decision-prep evidence:
 
 - false-positive and false-negative review
-- AEGIS/runtime-kernel boundary review
+- external-kernel boundary review
 - operational-readiness decision report
 
 Required ongoing condition:

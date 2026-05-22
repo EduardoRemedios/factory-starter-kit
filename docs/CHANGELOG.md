@@ -1,10 +1,13 @@
 # Changelog
 
 ## 2026-05-22
+- Added Factory v3 Phase 1 trial capture template for real-project `V3-OP-001` evidence collection.
+- Added Factory v3 roadmap pre-mortem with failure modes, Phase 1 watchpoints, and a golden-fixture backlog.
+- Added Factory v3 vision and phased roadmap documents for moving from optional `V3-OP-001` use toward the full mission-governance runtime vision.
 - Updated the top-level and V3 README files so adopters can discover optional `V3-OP-001` operational use and the V3 user guide.
 - Recorded optional operational release approval for `V3-OP-001` and added the V3 Codex user guide with starter templates.
 - Added `V3-OP-001` operational-readiness decision report; C-10 is now ready for explicit human release approval.
-- Added `V3-OP-001` AEGIS/runtime-kernel boundary review; C-09 is now marked DONE in the V3 operational checklist.
+- Added `V3-OP-001` external-kernel boundary review; C-09 is now marked DONE in the V3 operational checklist.
 - Added `V3-OP-001` finding classification rollup for real shadow, seeded drift, positive routing, and natural-language evidence; C-08 is now marked DONE in the V3 operational checklist.
 - Added bounded `V3-OP-001` operational profile candidate and V2 guarantee preservation matrix; C-05, C-06, and C-07 are now marked DONE in the V3 operational checklist.
 - Added cross-version SIMPLE-CODE-GATE severity policy for ordinary Factory V2/V3 repos and marked V3 operational checklist C-04 DONE.

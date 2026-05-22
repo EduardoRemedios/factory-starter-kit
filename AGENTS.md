@@ -9,7 +9,7 @@ Purpose:
 3. `docs/Factory/ARCHITECTURE.md`
 4. `docs/Factory/ORCHESTRATION.md`
 5. `docs/Factory/MISSION_MODE.md` (if using Mission Mode)
-6. `docs/Factory/AEGIS_BOUNDARY.md` (if working on Factory v3, autonomy governance, AEGIS-compatible repos, or runtime-kernel boundaries)
+6. `docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md` (if working on Factory v3, autonomy governance, repositories with separate governance kernels, or runtime-kernel boundaries)
 7. `docs/Factory/ProductOwner/PO_PROCESS.md` (if working on PO-authored briefs or phase planning)
 8. `docs/Factory/SCRATCHPAD.md` (read only `## Active Pitfalls (Mandatory)`)
 9. current sprint artifacts in `docs/sprints/` and current run pack in `docs/Factory/runs/<RUN_ID>/pack/`
@@ -37,7 +37,7 @@ Purpose:
 - Keep deterministic ordering and evidence-chain integrity in reports and artifacts.
 - Do not create a second authored source of truth for mission state when Mission Mode is active.
 - Keep continuity artifacts as evidence aids, not as replacement authority for the underlying source documents.
-- If an adopting repo has AEGIS or another autonomy governance kernel, do not duplicate kernel authority, policy, evidence, lease, or runtime-action behavior inside Factory.
+- If an adopting repo has a separate autonomy governance kernel, do not duplicate kernel authority, policy, evidence, lease, or runtime-action behavior inside Factory.
 
 ## 3.1) SIMPLE-CODE-GATE (v2)
 Availability:
@@ -76,7 +76,7 @@ Future-Proofing and Context:
 - For process improvement runs, instantiate `docs/Factory/templates/RUN_METRICS_TEMPLATE.md` as `docs/Factory/runs/<RUN_ID>/RUN_METRICS.md`.
 - Prefer `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md` from the canonical template.
 - Optional task memory and cartographer outputs are advisory artifacts only; they do not replace Factory source artifacts, pack-lint, stage-lint, or human Go/No-go.
-- For Factory v3 or AEGIS-compatible work, read `docs/Factory/AEGIS_BOUNDARY.md` before changing mission governance, authority leases, evidence, runtime verification, or escalation semantics.
+- For Factory v3 work involving a separate governance kernel, read `docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md` before changing mission governance, authority leases, evidence, runtime verification, or escalation semantics.
 - If the run is advancing a unit inside an already-authorized mission, run `bash scripts/mission_lint.sh <MISSION_ID>` before Stage A and persist output as `MISSION_LINT.txt`.
 - If using the optional Codex Mission Goal Continuity adapter, run `bash scripts/mission_cursor_lint.sh <MISSION_ID>` before continuing from `MISSION_CURSOR.json` or an external goal/bookmark; `MISSION_CURSOR.json` is a derived resume cursor, not mission truth.
 - If the raw brief originates from the PO process, confirm it has a Brief Review PASS before entering the Factory.

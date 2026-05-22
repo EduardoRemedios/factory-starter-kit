@@ -17,7 +17,7 @@ Define how to stress-test Factory v3 research artifacts before promotion. Pilots
 - Confirm v3 docs improve clarity without confusing v2 usage.
 - Detect whether advisory checks catch real drift.
 - Measure overhead added to normal Factory work.
-- Verify AEGIS compatibility without dependency.
+- Verify external governance kernel compatibility without dependency.
 - Confirm no runtime-kernel behavior is introduced into Factory.
 
 ## Pilot Inputs
@@ -41,9 +41,9 @@ Define how to stress-test Factory v3 research artifacts before promotion. Pilots
 - Evidence: advisory report and manual review.
 - Pass signal: drift warnings are accurate and useful.
 
-### Profile P3 - AEGIS Boundary Review
+### Profile P3 - External Governance Kernel Boundary Review
 - Target: v3 concepts and shadow schema candidates.
-- Method: Review each candidate against `docs/Factory/AEGIS_BOUNDARY.md`.
+- Method: Review each candidate against `docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md`.
 - Evidence: boundary findings.
 - Pass signal: Factory-owned and kernel-owned responsibilities remain separated.
 
@@ -82,7 +82,7 @@ A pilot may pass only if:
 - v2 remains current and usable
 - v3 remains research-only
 - advisory checks do not block required v2 gates
-- no AEGIS dependency is introduced
+- no separate governance kernel dependency is introduced
 - no runtime-kernel behavior is introduced
 - findings are documented with evidence paths
 
@@ -92,7 +92,7 @@ Fail the pilot if:
 - shadow schemas are treated as required contracts
 - advisory checks are wired into required gates
 - Factory claims runtime proof
-- AEGIS becomes required
+- external governance kernel becomes required
 - promotion can occur without human release approval
 
 ## Next Step

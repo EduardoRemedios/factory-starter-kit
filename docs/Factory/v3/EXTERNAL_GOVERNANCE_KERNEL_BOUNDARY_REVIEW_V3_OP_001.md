@@ -1,4 +1,4 @@
-# AEGIS Runtime Boundary Review For V3-OP-001
+# External Governance Kernel Boundary Review For V3-OP-001
 
 ## Version
 v0.1
@@ -12,20 +12,20 @@ Research-only, non-enforcing decision-prep evidence. This document does not prom
 ## Purpose
 Complete the C-09 boundary review for `V3-OP-001 Bounded Code Change`.
 
-The review checks whether the profile remains an SDLC coding-governance profile and avoids duplicating lower-level autonomy governance kernels such as AEGIS.
+The review checks whether the profile remains an SDLC coding-governance profile and avoids duplicating any lower-level autonomy governance kernel.
 
 ## Scope
 - Profile: `V3-OP-001`
 - Profile document: `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`
-- Boundary source: `docs/Factory/AEGIS_BOUNDARY.md`
+- Boundary source: `docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md`
 - Default authority until release: Factory v2
 - Gate effect: none
 - Promotion decision: not authorized
 
 ## Boundary Summary
-`V3-OP-001` passes the AEGIS/runtime-kernel boundary review for decision-prep purposes.
+`V3-OP-001` passes the external-kernel boundary review for decision-prep purposes.
 
-The profile is suitable for ordinary repositories without AEGIS because it uses process artifacts, verification commands, evidence paths, halt rules, and V2 fallback. It is also compatible with repositories that have an AEGIS-like kernel because it does not duplicate kernel-owned runtime authority, policy, leases, proof, or production action behavior.
+The profile is suitable for ordinary repositories without a separate governance kernel because it uses process artifacts, verification commands, evidence paths, halt rules, and V2 fallback. It is also compatible with repositories that have a separate governance kernel because it does not duplicate kernel-owned runtime authority, policy, leases, proof, or production action behavior.
 
 Optional operational release approval for `V3-OP-001` is recorded separately at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.
 
@@ -33,10 +33,10 @@ Optional operational release approval for `V3-OP-001` is recorded separately at 
 
 | Source | Boundary-Relevant Content | Review Result |
 |---|---|---|
-| `docs/Factory/AEGIS_BOUNDARY.md` | Factory governs coding missions; external kernels govern autonomous system behavior at runtime. | PASS |
+| `docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md` | Factory governs coding missions; external kernels govern autonomous system behavior at runtime. | PASS |
 | `docs/Factory/ARCHITECTURE.md` | Factory Core includes external governance-kernel boundary rules and is not a second runtime governance kernel. | PASS |
 | `docs/Factory/ORCHESTRATION.md` | External governance kernel boundary is hard when present; Factory artifacts may map to kernel inputs through adapters. | PASS |
-| `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md` | Profile excludes runtime-kernel authority, production action mediation, AEGIS dependency, CI wiring, V2 deprecation, and unbounded autonomous execution. | PASS |
+| `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md` | Profile excludes runtime-kernel authority, production action mediation, separate governance kernel dependency, CI wiring, V2 deprecation, and unbounded autonomous execution. | PASS |
 | `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md` | Runtime-kernel authority is a preserved V2 guarantee for the profile only when boundary review and advisory eval output show no authority claim. | PASS |
 | `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md` | Current measured evidence has no known false positives and no measured seeded or natural-language false negatives, but broad production discovery is not measured. | PASS |
 
@@ -51,10 +51,10 @@ Optional operational release approval for `V3-OP-001` is recorded separately at 
 | Runtime authority | No ownership. The profile does not approve deployed autonomous behavior. | Owns runtime leases, policy gates, safety checks, and domain action permissions. | PASS |
 | Production action behavior | No ownership. The profile excludes production action mediation. | Owns production action admission and mediation. | PASS |
 | Audit-grade runtime proof | No ownership. Factory evidence is delivery evidence only. | Owns proof bundles or offline verification where applicable. | PASS |
-| AEGIS dependency | No dependency. Ordinary repositories can use Factory process governance without AEGIS. | Optional substrate only when an adopting repository already has one. | PASS |
+| Separate governance kernel dependency | No dependency. Ordinary repositories can use Factory process governance without a separate governance kernel. | Optional substrate only when an adopting repository already has one. | PASS |
 
 ## Ordinary Repository Review
-Most adopting repositories will not have AEGIS or an equivalent kernel. `V3-OP-001` remains useful in those repositories because it requires only:
+Most adopting repositories will not have a separate governance kernel. `V3-OP-001` remains useful in those repositories because it requires only:
 
 - an explicit mission objective,
 - authorized and forbidden repo scope,
@@ -68,8 +68,8 @@ Most adopting repositories will not have AEGIS or an equivalent kernel. `V3-OP-0
 
 These are process-governance controls. They do not imply runtime enforcement.
 
-## AEGIS-Like Repository Review
-For repositories with AEGIS or another lower-level governance kernel, `V3-OP-001` should remain above the kernel as the SDLC mission-governance layer.
+## Separate-Kernel Repository Review
+For repositories with a separate lower-level governance kernel, `V3-OP-001` should remain above the kernel as the SDLC mission-governance layer.
 
 Allowed relationship:
 - Factory mission envelope fields may become kernel policy inputs.
@@ -89,8 +89,8 @@ Forbidden relationship:
 |---|---|
 | `V3-OP-001` approves Factory v3 operational use. | Not present. C-10 remains required. |
 | `V3-OP-001` removes Factory v2 fallback. | Not present. V2 fallback is mandatory. |
-| `V3-OP-001` requires AEGIS in every repo. | Not present. AEGIS is optional external substrate. |
-| `V3-OP-001` provides runtime authority. | Not present. Runtime authority is excluded. |
+| `V3-OP-001` makes a separate governance kernel mandatory. | Not present. A separate governance kernel is optional. |
+| `V3-OP-001` provides runtime authority. | Not present. Factory v3 does not claim runtime authority. |
 | `V3-OP-001` provides production action mediation. | Not present. Production action mediation is excluded. |
 | `V3-OP-001` provides audit-grade runtime proof. | Not present. Factory evidence is delivery evidence only. |
 | `V3-OP-001` changes validators, gates, CI, or required checks. | Not present. Current checks remain standalone advisory only. |
@@ -100,14 +100,14 @@ C-09 is complete for `V3-OP-001`.
 
 Decision basis:
 - `V3-OP-001` is coding-governance only.
-- AEGIS remains optional.
-- Ordinary non-AEGIS repositories remain supported.
+- A separate governance kernel remains optional.
+- Ordinary non-kernel repositories remain supported.
 - Repositories with a lower-level kernel can map Factory artifacts through adapters without duplicating kernel authority.
 - Factory v2 remains authoritative until a future release decision.
 - Operational use remains limited to optional `V3-OP-001`.
 
 ## Residual Risk
-- This review is document and evidence based. It does not test a live AEGIS adapter.
+- This review is document and evidence based. It does not test a live external governance kernel adapter.
 - Broad production false-negative discovery remains outside the current measured evidence set.
 - Future expansion beyond optional `V3-OP-001` requires explicit human approval.
 

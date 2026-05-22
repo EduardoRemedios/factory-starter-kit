@@ -27,7 +27,7 @@ Factory v3 must not implement:
 - persistent world-model or cognition memory
 - production rollback execution
 - regulated-action mediation runtime
-- AEGIS-specific hard dependency
+- separate-governance-kernel hard dependency
 
 ## Factory-owned Space
 Factory may own lightweight coding-mission governance artifacts:
@@ -51,7 +51,7 @@ A lower-level governance kernel owns:
 - production rollback or revocation execution
 
 ## Adapter Rule
-When an adopting repo has AEGIS or a similar kernel, Factory artifacts may map to kernel inputs through a project adapter.
+When an adopting repo has a separate governance kernel, Factory artifacts may map to kernel inputs through a project adapter.
 
 The adapter must not make Factory the runtime authority. Factory evidence may support a kernel decision, but it is not runtime proof unless the kernel verifier produced that proof.
 
@@ -64,4 +64,3 @@ Before adding a v3 feature, ask:
 5. Would it create a second source of truth for authority, evidence, or mission state?
 
 If the answer to question 2, 3, or 5 is yes, stop and define an adapter boundary instead.
-

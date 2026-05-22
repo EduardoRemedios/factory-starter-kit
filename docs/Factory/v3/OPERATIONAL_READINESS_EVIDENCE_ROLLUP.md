@@ -30,7 +30,7 @@ The current question is not whether V3 should replace V2. The question is whethe
 |---|---|---|
 | Clean real-run behavior | One real Factory run root returns `ADVISORY_PASS` with zero findings. | Useful non-regression signal, but not enough real-run breadth. |
 | V2 fallback and non-deprecation | `V3-G007` seeded drift detected. | Covered for trigger-marker regression; broader language detection unproven. |
-| Runtime-kernel boundary | `V3-G009` seeded drift detected. | Covered for trigger-marker regression; AEGIS adapter-positive case still needs pilot evidence. |
+| Runtime-kernel boundary | `V3-G009` seeded drift detected. | Covered for trigger-marker regression; external governance kernel adapter-positive case still needs pilot evidence. |
 | Verification halt behavior | `V3-G005` seeded drift detected. | Covered for seeded failure; real failed-verification pilot still missing. |
 | SIMPLE-CODE-GATE behavior | `V3-G011` seeded drift detected as warning. | Covered for seeded warning; severity policy for operational profiles remains unresolved. |
 | Mission envelope completeness | Golden fixture family exists in the eval suite. | Fixture-level coverage exists; real mission-envelope pilot evidence is still thin. |
@@ -66,7 +66,7 @@ Evidence does not support:
 - making V3 the default Factory mode
 - deprecating or discouraging V2
 - wiring the eval runner into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, merge preflight, CI, or any required gate
-- claiming runtime proof, production mediation, AEGIS authority, or fail-closed enforcement from Factory V3 advisory evidence alone
+- claiming runtime proof, production mediation, external governance kernel authority, or fail-closed enforcement from Factory V3 advisory evidence alone
 
 ## Decision
 NO-GO for Factory v3 operational promotion.

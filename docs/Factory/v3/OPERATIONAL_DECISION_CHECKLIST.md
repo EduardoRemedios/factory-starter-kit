@@ -32,7 +32,7 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | C-06 | V2 fallback remains explicit. | `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md` requires V2 fallback for ambiguity, scope expansion, missing authority, failed verification, stale evidence, unresolved SIMPLE-CODE-GATE blockers, runtime/kernel scope, and human request. | DONE |
 | C-07 | V2 guarantee preservation matrix is complete. | `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md` maps V2 guarantees to V3-OP-001 controls with no unresolved critical profile-definition gaps. | DONE |
 | C-08 | False-positive and false-negative review is complete. | `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md` classifies real shadow, seeded drift, positive routing, and natural-language evidence for `V3-OP-001`, with 0 known false positives and 0 known false negatives in measured seeded/natural-language cases. | DONE |
-| C-09 | AEGIS/runtime-kernel boundary review passes. | `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md` confirms `V3-OP-001` remains coding-governance only, AEGIS remains optional, ordinary non-AEGIS repositories remain supported, and runtime-kernel authority remains outside Factory. | DONE |
+| C-09 | external-kernel boundary review passes. | `docs/Factory/v3/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY_REVIEW_V3_OP_001.md` confirms `V3-OP-001` remains coding-governance only, a separate governance kernel remains optional, ordinary non-kernel repositories remain supported, and runtime-kernel authority remains outside Factory. | DONE |
 | C-10 | Operational-readiness decision report is complete. | `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md` names exact evidence paths, baseline revision, pilot results, residual risks, and approval. Release approval is recorded at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`. | DONE |
 
 ## Already Satisfied Or Partially Satisfied
@@ -48,7 +48,7 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | SIMPLE-CODE-GATE severity policy | C-04 evidence exists at `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md` and `docs/Factory/runs/RUN_20260522_0948_v3_g011_severity_policy/EXECUTION_CLOSEOUT.md`. | DONE |
 | Bounded profile and V2 guarantee matrix | C-05, C-06, and C-07 evidence exists at `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`, `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`, and `docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/EXECUTION_CLOSEOUT.md`. | DONE |
 | Finding classification rollup | C-08 evidence exists at `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md` and `docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup/EXECUTION_CLOSEOUT.md`. | DONE |
-| AEGIS/runtime-kernel boundary review | C-09 evidence exists at `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md` and `docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/EXECUTION_CLOSEOUT.md`. | DONE |
+| external-kernel boundary review | C-09 evidence exists at `docs/Factory/v3/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY_REVIEW_V3_OP_001.md` and `docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/EXECUTION_CLOSEOUT.md`. | DONE |
 | Operational-readiness decision report | C-10 report exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md`; approval exists at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`. | DONE |
 
 ## Decision Rule

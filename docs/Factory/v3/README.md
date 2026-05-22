@@ -1,9 +1,12 @@
 # Factory v3
 
 ## Version
-v0.2
+v0.5
 
 ## Change Log
+- v0.5 (2026-05-22): Added Phase 1 real-project trial capture template for `V3-OP-001` evidence collection.
+- v0.4 (2026-05-22): Added roadmap pre-mortem and golden-fixture backlog for V3 operationalization.
+- v0.3 (2026-05-22): Added vision and roadmap documents for the path from `V3-OP-001` to the full mission-governance runtime vision.
 - v0.2 (2026-05-22): Updated status after optional `V3-OP-001` operational release approval and user-guide addition.
 - v0.1 (2026-05-18): Initial research-only namespace for Factory v3 planning.
 
@@ -26,7 +29,7 @@ This namespace captures Factory v3 operating guidance, release evidence, starter
 ## Current Scope
 - Provide user guidance for optional `V3-OP-001` use.
 - Provide starter templates for V3 mission envelopes, closeout, fallback review, and SIMPLE-CODE-GATE review.
-- Preserve the AEGIS and runtime-kernel boundary.
+- Preserve the external governance kernel and runtime-kernel boundary.
 - Keep V2 fallback explicit.
 - Capture evals, stress tests, pilot evidence, decision reports, and promotion criteria.
 - Continue research for any future V3 profile before promotion.
@@ -44,12 +47,12 @@ They do not change:
 
 They also do not approve payment, authentication, compliance, production deployment, infrastructure authority, runtime-kernel authority, or production action mediation.
 
-## Relationship To AEGIS
-Factory v3 should be AEGIS-compatible but not AEGIS-dependent.
+## Relationship To External Governance Kernels
+Factory v3 should be compatible with external governance kernels but does not require one.
 
-If an adopting repository uses AEGIS or another lower-level autonomy governance kernel, Factory should act as the SDLC mission-governance profile for coding work while the kernel remains the runtime authority and proof layer.
+If an adopting repository uses a separate lower-level autonomy governance kernel, Factory should act as the SDLC mission-governance profile for coding work while the kernel remains the runtime authority and proof layer.
 
-If an adopting repository does not use AEGIS, Factory v2 and optional `V3-OP-001` remain usable without it.
+If an adopting repository does not use a separate governance kernel, Factory v2 and optional `V3-OP-001` remain usable without one.
 
 ## Approved Profile
 Use `V3-OP-001` only for bounded code-changing work where:
@@ -67,6 +70,9 @@ Start with `USER_GUIDE.md`.
 Any V3 profile beyond `V3-OP-001`, any default-mode promotion, or any required-gate integration requires evidence, human approval, and Factory governance.
 
 ## Key Research Artifacts
+- `VISION.md`
+- `ROADMAP_TO_FULL_VISION.md`
+- `ROADMAP_PREMORTEM.md`
 - `USER_GUIDE.md`
 - `OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`
 - `OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`
@@ -77,6 +83,11 @@ Any V3 profile beyond `V3-OP-001`, any default-mode promotion, or any required-g
 - `OPERATIONAL_READINESS_EVAL_PLAN.md`
 - `OPERATIONAL_READINESS_DECISION_REPORT_TEMPLATE.md`
 - `templates/`
+
+## Phase 1 Trial Capture
+Use `templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md` for real-project `V3-OP-001` trials.
+
+The template is designed to capture fallback decisions, user friction, advisory false positives and false negatives, SIMPLE-CODE-GATE evidence, and roadmap pre-mortem watchpoints before Phase 2 structured mission records are designed.
 
 ## Advisory Eval Tooling
 - `scripts/factory_v3_advisory_lint.py` checks research-posture and promotion-evidence drift in V3 docs.

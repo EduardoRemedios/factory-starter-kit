@@ -40,7 +40,7 @@ V3 research should capture:
 - false negatives missed by advisory checks
 - overhead added to normal v2 runs
 - clarity for public starter-kit users
-- AEGIS-boundary compliance
+- external-kernel boundary compliance
 - evidence quality for promotion decisions
 
 ## Release Bar
@@ -48,7 +48,7 @@ A v3 release should not be declared until:
 - v2 remains usable and documented as current until the release decision
 - research artifacts are tested in shadow or advisory mode
 - pilot evidence shows useful signal
-- AEGIS compatibility does not imply dependency
+- external governance kernel compatibility does not imply dependency
 - runtime-kernel behavior remains out of Factory
 - a human release decision promotes specific artifacts
 

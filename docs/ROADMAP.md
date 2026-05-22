@@ -37,14 +37,19 @@
 | SPRINT_20260522_025 | V3-G011 SIMPLE-CODE-GATE severity policy | Done | 2026-05-22 | `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md`; `docs/Factory/runs/RUN_20260522_0948_v3_g011_severity_policy/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260522_026 | V3 operational profile and guarantee matrix | Done | 2026-05-22 | `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`; `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260522_027 | V3-OP-001 finding classification rollup | Done | 2026-05-22 | `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup/EXECUTION_CLOSEOUT.md` |
-| SPRINT_20260522_028 | V3-OP-001 AEGIS/runtime-kernel boundary review | Done | 2026-05-22 | `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/EXECUTION_CLOSEOUT.md` |
+| SPRINT_20260522_028 | V3-OP-001 external-kernel boundary review | Done | 2026-05-22 | `docs/Factory/v3/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY_REVIEW_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260522_029 | V3-OP-001 operational-readiness decision report | Done | 2026-05-22 | `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1150_v3_decision_report/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260522_030 | V3-OP-001 release approval and user guide | Done | 2026-05-22 | `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`; `docs/Factory/v3/USER_GUIDE.md`; `docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide/EXECUTION_CLOSEOUT.md` |
+| SPRINT_20260522_031 | V3 full-vision roadmap | Done | 2026-05-22 | `docs/Factory/v3/VISION.md`; `docs/Factory/v3/ROADMAP_TO_FULL_VISION.md` |
+| SPRINT_20260522_032 | V3 roadmap pre-mortem | Done | 2026-05-22 | `docs/Factory/v3/ROADMAP_PREMORTEM.md` |
+| SPRINT_20260522_033 | V3 Phase 1 trial capture template | Done | 2026-05-22 | `docs/Factory/v3/templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
+| Phase 1 V3 real-project trial loop | Next | Use `V3-OP-001` in real projects, including non-kernel repos, and capture friction, fallback triggers, false positives, and false negatives. |
+| Phase 2 V3 structured mission record | Next | Design a shadow `V3_MISSION_RECORD` format only after trial evidence clarifies what must be captured. |
 | V3-OP-001 trial feedback | Next | Test optional V3 use in real projects, capture friction, missed fallback triggers, and guide/template improvements. |
 | V3 user guide refinement | Next | Update the user guide after trial evidence, especially for Codex task prompts and fallback ergonomics. |
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |

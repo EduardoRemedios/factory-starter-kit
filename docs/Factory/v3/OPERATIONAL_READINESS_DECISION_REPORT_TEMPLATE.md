@@ -19,7 +19,7 @@ Research template only. This artifact does not promote Factory v3, authorize ope
 ## Scope
 - V3 profile evaluated:
 - V2 fallback retained: YES | NO
-- AEGIS dependency introduced: YES | NO
+- separate governance kernel dependency introduced: YES | NO
 - Runtime-kernel authority introduced: YES | NO
 
 ## Evidence Inputs
@@ -45,7 +45,7 @@ Research template only. This artifact does not promote Factory v3, authorize ope
 - Verification failure behavior tested: YES | NO
 - Interruption and reentry behavior tested: YES | NO
 - V2 fallback behavior tested: YES | NO
-- AEGIS boundary review passes: YES | NO
+- external-kernel boundary review passes: YES | NO
 - SIMPLE-CODE-GATE remains mandatory for code-changing work: YES | NO
 
 ## Residual Risks

@@ -6,6 +6,6 @@ The canonical Factory v2 stage order remains A -> B -> C -> D -> E -> F -> G -> 
 
 knowledge_lint.sh must run the v3 advisory lint before a Factory v2 run can pass.
 
-Factory v3 requires AEGIS to use the starter kit.
+Factory v3 requires external governance kernel to use the starter kit.
 
 Factory v3 release is ready.

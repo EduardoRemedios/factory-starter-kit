@@ -12,7 +12,7 @@ Mandatory cross-version policy for Factory-controlled planning, execution, and r
 ## Purpose
 Define when SIMPLE-CODE-GATE issues are blockers, advisory-high findings, or no findings.
 
-Factory is used across ordinary software repositories, most of which do not have AEGIS or another runtime governance kernel. The default policy therefore protects general implementation quality and governance clarity for both Factory v2 and Factory v3. Runtime-kernel boundary concerns are an optional additional case for repos that have such a kernel.
+Factory is used across ordinary software repositories, most of which do not have a separate runtime governance kernel. The default policy therefore protects general implementation quality and governance clarity for both Factory v2 and Factory v3. Runtime-kernel boundary concerns are an optional additional case for repos that have such a kernel.
 
 ## Default Rule
 For Factory-controlled code-changing work, SIMPLE-CODE-GATE findings block operational execution or closeout when they materially increase bloat, brittleness, hidden coupling, dependency risk, silent failure risk, or unclear ownership.
@@ -65,9 +65,9 @@ The policy applies equally to:
 - V3 shadow and advisory runs, with advisory-high severity until a profile is operationally authorized.
 
 ## Optional Runtime-Kernel Addendum
-If an adopting repo has AEGIS or another runtime governance kernel, also treat a SIMPLE-CODE-GATE issue as a blocker when it creates duplicate authority, duplicate evidence state, duplicate runtime gates, duplicate leases, or confusing ownership between Factory and the kernel.
+If an adopting repo has a separate runtime governance kernel, also treat a SIMPLE-CODE-GATE issue as a blocker when it creates duplicate authority, duplicate evidence state, duplicate runtime gates, duplicate leases, or confusing ownership between Factory and the kernel.
 
-Repos without such a kernel do not need AEGIS concepts to apply this policy.
+Repos without such a kernel do not need external governance kernel concepts to apply this policy.
 
 ## V3-G011 Policy Decision
 For the current Factory v3 operational-readiness checklist, `V3-G011` remains `advisory_high` in the standalone research eval runner because the runner is advisory and has no gate effect.

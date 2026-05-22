@@ -34,7 +34,7 @@ Map the Factory v2 guarantees that would be collapsed or compressed by `V3-OP-00
 | Verification failure halts work. | Failed halt-on-failure verification must stop execution and preserve evidence. | PRESERVED FOR PROFILE | Halt evidence records failed command and no continuation. |
 | Interruption and reentry do not invent state. | Reentry must resume from authored artifacts and halt on stale or conflicting state. | PRESERVED FOR PROFILE | Reentry evidence cites authored mission artifacts. |
 | V2 remains available. | V2 fallback triggers are mandatory and include human sponsor request, ambiguity, scope expansion, missing authority, failed verification, and unresolved blocker findings. | PRESERVED FOR PROFILE | Mission envelope and closeout record fallback review. |
-| Runtime-kernel authority is not claimed. | Profile excludes production action mediation, runtime-kernel authority, and AEGIS dependency. | PRESERVED FOR PROFILE | Boundary review and advisory eval output show no runtime-authority claim. |
+| Runtime-kernel authority is not claimed. | Profile excludes production action mediation, runtime-kernel authority, and separate governance kernel dependency. | PRESERVED FOR PROFILE | Boundary review and advisory eval output show no runtime-authority claim. |
 
 ## Result
 The relevant Factory v2 guarantees are preserved for the narrow `V3-OP-001` profile definition when all listed controls are present.
@@ -42,6 +42,6 @@ The relevant Factory v2 guarantees are preserved for the narrow `V3-OP-001` prof
 This result is not an operational promotion. It only means the profile definition is sufficiently bounded for the next readiness steps.
 
 ## Remaining Decision Work
-Completed decision-prep evidence now includes false-positive and false-negative classification, AEGIS/runtime-kernel boundary review, and the operational-readiness decision report for the profile.
+Completed decision-prep evidence now includes false-positive and false-negative classification, external-kernel boundary review, and the operational-readiness decision report for the profile.
 
 Release approval is recorded at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.
