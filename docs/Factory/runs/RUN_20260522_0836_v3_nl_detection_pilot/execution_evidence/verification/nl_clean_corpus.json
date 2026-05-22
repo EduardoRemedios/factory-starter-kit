@@ -1,0 +1,38 @@
+{
+  "blocking_effect": "none",
+  "checked_files": [
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_01_v2_fallback.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_02_research_posture.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_03_runtime_boundary.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_04_verification_halt.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_05_reentry.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_06_simple_code.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_07_profile.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_08_evidence.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_09_shadow.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean/clean_10_aegis.md"
+  ],
+  "false_negative_review": {
+    "items": [],
+    "status": "not_reviewed"
+  },
+  "false_positive_review": {
+    "items": [],
+    "status": "not_reviewed"
+  },
+  "findings": [],
+  "generated_at": "not_recorded",
+  "natural_language_pilot": {
+    "enabled": true,
+    "false_positive_budget": 1,
+    "gate_effect": "none"
+  },
+  "promotion_decision": "not_authorized",
+  "recommended_next_steps": [
+    "No operational-readiness findings. Keep V3 research-only until a promotion pack approves otherwise."
+  ],
+  "report_id": "factory-v3-operational-readiness-eval",
+  "status": "ADVISORY_PASS",
+  "target": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/clean",
+  "warnings": []
+}

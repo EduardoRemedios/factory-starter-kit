@@ -26,7 +26,7 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 |---|---|---|---|
 | C-01 | Real failed-command halt behavior is proven. | `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/execution_evidence/halt_failed_command/result.json` and closeout show nonzero command halt, preserved evidence, and no continuation marker. | DONE |
 | C-02 | Real interruption/reentry behavior is proven. | `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/execution_evidence/reentry_valid/result.json` and `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/execution_evidence/reentry_stale_cursor/result.json` show authored-artifact resume and stale cursor halt. | DONE |
-| C-03 | Natural-language advisory detection is implemented and measured. | A bounded candidate layer with a clean corpus, classified findings, and measured false positives within budget. | OPEN |
+| C-03 | Natural-language advisory detection is implemented and measured. | `docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/execution_evidence/NL_DETECTION_MEASUREMENT_REPORT.md` shows opt-in pilot detection with 0 false positives across 10 clean artifacts and expected drift IDs detected. | DONE |
 | C-04 | V3-G011 severity policy is decided. | A documented rule for when SIMPLE-CODE-GATE violations are advisory warnings versus operational blockers for selected V3 profiles. | OPEN |
 | C-05 | Operational profile is named and bounded. | A concrete profile defining eligible work types, excluded work, authority limits, verification expectations, and V2 fallback triggers. | OPEN |
 | C-06 | V2 fallback remains explicit. | Operational profile and decision report state when work must stay on or return to Factory v2. | OPEN |
@@ -44,6 +44,7 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | Positive routing | V3-G012 and V3-G013 pass as positive routing cases. | PARTIAL |
 | Natural-language design | Bounded design and false-positive budget exist at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/NATURAL_LANGUAGE_DETECTION_DESIGN.md`. | PARTIAL |
 | Real halt and reentry behavior | C-01 and C-02 evidence exists at `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/EXECUTION_CLOSEOUT.md`. | DONE |
+| Natural-language pilot measurement | C-03 evidence exists at `docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/EXECUTION_CLOSEOUT.md`. | DONE |
 
 ## Decision Rule
 Do not approve operational Factory v3 use until every `OPEN` checklist item is either:
@@ -59,8 +60,8 @@ No waiver may remove these hard requirements:
 ## Recommended Next Work
 Prioritize in this order:
 
-1. Bounded natural-language advisory detection implementation with false-positive corpus.
-2. V3-G011 severity policy decision.
-3. Operational profile boundary drafting.
-4. V2 guarantee preservation matrix completion.
+1. V3-G011 severity policy decision.
+2. Operational profile boundary drafting.
+3. V2 guarantee preservation matrix completion.
+4. False-positive and false-negative review rollup.
 5. Operational-readiness decision report drafting.

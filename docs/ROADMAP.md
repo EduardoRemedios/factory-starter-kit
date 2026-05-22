@@ -33,12 +33,13 @@
 | SPRINT_20260521_021 | V3 confidence pilot batch execution | Done | 2026-05-21 | `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260521_022 | V3 operational decision checklist | Done | 2026-05-21 | `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md` |
 | SPRINT_20260522_023 | V3 real halt and reentry pilot | Done | 2026-05-22 | `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/EXECUTION_CLOSEOUT.md` |
+| SPRINT_20260522_024 | V3 natural-language advisory detection pilot | Done | 2026-05-22 | `docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/EXECUTION_CLOSEOUT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| V3 natural-language advisory detection pilot | Next | Implement only a bounded candidate layer with false-positive corpus and no gate effect, if approved. |
+| V3-G011 severity policy decision | Next | Decide when SIMPLE-CODE-GATE findings remain advisory warnings versus become operational blockers. |
 | V3 operational profile boundary | Next | Draft the first bounded optional operational profile after natural-language and severity-policy evidence. |
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |
 | Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |

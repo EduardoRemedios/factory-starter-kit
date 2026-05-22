@@ -1,0 +1,95 @@
+{
+  "blocking_effect": "none",
+  "checked_files": [
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g003_scope_expansion.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g005_continue_after_failure.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g007_v2_deprecation.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g009_runtime_authority.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g010_stale_cursor.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g011_code_gate.md",
+    "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g014_promotion_gap.md"
+  ],
+  "false_negative_review": {
+    "items": [],
+    "status": "not_reviewed"
+  },
+  "false_positive_review": {
+    "items": [],
+    "status": "not_reviewed"
+  },
+  "findings": [
+    {
+      "id": "V3-G003",
+      "message": "natural-language scope expansion risk found",
+      "path": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g003_scope_expansion.md",
+      "severity": "advisory_critical",
+      "source": "natural_language_pilot"
+    },
+    {
+      "id": "V3-G005",
+      "message": "natural-language verification halt risk found",
+      "path": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g005_continue_after_failure.md",
+      "severity": "advisory_critical",
+      "source": "natural_language_pilot"
+    },
+    {
+      "id": "V3-G007",
+      "message": "natural-language V2 deprecation risk found",
+      "path": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g007_v2_deprecation.md",
+      "severity": "advisory_critical",
+      "source": "natural_language_pilot"
+    },
+    {
+      "id": "V3-G009",
+      "message": "natural-language runtime-kernel authority risk found",
+      "path": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g009_runtime_authority.md",
+      "severity": "advisory_critical",
+      "source": "natural_language_pilot"
+    },
+    {
+      "id": "V3-G010",
+      "message": "natural-language stale continuity risk found",
+      "path": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g010_stale_cursor.md",
+      "severity": "advisory_critical",
+      "source": "natural_language_pilot"
+    },
+    {
+      "id": "V3-G011",
+      "message": "natural-language SIMPLE-CODE-GATE risk found",
+      "path": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g011_code_gate.md",
+      "severity": "advisory_high",
+      "source": "natural_language_pilot"
+    },
+    {
+      "id": "V3-G014",
+      "message": "natural-language promotion evidence risk found",
+      "path": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g014_promotion_gap.md",
+      "severity": "advisory_critical",
+      "source": "natural_language_pilot"
+    }
+  ],
+  "generated_at": "not_recorded",
+  "natural_language_pilot": {
+    "enabled": true,
+    "false_positive_budget": 1,
+    "gate_effect": "none"
+  },
+  "promotion_decision": "not_authorized",
+  "recommended_next_steps": [
+    "Review findings manually; this report is advisory and non-blocking.",
+    "Classify findings as accepted, false_positive, needs_more_context, or deferred.",
+    "Do not treat this eval output as Factory v3 promotion approval."
+  ],
+  "report_id": "factory-v3-operational-readiness-eval",
+  "status": "ADVISORY_FAIL_NON_BLOCKING",
+  "target": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift",
+  "warnings": [
+    {
+      "id": "V3-G011",
+      "message": "natural-language SIMPLE-CODE-GATE risk found",
+      "path": "tests/fixtures/factory_v3_operational_readiness_nl_pilot/drift/v3g011_code_gate.md",
+      "severity": "advisory_high",
+      "source": "natural_language_pilot"
+    }
+  ]
+}

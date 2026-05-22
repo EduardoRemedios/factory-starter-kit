@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add opt-in V3 natural-language advisory detection pilot with clean false-positive corpus and drift corpus measurement.
 - Add execution-enabled V3 real halt and reentry pilot evidence; C-01 and C-02 are now marked DONE in the operational decision checklist.
 - Add Factory v3 operational decision checklist capturing remaining evidence required before any V3 operational-use decision.
 - Add execution-enabled V3 confidence pilot batch with additional real shadows, seeded drift evidence, positive routing pilots, and natural-language detection design.
