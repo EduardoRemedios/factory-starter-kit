@@ -1,0 +1,11 @@
+{
+  "case": "reentry_valid",
+  "cursor_authority": "derived_resume_cursor",
+  "cursor_revision": "intent-v2",
+  "halt_reason": "",
+  "halted": false,
+  "resume_allowed": true,
+  "resume_source": "authored_factory_artifact",
+  "source_authority": "authored_factory_artifact",
+  "source_revision": "intent-v2"
+}

@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the current state of the build. Updated after every sprint.
 >
-> **Last updated:** 2026-05-21
+> **Last updated:** 2026-05-22
 
 ---
 
@@ -19,6 +19,7 @@
 - A V3 operational-readiness decision report template exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_TEMPLATE.md`.
 - A V3 operational-readiness evidence rollup exists at `docs/Factory/v3/OPERATIONAL_READINESS_EVIDENCE_ROLLUP.md`.
 - A V3 operational decision checklist exists at `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md`.
+- An execution-enabled V3 real halt and reentry pilot exists at `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/EXECUTION_CLOSEOUT.md`.
 - A Factory v2 planning pack for the V3 eval evolution decision exists at `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md`.
 - An execution-enabled V3 confidence pilot batch exists at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
@@ -38,7 +39,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: V3 operational decision checklist.
+- Current tracked evidence: V3 real halt and reentry pilot closeout.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -60,12 +61,13 @@
 - Latest V3 eval evolution planning result: `RUN_20260521_0939_v3_eval_evolution_decision_plan` pack returns `PASS`, selects a staged combined path, and defines confidence thresholds for future operational V3 use while retaining V2 authority.
 - Latest V3 confidence pilot batch result: `RUN_20260521_0948_v3_confidence_pilot_execution` returns READY; two additional real-run shadows pass, seeded V3-G003/G006/G010/G014 and controlled V3-G005 are accepted, V3-G012/V3-G013 positive routing passes, and V3 remains not operationally promoted.
 - Latest V3 decision-checklist result: `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md` records the remaining OPEN items before any operational V3 decision.
+- Latest V3 real behavior pilot result: `RUN_20260522_0824_v3_real_halt_reentry_pilot` returns READY; C-01 and C-02 are DONE with run-local evidence for nonzero halt/no-continuation, authored-artifact resume, and stale-cursor halt.
 
 ## What Does NOT Exist Yet
 
 - Factory v3 is not promoted for release.
 - Factory v3 does not yet have enough real-run pilot evidence, interruption/reentry evidence, failed-verification halt evidence, or V2 fallback evidence to become an optional operational mode.
-- Factory v3 still lacks a real failed-command halt pilot, a real authored-artifact interruption/reentry pilot, broader natural-language false-positive measurement, and a V3-G011 severity policy decision.
+- Factory v3 still lacks broader natural-language false-positive measurement, a V3-G011 severity policy decision, a named bounded operational profile, a complete V2 guarantee preservation matrix, and a final operational-readiness decision report.
 - Factory v3 has no approved operational profile yet; a future decision report must still name exact evidence paths, revisions, residual risks, and human approval.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
@@ -100,6 +102,7 @@ python3 scripts/factory_v3_operational_readiness_eval.py --target docs/Factory/v
 ./scripts/factoryctl pack-lint --run RUN_20260521_0833_v3_eval_suite_impl_plan
 ./scripts/factoryctl pack-lint --run RUN_20260521_0939_v3_eval_evolution_decision_plan
 ./scripts/factoryctl pack-lint --run RUN_20260521_0948_v3_confidence_pilot_execution
+./scripts/factoryctl pack-lint --run RUN_20260522_0824_v3_real_halt_reentry_pilot
 
 # Run your test suite
 # (add your project's test command here)

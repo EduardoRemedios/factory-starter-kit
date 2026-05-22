@@ -1,0 +1,28 @@
+schema_version: 1
+run_id: RUN_20260522_0824_v3_real_halt_reentry_pilot
+sprint_id: SPRINT_20260522_023
+execution_mode: EXECUTION_ENABLED
+
+checks:
+  - id: VM-001
+    tier: V2
+    type: command
+    constraint_ids:
+      - C-01
+      - C-02
+    description: Run the real behavior pilot harness.
+    command: python3 docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/execution_evidence/harness/real_behavior_pilot.py
+    expected: Command exits 0 and writes halt/reentry evidence JSON.
+    halt_on_failure: true
+    evidence_path: execution_evidence/harness/run_output.txt
+
+  - id: VM-002
+    tier: V1
+    type: command
+    constraint_ids:
+      - VP-05
+    description: Validate completed Factory pack.
+    command: ./scripts/factoryctl pack-lint --run RUN_20260522_0824_v3_real_halt_reentry_pilot
+    expected: Command exits 0.
+    halt_on_failure: true
+    evidence_path: execution_evidence/verification/pack_lint.txt

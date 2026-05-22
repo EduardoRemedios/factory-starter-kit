@@ -1,0 +1,37 @@
+{
+  "halt_failed_command": {
+    "case": "halt_failed_command",
+    "command": "bash -lc printf 'halt pilot command failed as intended\\n'; exit 7",
+    "command_returncode": 7,
+    "continuation_executed": false,
+    "continuation_marker_exists": false,
+    "halt_reason": "halt_on_failure command exited nonzero",
+    "halted": true,
+    "stderr": "",
+    "stdout": "halt pilot command failed as intended\n"
+  },
+  "pilot": "v3_real_halt_reentry",
+  "reentry_stale_cursor": {
+    "case": "reentry_stale_cursor",
+    "cursor_authority": "derived_resume_cursor",
+    "cursor_revision": "intent-v1",
+    "halt_reason": "derived cursor conflicts with authored source artifact",
+    "halted": true,
+    "resume_allowed": false,
+    "resume_source": "",
+    "source_authority": "authored_factory_artifact",
+    "source_revision": "intent-v2"
+  },
+  "reentry_valid": {
+    "case": "reentry_valid",
+    "cursor_authority": "derived_resume_cursor",
+    "cursor_revision": "intent-v2",
+    "halt_reason": "",
+    "halted": false,
+    "resume_allowed": true,
+    "resume_source": "authored_factory_artifact",
+    "source_authority": "authored_factory_artifact",
+    "source_revision": "intent-v2"
+  },
+  "status": "PASS"
+}

@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-05-22
+- Added execution-enabled V3 real halt and reentry pilot evidence; C-01 and C-02 are now marked DONE in the operational decision checklist.
+
 ## 2026-05-21
 - Added Factory v3 operational decision checklist capturing the remaining evidence gates before any V3 operational-use decision.
 - Added execution-enabled V3 confidence pilot batch with two additional clean real shadows, seeded V3-G003/G006/G010/G014 evidence, controlled V3-G005 halt evidence, V3-G012/V3-G013 positive routing passes, and a bounded natural-language detection design.
