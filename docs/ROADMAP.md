@@ -36,13 +36,14 @@
 | SPRINT_20260522_024 | V3 natural-language advisory detection pilot | Done | 2026-05-22 | `docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260522_025 | V3-G011 SIMPLE-CODE-GATE severity policy | Done | 2026-05-22 | `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md`; `docs/Factory/runs/RUN_20260522_0948_v3_g011_severity_policy/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260522_026 | V3 operational profile and guarantee matrix | Done | 2026-05-22 | `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`; `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/EXECUTION_CLOSEOUT.md` |
+| SPRINT_20260522_027 | V3-OP-001 finding classification rollup | Done | 2026-05-22 | `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md`; `docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup/EXECUTION_CLOSEOUT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| V3 false-positive and false-negative review rollup | Next | Classify real shadow, seeded drift, positive routing, and natural-language findings for `V3-OP-001`. |
 | V3-OP-001 AEGIS/runtime-kernel boundary review | Next | Confirm the profile remains coding-governance only and does not claim runtime proof or production mediation. |
+| V3 operational-readiness decision report | Next | Draft the final decision report after C-09 is complete; do not promote without explicit human release approval. |
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |
 | Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |
 | `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack, false-positive review evidence, and explicit human release approval. |

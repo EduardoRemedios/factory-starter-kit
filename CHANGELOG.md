@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add `V3-OP-001` finding classification rollup and mark V3 operational checklist C-08 complete.
 - Add bounded `V3-OP-001` profile candidate and V2 guarantee preservation matrix.
 - Add cross-version SIMPLE-CODE-GATE severity policy and mark V3 operational checklist C-04 complete.
 - Add opt-in V3 natural-language advisory detection pilot with clean false-positive corpus and drift corpus measurement.

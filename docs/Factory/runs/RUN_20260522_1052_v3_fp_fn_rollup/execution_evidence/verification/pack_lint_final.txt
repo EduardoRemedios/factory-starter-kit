@@ -1,0 +1,4 @@
+pack_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup
+pack_dir=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup/pack
+checked_files=32 errors=0 warnings=0

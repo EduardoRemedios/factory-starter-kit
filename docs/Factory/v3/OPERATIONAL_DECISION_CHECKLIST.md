@@ -31,7 +31,7 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | C-05 | Operational profile is named and bounded. | `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md` defines `V3-OP-001`, including eligible work, exclusions, authority limits, verification expectations, and fallback triggers. | DONE |
 | C-06 | V2 fallback remains explicit. | `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md` requires V2 fallback for ambiguity, scope expansion, missing authority, failed verification, stale evidence, unresolved SIMPLE-CODE-GATE blockers, runtime/kernel scope, and human request. | DONE |
 | C-07 | V2 guarantee preservation matrix is complete. | `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md` maps V2 guarantees to V3-OP-001 controls with no unresolved critical profile-definition gaps. | DONE |
-| C-08 | False-positive and false-negative review is complete. | Human classification of real shadow, seeded, positive routing, and natural-language findings. | OPEN |
+| C-08 | False-positive and false-negative review is complete. | `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md` classifies real shadow, seeded drift, positive routing, and natural-language evidence for `V3-OP-001`, with 0 known false positives and 0 known false negatives in measured seeded/natural-language cases. | DONE |
 | C-09 | AEGIS/runtime-kernel boundary review passes. | Evidence that V3 remains coding-governance only and does not claim runtime proof, production mediation, or kernel authority. | OPEN |
 | C-10 | Operational-readiness decision report is complete. | Report names exact artifact paths, revisions, pilot results, residual risks, and human release approval. | OPEN |
 
@@ -47,6 +47,7 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | Natural-language pilot measurement | C-03 evidence exists at `docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/EXECUTION_CLOSEOUT.md`. | DONE |
 | SIMPLE-CODE-GATE severity policy | C-04 evidence exists at `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md` and `docs/Factory/runs/RUN_20260522_0948_v3_g011_severity_policy/EXECUTION_CLOSEOUT.md`. | DONE |
 | Bounded profile and V2 guarantee matrix | C-05, C-06, and C-07 evidence exists at `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`, `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`, and `docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/EXECUTION_CLOSEOUT.md`. | DONE |
+| Finding classification rollup | C-08 evidence exists at `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md` and `docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup/EXECUTION_CLOSEOUT.md`. | DONE |
 
 ## Decision Rule
 Do not approve operational Factory v3 use until every `OPEN` checklist item is either:
@@ -62,6 +63,5 @@ No waiver may remove these hard requirements:
 ## Recommended Next Work
 Prioritize in this order:
 
-1. False-positive and false-negative review rollup.
-2. AEGIS/runtime-kernel boundary review for `V3-OP-001`.
-3. Operational-readiness decision report drafting.
+1. AEGIS/runtime-kernel boundary review for `V3-OP-001`.
+2. Operational-readiness decision report drafting.
