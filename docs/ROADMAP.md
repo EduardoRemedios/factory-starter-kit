@@ -34,13 +34,14 @@
 | SPRINT_20260521_022 | V3 operational decision checklist | Done | 2026-05-21 | `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md` |
 | SPRINT_20260522_023 | V3 real halt and reentry pilot | Done | 2026-05-22 | `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/EXECUTION_CLOSEOUT.md` |
 | SPRINT_20260522_024 | V3 natural-language advisory detection pilot | Done | 2026-05-22 | `docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/EXECUTION_CLOSEOUT.md` |
+| SPRINT_20260522_025 | V3-G011 SIMPLE-CODE-GATE severity policy | Done | 2026-05-22 | `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md`; `docs/Factory/runs/RUN_20260522_0948_v3_g011_severity_policy/EXECUTION_CLOSEOUT.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| V3-G011 severity policy decision | Next | Decide when SIMPLE-CODE-GATE findings remain advisory warnings versus become operational blockers. |
-| V3 operational profile boundary | Next | Draft the first bounded optional operational profile after natural-language and severity-policy evidence. |
+| V3 operational profile boundary | Next | Draft the first bounded optional operational profile using the completed C-01 through C-04 evidence. |
+| V2 guarantee preservation matrix | Next | Map each collapsed V2 ceremony element to a V3 guarantee for the selected profile. |
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |
 | Advisory check expansion | Blocked | Wait for additional real-branch evidence across more finding classes before adding more checks. |
 | `factoryctl` integration or CI usage | Blocked | Requires a new Factory pack, false-positive review evidence, and explicit human release approval. |

@@ -21,6 +21,7 @@
 - A V3 operational decision checklist exists at `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md`.
 - An execution-enabled V3 real halt and reentry pilot exists at `docs/Factory/runs/RUN_20260522_0824_v3_real_halt_reentry_pilot/EXECUTION_CLOSEOUT.md`.
 - An execution-enabled V3 natural-language advisory detection pilot exists at `docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/EXECUTION_CLOSEOUT.md`.
+- A cross-version SIMPLE-CODE-GATE severity policy exists at `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md`.
 - A Factory v2 planning pack for the V3 eval evolution decision exists at `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md`.
 - An execution-enabled V3 confidence pilot batch exists at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
@@ -40,7 +41,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: V3 natural-language advisory detection pilot closeout.
+- Current tracked evidence: V3-G011 SIMPLE-CODE-GATE severity policy closeout.
 - Factory v3 status: Level 0 research only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -64,12 +65,13 @@
 - Latest V3 decision-checklist result: `docs/Factory/v3/OPERATIONAL_DECISION_CHECKLIST.md` records the remaining OPEN items before any operational V3 decision.
 - Latest V3 real behavior pilot result: `RUN_20260522_0824_v3_real_halt_reentry_pilot` returns READY; C-01 and C-02 are DONE with run-local evidence for nonzero halt/no-continuation, authored-artifact resume, and stale-cursor halt.
 - Latest V3 natural-language pilot result: `RUN_20260522_0836_v3_nl_detection_pilot` returns READY; C-03 is DONE with opt-in pilot mode, 0 false positives across 10 clean artifacts, and expected drift IDs detected.
+- Latest V3-G011 policy result: `RUN_20260522_0948_v3_g011_severity_policy` returns READY; C-04 is DONE with a cross-version SIMPLE-CODE-GATE severity policy for ordinary repos, plus an optional runtime-kernel addendum for repos with AEGIS-like governance.
 
 ## What Does NOT Exist Yet
 
 - Factory v3 is not promoted for release.
 - Factory v3 does not yet have enough real-run pilot evidence, interruption/reentry evidence, failed-verification halt evidence, or V2 fallback evidence to become an optional operational mode.
-- Factory v3 still lacks a V3-G011 severity policy decision, a named bounded operational profile, a complete V2 guarantee preservation matrix, false-positive and false-negative review rollup, and a final operational-readiness decision report.
+- Factory v3 still lacks a named bounded operational profile, a complete V2 guarantee preservation matrix, false-positive and false-negative review rollup, AEGIS/runtime-kernel boundary review, and a final operational-readiness decision report.
 - Factory v3 has no approved operational profile yet; a future decision report must still name exact evidence paths, revisions, residual risks, and human approval.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
@@ -106,6 +108,7 @@ python3 scripts/factory_v3_operational_readiness_eval.py --target docs/Factory/v
 ./scripts/factoryctl pack-lint --run RUN_20260521_0948_v3_confidence_pilot_execution
 ./scripts/factoryctl pack-lint --run RUN_20260522_0824_v3_real_halt_reentry_pilot
 ./scripts/factoryctl pack-lint --run RUN_20260522_0836_v3_nl_detection_pilot
+./scripts/factoryctl pack-lint --run RUN_20260522_0948_v3_g011_severity_policy
 
 # Run your test suite
 # (add your project's test command here)

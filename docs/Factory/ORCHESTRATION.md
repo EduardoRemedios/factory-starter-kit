@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.12
+v1.13
 
 ## Change Log
+- v1.13 (2026-05-22): Added cross-version SIMPLE-CODE-GATE severity policy reference for Factory v2 and v3 implementation work.
 - v1.12 (2026-05-19): Added SIMPLE-CODE-GATE v2 as a mandatory cross-version planning and execution guardrail for Factory v2 and v3 implementation work.
 - v1.11 (2026-05-18): Added Factory v3 / AEGIS boundary guidance for repositories that also use a lower-level autonomy governance kernel.
 - v1.10 (2026-05-18): Added optional support-helper guidance for task memory, Repo Cartographer, and Agent Loop Bridge.
@@ -106,6 +107,8 @@ Before adding Factory v3 mission-governance features that overlap with a kernel,
 
 ## 0.9 SIMPLE-CODE-GATE (v2)
 For Factory v2 and Factory v3 code-changing runs, planning and execution must apply root `AGENTS.md` section `3.1) SIMPLE-CODE-GATE (v2)`.
+
+Severity decisions for SIMPLE-CODE-GATE findings are governed by `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md`.
 
 Required effect:
 1. Prefer the smallest clear, behavior-preserving change.

@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-05-22
+- Added cross-version SIMPLE-CODE-GATE severity policy for ordinary Factory V2/V3 repos and marked V3 operational checklist C-04 DONE.
 - Added opt-in V3 natural-language advisory detection pilot with zero false positives across 10 clean artifacts and expected drift IDs detected; C-03 is now marked DONE in the operational decision checklist.
 - Added execution-enabled V3 real halt and reentry pilot evidence; C-01 and C-02 are now marked DONE in the operational decision checklist.
 
