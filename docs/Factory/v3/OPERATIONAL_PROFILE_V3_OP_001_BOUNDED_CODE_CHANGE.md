@@ -7,7 +7,9 @@ v0.1
 - v0.1 (2026-05-22): Initial bounded optional V3 operational profile candidate.
 
 ## Status
-Research-only, non-enforcing decision-prep profile candidate. This document does not promote Factory v3, deprecate Factory v2, authorize operational use, or wire V3 checks into required gates.
+Approved for optional operational use under `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`. This document does not make Factory v3 the default, deprecate Factory v2, approve other V3 profiles, or wire V3 checks into required gates.
+
+The prior research evidence remains the basis for approval; this profile remains non-enforcing with respect to repository gates unless a future integration run explicitly changes that.
 
 ## Purpose
 Define the first narrow Factory v3 operational profile candidate so remaining readiness work can be judged against a concrete profile instead of abstract V3 ambition.
@@ -17,8 +19,8 @@ This profile is designed for ordinary software repositories. It does not assume 
 ## Profile Identity
 - Profile ID: `V3-OP-001`
 - Profile name: Bounded Code Change
-- Profile type: optional future V3 operational profile candidate
-- Governing default until release: Factory v2
+- Profile type: optional V3 operational profile
+- Governing default outside this profile: Factory v2
 - Required fallback: Factory v2
 
 ## Eligible Work
@@ -70,7 +72,7 @@ A future V3 mission under this profile must record:
 - human sponsor approval for the profile use
 
 ## Authority Limits
-This profile may govern coding-agent delivery work only after a future release decision approves it.
+This profile may govern coding-agent delivery work within the optional release scope approved in `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.
 
 It does not authorize:
 
@@ -125,7 +127,7 @@ Closeout for a future operational use of this profile must name:
 - human release or closeout decision
 
 ## Promotion Dependencies
-This candidate profile cannot be used operationally until the remaining operational decision checklist items pass.
+This profile can be used operationally within the approved optional `V3-OP-001` scope.
 
 Completed decision-prep evidence:
 
@@ -133,6 +135,6 @@ Completed decision-prep evidence:
 - AEGIS/runtime-kernel boundary review
 - operational-readiness decision report
 
-Remaining dependency:
+Required ongoing condition:
 
-- explicit human release approval naming `V3-OP-001`
+- Factory v2 fallback remains available for every mission.

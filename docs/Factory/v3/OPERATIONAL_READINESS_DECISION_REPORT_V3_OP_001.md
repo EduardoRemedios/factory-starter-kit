@@ -7,19 +7,20 @@ v0.1
 - v0.1 (2026-05-22): Initial C-10 decision report for `V3-OP-001`.
 
 ## Status
-Decision report complete. Operational release approval is not recorded in this report.
+Decision report complete. Operational release approval is recorded in `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.
 
-This document recommends that `V3-OP-001` is ready for explicit human release review. It does not by itself promote Factory v3, deprecate Factory v2, authorize operational use, or wire V3 checks into required gates.
+This document supports optional operational use of `V3-OP-001` only. It does not make Factory v3 the default, deprecate Factory v2, approve any other V3 profile, or wire V3 checks into required gates.
 
 ## Decision Metadata
-- Decision: READY FOR HUMAN RELEASE DECISION
-- Release recommendation: GO for optional operational use of `V3-OP-001` only after explicit human approval names this profile.
+- Decision: APPROVED FOR OPTIONAL OPERATIONAL USE
+- Release approval: `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`
 - Promotion target: `V3-OP-001 Bounded Code Change`
 - Promotion level: optional operational profile, not default Factory mode
 - Date: 2026-05-22
-- Human approver: not yet recorded
+- Human approver: Eduardo Remedios
 - Evidence baseline branch: `main`
 - Evidence baseline revision before this report: `c91398e`
+- Approval commit: `f07fa11`
 
 ## Scope
 - V3 profile evaluated: `V3-OP-001 Bounded Code Change`
@@ -34,12 +35,12 @@ The evidence supports a human release decision for narrow, optional Factory v3 o
 
 The evidence does not support making Factory v3 the default, removing Factory v2, wiring V3 checks into required gates, applying V3 to broad or ambiguous missions, or claiming runtime proof or production mediation from Factory artifacts.
 
-Operational use remains unapproved until a human release decision explicitly says:
+Operational use is approved only within this release scope:
 
 - `V3-OP-001` is approved for optional operational use,
 - Factory v2 remains supported and available as fallback,
-- the exact approving commit or release tag is named,
-- the residual risks in this report are accepted or assigned follow-up controls.
+- approval applies at commit `f07fa11`,
+- the residual risks in this report are accepted.
 
 ## Evidence Inputs
 
@@ -76,7 +77,7 @@ Operational use remains unapproved until a human release decision explicitly say
 | V2 fallback behavior tested. | YES | `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/pilots/v3g012_v2_fallback/REPORT.md`; `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/execution_evidence/pilots/v3g013_v3_with_fallback/REPORT.md` |
 | AEGIS boundary review passes. | YES | `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md` |
 | SIMPLE-CODE-GATE remains mandatory for code-changing work. | YES | `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md` |
-| Human release approval recorded. | NO | Approval remains required before operational use. |
+| Human release approval recorded. | YES | `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md` |
 
 ## Residual Risks
 
@@ -86,21 +87,21 @@ Operational use remains unapproved until a human release decision explicitly say
 | Current release target is optional profile use, not default Factory mode. | Keep V2 authoritative and available as fallback. |
 | V3 checks remain standalone advisory only. | Do not wire into required gates without a later Factory run and explicit approval. |
 | No live AEGIS adapter was tested. | Accept because `V3-OP-001` does not require AEGIS and does not claim kernel behavior. |
-| User-facing operating instructions do not yet exist. | Create a V3 user guide before broad team adoption. |
+| User-facing operating instructions are new. | Use `docs/Factory/v3/USER_GUIDE.md` for initial trials and update it from real project feedback. |
 
 ## Release Conditions
-Before any operational use, a human release decision must record:
+Operational use must stay within these conditions:
 
 - profile approved: `V3-OP-001 Bounded Code Change`,
 - release scope: optional use only,
 - fallback: Factory v2 remains supported and available,
-- approval commit or release tag,
+- approval commit: `f07fa11`,
 - accepted residual risks,
 - first-use monitoring expectations,
 - rollback rule: return to Factory v2 on ambiguity, failed verification, stale evidence, missing authority, or human request.
 
 ## Decision Rationale
-C-01 through C-09 provide enough evidence for a human to decide on optional operational use of `V3-OP-001`: real halt and reentry behavior have been tested, natural-language detection has been measured, SIMPLE-CODE-GATE severity is defined, the profile is bounded, V2 fallback is explicit, V2 guarantees are mapped, finding classifications are complete for the current evidence set, and the AEGIS/runtime-kernel boundary passes. The remaining blocker is not technical evidence; it is explicit release approval.
+C-01 through C-09 provide enough evidence for optional operational use of `V3-OP-001`: real halt and reentry behavior have been tested, natural-language detection has been measured, SIMPLE-CODE-GATE severity is defined, the profile is bounded, V2 fallback is explicit, V2 guarantees are mapped, finding classifications are complete for the current evidence set, and the AEGIS/runtime-kernel boundary passes. The explicit release approval is now recorded.
 
 ## No-Go Carry-Forward
 If release approval is not granted, carry forward:
@@ -111,4 +112,4 @@ If release approval is not granted, carry forward:
 - collect any requested additional evidence through a new Factory run.
 
 ## Recommended Next Step
-Ask the human sponsor for an explicit release decision for `V3-OP-001`. If approved, immediately create a user guide for Codex users that explains how to choose V3, how to fall back to V2, and how to run a concrete example such as creating a new online slot game.
+Use `docs/Factory/v3/USER_GUIDE.md` for initial trials in real projects and capture feedback in follow-up Factory evidence.

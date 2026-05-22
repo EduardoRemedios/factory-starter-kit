@@ -1,0 +1,44 @@
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=A
+checked_files=2 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=B
+checked_files=2 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=C
+checked_files=3 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=D
+checked_files=2 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=E
+checked_files=3 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=F
+checked_files=4 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=G
+checked_files=2 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=H
+checked_files=3 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=I
+checked_files=3 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=J
+checked_files=3 errors=0 warnings=0
+stage_lint: PASS
+run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1220_v3_release_user_guide
+stage=I2
+checked_files=3 errors=0 warnings=0

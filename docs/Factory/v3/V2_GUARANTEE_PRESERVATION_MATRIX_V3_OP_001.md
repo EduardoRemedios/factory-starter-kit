@@ -44,6 +44,4 @@ This result is not an operational promotion. It only means the profile definitio
 ## Remaining Decision Work
 Completed decision-prep evidence now includes false-positive and false-negative classification, AEGIS/runtime-kernel boundary review, and the operational-readiness decision report for the profile.
 
-Remaining decision work:
-
-- Record explicit human release approval before any operational use.
+Release approval is recorded at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.

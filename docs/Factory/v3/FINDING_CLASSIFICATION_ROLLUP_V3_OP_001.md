@@ -108,7 +108,7 @@ The evidence supports:
 - natural-language clean and drift corpora are classified,
 - current V3 docs remain quiet under advisory and natural-language scans.
 
-This does not prove broad production discovery. The operational decision report must still carry that residual risk unless additional live operational pilots are added.
+This does not prove broad production discovery. Operational use must carry that residual risk unless additional live operational pilots are added.
 
-## Remaining Operational-Readiness Work
-- C-10: human release approval remains required before any operational use.
+## Release Status
+Optional operational release approval for `V3-OP-001` is recorded at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`.

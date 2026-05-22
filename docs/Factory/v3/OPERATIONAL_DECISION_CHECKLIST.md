@@ -7,7 +7,7 @@ v0.1
 - v0.1 (2026-05-21): Initial high-level checklist of evidence still required before deciding whether Factory v3 can be used operationally.
 
 ## Status
-Decision-prep checklist only. This document does not promote Factory v3, deprecate Factory v2, authorize operational use, or wire V3 checks into required gates.
+`V3-OP-001` is approved for optional operational use. This document does not make Factory v3 the default, deprecate Factory v2, approve other V3 profiles, or wire V3 checks into required gates.
 
 ## Purpose
 Provide the high-level checklist that must be satisfied before making a decision on operational Factory v3 use.
@@ -15,10 +15,10 @@ Provide the high-level checklist that must be satisfied before making a decision
 Factory v3 can move out of research mode only when the remaining evidence shows that V3 preserves the relevant Factory v2 safety guarantees for a named operational profile, while Factory v2 remains supported and available as fallback.
 
 ## Current Posture
-- Factory v3 status: Level 0 research only.
+- Factory v3 status: optional operational use approved for `V3-OP-001` only.
 - V2 status: authoritative and supported.
 - V3 eval runner status: standalone advisory only.
-- Latest confidence signal: improved after the confidence pilot batch, but not sufficient for operational use.
+- Latest confidence signal: sufficient for optional `V3-OP-001` release with V2 fallback.
 
 ## Decision Checklist
 
@@ -33,7 +33,7 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | C-07 | V2 guarantee preservation matrix is complete. | `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md` maps V2 guarantees to V3-OP-001 controls with no unresolved critical profile-definition gaps. | DONE |
 | C-08 | False-positive and false-negative review is complete. | `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md` classifies real shadow, seeded drift, positive routing, and natural-language evidence for `V3-OP-001`, with 0 known false positives and 0 known false negatives in measured seeded/natural-language cases. | DONE |
 | C-09 | AEGIS/runtime-kernel boundary review passes. | `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md` confirms `V3-OP-001` remains coding-governance only, AEGIS remains optional, ordinary non-AEGIS repositories remain supported, and runtime-kernel authority remains outside Factory. | DONE |
-| C-10 | Operational-readiness decision report is complete. | `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md` names exact evidence paths, baseline revision, pilot results, residual risks, and the explicit human release-approval requirement. Release approval is not recorded yet. | READY FOR APPROVAL |
+| C-10 | Operational-readiness decision report is complete. | `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md` names exact evidence paths, baseline revision, pilot results, residual risks, and approval. Release approval is recorded at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`. | DONE |
 
 ## Already Satisfied Or Partially Satisfied
 
@@ -49,12 +49,10 @@ Factory v3 can move out of research mode only when the remaining evidence shows 
 | Bounded profile and V2 guarantee matrix | C-05, C-06, and C-07 evidence exists at `docs/Factory/v3/OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`, `docs/Factory/v3/V2_GUARANTEE_PRESERVATION_MATRIX_V3_OP_001.md`, and `docs/Factory/runs/RUN_20260522_1019_v3_operational_profile_matrix/EXECUTION_CLOSEOUT.md`. | DONE |
 | Finding classification rollup | C-08 evidence exists at `docs/Factory/v3/FINDING_CLASSIFICATION_ROLLUP_V3_OP_001.md` and `docs/Factory/runs/RUN_20260522_1052_v3_fp_fn_rollup/EXECUTION_CLOSEOUT.md`. | DONE |
 | AEGIS/runtime-kernel boundary review | C-09 evidence exists at `docs/Factory/v3/AEGIS_RUNTIME_BOUNDARY_REVIEW_V3_OP_001.md` and `docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/EXECUTION_CLOSEOUT.md`. | DONE |
-| Operational-readiness decision report | C-10 report exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md` and recommends human release review while keeping approval separate. | READY FOR APPROVAL |
+| Operational-readiness decision report | C-10 report exists at `docs/Factory/v3/OPERATIONAL_READINESS_DECISION_REPORT_V3_OP_001.md`; approval exists at `docs/Factory/v3/OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`. | DONE |
 
 ## Decision Rule
-Do not approve operational Factory v3 use until every `OPEN` or `READY FOR APPROVAL` checklist item is either:
-- completed with evidence paths, or
-- explicitly waived by the human sponsor with rationale and residual risk.
+Do not expand operational Factory v3 use beyond `V3-OP-001` until a future checklist names the profile and evidence paths.
 
 No waiver may remove these hard requirements:
 - V2 remains supported and available as fallback.
@@ -65,5 +63,5 @@ No waiver may remove these hard requirements:
 ## Recommended Next Work
 Prioritize in this order:
 
-1. Explicit human release decision for `V3-OP-001`.
-2. User guide for Codex users adopting V3 from V2.
+1. Trial `V3-OP-001` on real projects and record feedback.
+2. Refine the V3 user guide from trial evidence.
