@@ -1,9 +1,10 @@
 # Factory V3 User Guide
 
 ## Version
-v1.1
+v1.2
 
 ## Change Log
+- v1.2 (2026-05-24): Clarified that unchanged placeholders in the Phase 1 trial prompt are a pre-envelope fallback trigger.
 - v1.1 (2026-05-24): Added pre-envelope fallback guidance and a Phase 1 trial prompt for ordinary adopting repositories.
 - v1 (2026-05-22): Initial Codex user guide for optional `V3-OP-001` operational use.
 
@@ -88,6 +89,8 @@ If not eligible, stop and explain why this should use Factory V2.
 
 ## Phase 1 Trial Prompt
 Use this when testing V3 in an ordinary project repository.
+
+Replace every placeholder before submitting this as an execution request. If `<describe one small bounded code change>`, `<file or directory>`, or `<project lint/test/build command>` remain unresolved, Codex should stop before creating a mission envelope and route the work back to V2 or resubmission with concrete authority.
 
 ```text
 Use Factory V3 profile V3-OP-001 if eligible.

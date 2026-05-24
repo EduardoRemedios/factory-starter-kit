@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Record the Harmony Phase 1 V3 placeholder-submission trial as a pre-envelope V2 fallback and clarify the user guide.
 - Refine Factory v3 Phase 1 trial guidance with explicit pre-envelope fallback handling and a paste-ready ordinary-repo trial prompt.
 - Record the first Factory v3 Phase 1 trial as a V2 fallback / V3-unsuitable signal when no bounded code-changing objective is named.
 - Add Factory v3 Phase 1 trial operating plan and trial index for real-project `V3-OP-001` evidence collection.
