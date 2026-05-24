@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Align the top-level and Factory v3 roadmaps with Phase 1 decision-review readiness and keep Phase 2 blocked pending an explicit decision.
 - Record owner waiver for the Factory v3 Phase 1 non-author user trial requirement in the solo AI-native development context.
 - Record the first completed Temper `V3-OP-001` happy-path implementation trial for a verifier-backed accessibility change.
 - Record the second completed Harmony `V3-OP-001` happy-path implementation trial for currency display defaults.

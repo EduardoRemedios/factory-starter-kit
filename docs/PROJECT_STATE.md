@@ -98,6 +98,7 @@
 - Latest Harmony V3 currency result: `TRIAL_20260524_004_harmony_currency_blank_defaults` records `COMPLETED_WITH_V3`; Harmony changed two authorized files, ran `python3 -m unittest tests.test_currency_formatter -v`, passed 17 tests, and reported no V2 fallback trigger.
 - Latest Temper V3 result: `TRIAL_20260524_005_temper_cs_send_aria_disabled` records `COMPLETED_WITH_V3`; Temper changed two authorized files, ran `npm run verify:cs-browser-demo-surface`, passed the verifier including 9/9 runtime operator-surface tests, and reported no V2 fallback trigger.
 - Latest V3 Phase 1 batch result: the 5-trial minimum is met and the owner waived the non-author user trial requirement for this solo AI-native development context; the batch is ready for Phase 1 decision review.
+- Latest V3 roadmap alignment result: the top-level roadmap and V3 full-vision roadmap now treat Phase 1 as ready for decision review and keep Phase 2 blocked until that review explicitly selects `START_PHASE_2`.
 
 ## What Does NOT Exist Yet
 

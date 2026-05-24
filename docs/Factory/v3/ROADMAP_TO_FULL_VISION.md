@@ -1,9 +1,10 @@
 # Factory v3 Roadmap To Full Vision
 
 ## Version
-v0.2
+v0.3
 
 ## Change Log
+- v0.3 (2026-05-24): Aligned Phase 1 with completed trial-batch evidence, owner waiver, and decision-review gate before Phase 2.
 - v0.2 (2026-05-22): Removed private-kernel naming, added a self-contained public boundary, and clarified that V3 remains useful without any external governance kernel.
 - v0.1 (2026-05-22): Initial phased roadmap from optional `V3-OP-001` use to the full Factory v3 mission-governance runtime vision.
 
@@ -21,6 +22,7 @@ Current state:
 - Factory v2 is the default and fallback process.
 - Factory v3 `V3-OP-001 Bounded Code Change` is approved for optional operational use.
 - V3 has user guidance, templates, advisory evals, seeded fixtures, and pilot evidence.
+- Phase 1 real-project trial evidence has reached decision-review readiness: 5 trial records, 2 fallback/pre-envelope trials, 3 completed happy-path trials across Harmony and Temper, and an owner waiver for the non-author user trial requirement in a solo AI-native development context.
 - V3 does not yet have persistent mission state, enforced authority leases, structured telemetry, dynamic governance routing, continuous verification, capability profiling, or replayable execution graphs.
 - This plan does not authorize promotion beyond the already approved optional `V3-OP-001` profile.
 
@@ -71,6 +73,8 @@ No default-mode promotion. No required-gate integration. V2 remains fallback.
 
 ## Phase 1 - Real-Project Trial Loop
 
+Status: Ready for decision review.
+
 Goal:
 
 Use `V3-OP-001` in real projects and learn where the guidance, templates, fallback triggers, and evals are weak.
@@ -87,15 +91,29 @@ Required evidence:
 
 - at least 5 real project `V3-OP-001` trials,
 - at least 2 projects that do not use a separate autonomy governance kernel,
-- at least 1 trial by a user other than the V3 doc author,
+- at least 1 trial by a user other than the V3 doc author, or an explicit owner waiver for a solo AI-native development context,
 - false-positive, false-negative, and fallback notes for each trial,
 - update recommendations for docs and templates.
+
+Current evidence:
+
+- 5 Phase 1 trial records exist.
+- 2 fallback/pre-envelope trials exist.
+- 3 completed happy-path implementation trials exist.
+- Harmony and Temper provide real-project evidence outside the Factory starter kit.
+- The owner waiver for the non-author user trial requirement is recorded at `docs/Factory/v3/trials/PHASE1_REQUIREMENT_WAIVER_20260524.md`.
 
 Promotion gate:
 
 Approve a `V3-OP-001` refinement release only if real-project evidence shows the profile is understandable, bounded, and does not cause V2 deprecation confusion.
 
+Next decision:
+
+Produce a Phase 1 decision review before starting Phase 2. The review must choose one of: refine `V3-OP-001`, add fixtures, start Phase 2 structured mission-record design, pause V3 expansion, or route more evidence collection through V2.
+
 ## Phase 2 - Structured Mission Record
+
+Status: Blocked until Phase 1 decision review explicitly chooses `START_PHASE_2`.
 
 Goal:
 
