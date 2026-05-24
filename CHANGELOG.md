@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Record owner waiver for the Factory v3 Phase 1 non-author user trial requirement in the solo AI-native development context.
+- Record the first completed Temper `V3-OP-001` happy-path implementation trial for a verifier-backed accessibility change.
 - Record the second completed Harmony `V3-OP-001` happy-path implementation trial for currency display defaults.
 - Record the first completed Harmony `V3-OP-001` happy-path implementation trial and clarify thread-local mission-envelope guidance.
 - Record the Harmony Phase 1 V3 placeholder-submission trial as a pre-envelope V2 fallback and clarify the user guide.

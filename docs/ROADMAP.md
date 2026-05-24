@@ -49,12 +49,15 @@
 | SPRINT_20260524_037 | V3 Harmony placeholder fallback trial | Done | 2026-05-24 | `docs/Factory/v3/trials/TRIAL_20260524_002_harmony_placeholder_fallback.md`; `docs/Factory/v3/USER_GUIDE.md` |
 | SPRINT_20260524_038 | V3 Harmony FAQ ingestion happy-path trial | Done | 2026-05-24 | `docs/Factory/v3/trials/TRIAL_20260524_003_harmony_faq_ingestion_utf8.md`; `docs/Factory/v3/PHASE1_TRIAL_PLAN.md`; `docs/Factory/v3/USER_GUIDE.md` |
 | SPRINT_20260524_039 | V3 Harmony currency happy-path trial | Done | 2026-05-24 | `docs/Factory/v3/trials/TRIAL_20260524_004_harmony_currency_blank_defaults.md`; `docs/Factory/v3/trials/TRIAL_INDEX.md` |
+| SPRINT_20260524_040 | V3 Temper CS accessibility happy-path trial | Done | 2026-05-24 | `docs/Factory/v3/trials/TRIAL_20260524_005_temper_cs_send_aria_disabled.md`; `docs/Factory/v3/trials/TRIAL_INDEX.md` |
+| SPRINT_20260524_041 | V3 Phase 1 owner waiver | Done | 2026-05-24 | `docs/Factory/v3/trials/PHASE1_REQUIREMENT_WAIVER_20260524.md`; `docs/Factory/v3/trials/TRIAL_INDEX.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| Phase 1 V3 real-project trial batch | Next | Record 5 trials with `PHASE1_TRIAL_PLAN.md`; 4 of 5 are recorded, including two fallback cases and two completed Harmony happy-path implementations. |
+| Phase 1 V3 real-project trial batch | Done | 5 of 5 trials are recorded, including two fallback cases and three completed happy-path implementations across Harmony and Temper; owner waiver recorded for the non-author user criterion. |
+| Phase 1 decision review | Next | Review the 5-trial evidence and decide whether to refine `V3-OP-001`, add fixtures, start Phase 2 mission-record design, or pause V3 expansion. |
 | Phase 2 V3 structured mission record | Next | Design a shadow `V3_MISSION_RECORD` format only after trial evidence clarifies what must be captured, including pre-envelope fallback decisions. |
 | V3-OP-001 trial feedback | Next | Test optional V3 use in real projects, capture friction, missed fallback triggers, and guide/template improvements. |
 | V3 user guide refinement | Next | Update the user guide after trial evidence, especially for Codex task prompts and fallback ergonomics. |

@@ -40,6 +40,8 @@
 - The second Phase 1 V3 trial record exists at `docs/Factory/v3/trials/TRIAL_20260524_002_harmony_placeholder_fallback.md`, recording a Harmony pre-envelope fallback because the trial prompt placeholders were not replaced.
 - The third Phase 1 V3 trial record exists at `docs/Factory/v3/trials/TRIAL_20260524_003_harmony_faq_ingestion_utf8.md`, recording the first completed Harmony `V3-OP-001` happy-path implementation trial.
 - The fourth Phase 1 V3 trial record exists at `docs/Factory/v3/trials/TRIAL_20260524_004_harmony_currency_blank_defaults.md`, recording the second completed Harmony `V3-OP-001` happy-path implementation trial.
+- The fifth Phase 1 V3 trial record exists at `docs/Factory/v3/trials/TRIAL_20260524_005_temper_cs_send_aria_disabled.md`, recording the first completed Temper `V3-OP-001` happy-path implementation trial.
+- A Phase 1 owner waiver for the non-author user trial requirement exists at `docs/Factory/v3/trials/PHASE1_REQUIREMENT_WAIVER_20260524.md`.
 - A Factory v2 planning pack for the V3 eval evolution decision exists at `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md`.
 - An execution-enabled V3 confidence pilot batch exists at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
@@ -59,7 +61,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: V3-OP-001 operational release approval, user guide closeout, V3 full-vision roadmap, roadmap pre-mortem, Phase 1 trial operating plan, Phase 1 trial capture template, two Phase 1 fallback trial records, and two completed Phase 1 happy-path trial records.
+- Current tracked evidence: V3-OP-001 operational release approval, user guide closeout, V3 full-vision roadmap, roadmap pre-mortem, Phase 1 trial operating plan, Phase 1 trial capture template, two Phase 1 fallback trial records, three completed Phase 1 happy-path trial records, and owner waiver for the non-author user trial requirement.
 - Factory v3 status: optional operational use approved for `V3-OP-001` only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -94,6 +96,8 @@
 - Latest Harmony V3 trial result: `TRIAL_20260524_002_harmony_placeholder_fallback` records `FALLBACK_TO_V2` because the Phase 1 trial prompt still contained placeholders for task, authorized file scope, and allowed verification command.
 - Latest Harmony V3 happy-path result: `TRIAL_20260524_003_harmony_faq_ingestion_utf8` records `COMPLETED_WITH_V3`; Harmony changed two authorized files, ran `python3 -m unittest tests.test_faq_ingestion -v`, passed 14 tests, and reported no V2 fallback trigger.
 - Latest Harmony V3 currency result: `TRIAL_20260524_004_harmony_currency_blank_defaults` records `COMPLETED_WITH_V3`; Harmony changed two authorized files, ran `python3 -m unittest tests.test_currency_formatter -v`, passed 17 tests, and reported no V2 fallback trigger.
+- Latest Temper V3 result: `TRIAL_20260524_005_temper_cs_send_aria_disabled` records `COMPLETED_WITH_V3`; Temper changed two authorized files, ran `npm run verify:cs-browser-demo-surface`, passed the verifier including 9/9 runtime operator-surface tests, and reported no V2 fallback trigger.
+- Latest V3 Phase 1 batch result: the 5-trial minimum is met and the owner waived the non-author user trial requirement for this solo AI-native development context; the batch is ready for Phase 1 decision review.
 
 ## What Does NOT Exist Yet
 
@@ -102,7 +106,7 @@
 - Factory v3 user guidance is new and should be refined after real project trials.
 - Factory v3 full-vision roadmap exists, but its later phases are not implemented or approved.
 - Factory v3 roadmap pre-mortem exists, but its proposed fixtures are a backlog and not yet implemented.
-- Phase 1 trial operating plan, index, capture template, two fallback trial records, and two happy-path implementation trials exist, but no real-project Phase 1 trial batch has been completed with them yet.
+- Phase 1 trial operating plan, index, capture template, two fallback trial records, three happy-path implementation trials, and owner waiver exist; Phase 1 is ready for decision review but Phase 2 implementation has not been approved.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
 - No advisory check expansion has been approved yet; current real-branch evidence supports continued standalone advisory use only.
