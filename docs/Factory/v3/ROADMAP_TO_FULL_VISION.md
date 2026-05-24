@@ -1,9 +1,10 @@
 # Factory v3 Roadmap To Full Vision
 
 ## Version
-v0.4
+v0.5
 
 ## Change Log
+- v0.5 (2026-05-24): Added Phase 2 v0 shadow mission-record design artifacts and trial-derived fixtures.
 - v0.4 (2026-05-24): Recorded Phase 1 decision review result and unblocked Phase 2 shadow mission-record design.
 - v0.3 (2026-05-24): Aligned Phase 1 with completed trial-batch evidence, owner waiver, and decision-review gate before Phase 2.
 - v0.2 (2026-05-22): Removed private-kernel naming, added a self-contained public boundary, and clarified that V3 remains useful without any external governance kernel.
@@ -114,7 +115,7 @@ Decision:
 
 ## Phase 2 - Structured Mission Record
 
-Status: Approved for shadow design only.
+Status: In progress. v0 shadow template and trial-derived fixtures exist.
 
 Goal:
 
@@ -146,9 +147,9 @@ The record should capture:
 
 Work:
 
-1. Design the JSON schema as a shadow artifact.
-2. Backfill the schema against existing V3 pilot evidence where practical.
-3. Add fixture coverage for valid records, missing authority, failed verification, stale reentry, and V2 fallback.
+1. Design the JSON schema as a shadow artifact. Status: v0 template exists at `docs/Factory/v3/templates/V3_MISSION_RECORD_TEMPLATE.json`.
+2. Backfill the schema against existing V3 pilot evidence where practical. Status: first five Phase 1 trials are backfilled under `tests/fixtures/factory_v3_mission_record/`.
+3. Add fixture coverage for valid records, missing authority, verification-halt outcomes, stale reentry, and V2 fallback. Status: pre-envelope fallback and happy-path fixtures exist; verification-halt, stale reentry, and malformed-record fixtures remain future work.
 4. Add an advisory validator that reads the record and emits structured findings.
 5. Keep the authored Markdown envelope and closeout as the human-readable source until the schema has enough evidence.
 

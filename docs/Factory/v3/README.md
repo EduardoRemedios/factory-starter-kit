@@ -1,9 +1,10 @@
 # Factory v3
 
 ## Version
-v0.6
+v0.7
 
 ## Change Log
+- v0.7 (2026-05-24): Added Phase 2 shadow mission-record v0 design and trial-derived JSON fixtures.
 - v0.6 (2026-05-24): Added Phase 1 trial operating plan and trial index.
 - v0.5 (2026-05-22): Added Phase 1 real-project trial capture template for `V3-OP-001` evidence collection.
 - v0.4 (2026-05-22): Added roadmap pre-mortem and golden-fixture backlog for V3 operationalization.
@@ -33,6 +34,7 @@ This namespace captures Factory v3 operating guidance, release evidence, starter
 - Preserve the external governance kernel and runtime-kernel boundary.
 - Keep V2 fallback explicit.
 - Capture evals, stress tests, pilot evidence, decision reports, and promotion criteria.
+- Provide a shadow `V3_MISSION_RECORD` design for Phase 2 replay and evidence-shape testing.
 - Continue research for any future V3 profile before promotion.
 
 ## Non-authority Rule
@@ -74,6 +76,8 @@ Any V3 profile beyond `V3-OP-001`, any default-mode promotion, or any required-g
 - `VISION.md`
 - `ROADMAP_TO_FULL_VISION.md`
 - `ROADMAP_PREMORTEM.md`
+- `MISSION_RECORD_DESIGN_V0.md`
+- `PHASE1_DECISION_REVIEW_V3_OP_001.md`
 - `PHASE1_TRIAL_PLAN.md`
 - `USER_GUIDE.md`
 - `OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`
@@ -94,6 +98,19 @@ Use `templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md` for real-project `V3-OP-001`
 The template is designed to capture fallback decisions, user friction, advisory false positives and false negatives, SIMPLE-CODE-GATE evidence, and roadmap pre-mortem watchpoints before Phase 2 structured mission records are designed.
 
 Track trial records in `trials/TRIAL_INDEX.md`.
+
+## Phase 2 Shadow Mission Records
+Phase 2 shadow mission-record design is approved only as research and replay work.
+
+Use:
+
+- `MISSION_RECORD_DESIGN_V0.md`
+- `templates/V3_MISSION_RECORD_TEMPLATE.json`
+- `tests/fixtures/factory_v3_mission_record/`
+
+The v0 record captures pre-envelope fallback, thread-local mission envelopes, bounded authority, command evidence, verification, fallback review, SIMPLE-CODE-GATE review, and Phase 2 design signals.
+
+It does not approve enforcement, required gates, runtime authority, telemetry, governance routing, or new V3 profiles.
 
 ## Advisory Eval Tooling
 - `scripts/factory_v3_advisory_lint.py` checks research-posture and promotion-evidence drift in V3 docs.

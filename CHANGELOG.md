@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add Factory v3 Phase 2 shadow mission-record v0 design, template, and trial-derived JSON examples.
 - Add Factory v3 Phase 1 decision review selecting Phase 2 shadow mission-record design only.
 - Align the top-level and Factory v3 roadmaps with Phase 1 decision-review readiness and keep Phase 2 blocked pending an explicit decision.
 - Record owner waiver for the Factory v3 Phase 1 non-author user trial requirement in the solo AI-native development context.

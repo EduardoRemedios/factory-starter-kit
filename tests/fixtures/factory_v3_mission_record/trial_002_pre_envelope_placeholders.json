@@ -1,0 +1,116 @@
+{
+  "record": {
+    "schema_version": "v0.1-shadow",
+    "record_type": "factory_v3_mission_record",
+    "status": "research_only_non_enforcing",
+    "profile_id": "V3-OP-001",
+    "decision_state": "pre_envelope_fallback",
+    "created_date": "2026-05-24",
+    "source_trial_id": "TRIAL_20260524_002_harmony_placeholder_fallback",
+    "source_trial_path": "docs/Factory/v3/trials/TRIAL_20260524_002_harmony_placeholder_fallback.md",
+    "source_closeout_reference": "returned Harmony chat closeout",
+    "approval_scope": {
+      "factory_v3_default_approved": false,
+      "new_v3_profile_approved": false,
+      "required_gate_integration_approved": false,
+      "runtime_authority_approved": false,
+      "factory_v2_fallback_retained": true
+    }
+  },
+  "mission": {
+    "repository": "Harmony",
+    "branch": "not_recorded",
+    "commit_before": "not_recorded",
+    "commit_after": "no_file_changes_reported",
+    "user_or_reviewer": "Eduardo Remedios / Harmony Codex session",
+    "coding_harness": "Codex",
+    "model": "not_recorded",
+    "objective": "Run a Harmony Phase 1 V3 trial, but the prompt still contained unresolved placeholders.",
+    "envelope": {
+      "mode": "not_created_pre_envelope_fallback",
+      "reference": "none",
+      "not_created_reason": "Unchanged placeholders meant the request lacked a concrete bounded objective, authorized files, and allowed verification command."
+    },
+    "separate_governance_kernel_present": "unknown"
+  },
+  "authority": {
+    "authorized_files": [],
+    "forbidden_scope": [
+      "no governance-kernel/runtime authority changes",
+      "no policy, evidence, lease, or action-execution changes",
+      "no auth, payment, deployment, infrastructure, or compliance changes",
+      "no dependency additions"
+    ],
+    "allowed_commands": [],
+    "dependency_policy": "No new dependencies.",
+    "v2_fallback_required": true,
+    "fallback_triggers": [
+      "unresolved_task_placeholder",
+      "unresolved_file_placeholder",
+      "unresolved_command_placeholder"
+    ]
+  },
+  "execution": {
+    "files_changed": [],
+    "verification": {
+      "commands": [],
+      "result": "not_run",
+      "summary": "No task-specific verification ran because no eligible mission existed."
+    },
+    "advisory_checks": [
+      {
+        "name": "factory_v3_advisory_lint.py",
+        "result": "not_run",
+        "classification": "not_run"
+      },
+      {
+        "name": "factory_v3_operational_readiness_eval.py",
+        "result": "not_run",
+        "classification": "not_run"
+      },
+      {
+        "name": "factory_v3_operational_readiness_eval.py --nl-pilot",
+        "result": "not_run",
+        "classification": "not_run"
+      }
+    ],
+    "halt": {
+      "halted": true,
+      "reason_codes": [
+        "pre_envelope_unresolved_placeholders"
+      ]
+    },
+    "fallback": {
+      "used": true,
+      "reason_codes": [
+        "route_to_v2_or_resubmit_with_concrete_authority"
+      ]
+    }
+  },
+  "reviews": {
+    "simple_code_gate": {
+      "result": "not_applicable",
+      "notes": [
+        "No code-changing V3 mission ran."
+      ]
+    },
+    "fallback_halt_review": {
+      "result": "pass",
+      "notes": [
+        "Placeholder detection triggered fallback before mission-envelope creation."
+      ]
+    },
+    "friction_notes": [
+      "The trial prompt was paste-ready in structure but still required replacing placeholders."
+    ],
+    "false_positive_notes": [
+      "No advisory false positives observed; advisory checks were not run."
+    ],
+    "false_negative_notes": [
+      "No advisory false negatives observed; advisory checks were not run."
+    ]
+  },
+  "phase2_design_signals": [
+    "Unresolved placeholders should be explicit pre-envelope rejection reason codes."
+  ]
+}
