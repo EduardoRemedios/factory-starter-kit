@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Record the first Factory v3 Phase 1 trial as a V2 fallback / V3-unsuitable signal when no bounded code-changing objective is named.
 - Add Factory v3 Phase 1 trial operating plan and trial index for real-project `V3-OP-001` evidence collection.
 - Add Factory v3 Phase 1 trial capture template for real-project `V3-OP-001` evidence collection.
 - Add Factory v3 roadmap pre-mortem with roadmap failure modes, watchpoints, and golden-fixture backlog.

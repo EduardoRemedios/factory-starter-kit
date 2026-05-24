@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-05-24
+- Recorded the first Factory v3 Phase 1 trial as a V2 fallback / V3-unsuitable signal when no bounded code-changing objective is named.
 - Added Factory v3 Phase 1 trial operating plan and trial index for real-project `V3-OP-001` evidence collection.
 
 ## 2026-05-22

@@ -36,6 +36,7 @@
 - A V3 Phase 1 trial operating plan exists at `docs/Factory/v3/PHASE1_TRIAL_PLAN.md`.
 - A Phase 1 V3 real-project trial capture template exists at `docs/Factory/v3/templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md`.
 - A Phase 1 V3 trial index exists at `docs/Factory/v3/trials/TRIAL_INDEX.md`.
+- The first Phase 1 V3 trial record exists at `docs/Factory/v3/trials/TRIAL_20260524_001_no_bounded_code_change.md`, recording a V2 fallback / V3-unsuitable decision before mission-envelope creation.
 - A Factory v2 planning pack for the V3 eval evolution decision exists at `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md`.
 - An execution-enabled V3 confidence pilot batch exists at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
@@ -55,7 +56,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: V3-OP-001 operational release approval, user guide closeout, V3 full-vision roadmap, roadmap pre-mortem, Phase 1 trial operating plan, and Phase 1 trial capture template.
+- Current tracked evidence: V3-OP-001 operational release approval, user guide closeout, V3 full-vision roadmap, roadmap pre-mortem, Phase 1 trial operating plan, Phase 1 trial capture template, and first Phase 1 fallback trial record.
 - Factory v3 status: optional operational use approved for `V3-OP-001` only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -85,6 +86,7 @@
 - Latest V3 boundary-review result: `RUN_20260522_1120_v3_boundary_review` returns READY; C-09 is DONE with evidence that `V3-OP-001` remains coding-governance only, keeps separate governance kernels optional, supports ordinary non-kernel repositories, and does not claim runtime-kernel authority.
 - Latest V3 decision-report result: `RUN_20260522_1150_v3_decision_report` returned READY for explicit human release approval and is now superseded by the release approval recorded in `RUN_20260522_1220_v3_release_user_guide`.
 - Latest V3 release result: `RUN_20260522_1220_v3_release_user_guide` records optional operational approval for `V3-OP-001` at commit `f07fa11`, keeps Factory v2 as fallback, and adds user guidance plus starter templates.
+- Latest V3 Phase 1 trial result: `TRIAL_20260524_001_no_bounded_code_change` records `FALLBACK_TO_V2` because the request authorized a next process step but did not name a bounded code-changing objective suitable for `V3-OP-001`.
 
 ## What Does NOT Exist Yet
 
@@ -93,7 +95,7 @@
 - Factory v3 user guidance is new and should be refined after real project trials.
 - Factory v3 full-vision roadmap exists, but its later phases are not implemented or approved.
 - Factory v3 roadmap pre-mortem exists, but its proposed fixtures are a backlog and not yet implemented.
-- Phase 1 trial operating plan, index, and capture template exist, but no real-project Phase 1 trial batch has been completed with them yet.
+- Phase 1 trial operating plan, index, capture template, and first fallback trial record exist, but no real-project Phase 1 trial batch has been completed with them yet.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
 - No advisory check expansion has been approved yet; current real-branch evidence supports continued standalone advisory use only.
