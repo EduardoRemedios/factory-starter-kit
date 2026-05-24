@@ -1,9 +1,10 @@
 # Factory v3
 
 ## Version
-v0.7
+v0.8
 
 ## Change Log
+- v0.8 (2026-05-24): Added the standalone advisory V3 mission-record validator, malformed-record fixtures, and deterministic expected outputs.
 - v0.7 (2026-05-24): Added Phase 2 shadow mission-record v0 design and trial-derived JSON fixtures.
 - v0.6 (2026-05-24): Added Phase 1 trial operating plan and trial index.
 - v0.5 (2026-05-22): Added Phase 1 real-project trial capture template for `V3-OP-001` evidence collection.
@@ -34,7 +35,7 @@ This namespace captures Factory v3 operating guidance, release evidence, starter
 - Preserve the external governance kernel and runtime-kernel boundary.
 - Keep V2 fallback explicit.
 - Capture evals, stress tests, pilot evidence, decision reports, and promotion criteria.
-- Provide a shadow `V3_MISSION_RECORD` design for Phase 2 replay and evidence-shape testing.
+- Provide a shadow `V3_MISSION_RECORD` design and standalone advisory validator for Phase 2 replay and evidence-shape testing.
 - Continue research for any future V3 profile before promotion.
 
 ## Non-authority Rule
@@ -107,12 +108,16 @@ Use:
 - `MISSION_RECORD_DESIGN_V0.md`
 - `templates/V3_MISSION_RECORD_TEMPLATE.json`
 - `tests/fixtures/factory_v3_mission_record/`
+- `scripts/factory_v3_mission_record_lint.py`
 
 The v0 record captures pre-envelope fallback, thread-local mission envelopes, bounded authority, command evidence, verification, fallback review, SIMPLE-CODE-GATE review, and Phase 2 design signals.
+
+The validator is standalone and advisory. It emits `blocking_effect: none`, supports deterministic `--expect` fixture checks, and is not wired into required Factory gates.
 
 It does not approve enforcement, required gates, runtime authority, telemetry, governance routing, or new V3 profiles.
 
 ## Advisory Eval Tooling
 - `scripts/factory_v3_advisory_lint.py` checks research-posture and promotion-evidence drift in V3 docs.
 - `scripts/factory_v3_operational_readiness_eval.py` checks standalone operational-readiness fixture scenarios and emits advisory-only reports.
+- `scripts/factory_v3_mission_record_lint.py` checks shadow V3 mission-record JSON files and malformed-record fixtures in advisory mode.
 - These tools are not wired into required Factory v2 gates and do not authorize broader V3 promotion.

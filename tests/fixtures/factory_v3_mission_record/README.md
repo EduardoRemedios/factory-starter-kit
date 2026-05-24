@@ -6,4 +6,6 @@ Research-only shadow fixtures. These examples are non-enforcing and do not appro
 ## Purpose
 Backfit the v0 mission-record shape against the first five Phase 1 `V3-OP-001` trials.
 
-These fixtures are examples only. No validator is approved yet.
+The root trial fixtures are valid shadow examples. `invalid/` contains malformed record-shape fixtures for the standalone advisory validator, and `expected/` contains deterministic output fixtures for valid, invalid, and mixed-directory checks.
+
+The validator is `scripts/factory_v3_mission_record_lint.py`. It is advisory only, emits `blocking_effect: none`, and is not wired into `factoryctl`, CI, or any required Factory v2 gate.

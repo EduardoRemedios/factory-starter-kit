@@ -1,0 +1,72 @@
+{
+  "record": {
+    "record_type": "factory_v3_mission_record",
+    "status": "research_only_non_enforcing",
+    "profile_id": "V3-OP-001",
+    "decision_state": "completed_with_v3",
+    "approval_scope": {
+      "factory_v3_default_approved": false,
+      "new_v3_profile_approved": false,
+      "required_gate_integration_approved": false,
+      "runtime_authority_approved": false,
+      "factory_v2_fallback_retained": true
+    }
+  },
+  "mission": {
+    "repository": "fixture-repo",
+    "objective": "Exercise a thread-local envelope with no reference.",
+    "envelope": {
+      "mode": "thread_local",
+      "reference": "",
+      "not_created_reason": ""
+    },
+    "separate_governance_kernel_present": "no"
+  },
+  "authority": {
+    "authorized_files": [
+      "src/fixture.py"
+    ],
+    "forbidden_scope": [
+      "no files outside authorized scope"
+    ],
+    "allowed_commands": [
+      "python3 -m unittest tests.test_fixture -v"
+    ],
+    "dependency_policy": "No new dependencies.",
+    "v2_fallback_required": true,
+    "fallback_triggers": [
+      "scope expansion",
+      "verification failure"
+    ]
+  },
+  "execution": {
+    "files_changed": [
+      "src/fixture.py"
+    ],
+    "verification": {
+      "commands": [
+        "python3 -m unittest tests.test_fixture -v"
+      ],
+      "result": "pass",
+      "summary": "Fixture-only malformed record."
+    },
+    "halt": {
+      "halted": false,
+      "reason_codes": []
+    },
+    "fallback": {
+      "used": false,
+      "reason_codes": []
+    }
+  },
+  "reviews": {
+    "simple_code_gate": {
+      "result": "pass",
+      "notes": []
+    },
+    "fallback_halt_review": {
+      "result": "pass",
+      "notes": []
+    }
+  }
+}

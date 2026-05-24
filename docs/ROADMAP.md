@@ -53,6 +53,7 @@
 | SPRINT_20260524_041 | V3 Phase 1 owner waiver | Done | 2026-05-24 | `docs/Factory/v3/trials/PHASE1_REQUIREMENT_WAIVER_20260524.md`; `docs/Factory/v3/trials/TRIAL_INDEX.md` |
 | SPRINT_20260524_042 | V3 Phase 1 decision review | Done | 2026-05-24 | `docs/Factory/v3/PHASE1_DECISION_REVIEW_V3_OP_001.md`; `docs/Factory/v3/trials/TRIAL_INDEX.md` |
 | SPRINT_20260524_043 | V3 Phase 2 mission record v0 | Done | 2026-05-24 | `docs/Factory/v3/MISSION_RECORD_DESIGN_V0.md`; `docs/Factory/v3/templates/V3_MISSION_RECORD_TEMPLATE.json`; `tests/fixtures/factory_v3_mission_record/` |
+| SPRINT_20260524_044 | V3 Phase 2 mission-record advisory validator | Done | 2026-05-24 | `scripts/factory_v3_mission_record_lint.py`; `tests/fixtures/factory_v3_mission_record/invalid/`; `tests/fixtures/factory_v3_mission_record/expected/` |
 
 ## Next Candidates
 
@@ -60,7 +61,7 @@
 |-----------|--------|-------|
 | Phase 1 V3 real-project trial batch | Done | 5 of 5 trials are recorded, including two fallback cases and three completed happy-path implementations across Harmony and Temper; owner waiver recorded for the non-author user criterion. |
 | Phase 1 decision review | Done | Decision selected `START_PHASE_2` for shadow mission-record design only. |
-| Phase 2 V3 structured mission record | In Progress | v0 shadow template and five trial-derived examples exist; next step is malformed/negative fixtures and a minimal advisory validator, still non-enforcing. |
+| Phase 2 V3 structured mission record | In Progress | v0 shadow template, five trial-derived examples, malformed fixtures, deterministic expected outputs, and a standalone advisory validator exist; future work remains shadow-only unless explicitly approved. |
 | V3-OP-001 trial feedback | Ongoing | Continue capturing optional trial feedback as real work arises, especially missed fallback triggers, guide friction, and thread-local envelope behavior. |
 | V3 user guide refinement | Ongoing | Update the user guide only from trial evidence or decision-review outputs. |
 | Additional real-branch evidence collection | Next | Collect future advisory findings only as real changes arise; do not expand matchers or integrate gates yet. |

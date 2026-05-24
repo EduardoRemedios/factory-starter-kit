@@ -1,0 +1,16 @@
+{
+  "blocking_effect": "none",
+  "checked_records": [
+    "tests/fixtures/factory_v3_mission_record/trial_003_harmony_faq_ingestion.json"
+  ],
+  "findings": [],
+  "generated_at": "not_recorded",
+  "recommended_next_steps": [
+    "No mission-record findings. Keep records shadow-only until a promotion pack approves otherwise."
+  ],
+  "record_scope": "shadow_advisory",
+  "report_id": "factory-v3-mission-record-lint",
+  "status": "ADVISORY_PASS",
+  "target": "tests/fixtures/factory_v3_mission_record/trial_003_harmony_faq_ingestion.json",
+  "warnings": []
+}

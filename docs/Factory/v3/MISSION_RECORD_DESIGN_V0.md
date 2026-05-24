@@ -1,9 +1,10 @@
 # Factory v3 Mission Record Design v0
 
 ## Version
-v0.1
+v0.2
 
 ## Change Log
+- v0.2 (2026-05-24): Added malformed-record fixture coverage and a standalone advisory mission-record validator with deterministic expected outputs.
 - v0.1 (2026-05-24): Initial shadow mission-record design derived from the first five Phase 1 `V3-OP-001` trials.
 
 ## Status
@@ -34,6 +35,12 @@ Backfilled examples:
 tests/fixtures/factory_v3_mission_record/
 ```
 
+Advisory validator:
+
+```text
+scripts/factory_v3_mission_record_lint.py
+```
+
 ## Design Principles
 
 1. Capture observed Phase 1 evidence before adding new concepts.
@@ -54,7 +61,7 @@ tests/fixtures/factory_v3_mission_record/
 | `halted` | V3 started and then stopped because verification did not pass, scope expanded, authority was missing, or another halt rule fired. No further execution is implied by this state. |
 | `blocked` | The work could not safely proceed and no execution occurred. |
 
-Phase 1 produced `pre_envelope_fallback` and `completed_with_v3` records. `halted` and `blocked` remain design states for future fixtures.
+Phase 1 produced `pre_envelope_fallback` and `completed_with_v3` records. `halted` and `blocked` remain design states for future valid-record fixtures.
 
 ## Required Field Groups
 
@@ -83,6 +90,30 @@ Phase 1 produced `pre_envelope_fallback` and `completed_with_v3` records. `halte
 - A mission record must identify missing evidence with explicit `not_recorded` or `not_run` values.
 - A mission record must preserve whether V2 fallback was used or retained.
 
+## Advisory Validator
+
+The standalone advisory validator reads one mission-record JSON file or a directory of JSON files:
+
+```bash
+python3 scripts/factory_v3_mission_record_lint.py --target tests/fixtures/factory_v3_mission_record --json
+```
+
+It emits JSON with `blocking_effect: none` and only advisory statuses:
+
+- `ADVISORY_PASS`
+- `ADVISORY_WARN`
+- `ADVISORY_FAIL_NON_BLOCKING`
+
+The validator is a replay and fixture aid only. It is not wired into `factoryctl`, CI, merge preflight, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, or any required Factory v2 gate.
+
+Deterministic expected outputs live under:
+
+```text
+tests/fixtures/factory_v3_mission_record/expected/
+```
+
+Malformed-record fixtures currently cover missing authorized files, missing allowed commands, missing verification result, fallback without reason code, thread-local envelope without reference, and unsafe approval-scope flags.
+
 ## Out Of Scope For v0
 
 - JSON Schema validation.
@@ -95,4 +126,4 @@ Phase 1 produced `pre_envelope_fallback` and `completed_with_v3` records. `halte
 - External governance-kernel adapters.
 
 ## Next Step
-Review the v0 template and five backfilled records. If the shape is accepted, the next Phase 2 task should create a minimal advisory validator and deterministic fixtures for malformed records.
+Use the advisory validator against future shadow records and add valid halted, blocked, stale-reentry, and verification-failure examples only when real evidence or an approved Phase 2 design task justifies them.

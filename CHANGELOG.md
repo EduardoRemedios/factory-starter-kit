@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add a standalone advisory Factory v3 mission-record validator with malformed fixtures and deterministic expected-output checks.
 - Add Factory v3 Phase 2 shadow mission-record v0 design, template, and trial-derived JSON examples.
 - Add Factory v3 Phase 1 decision review selecting Phase 2 shadow mission-record design only.
 - Align the top-level and Factory v3 roadmaps with Phase 1 decision-review readiness and keep Phase 2 blocked pending an explicit decision.
