@@ -87,6 +87,7 @@
 - Latest V3 decision-report result: `RUN_20260522_1150_v3_decision_report` returned READY for explicit human release approval and is now superseded by the release approval recorded in `RUN_20260522_1220_v3_release_user_guide`.
 - Latest V3 release result: `RUN_20260522_1220_v3_release_user_guide` records optional operational approval for `V3-OP-001` at commit `f07fa11`, keeps Factory v2 as fallback, and adds user guidance plus starter templates.
 - Latest V3 Phase 1 trial result: `TRIAL_20260524_001_no_bounded_code_change` records `FALLBACK_TO_V2` because the request authorized a next process step but did not name a bounded code-changing objective suitable for `V3-OP-001`.
+- Latest V3 guide refinement result: the user guide, Phase 1 plan, and trial capture template now explicitly support pre-envelope fallback and include a paste-ready Phase 1 trial prompt for ordinary adopting repositories.
 
 ## What Does NOT Exist Yet
 

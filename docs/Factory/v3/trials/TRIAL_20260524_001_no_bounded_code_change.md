@@ -132,5 +132,5 @@ Phase 1 `V3-OP-001` trial record. This record is research and evidence capture o
 ## Follow-Ups
 | Follow-Up | Owner | Target |
 |---|---|---|
-| Add a guide/template note for pre-envelope fallback decisions. | Factory maintainer | Next V3 user-guide refinement |
+| Add a guide/template note for pre-envelope fallback decisions. | Factory maintainer | Completed in `SPRINT_20260524_036` |
 | Consider a natural-language fixture for vague continuation prompts. | Factory maintainer | Future eval fixture backlog |

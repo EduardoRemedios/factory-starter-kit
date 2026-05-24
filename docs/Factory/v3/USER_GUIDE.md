@@ -1,9 +1,10 @@
 # Factory V3 User Guide
 
 ## Version
-v1
+v1.1
 
 ## Change Log
+- v1.1 (2026-05-24): Added pre-envelope fallback guidance and a Phase 1 trial prompt for ordinary adopting repositories.
 - v1 (2026-05-22): Initial Codex user guide for optional `V3-OP-001` operational use.
 
 ## Status
@@ -58,6 +59,19 @@ V3 can also act as a front door:
 
 Using V3 to route work back to V2 is a successful outcome, not a failure.
 
+## Pre-Envelope Fallback
+V3 does not need to create a mission envelope for every request.
+
+If the request does not identify a bounded code-changing objective, authorized files, forbidden scope, allowed commands, and verification, Codex should stop before the envelope and record why the work should use V2 or ordinary planning instead.
+
+This is the correct response for prompts like:
+
+```text
+Proceed with the next step.
+```
+
+That kind of prompt may be enough conversational authority to continue discussion, but it is not enough authority for a `V3-OP-001` execution mission.
+
 ## Quick Start In Codex
 Use this prompt:
 
@@ -70,6 +84,50 @@ Task:
 Before editing, classify whether this task is eligible for V3-OP-001.
 If eligible, create a mission envelope with objective, authorized files, forbidden scope, allowed commands, verification, halt rules, and V2 fallback triggers.
 If not eligible, stop and explain why this should use Factory V2.
+```
+
+## Phase 1 Trial Prompt
+Use this when testing V3 in an ordinary project repository.
+
+```text
+Use Factory V3 profile V3-OP-001 if eligible.
+
+Factory source:
+https://github.com/EduardoRemedios/factory-starter-kit
+
+Context:
+I am running a Phase 1 V3 real-project trial. V3 is optional and bounded. Factory V2 remains the fallback. Do not make V3 the default, do not add required CI gates, and do not create broad governance infrastructure.
+
+Task:
+<describe one small bounded code change>
+
+Candidate authorized files:
+- <file or directory>
+
+Forbidden scope:
+- no payment, authentication, compliance, deployment, infrastructure, or runtime-kernel changes
+- no dependency additions unless explicitly approved
+- no broad architecture changes
+- no files outside the authorized scope unless you stop and ask
+
+Allowed commands:
+- <project lint/test/build command>
+
+Before editing:
+1. Fetch or inspect the latest Factory V3 guidance from the Factory source if this repo does not already have it.
+2. Classify whether this task is eligible for V3-OP-001.
+3. If eligible, create a compact mission envelope with objective, authorized files, forbidden scope, allowed commands, verification, halt rules, and V2 fallback triggers.
+4. If not eligible, stop before creating the envelope and explain why this should use Factory V2.
+
+During execution:
+- make the smallest clear behavior-preserving change,
+- avoid speculative abstraction,
+- avoid dependency creep,
+- run the allowed verification,
+- halt if verification fails or scope expands.
+
+Closeout:
+Record files changed, commands run, verification result, SIMPLE-CODE-GATE review, fallback review, friction notes, and whether the trial should influence future V3 mission-record design.
 ```
 
 ## Required Mission Envelope

@@ -1,9 +1,10 @@
 # Factory v3 Phase 1 Trial Plan
 
 ## Version
-v0.1
+v0.2
 
 ## Change Log
+- v0.2 (2026-05-24): Added explicit pre-envelope fallback guidance for unsuitable `V3-OP-001` trial requests.
 - v0.1 (2026-05-24): Initial Phase 1 real-project trial operating plan for optional `V3-OP-001` use.
 
 ## Status
@@ -74,7 +75,7 @@ Each trial record must include:
 
 - project and harness metadata,
 - why V3 was selected or rejected,
-- mission envelope path,
+- mission envelope path, or an explicit pre-envelope fallback reason when no envelope was created,
 - closeout path,
 - fallback review path,
 - SIMPLE-CODE-GATE review path,
@@ -83,6 +84,19 @@ Each trial record must include:
 - user friction or confusion,
 - false-positive and false-negative notes,
 - whether the trial should influence Phase 2 mission record design.
+
+## Pre-Envelope Fallback Trials
+A useful trial can stop before mission-envelope creation.
+
+Record a pre-envelope fallback when the user request is conversationally clear but insufficient for `V3-OP-001`, such as a vague continuation request, broad feature request, missing verification command, missing authorized files, or a task that touches forbidden scope.
+
+This should count as a V2 fallback or V3-unsuitable trial only when the record includes:
+
+- the missing authority or scope element,
+- the reason no mission envelope was created,
+- the V2 fallback path,
+- friction notes,
+- false-positive and false-negative notes for any advisory checks that ran.
 
 ## Required Checks
 Run these checks when they exist in the adopting repo:

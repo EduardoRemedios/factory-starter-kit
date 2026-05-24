@@ -41,6 +41,7 @@ Template for Phase 1 `V3-OP-001` real-project trials. This template is research 
 
 ## Mission Evidence
 - Mission envelope path:
+- If no mission envelope was created, why:
 - Closeout path:
 - Fallback review path:
 - SIMPLE-CODE-GATE review path:
@@ -122,6 +123,7 @@ Template for Phase 1 `V3-OP-001` real-project trials. This template is research 
 
 ## Trial Judgment
 - Trial classification: USEFUL_SIGNAL | NEEDS_GUIDE_UPDATE | NEEDS_TEMPLATE_UPDATE | NEEDS_EVAL_UPDATE | UNSUITABLE_FOR_V3
+- Pre-envelope decision captured: yes | no | not_applicable
 - Should this trial influence Phase 2 mission record design: yes | no
 - Reason:
 
