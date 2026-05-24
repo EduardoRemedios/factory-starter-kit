@@ -1,9 +1,10 @@
 # Factory v3 Roadmap To Full Vision
 
 ## Version
-v0.3
+v0.4
 
 ## Change Log
+- v0.4 (2026-05-24): Recorded Phase 1 decision review result and unblocked Phase 2 shadow mission-record design.
 - v0.3 (2026-05-24): Aligned Phase 1 with completed trial-batch evidence, owner waiver, and decision-review gate before Phase 2.
 - v0.2 (2026-05-22): Removed private-kernel naming, added a self-contained public boundary, and clarified that V3 remains useful without any external governance kernel.
 - v0.1 (2026-05-22): Initial phased roadmap from optional `V3-OP-001` use to the full Factory v3 mission-governance runtime vision.
@@ -73,7 +74,7 @@ No default-mode promotion. No required-gate integration. V2 remains fallback.
 
 ## Phase 1 - Real-Project Trial Loop
 
-Status: Ready for decision review.
+Status: Complete.
 
 Goal:
 
@@ -107,13 +108,13 @@ Promotion gate:
 
 Approve a `V3-OP-001` refinement release only if real-project evidence shows the profile is understandable, bounded, and does not cause V2 deprecation confusion.
 
-Next decision:
+Decision:
 
-Produce a Phase 1 decision review before starting Phase 2. The review must choose one of: refine `V3-OP-001`, add fixtures, start Phase 2 structured mission-record design, pause V3 expansion, or route more evidence collection through V2.
+`START_PHASE_2` for shadow mission-record design only. Evidence is recorded at `docs/Factory/v3/PHASE1_DECISION_REVIEW_V3_OP_001.md`.
 
 ## Phase 2 - Structured Mission Record
 
-Status: Blocked until Phase 1 decision review explicitly chooses `START_PHASE_2`.
+Status: Approved for shadow design only.
 
 Goal:
 

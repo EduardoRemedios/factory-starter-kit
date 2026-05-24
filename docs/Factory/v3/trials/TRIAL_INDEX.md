@@ -1,9 +1,10 @@
 # Factory v3 Phase 1 Trial Index
 
 ## Version
-v0.7
+v0.8
 
 ## Change Log
+- v0.8 (2026-05-24): Recorded Phase 1 decision review result: `START_PHASE_2` for shadow mission-record design only.
 - v0.7 (2026-05-24): Recorded owner waiver for the non-author user trial requirement and moved batch to decision-review readiness.
 - v0.6 (2026-05-24): Recorded first completed Temper `V3-OP-001` happy-path implementation trial.
 - v0.5 (2026-05-24): Recorded second completed Harmony `V3-OP-001` happy-path implementation trial.
@@ -42,7 +43,7 @@ Use `docs/Factory/v3/templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md` for each tri
 | Trials with advisory false-positive/false-negative notes | 5 | 5 |
 
 ## Current Batch Verdict
-READY_FOR_PHASE_1_DECISION_REVIEW
+PHASE_1_DECISION_COMPLETE_START_PHASE_2_SHADOW_DESIGN
 
 ## Notes
 - First Phase 1 trial records that `V3-OP-001` was unsuitable because the request did not name a bounded code-changing objective.
@@ -52,4 +53,5 @@ READY_FOR_PHASE_1_DECISION_REVIEW
 - Fifth Phase 1 trial records the first completed `V3-OP-001` happy-path implementation in Temper.
 - The 5-trial minimum is met.
 - The non-author user trial requirement is explicitly waived by the owner for this batch because the project is operated by a solo AI-native developer; see `docs/Factory/v3/trials/PHASE1_REQUIREMENT_WAIVER_20260524.md`.
-- Batch is ready for Phase 1 decision review, not automatic Phase 2 implementation.
+- Phase 1 decision review is complete at `docs/Factory/v3/PHASE1_DECISION_REVIEW_V3_OP_001.md`.
+- Decision result is `START_PHASE_2` for shadow mission-record design only; no default-mode promotion, new profile, required-gate integration, or Phase 2 enforcement is approved.

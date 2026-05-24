@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-05-24
+- Added Factory v3 Phase 1 decision review selecting Phase 2 shadow mission-record design only.
 - Aligned the top-level and Factory v3 roadmaps with Phase 1 decision-review readiness and kept Phase 2 blocked pending an explicit decision.
 - Recorded owner waiver for the Factory v3 Phase 1 non-author user trial requirement in the solo AI-native development context.
 - Recorded the first completed Temper `V3-OP-001` happy-path implementation trial for a verifier-backed accessibility change.
