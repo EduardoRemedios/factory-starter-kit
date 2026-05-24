@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add Factory v3 Phase 1 trial operating plan and trial index for real-project `V3-OP-001` evidence collection.
 - Add Factory v3 Phase 1 trial capture template for real-project `V3-OP-001` evidence collection.
 - Add Factory v3 roadmap pre-mortem with roadmap failure modes, watchpoints, and golden-fixture backlog.
 - Add Factory v3 vision and phased roadmap from optional `V3-OP-001` use to the full mission-governance runtime vision.

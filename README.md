@@ -189,6 +189,7 @@ your-repo/
 │           ├── VISION.md
 │           ├── ROADMAP_TO_FULL_VISION.md
 │           ├── ROADMAP_PREMORTEM.md
+│           ├── PHASE1_TRIAL_PLAN.md
 │           ├── USER_GUIDE.md
 │           ├── OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md
 │           ├── OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md
@@ -205,6 +206,8 @@ your-repo/
 │               ├── V3_CLOSEOUT_TEMPLATE.md
 │               ├── V3_FALLBACK_REVIEW_TEMPLATE.md
 │               └── V3_SIMPLE_CODE_GATE_REVIEW_TEMPLATE.md
+│           └── trials/
+│               └── TRIAL_INDEX.md
 ```
 
 This starter kit intentionally does not ship product-specific run packs, finished state docs, historical missions, or real PO phase artifacts.

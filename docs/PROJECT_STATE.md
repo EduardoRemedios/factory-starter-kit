@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the current state of the build. Updated after every sprint.
 >
-> **Last updated:** 2026-05-22
+> **Last updated:** 2026-05-24
 
 ---
 
@@ -33,7 +33,9 @@
 - A V3 full-vision document exists at `docs/Factory/v3/VISION.md`.
 - A V3 roadmap from `V3-OP-001` to the full mission-governance runtime vision exists at `docs/Factory/v3/ROADMAP_TO_FULL_VISION.md`.
 - A V3 roadmap-level pre-mortem and golden-fixture backlog exists at `docs/Factory/v3/ROADMAP_PREMORTEM.md`.
+- A V3 Phase 1 trial operating plan exists at `docs/Factory/v3/PHASE1_TRIAL_PLAN.md`.
 - A Phase 1 V3 real-project trial capture template exists at `docs/Factory/v3/templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md`.
+- A Phase 1 V3 trial index exists at `docs/Factory/v3/trials/TRIAL_INDEX.md`.
 - A Factory v2 planning pack for the V3 eval evolution decision exists at `docs/Factory/runs/RUN_20260521_0939_v3_eval_evolution_decision_plan/pack/PACK_AUDIT_REPORT.md`.
 - An execution-enabled V3 confidence pilot batch exists at `docs/Factory/runs/RUN_20260521_0948_v3_confidence_pilot_execution/EXECUTION_CLOSEOUT.md`.
 - The first real-run V3 operational-readiness shadow pilot report exists at `docs/Factory/runs/RUN_20260521_0833_v3_eval_suite_impl_plan/shadow_pilot/OPERATIONAL_READINESS_SHADOW_PILOT_REPORT.md`.
@@ -53,7 +55,7 @@
 
 ## Current Tracking Snapshot
 
-- Current tracked evidence: V3-OP-001 operational release approval, user guide closeout, V3 full-vision roadmap, roadmap pre-mortem, and Phase 1 trial capture template.
+- Current tracked evidence: V3-OP-001 operational release approval, user guide closeout, V3 full-vision roadmap, roadmap pre-mortem, Phase 1 trial operating plan, and Phase 1 trial capture template.
 - Factory v3 status: optional operational use approved for `V3-OP-001` only.
 - Advisory lint status: optional standalone prototype only.
 - Latest fixture pilot result: deliberate boundary-stressor fixture returns `ADVISORY_FAIL_NON_BLOCKING` with `blocking_effect: none`.
@@ -91,7 +93,7 @@
 - Factory v3 user guidance is new and should be refined after real project trials.
 - Factory v3 full-vision roadmap exists, but its later phases are not implemented or approved.
 - Factory v3 roadmap pre-mortem exists, but its proposed fixtures are a backlog and not yet implemented.
-- Phase 1 trial capture template exists, but no real-project Phase 1 trial batch has been completed with it yet.
+- Phase 1 trial operating plan, index, and capture template exist, but no real-project Phase 1 trial batch has been completed with them yet.
 - Factory v3 advisory lint is not wired into `factoryctl`, `knowledge_lint.sh`, `stage-lint`, `pack-lint`, mission lint, mission cursor lint, merge preflight, or any required Factory v2 gate.
 - Factory v3 does not implement runtime-kernel authority, proof, leases, sandboxing, policy, or production action mediation.
 - No advisory check expansion has been approved yet; current real-branch evidence supports continued standalone advisory use only.

@@ -2,7 +2,7 @@
 
 > **Purpose:** Sprint-level plan and milestone sequence.
 >
-> **Last updated:** 2026-05-22
+> **Last updated:** 2026-05-24
 
 ---
 
@@ -43,12 +43,13 @@
 | SPRINT_20260522_031 | V3 full-vision roadmap | Done | 2026-05-22 | `docs/Factory/v3/VISION.md`; `docs/Factory/v3/ROADMAP_TO_FULL_VISION.md` |
 | SPRINT_20260522_032 | V3 roadmap pre-mortem | Done | 2026-05-22 | `docs/Factory/v3/ROADMAP_PREMORTEM.md` |
 | SPRINT_20260522_033 | V3 Phase 1 trial capture template | Done | 2026-05-22 | `docs/Factory/v3/templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md` |
+| SPRINT_20260524_034 | V3 Phase 1 trial operating plan | Done | 2026-05-24 | `docs/Factory/v3/PHASE1_TRIAL_PLAN.md`; `docs/Factory/v3/trials/TRIAL_INDEX.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| Phase 1 V3 real-project trial loop | Next | Use `V3-OP-001` in real projects, including non-kernel repos, and capture friction, fallback triggers, false positives, and false negatives. |
+| Phase 1 V3 real-project trial batch | Next | Record 5 trials with `PHASE1_TRIAL_PLAN.md`, including at least one fallback or unsuitable case. |
 | Phase 2 V3 structured mission record | Next | Design a shadow `V3_MISSION_RECORD` format only after trial evidence clarifies what must be captured. |
 | V3-OP-001 trial feedback | Next | Test optional V3 use in real projects, capture friction, missed fallback triggers, and guide/template improvements. |
 | V3 user guide refinement | Next | Update the user guide after trial evidence, especially for Codex task prompts and fallback ergonomics. |

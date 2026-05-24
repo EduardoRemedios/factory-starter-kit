@@ -1,9 +1,10 @@
 # Factory v3
 
 ## Version
-v0.5
+v0.6
 
 ## Change Log
+- v0.6 (2026-05-24): Added Phase 1 trial operating plan and trial index.
 - v0.5 (2026-05-22): Added Phase 1 real-project trial capture template for `V3-OP-001` evidence collection.
 - v0.4 (2026-05-22): Added roadmap pre-mortem and golden-fixture backlog for V3 operationalization.
 - v0.3 (2026-05-22): Added vision and roadmap documents for the path from `V3-OP-001` to the full mission-governance runtime vision.
@@ -73,6 +74,7 @@ Any V3 profile beyond `V3-OP-001`, any default-mode promotion, or any required-g
 - `VISION.md`
 - `ROADMAP_TO_FULL_VISION.md`
 - `ROADMAP_PREMORTEM.md`
+- `PHASE1_TRIAL_PLAN.md`
 - `USER_GUIDE.md`
 - `OPERATIONAL_RELEASE_APPROVAL_V3_OP_001.md`
 - `OPERATIONAL_PROFILE_V3_OP_001_BOUNDED_CODE_CHANGE.md`
@@ -85,9 +87,13 @@ Any V3 profile beyond `V3-OP-001`, any default-mode promotion, or any required-g
 - `templates/`
 
 ## Phase 1 Trial Capture
+Use `PHASE1_TRIAL_PLAN.md` to run the first real-project trial batch.
+
 Use `templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md` for real-project `V3-OP-001` trials.
 
 The template is designed to capture fallback decisions, user friction, advisory false positives and false negatives, SIMPLE-CODE-GATE evidence, and roadmap pre-mortem watchpoints before Phase 2 structured mission records are designed.
+
+Track trial records in `trials/TRIAL_INDEX.md`.
 
 ## Advisory Eval Tooling
 - `scripts/factory_v3_advisory_lint.py` checks research-posture and promotion-evidence drift in V3 docs.

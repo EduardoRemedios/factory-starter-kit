@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-05-24
+- Added Factory v3 Phase 1 trial operating plan and trial index for real-project `V3-OP-001` evidence collection.
+
 ## 2026-05-22
 - Added Factory v3 Phase 1 trial capture template for real-project `V3-OP-001` evidence collection.
 - Added Factory v3 roadmap pre-mortem with failure modes, Phase 1 watchpoints, and a golden-fixture backlog.
