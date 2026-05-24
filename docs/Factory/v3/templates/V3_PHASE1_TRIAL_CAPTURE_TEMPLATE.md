@@ -40,7 +40,7 @@ Template for Phase 1 `V3-OP-001` real-project trials. This template is research 
   - broad architecture change:
 
 ## Mission Evidence
-- Mission envelope path:
+- Mission envelope path or thread-local reference:
 - If no mission envelope was created, why:
 - Closeout path:
 - Fallback review path:

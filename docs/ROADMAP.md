@@ -47,12 +47,13 @@
 | SPRINT_20260524_035 | V3 Phase 1 first fallback trial | Done | 2026-05-24 | `docs/Factory/v3/trials/TRIAL_20260524_001_no_bounded_code_change.md`; `docs/Factory/v3/trials/TRIAL_INDEX.md` |
 | SPRINT_20260524_036 | V3 Phase 1 trial guide refinement | Done | 2026-05-24 | `docs/Factory/v3/USER_GUIDE.md`; `docs/Factory/v3/PHASE1_TRIAL_PLAN.md`; `docs/Factory/v3/templates/V3_PHASE1_TRIAL_CAPTURE_TEMPLATE.md` |
 | SPRINT_20260524_037 | V3 Harmony placeholder fallback trial | Done | 2026-05-24 | `docs/Factory/v3/trials/TRIAL_20260524_002_harmony_placeholder_fallback.md`; `docs/Factory/v3/USER_GUIDE.md` |
+| SPRINT_20260524_038 | V3 Harmony FAQ ingestion happy-path trial | Done | 2026-05-24 | `docs/Factory/v3/trials/TRIAL_20260524_003_harmony_faq_ingestion_utf8.md`; `docs/Factory/v3/PHASE1_TRIAL_PLAN.md`; `docs/Factory/v3/USER_GUIDE.md` |
 
 ## Next Candidates
 
 | Candidate | Status | Notes |
 |-----------|--------|-------|
-| Phase 1 V3 real-project trial batch | Next | Record 5 trials with `PHASE1_TRIAL_PLAN.md`; 2 of 5 are recorded, both fallback cases. The next trial should be a completed bounded implementation. |
+| Phase 1 V3 real-project trial batch | Next | Record 5 trials with `PHASE1_TRIAL_PLAN.md`; 3 of 5 are recorded, including two fallback cases and one completed Harmony happy-path implementation. |
 | Phase 2 V3 structured mission record | Next | Design a shadow `V3_MISSION_RECORD` format only after trial evidence clarifies what must be captured, including pre-envelope fallback decisions. |
 | V3-OP-001 trial feedback | Next | Test optional V3 use in real projects, capture friction, missed fallback triggers, and guide/template improvements. |
 | V3 user guide refinement | Next | Update the user guide after trial evidence, especially for Codex task prompts and fallback ergonomics. |

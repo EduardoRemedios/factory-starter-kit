@@ -1,9 +1,10 @@
 # Factory v3 Phase 1 Trial Plan
 
 ## Version
-v0.2
+v0.3
 
 ## Change Log
+- v0.3 (2026-05-24): Added thread-local mission-envelope guidance for trials whose authorized file scope excludes Factory artifacts.
 - v0.2 (2026-05-24): Added explicit pre-envelope fallback guidance for unsuitable `V3-OP-001` trial requests.
 - v0.1 (2026-05-24): Initial Phase 1 real-project trial operating plan for optional `V3-OP-001` use.
 
@@ -97,6 +98,19 @@ This should count as a V2 fallback or V3-unsuitable trial only when the record i
 - the V2 fallback path,
 - friction notes,
 - false-positive and false-negative notes for any advisory checks that ran.
+
+## Thread-Local Mission Envelopes
+A completed V3 trial does not need to create repository Factory artifacts when those artifacts are outside the authorized mutation scope.
+
+Use a thread-local mission envelope when all are true:
+
+- the code-change scope is otherwise eligible for `V3-OP-001`,
+- authorized files intentionally exclude Factory artifact paths,
+- creating a mission-envelope file would expand the approved file scope,
+- closeout records the envelope contents or states that the envelope remained in-thread,
+- command evidence and fallback review are preserved in the trial record.
+
+Do not widen authorized files solely to persist Factory paperwork.
 
 ## Required Checks
 Run these checks when they exist in the adopting repo:

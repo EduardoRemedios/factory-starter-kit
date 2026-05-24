@@ -1,9 +1,10 @@
 # Factory V3 User Guide
 
 ## Version
-v1.2
+v1.3
 
 ## Change Log
+- v1.3 (2026-05-24): Clarified thread-local mission-envelope use when authorized file scope excludes Factory artifacts.
 - v1.2 (2026-05-24): Clarified that unchanged placeholders in the Phase 1 trial prompt are a pre-envelope fallback trigger.
 - v1.1 (2026-05-24): Added pre-envelope fallback guidance and a Phase 1 trial prompt for ordinary adopting repositories.
 - v1 (2026-05-22): Initial Codex user guide for optional `V3-OP-001` operational use.
@@ -152,6 +153,8 @@ Every V3 mission should record:
 - SIMPLE-CODE-GATE review status.
 
 Use `docs/Factory/v3/templates/V3_MISSION_ENVELOPE_TEMPLATE.md`.
+
+If the authorized file scope does not include Factory artifact paths, keep the mission envelope in the chat thread and record that in closeout. Do not expand authorized files just to persist Factory paperwork.
 
 ## During Execution
 Codex should:

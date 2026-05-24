@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2026-05-24
+- Recorded the first completed Harmony `V3-OP-001` happy-path implementation trial and clarified thread-local mission-envelope guidance.
 - Recorded the Harmony Phase 1 V3 placeholder-submission trial as a pre-envelope V2 fallback and clarified the user guide.
 - Refined Factory v3 Phase 1 trial guidance with explicit pre-envelope fallback handling and a paste-ready ordinary-repo trial prompt.
 - Recorded the first Factory v3 Phase 1 trial as a V2 fallback / V3-unsuitable signal when no bounded code-changing objective is named.
