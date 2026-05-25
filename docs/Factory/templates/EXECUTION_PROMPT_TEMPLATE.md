@@ -6,7 +6,7 @@ VALIDATION:
 - Generate only after STAGE_I2 PASS, explicit human "Go", and `EXECUTION_MODE.txt = EXECUTION_ENABLED`.
 - Must include deterministic skill invocation directives for required execution subflows.
 - Must include hard guardrails, gate checks, and verification command contract.
-- Must include SIMPLE-CODE-GATE v2 for Factory v2 and Factory v3 code-changing execution.
+- Must include SIMPLE-CODE-GATE v2 for Factory-controlled code-changing execution.
 - If `pack/verification_manifest.yaml` exists, must include its checks in the verification contract.
 - If external research is in scope, must include run-level source allowlist and evidence metadata rules.
 - No placeholders may remain (see DEFINITIONS.md §12).
@@ -17,7 +17,7 @@ VALIDATION:
 v1.1
 
 ## Change Log
-- v1.1 (2026-05-19): Added SIMPLE-CODE-GATE v2 implementation guardrail for Factory v2 and v3 code-changing execution.
+- v1.1 (2026-05-19): Added SIMPLE-CODE-GATE v2 implementation guardrail for Factory-controlled code-changing execution.
 - v1 (YYYY-MM-DD): Initial execution prompt for this run.
 
 ## Run Metadata
@@ -58,7 +58,7 @@ One paragraph: what the execution agent must deliver and what is explicitly out 
 - Separate parity requirements from enhancement ideas.
 
 ## SIMPLE-CODE-GATE (v2)
-Mandatory cross-version guardrail for Factory v2 and Factory v3 implementation work.
+Mandatory guardrail for Factory-controlled implementation work.
 
 Core Directive:
 - Implement the smallest clear, behavior-preserving change.

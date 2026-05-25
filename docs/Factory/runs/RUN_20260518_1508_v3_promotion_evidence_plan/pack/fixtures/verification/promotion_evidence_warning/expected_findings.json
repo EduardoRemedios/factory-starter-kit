@@ -1,6 +1,0 @@
-{
-  "expected_finding_ids": ["V3-A006"],
-  "expected_blocking_effect": "none",
-  "expected_status": "ADVISORY_WARN",
-  "classification_required": true
-}

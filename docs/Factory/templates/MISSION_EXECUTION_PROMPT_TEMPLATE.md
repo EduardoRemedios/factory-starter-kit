@@ -6,7 +6,7 @@ VALIDATION:
 - Must be generated only after mission checkpoint GO.
 - Must include ordered mission unit execution with stop/go gates.
 - Must preserve per-unit stage contracts and guardrails.
-- Must include SIMPLE-CODE-GATE v2 for Factory v2 and Factory v3 code-changing mission units.
+- Must include SIMPLE-CODE-GATE v2 for Factory-controlled code-changing mission units.
 - Must include HALT policy and restart constraints.
 - No placeholders may remain in final artifacts.
 -->
@@ -15,7 +15,7 @@ VALIDATION:
 v1.1
 
 ## Change Log
-- v1.1 (2026-05-19): Added SIMPLE-CODE-GATE v2 implementation guardrail for Factory v2 and v3 code-changing mission units.
+- v1.1 (2026-05-19): Added SIMPLE-CODE-GATE v2 implementation guardrail for Factory-controlled code-changing mission units.
 - v1 (YYYY-MM-DD): Initial mission execution prompt.
 
 ## Mission Metadata
@@ -42,7 +42,7 @@ One paragraph defining mission execution objective and explicit out-of-scope bou
 - Preserve per-unit iteration caps.
 
 ## SIMPLE-CODE-GATE (v2)
-Mandatory cross-version guardrail for Factory v2 and Factory v3 mission-unit implementation work.
+Mandatory guardrail for Factory-controlled mission-unit implementation work.
 
 For code-changing mission units:
 - Implement the smallest clear, behavior-preserving change.

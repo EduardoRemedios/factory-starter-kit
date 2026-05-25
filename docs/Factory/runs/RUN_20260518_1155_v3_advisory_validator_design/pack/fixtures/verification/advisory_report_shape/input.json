@@ -1,8 +1,0 @@
-{
-  "target": "docs/Factory/v3/SHADOW_SCHEMA_CANDIDATES.md",
-  "finding": {
-    "id": "V3-A003",
-    "message": "Shadow schema candidate appears near required contract language.",
-    "severity": "advisory_high"
-  }
-}

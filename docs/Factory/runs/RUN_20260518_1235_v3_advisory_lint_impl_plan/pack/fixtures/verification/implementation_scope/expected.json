@@ -1,5 +1,0 @@
-{
-  "implementation_plan_verdict": "GO_FOR_SEPARATE_IMPLEMENTATION_RUN",
-  "required_gate_wiring_allowed": false,
-  "blocking_effect": "none"
-}

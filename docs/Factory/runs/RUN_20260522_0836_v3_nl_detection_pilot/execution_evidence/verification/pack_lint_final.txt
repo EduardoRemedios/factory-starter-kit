@@ -1,4 +1,0 @@
-pack_lint: PASS
-run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot
-pack_dir=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_0836_v3_nl_detection_pilot/pack
-checked_files=32 errors=0 warnings=0

@@ -39,7 +39,6 @@ required_files=(
   "docs/ROADMAP.md"
   "docs/CHANGELOG.md"
   "docs/Factory/ARCHITECTURE.md"
-  "docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md"
   "docs/Factory/MERGE_PROTOCOL.md"
   "docs/Factory/ORCHESTRATION.md"
   "docs/Factory/TASK_MEMORY.md"
@@ -163,15 +162,6 @@ has_pattern 'scripts/cartographer' AGENTS.md \
 
 has_pattern 'factory\.handoff\.v1' docs/Factory/Harnesses/AGENT_LOOP_BRIDGE.md \
   || fail "Agent Loop Bridge docs missing handoff event type"
-
-has_pattern 'Factory v3 should be compatible with external governance kernels, but it must not require one' docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md \
-  || fail "external-kernel boundary doc missing compatibility rule"
-
-has_pattern 'second runtime governance kernel' docs/Factory/ARCHITECTURE.md \
-  || fail "Architecture missing runtime-kernel non-goal"
-
-has_pattern '^## 0\.8 External Governance Kernel Boundary \(Optional, HARD when present\)$' docs/Factory/ORCHESTRATION.md \
-  || fail "Orchestration missing external-kernel boundary section"
 
 python3 scripts/agent_loop_bridge_validate.py tests/fixtures/agent_loop_bridge/valid_handoff.json --json >/dev/null \
   || fail "Agent Loop Bridge validator fixture probe failed"

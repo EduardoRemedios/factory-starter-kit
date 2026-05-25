@@ -1,4 +1,0 @@
-pack_lint: PASS
-run_root=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1120_v3_boundary_review
-pack_dir=/Users/eduardodosremedios/factory-starter-kit/docs/Factory/runs/RUN_20260522_1120_v3_boundary_review/pack
-checked_files=32 errors=0 warnings=0

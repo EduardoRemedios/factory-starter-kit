@@ -1,12 +1,12 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.13
+v1.14
 
 ## Change Log
-- v1.13 (2026-05-22): Added cross-version SIMPLE-CODE-GATE severity policy reference for Factory v2 and v3 implementation work.
-- v1.12 (2026-05-19): Added SIMPLE-CODE-GATE v2 as a mandatory cross-version planning and execution guardrail for Factory v2 and v3 implementation work.
-- v1.11 (2026-05-18): Added Factory v3 / external-kernel boundary guidance for repositories that also use a lower-level autonomy governance kernel.
+- v1.14 (2026-05-25): Removed split-out next-generation boundary guidance after it moved to its dedicated repository.
+- v1.13 (2026-05-22): Added SIMPLE-CODE-GATE severity policy reference for implementation work.
+- v1.12 (2026-05-19): Added SIMPLE-CODE-GATE v2 as a mandatory planning and execution guardrail.
 - v1.10 (2026-05-18): Added optional support-helper guidance for task memory, Repo Cartographer, and Agent Loop Bridge.
 - v1.9 (2026-05-18): Added optional Codex Mission Goal Continuity adapter guidance for derived `MISSION_CURSOR.json` and `mission_cursor_lint.sh`; core Factory flow remains unchanged.
 - v1.8 (2026-05-09): Added verification-left-shift v1 guidance: Stage F verification tiers, optional `verification_manifest.yaml`, and MS-00 verification scaffold for execution runs.
@@ -93,20 +93,8 @@ The starter kit includes optional support helpers:
 
 These helpers are advisory. They do not replace Factory source artifacts, stage-lint, pack-lint, merge preflight, or human Go/No-go.
 
-## 0.8 External Governance Kernel Boundary (Optional, HARD when present)
-Some repositories may use a lower-level autonomy governance kernel.
-
-When such a kernel exists:
-1. Factory remains the SDLC mission-governance layer for coding-agent work.
-2. The external kernel remains the runtime authority, policy, evidence, and proof layer.
-3. Factory must not create a second source of truth for runtime authority, evidence, leases, or mission state.
-4. Factory artifacts may map to kernel inputs through an explicit project adapter.
-5. Any change to kernel authority, policy, evidence, safety, sandbox, ledger, verification, or runtime-action paths defaults to high-risk Factory governance.
-
-Before adding Factory v3 mission-governance features that overlap with a kernel, review `docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md`.
-
-## 0.9 SIMPLE-CODE-GATE (v2)
-For Factory v2 and Factory v3 code-changing runs, planning and execution must apply root `AGENTS.md` section `3.1) SIMPLE-CODE-GATE (v2)`.
+## 0.8 SIMPLE-CODE-GATE (v2)
+For Factory-controlled code-changing runs, planning and execution must apply root `AGENTS.md` section `3.1) SIMPLE-CODE-GATE (v2)`.
 
 Severity decisions for SIMPLE-CODE-GATE findings are governed by `docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md`.
 
@@ -126,7 +114,6 @@ Before a run starts, you need:
    - `docs/CHANGELOG.md`
 3. the Factory docs:
    - `docs/Factory/ARCHITECTURE.md`
-   - `docs/Factory/EXTERNAL_GOVERNANCE_KERNEL_BOUNDARY.md`
    - `docs/Factory/ORCHESTRATION.md`
    - `docs/Factory/MISSION_MODE.md`
    - `docs/Factory/SCRATCHPAD.md`
