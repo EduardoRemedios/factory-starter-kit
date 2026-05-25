@@ -4,8 +4,6 @@ A generic, open-source starter kit for Factory V2 and earlier planning workflows
 
 The starter kit is the reusable process layer for agentic software delivery: explicit intent, explicit constraints, explicit verification, and explicit continuity before coding starts.
 
-Factory V3 has moved to its own repository: `https://github.com/EduardoRemedios/Factory_V3`.
-
 ## What This Starter Kit Includes
 
 - Factory runner guide and stage/spec contracts.
@@ -35,8 +33,6 @@ Factory V2 remains the default starter-kit process:
 - Mission Mode as an additive wrapper for bounded multi-sprint chains.
 - deterministic stage-lint, pack-lint, context recall, verification manifest, and merge authorization guidance.
 - optional support helpers such as task memory, Repo Cartographer, Mission Cursor continuity, and Agent Loop Bridge.
-
-Factory V3 is no longer maintained in this repository.
 
 ## Quick Start
 

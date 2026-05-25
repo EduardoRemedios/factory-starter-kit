@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Move Factory V3 content to `https://github.com/EduardoRemedios/Factory_V3` and restore this repository to Factory V2 and earlier scope.
+- Restore this repository to Factory V2 and earlier starter-kit scope.
 
 ## v0.2.0 - 2026-03-21
 
