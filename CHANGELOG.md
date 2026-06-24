@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Restore this repository to Factory V2 and earlier starter-kit scope.
+- Add review-ready versus merge-ready handoff discipline for async branch/PR review.
 
 ## v0.2.0 - 2026-03-21
 

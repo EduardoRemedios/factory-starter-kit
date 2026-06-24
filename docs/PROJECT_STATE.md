@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the current starter-kit state.
 >
-> **Last updated:** 2026-05-25
+> **Last updated:** 2026-06-24
 
 ## What Exists
 
@@ -10,12 +10,13 @@
 - Mission Mode exists as an additive wrapper for ordered multi-sprint chains.
 - Context recall, stage-lint, pack-lint, verification manifest, mission lint, mission cursor lint, task memory, Repo Cartographer, and Agent Loop Bridge helpers remain available.
 - SIMPLE-CODE-GATE v2 remains the implementation guardrail for Factory-controlled code-changing work.
+- Merge handoff discipline now separates `REVIEW_READY` from `MERGE_READY` repository handoffs, with final sync window guidance in `docs/Factory/MERGE_PROTOCOL.md`.
 - Product Owner process docs and templates remain available under `docs/Factory/ProductOwner/`.
 
 ## Current Tracking Snapshot
 
 - Current repository scope: Factory V2 and earlier starter-kit content.
-- Latest structural change: repository state was reduced to the canonical Factory V2 and earlier starter-kit scope.
+- Latest structural change: review-ready versus merge-ready branch handoff discipline was added to the starter-kit Factory process.
 
 ## What Does NOT Exist Here
 

@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.14
+v1.15
 
 ## Change Log
+- v1.15 (2026-06-24): Added repository handoff state guidance for `REVIEW_READY` versus `MERGE_READY`, with final sync window discipline bound to `MERGE_PROTOCOL.md`.
 - v1.14 (2026-05-25): Removed split-out next-generation boundary guidance after it moved to its dedicated repository.
 - v1.13 (2026-05-22): Added SIMPLE-CODE-GATE severity policy reference for implementation work.
 - v1.12 (2026-05-19): Added SIMPLE-CODE-GATE v2 as a mandatory planning and execution guardrail.
@@ -104,6 +105,15 @@ Required effect:
 3. Add abstractions only when they remove real duplication, name a stable domain concept, reduce branching or call-site complexity, and have a clear owner/boundary.
 4. Do not add generic frameworks, registries, strategy layers, plugin seams, or broad indirection for speculative future variation.
 5. If complexity or duplication is intentionally accepted, bind it to a verification hook, deferred decision, scale metric, repeated pattern, or business condition.
+
+## 0.9 Repository Handoff State Discipline
+When a Factory run, execution slice, or maintainer review hands off a branch or pull request, the handoff should separate review readiness from merge readiness per `docs/Factory/MERGE_PROTOCOL.md`.
+
+Required states:
+1. `REVIEW_READY` means the branch is ready for human or maintainer review. It may have valid pack/stage/content evidence, but it is not a merge request and does not require final merge preflight to stay fresh while review waits.
+2. `MERGE_READY` means the branch has entered a short final sync window, contains the latest configured base branch, has a clean tracked tree, has just passed the project merge preflight, and can ask the exact merge-authorization question.
+
+If the configured base branch moves after `MERGE_READY` evidence is generated, the branch returns to `REVIEW_READY` until final sync and merge preflight are rerun. This prevents asynchronous contributors from blocking review work while preserving the hard merge gate.
 
 ## 1. Prerequisites
 Before a run starts, you need:
@@ -229,6 +239,14 @@ For `PLANNING_ONLY` runs, the pack is terminal planning evidence.
 For `EXECUTION_ENABLED` runs, execution may begin only after explicit human Go.
 
 If `pack/verification_manifest.yaml` exists, `pack-lint` validates it. If an execution-enabled pack has runnable checks but no manifest, treat that as a process smell even when legacy compatibility keeps the lint result non-blocking.
+
+### 5.1 Repository Handoff To Maintainer Review
+When Factory output is delivered through a branch or pull request, the handoff should state:
+- `handoff_state: REVIEW_READY` for review handoffs.
+- `handoff_state: MERGE_READY` only during a final sync window after merge preflight passes.
+- Latest evidence paths and known stale or open items.
+
+Review can start from `REVIEW_READY`. Merge authorization can only be requested from `MERGE_READY`.
 
 ## 6. Post-Factory Execution
 The Factory does not execute the sprint. It produces the contract for execution.
