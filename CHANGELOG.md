@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Add a non-technical starter guide for local Factory setup with Cursor, Claude, or Codex.
 - Restore this repository to Factory V2 and earlier starter-kit scope.
 - Add review-ready versus merge-ready handoff discipline for async branch/PR review.
 

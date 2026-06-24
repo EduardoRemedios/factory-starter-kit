@@ -2,6 +2,8 @@
 
 > Audience: a contributor adopting the Factory pipeline in a repo that does not already have a governed planning framework.
 
+For a non-technical, step-by-step setup path, start with `docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md`.
+
 ## 1. What You Are Adopting
 
 You are adopting a planning and governance framework, not a product implementation.

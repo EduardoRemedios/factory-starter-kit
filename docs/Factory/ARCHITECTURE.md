@@ -1,9 +1,10 @@
 # Factory Architecture
 
 ## Version
-v0.4
+v0.5
 
 ## Change Log
+- v0.5 (2026-06-24): Added non-technical onboarding as a project-adapter adoption aid.
 - v0.4 (2026-05-25): Removed split-out next-generation boundary content after it moved to its dedicated repository.
 - v0.2 (2026-05-18): Added task memory, Repo Cartographer, and Agent Loop Bridge as optional extension examples.
 - v0.1 (2026-04-26): Initial portable architecture model for Factory Core, harness adapters, validators, extension packs, and project adapters.
@@ -110,5 +111,5 @@ Factory can support high-compliance domains, but it is not limited to them.
 
 Near-term portable improvements:
 1. Add optional Codex hook examples that run validators at useful lifecycle points.
-2. Add a domain-owner operating guide for users who are not developers but need to direct AI coding agents safely.
+2. Expand the domain-owner operating guide with screenshots or short walkthrough examples after real adopter feedback.
 3. Expand verification manifest examples after real execution-enabled usage.

@@ -19,6 +19,7 @@ The starter kit is the reusable process layer for agentic software delivery: exp
 - Generic review-only Agent Loop Bridge harness pattern.
 - Harness adapter guidance for Codex and other AI coding tools.
 - Optional Product Owner pre-Factory process.
+- Non-technical onboarding guide for first-time local setup with Cursor, Claude, or Codex.
 - Starter lint scripts and project-state placeholders.
 
 You drop it into your own repository and adapt the project-specific spine.
@@ -35,6 +36,8 @@ Factory V2 remains the default starter-kit process:
 - optional support helpers such as task memory, Repo Cartographer, Mission Cursor continuity, and Agent Loop Bridge.
 
 ## Quick Start
+
+If you are not technical, start with `docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md`.
 
 1. Copy this repository into your own repository as the starting framework layer.
 2. Edit `AGENTS.md`, `docs/PROJECT_STATE.md`, `docs/ROADMAP.md`, and `docs/CHANGELOG.md`.
@@ -87,6 +90,9 @@ your-repo/
     ├── PROJECT_STATE.md
     ├── ROADMAP.md
     ├── CHANGELOG.md
+    ├── onboarding/
+    │   ├── ONBOARDING_GUIDE.md
+    │   └── NON_TECHNICAL_STARTER_GUIDE.md
     └── Factory/
         ├── ARCHITECTURE.md
         ├── MERGE_PROTOCOL.md

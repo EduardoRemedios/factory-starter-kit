@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.15
+v1.16
 
 ## Change Log
+- v1.16 (2026-06-24): Linked the non-technical starter guide as the beginner adoption path.
 - v1.15 (2026-06-24): Added repository handoff state guidance for `REVIEW_READY` versus `MERGE_READY`, with final sync window discipline bound to `MERGE_PROTOCOL.md`.
 - v1.14 (2026-05-25): Removed split-out next-generation boundary guidance after it moved to its dedicated repository.
 - v1.13 (2026-05-22): Added SIMPLE-CODE-GATE severity policy reference for implementation work.
@@ -24,6 +25,8 @@ v1.15
 This document explains how to run the Factory pipeline in a generic repo.
 
 The Factory is planning-first. It produces the pack that governs implementation. It does not replace coding, testing, or review in your project.
+
+If you are setting up Factory for the first time and are not comfortable with repositories or command-line tools, start with `docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md`.
 
 ## 0.1 Planning-First Operating Principle
 Use this order by default:
