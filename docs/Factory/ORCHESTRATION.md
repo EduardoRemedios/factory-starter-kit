@@ -1,9 +1,11 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.16
+v1.18
 
 ## Change Log
+- v1.18 (2026-06-25): Clarified Kilo Code CLI support as External Lane Mode driven by Codex or a neutral shell.
+- v1.17 (2026-06-25): Added optional Kilo Code CLI stage runner for model-routed Factory lanes.
 - v1.16 (2026-06-24): Linked the non-technical starter guide as the beginner adoption path.
 - v1.15 (2026-06-24): Added repository handoff state guidance for `REVIEW_READY` versus `MERGE_READY`, with final sync window discipline bound to `MERGE_PROTOCOL.md`.
 - v1.14 (2026-05-25): Removed split-out next-generation boundary guidance after it moved to its dedicated repository.
@@ -94,6 +96,7 @@ The starter kit includes optional support helpers:
 - Task memory: `./scripts/factoryctl memory-init`, `memory-suggest`, `memory-log`, and `memory-review`.
 - Repo Cartographer: `./scripts/cartographer` for advisory repository snapshots.
 - Agent Loop Bridge: `docs/Factory/Harnesses/AGENT_LOOP_BRIDGE.md` and `scripts/agent_loop_bridge_validate.py` for review-only structured handoffs.
+- Kilo Code CLI External Lane Mode: `./scripts/factoryctl kilo-stage` for model-routed worker subprocesses launched by Codex or a neutral shell, with post-run write-boundary checks.
 
 These helpers are advisory. They do not replace Factory source artifacts, stage-lint, pack-lint, merge preflight, or human Go/No-go.
 

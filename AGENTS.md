@@ -18,6 +18,7 @@ Purpose:
 - Context index refresh: `./scripts/factoryctl context-index`
 - Stage A recall report: `./scripts/factoryctl context-report --profile stage-a --scope <RUN_ID> --output docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
 - Stage validation after each handoff: `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>`
+- Kilo external model lane (optional): `./scripts/factoryctl kilo-stage --run <RUN_ID> --stage <STAGE> --model <KILO_MODEL_ID> --variant high --auto --timeout-seconds 900`
 - Pack validation after I2: `./scripts/factoryctl pack-lint --run <RUN_ID>`
 - Run metrics initialization: `./scripts/factoryctl metrics-init --run <RUN_ID>`
 - Task memory initialization (optional): `./scripts/factoryctl memory-init`

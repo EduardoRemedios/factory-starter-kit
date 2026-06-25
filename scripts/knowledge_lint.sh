@@ -46,6 +46,8 @@ required_files=(
   "docs/Factory/Harnesses/AGENT_LOOP_BRIDGE_MANUAL_RUNBOOK.md"
   "docs/Factory/Harnesses/README.md"
   "docs/Factory/Harnesses/CODEX.md"
+  "docs/Factory/Harnesses/KILO.md"
+  "docs/Factory/Harnesses/KILO_EXTERNAL_LANE_PROMPT.md"
   "docs/Factory/MISSION_MODE.md"
   "docs/Factory/SCRATCHPAD.md"
   "docs/Factory/Spec/DEFINITIONS.md"
@@ -77,6 +79,7 @@ required_files=(
   "scripts/factory_run_metrics.py"
   "scripts/factory_stage_lint.py"
   "scripts/factory_task_memory.py"
+  "scripts/factory_kilo_stage.py"
   "scripts/agent_loop_bridge_validate.py"
   "scripts/cartographer"
   "scripts/mission_cursor_lint.sh"
@@ -195,6 +198,15 @@ has_pattern '^## Codex CLI Terminal Flow$' docs/Factory/Harnesses/CODEX.md \
 
 has_pattern '^## Adapter Rule$' docs/Factory/Harnesses/README.md \
   || fail "Harness adapter README missing adapter rule"
+
+has_pattern '^## Kilo External Lane Mode$' docs/Factory/Harnesses/KILO.md \
+  || fail "Kilo harness adapter missing External Lane Mode section"
+
+has_pattern 'factoryctl kilo-stage --run <RUN_ID> --stage <STAGE>' AGENTS.md \
+  || fail "AGENTS.md missing Kilo external lane canonical command"
+
+has_pattern 'Do not nest Kilo inside Kilo' docs/Factory/Harnesses/KILO.md \
+  || fail "Kilo harness adapter missing nested Kilo guardrail"
 
 has_pattern '^### 6\.1 Execution Prompt Generation \(execution-enabled runs only\)$' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing execution-enabled post-gate prompt contract"
