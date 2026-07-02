@@ -87,6 +87,7 @@ required_files=(
   "tools/repo_cartographer/run.py"
   "tools/repo_cartographer/README.md"
   "tests/fixtures/agent_loop_bridge/valid_handoff.json"
+  "tests/test_context_recall_repair.py"
   ".agents/skills/factory-root-planner/SKILL.md"
   ".agents/skills/factory-purple-gate/SKILL.md"
   ".agents/skills/factory-pack-consolidator/SKILL.md"
@@ -126,6 +127,9 @@ has_pattern '^## 0\.5 Product Owner Lane \(Optional, Upstream of Factory\)$' doc
 
 has_pattern 'CONTEXT_RECALL_REPORT\.md' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing context recall report contract"
+
+has_pattern 'Direct-Source Repair' docs/Factory/ORCHESTRATION.md \
+  || fail "Orchestration missing direct-source recall repair contract"
 
 has_pattern 'mission_lint\.sh' docs/Factory/ORCHESTRATION.md \
   || fail "Orchestration missing mission-lint contract"
@@ -214,6 +218,9 @@ has_pattern '^### 6\.1 Execution Prompt Generation \(execution-enabled runs only
 has_pattern '^## Context recall rule \(HARD\)$' docs/Factory/Spec/STAGE_CONTRACTS.md \
   || fail "Stage contracts missing context recall rule"
 
+has_pattern 'REPAIRED_DIRECT_SOURCE_CHECK' docs/Factory/Spec/STAGE_CONTRACTS.md \
+  || fail "Stage contracts missing repaired direct-source recall verdict"
+
 has_pattern '^## POST_GATE — Execution Prompt Generation \(execution-enabled runs only\)$' docs/Factory/Spec/STAGE_CONTRACTS.md \
   || fail "Stage contracts missing execution-enabled post-gate execution prompt stage"
 
@@ -267,6 +274,12 @@ has_pattern 'BRIEF_SPRINT_<N>_CONTEXT_RECALL_REPORT\.md' docs/Factory/ProductOwn
 
 has_pattern 'CONTEXT_RECALL_REPORT\.md' docs/Factory/templates/PACK_MANIFEST_TEMPLATE.md \
   || fail "Pack manifest template missing context recall report completeness check"
+
+has_pattern 'Final Repaired Verdict:' docs/Factory/templates/CONTEXT_RECALL_REPORT_TEMPLATE.md \
+  || fail "Context recall template missing direct-source repair verdict field"
+
+has_pattern 'REPAIRED_DIRECT_SOURCE_CHECK' scripts/factory_pack_lint.py \
+  || fail "Pack lint missing direct-source repaired recall verdict support"
 
 has_pattern '^## Skill Routing Contract$' docs/Factory/templates/HANDOFF_STAGE_TEMPLATE.md \
   || fail "Handoff template missing Skill Routing Contract section"

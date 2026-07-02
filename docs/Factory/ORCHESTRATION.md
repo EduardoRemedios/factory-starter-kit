@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.18
+v1.19
 
 ## Change Log
+- v1.19 (2026-07-02): Added the direct-source repair path for generated WEAK context recall reports.
 - v1.18 (2026-06-25): Clarified Kilo Code CLI support as External Lane Mode driven by Codex or a neutral shell.
 - v1.17 (2026-06-25): Added optional Kilo Code CLI stage runner for model-routed Factory lanes.
 - v1.16 (2026-06-24): Linked the non-technical starter guide as the beginner adoption path.
@@ -172,7 +173,7 @@ The Root Planner should:
    - `docs/Factory/runs`
    - `docs/Factory/ProductOwner/phases`
    - `docs`
-9. halt if the written report still records `Coverage Verdict: WEAK`
+9. if the written report still records `Coverage Verdict: WEAK`, use the Stage A direct-source repair path in section 2.1 or halt
 10. derive and persist `EXECUTION_MODE.txt`
 11. if advancing a unit inside an already-authorized mission:
    - run `bash scripts/mission_lint.sh <MISSION_ID>`
@@ -186,6 +187,40 @@ The Root Planner should:
    - confirm the brief already passed the Brief Review gate
    - treat missing upstream recall or review evidence as blocking
 14. if collecting process telemetry, run `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md`
+
+### 2.1 Stage A Direct-Source Repair For WEAK Recall
+Direct-source repair is a narrow fallback after generated recall remains `WEAK`. It strengthens the recall gate by replacing unresolved index references with explicit local source review evidence; it does not allow Stage A to proceed on raw weak recall.
+
+Allowed only when all are true:
+1. `./scripts/factoryctl context-index` was refreshed for the current repo state.
+2. `context-report` was regenerated after fallback scopes were attempted.
+3. Each unresolved generated ref being repaired is a concrete local file path, code path, or exact artifact path.
+4. The agent reads each source directly from disk and records a concise source summary in `CONTEXT_RECALL_REPORT.md`.
+5. No remaining unresolved ref is material to Stage A intent, constraints, approvals, or scope.
+
+Not allowed when any are true:
+1. The required source does not exist, is unreadable, or is empty.
+2. The missing context is a human decision, approval, external source, or ambiguous artifact that cannot be verified locally.
+3. Any unresolved generated ref remains material to Stage A intent.
+4. The repair section omits exact files read, source summaries, remaining unresolved refs, or final repaired verdict.
+
+Repair format:
+- Preserve the generated report content, including `Coverage Verdict: WEAK`.
+- Add `## Direct-Source Repair`, `## Direct Sources Read`, and `## Source Summaries` sections.
+- Record `Original Generated Verdict: WEAK`, `Direct-Source Repair Status: APPLIED`, and `Final Repaired Verdict: REPAIRED_DIRECT_SOURCE_CHECK`.
+- Record `Unresolved Generated Refs`, `Context Index Refreshed: YES`, `Fallback Scopes Attempted: YES`, `Remaining Unresolved Generated Refs`, `Remaining Material Unresolved Refs: None`, and `Materiality Check: PASS`.
+- Treat the report as passable only when `stage-lint` and `pack-lint` recognize the repaired verdict and direct-source evidence. Otherwise halt before Stage A.
+
+### 2.2 Downstream Migration Note
+Downstream repositories should import this starter-kit update by copying the changed Factory Core docs, `docs/Factory/templates/CONTEXT_RECALL_REPORT_TEMPLATE.md`, `scripts/factory_pack_lint.py`, `scripts/factory_stage_lint.py`, and `scripts/knowledge_lint.sh`, then running:
+
+```bash
+bash scripts/knowledge_lint.sh
+./scripts/factoryctl context-index
+./scripts/factoryctl pack-lint --run <RUN_ID>
+```
+
+Existing runs do not need to be rewritten unless they still contain an unrepaired `Coverage Verdict: WEAK`. For those runs, append the direct-source repair sections only when the missing refs are locally verifiable and no material unresolved refs remain.
 
 ## 3. Roles
 The default role split is:

@@ -1,9 +1,10 @@
-# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.13)
+# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.14)
 
 ## Version
-v4.13
+v4.14
 
 ## Change Log
+- v4.14 (2026-07-02): Added direct-source repair semantics for generated WEAK Stage A context recall reports.
 - v4.13 (2026-05-19): Added SIMPLE-CODE-GATE v2 to Stage H and post-gate execution prompt contracts for Factory-controlled code-changing runs.
 - v4.12 (2026-05-18): Added optional Codex Mission Goal Continuity adapter lint contract for derived `MISSION_CURSOR.json`; it does not alter core stage contracts or mission ledger authority.
 - v4.11 (2026-05-09): Added Stage F verification tiers and optional `verification_manifest.yaml` for execution-enabled and Mission Mode runs.
@@ -63,6 +64,10 @@ Stage inputs are labelled:
 
 ## Context recall rule (HARD)
 - `STAGE_A` may not start until `docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md` exists and was generated from the artifact recall index via `./scripts/factoryctl context-report --profile stage-a`.
+- A generated Stage A report with `Coverage Verdict: WEAK` remains blocking unless it has an explicit direct-source repair addendum with `Final Repaired Verdict: REPAIRED_DIRECT_SOURCE_CHECK`.
+- Direct-source repair is allowed only after context-index refresh and fallback-scope attempts, only for concrete local files, code paths, or exact artifacts that are read directly from disk, and only when source summaries and exact file paths are recorded in the report.
+- Direct-source repair is forbidden for missing sources, unreadable sources, human decisions or approvals, external sources, ambiguous artifacts, or unresolved refs that remain material to Stage A intent.
+- A repaired report is not treated as raw `WEAK`; an unrepaired report containing `Coverage Verdict: WEAK` is still a hard halt.
 - Mission checkpointing and downstream mission-unit planning may not proceed until `docs/Factory/missions/<MISSION_ID>/MISSION_CONTEXT_RECALL_REPORT.md` exists and was generated via `./scripts/factoryctl context-report --profile mission-checkpoint`.
 - PO sprint brief drafting and review must follow the PO process recall contract in `docs/Factory/ProductOwner/PO_PROCESS.md`; Factory stage execution assumes that upstream brief-cycle recall evidence already exists when the raw brief originated from the PO lane.
 - Context recall artifacts are evidence aids, not authority. Source artifacts remain canonical.
@@ -141,7 +146,7 @@ Outputs:
 Entry criteria:
 - raw brief content exists and is non-empty
 - `KNOWLEDGE_LINT.txt` exists and records a successful knowledge-lint preflight
-- `CONTEXT_RECALL_REPORT.md` exists and records a Stage A recall pass generated from the artifact recall index for this run
+- `CONTEXT_RECALL_REPORT.md` exists and records either a generated Stage A recall pass for this run or a valid `REPAIRED_DIRECT_SOURCE_CHECK` direct-source repair addendum for a generated `WEAK` report
 - if the run is advancing a unit inside an already-authorized mission, `MISSION_LINT.txt` exists and records a successful mission-lint preflight
 - `EXECUTION_MODE.txt` exists and contains exactly one value: `PLANNING_ONLY` or `EXECUTION_ENABLED`
 

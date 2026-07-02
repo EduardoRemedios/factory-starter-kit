@@ -5,6 +5,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+from factory_pack_lint import check_context_recall_report
+
 
 class FactoryStageLintError(Exception):
     """Raised when stage-lint cannot resolve the requested run or stage."""
@@ -74,6 +76,23 @@ def lint_stage(root: Path, run: str, stage: str) -> dict[str, Any]:
 
     if text:
         _check_handoff_shape(handoff, text, stage, errors, warnings)
+
+    if stage == "A":
+        context_report = run_root / "CONTEXT_RECALL_REPORT.md"
+        checked_files.append(str(context_report))
+        if not context_report.exists():
+            errors.append(f"missing required Stage A input: {context_report}")
+        elif not context_report.is_file():
+            errors.append(f"Stage A context recall path is not a file: {context_report}")
+        elif context_report.stat().st_size == 0:
+            errors.append(f"Stage A context recall report is empty: {context_report}")
+        else:
+            check_context_recall_report(
+                root=root,
+                report_path=context_report,
+                text=_read_text(context_report),
+                errors=errors,
+            )
 
     for output in _stage_outputs(run_root=run_root, stage=stage):
         path = run_root / output

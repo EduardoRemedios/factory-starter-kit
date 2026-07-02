@@ -10,13 +10,15 @@ VALIDATION:
 - Report must be generated from the artifact recall index, not handwritten from memory.
 - Report must include: profile, scope, source index path, coverage snapshot, recall query sections, trace query sections, and cited source paths/lines.
 - If required prior context is missing, regenerate with more focus terms, trace IDs, fallback scopes, or required refs before proceeding.
+- If generated coverage remains WEAK after index refresh and fallback scopes, direct-source repair may be appended only for concrete local sources that were read directly from disk.
 - No placeholders may remain in final artifacts.
 -->
 
 ## Version
-v1
+v1.1
 
 ## Change Log
+- v1.1 (2026-07-02): Added direct-source repair sections for generated WEAK reports with locally verifiable sources.
 - v1 (2026-03-21): Initial context recall report template for Factory, Mission, and Product Owner continuity workflows.
 
 ## Report Metadata
@@ -58,3 +60,23 @@ v1
 
 ## Operator Notes
 - Cite the specific rationale, blocker, or acceptance trail that must be carried into the next stage.
+
+## Direct-Source Repair
+- Original Generated Verdict:
+- Unresolved Generated Refs:
+- Direct-Source Repair Status: NOT_APPLIED
+- Context Index Refreshed:
+- Fallback Scopes Attempted:
+- Remaining Unresolved Generated Refs:
+- Remaining Material Unresolved Refs:
+- Materiality Check:
+- Final Repaired Verdict:
+
+## Direct Sources Read
+- None
+
+## Source Summaries
+### `path/to/source.md`
+- Summary:
+- Covers refs:
+- Remaining unresolved refs:

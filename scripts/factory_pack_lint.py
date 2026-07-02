@@ -105,7 +105,15 @@ def lint_pack(root: Path, run: str | None = None, pack_path: Path | None = None)
     if execution_mode == "PLANNING_ONLY" and (run_root / "EXECUTION_PROMPT.md").exists():
         errors.append("EXECUTION_PROMPT.md exists even though EXECUTION_MODE.txt is PLANNING_ONLY")
 
-    _check_text_contracts(run_root=run_root, pack_dir=pack_dir, sprint_id=sprint_id, execution_mode=execution_mode, errors=errors, warnings=warnings)
+    _check_text_contracts(
+        root=root,
+        run_root=run_root,
+        pack_dir=pack_dir,
+        sprint_id=sprint_id,
+        execution_mode=execution_mode,
+        errors=errors,
+        warnings=warnings,
+    )
     _check_artifact_shapes(pack_dir=pack_dir, checked_files=checked_files, errors=errors, warnings=warnings)
     _check_verification_manifest(
         run_root=run_root,
@@ -186,6 +194,7 @@ def _check_required_files(base: Path, names: tuple[str, ...], errors: list[str],
 
 
 def _check_text_contracts(
+    root: Path,
     run_root: Path,
     pack_dir: Path,
     sprint_id: str,
@@ -198,8 +207,12 @@ def _check_text_contracts(
         errors.append("KNOWLEDGE_LINT.txt does not record knowledge_lint: PASS")
 
     context_report = _read_text(run_root / "CONTEXT_RECALL_REPORT.md")
-    if "Coverage Verdict: WEAK" in context_report:
-        errors.append("CONTEXT_RECALL_REPORT.md records Coverage Verdict: WEAK")
+    check_context_recall_report(
+        root=root,
+        report_path=run_root / "CONTEXT_RECALL_REPORT.md",
+        text=context_report,
+        errors=errors,
+    )
 
     checklist = _read_text(pack_dir / "PACK_CHECKLIST.md")
     for item_id in range(1, 10):
@@ -275,6 +288,135 @@ def _check_artifact_shapes(
             _check_word_cap(path, text, errors)
         if path.parent.name == "HANDOFF" and path.name.startswith("HANDOFF_STAGE_"):
             _check_handoff(path, text, errors, warnings)
+
+
+def check_context_recall_report(root: Path, report_path: Path, text: str, errors: list[str]) -> None:
+    if "Coverage Verdict: WEAK" not in text:
+        return
+
+    repair_section = _extract_markdown_section(text, "Direct-Source Repair")
+    if not repair_section:
+        errors.append(
+            f"{report_path} records Coverage Verdict: WEAK without a Direct-Source Repair section"
+        )
+        return
+
+    repair_errors: list[str] = []
+    if not re.search(r"^\s*-\s*Original Generated Verdict:\s*WEAK\s*$", repair_section, flags=re.MULTILINE):
+        repair_errors.append("Original Generated Verdict must be WEAK")
+    unresolved_generated = re.search(
+        r"^\s*-\s*Unresolved Generated Refs:\s*(.+)$",
+        repair_section,
+        flags=re.MULTILINE,
+    )
+    if not unresolved_generated or unresolved_generated.group(1).strip().lower() == "none":
+        repair_errors.append("Unresolved Generated Refs must list at least one generated ref")
+    if not re.search(r"^\s*-\s*Direct-Source Repair Status:\s*APPLIED\s*$", repair_section, flags=re.MULTILINE):
+        repair_errors.append("Direct-Source Repair Status must be APPLIED")
+    if not re.search(
+        r"^\s*-\s*Final Repaired Verdict:\s*REPAIRED_DIRECT_SOURCE_CHECK\s*$",
+        repair_section,
+        flags=re.MULTILINE,
+    ):
+        repair_errors.append("Final Repaired Verdict must be REPAIRED_DIRECT_SOURCE_CHECK")
+    if not re.search(r"^\s*-\s*Context Index Refreshed:\s*YES\s*$", repair_section, flags=re.MULTILINE):
+        repair_errors.append("Context Index Refreshed must be YES")
+    if not re.search(r"^\s*-\s*Fallback Scopes Attempted:\s*YES\s*$", repair_section, flags=re.MULTILINE):
+        repair_errors.append("Fallback Scopes Attempted must be YES")
+    if not re.search(r"^\s*-\s*Remaining Unresolved Generated Refs:\s*(.+)$", repair_section, flags=re.MULTILINE):
+        repair_errors.append("Remaining Unresolved Generated Refs must be recorded")
+    if not re.search(r"^\s*-\s*Remaining Material Unresolved Refs:\s*None\s*$", repair_section, flags=re.MULTILINE):
+        repair_errors.append("Remaining Material Unresolved Refs must be None")
+    if not re.search(r"^\s*-\s*Materiality Check:\s*PASS\s*$", repair_section, flags=re.MULTILINE):
+        repair_errors.append("Materiality Check must be PASS")
+
+    direct_sources_section = _extract_markdown_section(text, "Direct Sources Read")
+    direct_sources = _extract_bulleted_paths(direct_sources_section)
+    if not direct_sources:
+        repair_errors.append("Direct Sources Read must list at least one local file")
+
+    source_summaries_section = _extract_markdown_section(text, "Source Summaries")
+    if not source_summaries_section:
+        repair_errors.append("Source Summaries section is required")
+
+    for source in direct_sources:
+        source_path = _resolve_report_source_path(root=root, value=source)
+        if source_path is None:
+            repair_errors.append(f"direct source is outside the repository or invalid: {source}")
+            continue
+        if not source_path.exists():
+            repair_errors.append(f"direct source does not exist: {source}")
+            continue
+        if not source_path.is_file():
+            repair_errors.append(f"direct source is not a file: {source}")
+            continue
+        try:
+            source_text = source_path.read_text(encoding="utf-8")
+        except OSError as exc:
+            repair_errors.append(f"direct source is unreadable: {source} ({exc})")
+            continue
+        if not source_text.strip():
+            repair_errors.append(f"direct source is empty: {source}")
+        if not _has_source_summary(source_summaries_section, source):
+            repair_errors.append(f"direct source is missing a concise source summary: {source}")
+
+    errors.extend(f"{report_path} direct-source repair invalid: {item}" for item in repair_errors)
+
+
+def _extract_markdown_section(text: str, heading: str) -> str:
+    pattern = re.compile(
+        rf"^##\s+{re.escape(heading)}\s*$\n(?P<body>.*?)(?=^##\s+|\Z)",
+        flags=re.MULTILINE | re.DOTALL,
+    )
+    match = pattern.search(text)
+    return match.group("body").strip() if match else ""
+
+
+def _extract_bulleted_paths(section: str) -> list[str]:
+    paths: list[str] = []
+    for line in section.splitlines():
+        match = re.match(r"^\s*-\s+(.+?)\s*$", line)
+        if not match:
+            continue
+        value = match.group(1).strip()
+        if value.lower() == "none":
+            continue
+        if value.startswith("`") and "`" in value[1:]:
+            value = value[1:].split("`", 1)[0]
+        else:
+            value = value.split(" | ", 1)[0].strip()
+        if value:
+            paths.append(value)
+    return paths
+
+
+def _resolve_report_source_path(root: Path, value: str) -> Path | None:
+    path = Path(value).expanduser()
+    if not path.is_absolute():
+        path = root / path
+    try:
+        resolved = path.resolve()
+        resolved.relative_to(root.resolve())
+    except (OSError, ValueError):
+        return None
+    return resolved
+
+
+def _has_source_summary(source_summaries_section: str, source: str) -> bool:
+    escaped_source = re.escape(source)
+    pattern = re.compile(
+        rf"^###\s+`?{escaped_source}`?\s*$\n(?P<body>.*?)(?=^###\s+|\Z)",
+        flags=re.MULTILINE | re.DOTALL,
+    )
+    match = pattern.search(source_summaries_section)
+    if not match:
+        return False
+    body = match.group("body")
+    summary = re.search(r"^\s*-\s*Summary:\s*(.+)$", body, flags=re.MULTILINE)
+    if not summary:
+        return False
+    value = summary.group(1).strip()
+    return len(value) >= 20 and value.upper() not in {"TBD", "TODO", "N/A"}
 
 
 def _check_verification_manifest(
