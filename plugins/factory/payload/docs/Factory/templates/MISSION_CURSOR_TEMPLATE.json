@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "cursor_kind": "derived_resume_cursor",
+  "mission_id": "MISSION_YYYYMMDD_NNN",
+  "mission_lifecycle": "MISSION_AUTHORIZED",
+  "checkpoint_decision": "GO",
+  "current_unit": {
+    "order": 1,
+    "unit_id": "UNIT-ID",
+    "run_id": "RUN_YYYYMMDD_HHMM_factory",
+    "sprint_id": "SPRINT_YYYYMMDD_NNN",
+    "pack_path": "docs/Factory/runs/RUN_YYYYMMDD_HHMM_factory/pack"
+  },
+  "current_unit_status": "planned",
+  "next_legal_action": "read_current_unit_pack",
+  "execution_mode": "PLANNING_ONLY",
+  "last_non_cursor_validator": {
+    "name": "mission_lint",
+    "status": "PASS",
+    "artifact_path": "docs/Factory/runs/RUN_YYYYMMDD_HHMM_factory/MISSION_LINT.txt"
+  },
+  "latest_handoff": null,
+  "halt_required": false,
+  "halt_reason": null,
+  "source_artifacts": [
+    "docs/Factory/missions/MISSION_YYYYMMDD_NNN/MISSION_MANIFEST.md",
+    "docs/Factory/missions/MISSION_YYYYMMDD_NNN/MISSION_CHECKPOINT.md",
+    "docs/Factory/missions/MISSION_YYYYMMDD_NNN/MISSION_CONTEXT_RECALL_REPORT.md",
+    "docs/Factory/runs/RUN_YYYYMMDD_HHMM_factory/EXECUTION_MODE.txt"
+  ],
+  "source_artifact_fingerprints": {
+    "docs/Factory/missions/MISSION_YYYYMMDD_NNN/MISSION_MANIFEST.md": "sha256:<digest>",
+    "docs/Factory/missions/MISSION_YYYYMMDD_NNN/MISSION_CHECKPOINT.md": "sha256:<digest>",
+    "docs/Factory/missions/MISSION_YYYYMMDD_NNN/MISSION_CONTEXT_RECALL_REPORT.md": "sha256:<digest>",
+    "docs/Factory/runs/RUN_YYYYMMDD_HHMM_factory/EXECUTION_MODE.txt": "sha256:<digest>"
+  },
+  "goal_text": "Continue Mission Mode for MISSION_YYYYMMDD_NNN. Disk is source of truth; this goal is not authority. Current unit: UNIT-ID. Next legal action: read_current_unit_pack. Before acting, read MISSION_CURSOR.json, MISSION_MANIFEST.md, MISSION_CHECKPOINT.md, MISSION_CONTEXT_RECALL_REPORT.md, current unit pack, latest handoff, and validator output. Continue only if mission_cursor_lint passes and EXECUTION_MODE permits. Halt on scope expansion, weak recall, failed validator, missing evidence, policy/schema boundary change, external credential dependency, or required human checkpoint.",
+  "updated_from": [
+    "MISSION_MANIFEST.md",
+    "MISSION_CHECKPOINT.md",
+    "MISSION_CONTEXT_RECALL_REPORT.md",
+    "EXECUTION_MODE.txt",
+    "latest non-cursor validator output"
+  ],
+  "updated_at_utc": "YYYY-MM-DDTHH:MM:SSZ"
+}

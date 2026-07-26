@@ -1,0 +1,11 @@
+{
+  "name": "factory",
+  "version": "0.1.0",
+  "description": "Install, inspect, plan, run, validate, and update Factory workflows without weakening Factory Core gates.",
+  "author": {
+    "name": "Eduardo dos Remedios"
+  },
+  "homepage": "https://github.com/EduardoRemedios/factory-starter-kit",
+  "repository": "https://github.com/EduardoRemedios/factory-starter-kit",
+  "license": "Apache-2.0"
+}

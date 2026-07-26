@@ -1,0 +1,34 @@
+# docs/Factory/templates/VERIFICATION_MANIFEST_TEMPLATE.yaml
+#
+# Create at: docs/Factory/runs/<RUN_ID>/pack/verification_manifest.yaml
+# Purpose: optional machine-readable verification contract for EXECUTION_ENABLED
+# and Mission Mode runs. Keep planning-only packs lightweight unless runnable
+# verification would materially reduce execution risk.
+
+schema_version: 1
+run_id: RUN_YYYYMMDD_HHMM_TAG
+sprint_id: SPRINT_YYYYMMDD_NNN
+execution_mode: EXECUTION_ENABLED
+
+checks:
+  - id: VM-001
+    tier: V2
+    type: test
+    constraint_ids:
+      - C-001
+    description: Replace with the invariant this check proves.
+    command: python3 -m unittest tests.test_example -v
+    expected: Command exits 0 and covers the named constraint directly.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/example_output.txt
+
+  - id: VM-002
+    tier: V1
+    type: no_touch
+    constraint_ids:
+      - C-002
+    description: Prove forbidden paths were not changed.
+    command: git diff --name-only -- forbidden/path
+    expected: Command prints no changed files.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/no_touch.txt

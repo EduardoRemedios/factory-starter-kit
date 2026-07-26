@@ -1,0 +1,36 @@
+{
+  "fixture_id": "STATUS-EVIDENCE",
+  "constraints": ["C-01", "C-06", "C-14"],
+  "cases": [
+    {
+      "case_id": "STATUS-NO-RUN",
+      "evidence": ["factory_installation_present"],
+      "expected_state": "READY_TO_INITIALIZE",
+      "expected_reason_code": "FACTORY_NO_ACTIVE_RUN",
+      "mutations": []
+    },
+    {
+      "case_id": "STATUS-CONTRADICTION",
+      "evidence": ["stage_a_handoff_pass", "stage_a_lint_fail"],
+      "expected_state": "BLOCKED",
+      "expected_reason_code": "FACTORY_EVIDENCE_CONTRADICTION",
+      "next_legal_action": "repair_stage_a_and_rerun_stage_lint",
+      "mutations": []
+    },
+    {
+      "case_id": "STATUS-WEAK-RECALL",
+      "evidence": ["context_recall_weak_without_valid_repair"],
+      "expected_state": "BLOCKED",
+      "expected_reason_code": "FACTORY_WEAK_RECALL",
+      "next_legal_action": "refresh_recall_and_resolve_material_gaps",
+      "mutations": []
+    },
+    {
+      "case_id": "STATUS-WAITING-GO",
+      "evidence": ["stage_i2_pass", "pack_lint_pass", "execution_enabled", "human_go_absent"],
+      "expected_state": "WAITING_HUMAN_GO",
+      "expected_reason_code": "FACTORY_HUMAN_GO_REQUIRED",
+      "mutations": []
+    }
+  ]
+}

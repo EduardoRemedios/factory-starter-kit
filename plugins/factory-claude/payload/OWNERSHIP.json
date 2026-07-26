@@ -1,0 +1,377 @@
+{
+  "schema_version": 1,
+  "package": "factory",
+  "version": "0.1.0",
+  "files": [
+    {
+      "path": ".agents/skills/factory-execution-closeout/SKILL.md",
+      "classification": "release-owned",
+      "sha256": "b5d664811e3a12757afb7dc4fa89671765f20abf04907a71a279791a946f3668"
+    },
+    {
+      "path": ".agents/skills/factory-pack-consolidator/SKILL.md",
+      "classification": "release-owned",
+      "sha256": "06064bd03c2b076d1fe0fe18c526ff8a83bca97ae58c102bda66596702731669"
+    },
+    {
+      "path": ".agents/skills/factory-purple-gate/SKILL.md",
+      "classification": "release-owned",
+      "sha256": "ede35da60471de8a1b993b33ce1b7df25d11ea40ee94cd27639d66cb889f08c8"
+    },
+    {
+      "path": ".agents/skills/factory-root-planner/SKILL.md",
+      "classification": "release-owned",
+      "sha256": "4e79d17dbfd30dc618df99e3909b02254ea8e3ee33877dc1f9e382ec600eae19"
+    },
+    {
+      "path": "AGENTS.md",
+      "classification": "project-owned",
+      "sha256": "e53f28982a11b405818bc233ed89b984e66fbb73cb36732e752722f23f1733d2"
+    },
+    {
+      "path": "docs/CHANGELOG.md",
+      "classification": "project-owned",
+      "sha256": "e118f635fded0e7ec97a97bb8ea97daaf7e47346f784830023e86ce96ed53224"
+    },
+    {
+      "path": "docs/Factory/ARCHITECTURE.md",
+      "classification": "release-owned",
+      "sha256": "84972cec317efad7650fe9dc24a0e30c2917a25122bd1d8c86b2207fe701360e"
+    },
+    {
+      "path": "docs/Factory/Harnesses/AGENT_LOOP_BRIDGE.md",
+      "classification": "release-owned",
+      "sha256": "c0a073edfe4dd64269b539533022a876090abff58c5027690e31915b4d62b40c"
+    },
+    {
+      "path": "docs/Factory/Harnesses/AGENT_LOOP_BRIDGE_MANUAL_RUNBOOK.md",
+      "classification": "release-owned",
+      "sha256": "4e19bafe638a1759edd7562c806483a629b341a61bb833bf5f616cd3e3e2dbe7"
+    },
+    {
+      "path": "docs/Factory/Harnesses/CODEX.md",
+      "classification": "release-owned",
+      "sha256": "288efc0b7f975ff37d8fcd6161077ca71f37ecc357815db55a269562371b35bc"
+    },
+    {
+      "path": "docs/Factory/Harnesses/KILO.md",
+      "classification": "release-owned",
+      "sha256": "e360e54056459a7dbf53806b5e76c373f84c9bd5cd13775f35b11f52ebd1f64f"
+    },
+    {
+      "path": "docs/Factory/Harnesses/KILO_EXTERNAL_LANE_PROMPT.md",
+      "classification": "release-owned",
+      "sha256": "801c0915a714e684c9de039a5d7361977f9303565d3c483dbd2d917da2e8b233"
+    },
+    {
+      "path": "docs/Factory/Harnesses/README.md",
+      "classification": "release-owned",
+      "sha256": "69765bd818819d845af4ebacd6e84c8d4016ec6def553a27aaa53e3e74ff8d51"
+    },
+    {
+      "path": "docs/Factory/MERGE_PROTOCOL.md",
+      "classification": "release-owned",
+      "sha256": "32fbb64829d2596ca61322710b61bd783962416d43961b53927f0d5a4af55128"
+    },
+    {
+      "path": "docs/Factory/MISSION_MODE.md",
+      "classification": "release-owned",
+      "sha256": "eb1769ee85588d38d57056c511fdfc92a6cc6dfe53e4407d09bab3ff68be8b8e"
+    },
+    {
+      "path": "docs/Factory/ORCHESTRATION.md",
+      "classification": "release-owned",
+      "sha256": "a6f29e375c7c0a10ea7059ad5c74752c7785863728307be922e8fe92cd908de5"
+    },
+    {
+      "path": "docs/Factory/ProductOwner/BRIEF_REVIEW_CHECKLIST.md",
+      "classification": "release-owned",
+      "sha256": "deb513f642a222472962104ee04020baeaaa8076500757c8b1c024bcd3e6df02"
+    },
+    {
+      "path": "docs/Factory/ProductOwner/PHASE_INTENT_REVIEW_CHECKLIST.md",
+      "classification": "release-owned",
+      "sha256": "bb258205a2bf960cfab686a9d699fcbe5556b7ccb233c05402a44b52a3ab8b73"
+    },
+    {
+      "path": "docs/Factory/ProductOwner/PO_PROCESS.md",
+      "classification": "release-owned",
+      "sha256": "f2be66aef8ded7dcdf1dfaeb33c22fdfce5f2c4dc1bd8794274506cbd531e73f"
+    },
+    {
+      "path": "docs/Factory/ProductOwner/PO_ROLE_DEFINITION.md",
+      "classification": "release-owned",
+      "sha256": "2387aa71185bb42611b2de3adcf8adbaf87f1def8cc333dbc668462c5b795570"
+    },
+    {
+      "path": "docs/Factory/ProductOwner/templates/PHASE_BRIEF_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "8b3f8b3e2b5c6536f8828879ddcecff35cf10eb33a07b0e66535c01f350510a2"
+    },
+    {
+      "path": "docs/Factory/ProductOwner/templates/PHASE_INTENT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "cbfa0f4136b2ffbee7cdb8a9b44e3cf2aa586497d8762b58aafab2ac4eefcf7e"
+    },
+    {
+      "path": "docs/Factory/ProductOwner/templates/PHASE_STATE_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "3fe35d5977db7c81e3418657bee93f3bd8de5aed7be784bb2934591943a27eb3"
+    },
+    {
+      "path": "docs/Factory/SCRATCHPAD.md",
+      "classification": "release-owned",
+      "sha256": "b6878db191359acca8e399a556b306d4996e09ceadc742c45bc2af0d786b1e99"
+    },
+    {
+      "path": "docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md",
+      "classification": "release-owned",
+      "sha256": "5f5c173cd488529326f45564ff0a5b5c83fe451eb13420e1472e2a2b9061e487"
+    },
+    {
+      "path": "docs/Factory/Spec/DEFINITIONS.md",
+      "classification": "release-owned",
+      "sha256": "04c0888bda4d88d26dd13b3915bff3faee8bacbab8225e7bc7aa0804daef1b0f"
+    },
+    {
+      "path": "docs/Factory/Spec/NAMING_CONVENTIONS.md",
+      "classification": "release-owned",
+      "sha256": "a8f7c4791cffddddb56dde5f8668f8f7e69bbd02b51c9f807e025023a9718748"
+    },
+    {
+      "path": "docs/Factory/Spec/PURPLE_GATE_CHECKLIST.md",
+      "classification": "release-owned",
+      "sha256": "ab42046da62d1aa03d783ec7512c388ea54476eadf38ac01b72406e504e5dd74"
+    },
+    {
+      "path": "docs/Factory/Spec/STAGE_CONTRACTS.md",
+      "classification": "release-owned",
+      "sha256": "28701c153c7dc8191d0b5c2e4e01f09c4caa36bdedd0eb6ff15c7d99af438393"
+    },
+    {
+      "path": "docs/Factory/TASK_MEMORY.md",
+      "classification": "release-owned",
+      "sha256": "9a5db53c326b572d840a9695581f7708bd7064c69bf08a2e2ba405050c9c98dc"
+    },
+    {
+      "path": "docs/Factory/templates/CONTEXT_RECALL_REPORT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "fd92576ae28047cbde6d0c3482716430adb8e960da0c67f5c46f38df3af41578"
+    },
+    {
+      "path": "docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "32d62de4323496e382deed17d8a7d5bb03480f70b5e86631acce7287b6a16448"
+    },
+    {
+      "path": "docs/Factory/templates/HANDOFF_STAGE_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "40f46219193779a65622bd71cb9244a23d5d9c437aa8f0e4fc782b40cc7434b9"
+    },
+    {
+      "path": "docs/Factory/templates/INTENT_LOCK_REPORT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "7b91a3eaefee8f46110d0efe213cc8cb5a2b29f6e4ec3ef1d4d189322f2d1afe"
+    },
+    {
+      "path": "docs/Factory/templates/MISSION_CHECKPOINT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "2ba99eb4adcfb1dcaa13fa3e8362b013d89907af4877e3c8c7bfbf92c68eb3e7"
+    },
+    {
+      "path": "docs/Factory/templates/MISSION_COMPLETION_REPORT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "98f18a65336a2692ff7291e3db94fa51bbe29e0521eebb2d15c74e7618154ee8"
+    },
+    {
+      "path": "docs/Factory/templates/MISSION_CURSOR_TEMPLATE.json",
+      "classification": "release-owned",
+      "sha256": "855e4b1a82130a49750e9a6fa79db446182997f1808b4ad32b21544780517f74"
+    },
+    {
+      "path": "docs/Factory/templates/MISSION_EXECUTION_PROMPT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "6e09ec609398104e6a0ac966d0e72bfb57a3f856b9a19df35cfeb11fbb2745b2"
+    },
+    {
+      "path": "docs/Factory/templates/MISSION_MANIFEST_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "e639497a9f5e957845580f073c7ee352e0b21c01a7b7acd0738eaae0b3059321"
+    },
+    {
+      "path": "docs/Factory/templates/PACK_AUDIT_REPORT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "e92b93bb65f9eb76fa074aeaf97ac96dc9c8bdf7fbf23486b4cf68b104a57b05"
+    },
+    {
+      "path": "docs/Factory/templates/PACK_CHECKLIST_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "d5bd47b62a141304106005d0dcb67761db60f237445f411d895845666b15c09f"
+    },
+    {
+      "path": "docs/Factory/templates/PACK_MANIFEST_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "def7daf3d7ddfcd6dc0d1a9f821b6a6ecb9ad92b2fbb49cb72ee0606ca963174"
+    },
+    {
+      "path": "docs/Factory/templates/RUN_METRICS_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "dbd911bf208983d1514473b14035ab4c165ce291c392efd0c32c0368f42cd2ea"
+    },
+    {
+      "path": "docs/Factory/templates/SPRINT_ENVELOPE_REDTEAM_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "7230d123ecb38516d24f904faf54abca337d0fa7e4a000522e4e5300074f9a0a"
+    },
+    {
+      "path": "docs/Factory/templates/SPRINT_ENVELOPE_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "94f88c190a3a4ed96084dc8c9aa5ab1e71cd16ff231cd6954969d1d23d68a77a"
+    },
+    {
+      "path": "docs/Factory/templates/TRACEABILITY_MATRIX_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "c8c483f064bdc41e1dd133ec4f1a18ea7931eb6565dec8968d3950e74b95989d"
+    },
+    {
+      "path": "docs/Factory/templates/VERIFICATION_MANIFEST_TEMPLATE.yaml",
+      "classification": "release-owned",
+      "sha256": "23589a0264f42603d598d1ab9c67110e428ca7340b2661933f31cf25f9aff13e"
+    },
+    {
+      "path": "docs/PROJECT_STATE.md",
+      "classification": "project-owned",
+      "sha256": "9d8fb1b0e97c7d26d0f46c0995485694509223c691bc50fec6bc4b85ee30c966"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "classification": "project-owned",
+      "sha256": "4e7f1e3f60b2cc81a3c64a77fe797e0c6662c7704e968f7eee45a58ef3bbbf09"
+    },
+    {
+      "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",
+      "classification": "release-owned",
+      "sha256": "daaffc97ba22d8fdd178eac1509ed11bcb683ec4c811802ec38223debb24c744"
+    },
+    {
+      "path": "docs/onboarding/FACTORY_PLUGIN_QUICK_START.md",
+      "classification": "release-owned",
+      "sha256": "fb0e457b6a64387320e7a65838d2f3ddb26368b35b8bb374ec2311244dec686c"
+    },
+    {
+      "path": "docs/onboarding/FACTORY_PLUGIN_REFERENCE.md",
+      "classification": "release-owned",
+      "sha256": "51442128d5279843e8c76b4446c259dbac1ff7589fac12cc547de432e8eb6226"
+    },
+    {
+      "path": "docs/onboarding/FACTORY_PLUGIN_ROLLBACK.md",
+      "classification": "release-owned",
+      "sha256": "a58306664399431e59640e5076239458a487eccab4fba5a921873fd2ccc7bcd6"
+    },
+    {
+      "path": "docs/onboarding/FACTORY_PLUGIN_TROUBLESHOOTING.md",
+      "classification": "release-owned",
+      "sha256": "a77e343062a50a0f22d976a6bef8b8d942752024bb7504ed6e3b434d340dba91"
+    },
+    {
+      "path": "docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md",
+      "classification": "release-owned",
+      "sha256": "bf14290e3b02055b64ac7fb6abbc71b72377f27c87b9184b62647cbac9e042b3"
+    },
+    {
+      "path": "docs/onboarding/ONBOARDING_GUIDE.md",
+      "classification": "release-owned",
+      "sha256": "4b61ddc760efed3a2a27f84b2db6788bcb73ee076b611ffc93c066950f7f5ef0"
+    },
+    {
+      "path": "requirements.txt",
+      "classification": "release-owned",
+      "sha256": "8cfc3197b86bf23f2454918d3a0e212585c9cc70f8eee9ee36518311a93c7eb9"
+    },
+    {
+      "path": "scripts/agent_loop_bridge_validate.py",
+      "classification": "release-owned",
+      "sha256": "f65aaa29eb0b405c38e519d4f5f7134b48efadb5e9f5d98facdb7683855ac509"
+    },
+    {
+      "path": "scripts/cartographer",
+      "classification": "release-owned",
+      "sha256": "04ead5e618c8a6871a747d0f5e2bd1273e039057bd6b9dc078c691303704e0c0"
+    },
+    {
+      "path": "scripts/factory_context_index.py",
+      "classification": "release-owned",
+      "sha256": "bf36273994e576eeeead96a0b1276a13cae654ab5c06f0674fa1e87eb91341a4"
+    },
+    {
+      "path": "scripts/factory_kilo_stage.py",
+      "classification": "release-owned",
+      "sha256": "f671775d3f6be56b088419b451f1abf927b1d6665f2f249adb2cb125b0a8e1d2"
+    },
+    {
+      "path": "scripts/factory_pack_lint.py",
+      "classification": "release-owned",
+      "sha256": "e91b987d6ad5aa90fbc3ced0c83925efb89058fc8a1609e15ce1f7c243324216"
+    },
+    {
+      "path": "scripts/factory_run_metrics.py",
+      "classification": "release-owned",
+      "sha256": "937dcf8af25fc834518a4802742c284a29ee3dad083cff94b51197734cd74d5b"
+    },
+    {
+      "path": "scripts/factory_stage_lint.py",
+      "classification": "release-owned",
+      "sha256": "2fca0054ccef0911773ad6c29ae373e8138e6c2899d3e6b3a338d5615638a7b9"
+    },
+    {
+      "path": "scripts/factory_task_memory.py",
+      "classification": "release-owned",
+      "sha256": "5f7a551a006cd5f9048d065afb1ff94bbb549454e5005b4e5c3f53ff1a8ec040"
+    },
+    {
+      "path": "scripts/factoryctl",
+      "classification": "release-owned",
+      "sha256": "8c35e7f55c7e463d7ed45afba46e624913b69dc7eb26993a2c3fcb2b47701da2"
+    },
+    {
+      "path": "scripts/knowledge_lint.sh",
+      "classification": "release-owned",
+      "sha256": "239bd404ff7483e44ff59077f18762a90818a943370d7d34b86da3b01fe988a6"
+    },
+    {
+      "path": "scripts/mission_cursor_lint.sh",
+      "classification": "release-owned",
+      "sha256": "044b13ce9ca2c40529f1390fdd20af1610f64e47212925c24dec4bc35fcad64f"
+    },
+    {
+      "path": "scripts/mission_lint.sh",
+      "classification": "release-owned",
+      "sha256": "7619c81013fb2446a8b2d74c74e12861c5867ff4f1469f1ed9b095cbc1e5a4a6"
+    },
+    {
+      "path": "tests/fixtures/agent_loop_bridge/valid_handoff.json",
+      "classification": "release-owned",
+      "sha256": "9bc0b73e45c0ff4b9595b877a510c2a5a14acca349a6e99ccba1d9c8a699a8c0"
+    },
+    {
+      "path": "tests/test_context_recall_repair.py",
+      "classification": "release-owned",
+      "sha256": "3d170a08c3c23ad65e23ce3b55075c903a15b64f5721d089c1f527e437d9ccdf"
+    },
+    {
+      "path": "tools/repo_cartographer/README.md",
+      "classification": "release-owned",
+      "sha256": "87709c5fe453f7faed2f00d40c5e0985b3c5c2c28420ddf4259db8a4f8f61f4b"
+    },
+    {
+      "path": "tools/repo_cartographer/__init__.py",
+      "classification": "release-owned",
+      "sha256": "5cba0efbed98485936580733baf2632f24181124a9fad0f6460c9e5b0b3d5364"
+    },
+    {
+      "path": "tools/repo_cartographer/run.py",
+      "classification": "release-owned",
+      "sha256": "4d3b2ef4613c4ca406a2f53cccbe6340425319b2509d667ebd215b06f19465f1"
+    }
+  ]
+}

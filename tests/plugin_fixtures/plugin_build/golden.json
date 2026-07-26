@@ -1,0 +1,25 @@
+{
+  "fixture_id": "BUILD-REGEN",
+  "constraints": ["C-04", "C-05", "C-09", "C-13"],
+  "input": {
+    "release_source_version": "0.1.0",
+    "platforms": ["claude", "codex"],
+    "regeneration_state": "clean"
+  },
+  "expected": {
+    "result": "PASS",
+    "packages": {
+      "claude": {
+        "required_manifest": ".claude-plugin/plugin.json",
+        "workflow_source": "shared"
+      },
+      "codex": {
+        "required_manifest": ".codex-plugin/plugin.json",
+        "workflow_source": "shared"
+      }
+    },
+    "shared_skill_digest_equal": true,
+    "regeneration_diff": [],
+    "workflow_logic_in_platform_overlay": false
+  }
+}

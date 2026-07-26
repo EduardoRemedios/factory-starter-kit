@@ -1,0 +1,49 @@
+{
+  "name": "factory",
+  "version": "0.1.0",
+  "description": "Install, inspect, plan, run, validate, and update Factory workflows without weakening Factory Core gates.",
+  "author": {
+    "name": "Eduardo dos Remedios"
+  },
+  "homepage": "https://github.com/EduardoRemedios/factory-starter-kit",
+  "repository": "https://github.com/EduardoRemedios/factory-starter-kit",
+  "license": "Apache-2.0",
+  "interface": {
+    "displayName": "Factory",
+    "shortDescription": "Run Factory safely from Codex.",
+    "longDescription": "Factory provides guarded setup, diagnosis, progress, continuation, validation, and update workflows for repositories using Factory Core.",
+    "developerName": "Eduardo dos Remedios",
+    "category": "Developer Tools",
+    "defaultPrompt": "Inspect this repository with Factory and tell me the next legal action."
+  },
+  "skills": [
+    {
+      "id": "doctor",
+      "description": "Diagnose the Factory installation, environment, project compatibility, blockers, and next legal action without changing the repository."
+    },
+    {
+      "id": "greenfield",
+      "description": "Prepare a preview-only Factory setup plan for a new repository, preserving human authorization and repository safety gates."
+    },
+    {
+      "id": "brownfield",
+      "description": "Prepare a preview-only Factory adoption plan for an existing repository, preserving user-owned files and halting on conflicts."
+    },
+    {
+      "id": "progress",
+      "description": "Report Factory run state, completed validators, blockers, and the next legal action from deterministic disk evidence."
+    },
+    {
+      "id": "run",
+      "description": "Continue a Factory run through the next legal planning or execution action while preserving stage order and human Go gates."
+    },
+    {
+      "id": "validate",
+      "description": "Run the applicable deterministic Factory validators and report evidence-backed pass or halt results."
+    },
+    {
+      "id": "update",
+      "description": "Preview Factory compatibility and update changes, requiring explicit approval before any repository mutation."
+    }
+  ]
+}

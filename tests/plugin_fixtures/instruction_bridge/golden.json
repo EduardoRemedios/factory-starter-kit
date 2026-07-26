@@ -1,0 +1,28 @@
+{
+  "fixture_id": "CLAUDE-BRIDGE",
+  "constraints": ["C-02", "C-03", "C-11"],
+  "cases": [
+    {
+      "case_id": "CLAUDE-BRIDGE-CREATE",
+      "existing_claude_md": false,
+      "expected_result": "PLAN_READY",
+      "expected_content_lines": ["@AGENTS.md"],
+      "forbidden_content": ["copied_agents_policy"]
+    },
+    {
+      "case_id": "CLAUDE-BRIDGE-PRESENT",
+      "existing_claude_md": true,
+      "existing_content_lines": ["@AGENTS.md"],
+      "expected_result": "NO_CHANGE",
+      "mutations": []
+    },
+    {
+      "case_id": "CLAUDE-CONFLICT",
+      "existing_claude_md": true,
+      "existing_content_lines": ["project_specific_claude_rules"],
+      "expected_result": "HALT",
+      "expected_reason_code": "FACTORY_CONFLICT_USER_OWNED",
+      "mutations": []
+    }
+  ]
+}
