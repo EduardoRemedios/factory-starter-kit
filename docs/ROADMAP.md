@@ -14,7 +14,7 @@
 | SPRINT_20260625_001 | Add Kilo model-routed stage lanes | Done | 2026-06-25 | `docs/Factory/Harnesses/KILO.md`; `./scripts/factoryctl kilo-stage` |
 | SPRINT_20260702_001 | Formalize Stage A direct-source recall repair | Done | 2026-07-02 | `docs/Factory/ORCHESTRATION.md`; `scripts/factory_pack_lint.py`; `tests/test_context_recall_repair.py` |
 | SPRINT_20260724_001 | Build and pilot dual-platform Factory plugin | Public release candidate prepared for `main`; independent pilot pending | 2026-07-24 | `README.md`; `tests/plugin_fixtures/`; `tests/test_factory_plugin_*.py` |
-| SPRINT_20260727_001 | Build and publish bilingual Factory product site | Done | 2026-07-27 | `website/`; `https://factory-starter-kit.chatgpt.site/` |
+| SPRINT_20260727_001 | Build and publish bilingual Factory product site | Done | 2026-07-27 | `website/`; `https://factory-starter-kit.eduardoremedios.chatgpt.site/` |
 
 ## Current Candidates
 

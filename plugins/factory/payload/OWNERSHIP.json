@@ -241,12 +241,12 @@
     {
       "path": "docs/PROJECT_STATE.md",
       "classification": "project-owned",
-      "sha256": "e8e2390d947fc5f5a00f52bd3381f085d03dd99b721b0143fc8b4641b5be7d92"
+      "sha256": "0e47303f62cdff0445c66fec180e3405dd34123bc64abd359f1ef31656ddea9f"
     },
     {
       "path": "docs/ROADMAP.md",
       "classification": "project-owned",
-      "sha256": "ad127ed265a0c1996472f3858d17a01cf76363c0dff99e9afd91c0765041c518"
+      "sha256": "2dee2643d4977717b5c1d2276cc9a188060029681162935cc03a9abb9f715701"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",

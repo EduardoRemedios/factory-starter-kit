@@ -12,7 +12,7 @@ verification, human approval, and delivery evidence built into the workflow.
 [![Claude Code](https://img.shields.io/badge/Claude_Code-supported-D97757)](#claude-code-desktop-app)
 [![License](https://img.shields.io/badge/license-Apache--2.0-0f766e)](LICENSE)
 
-[Product site](https://factory-starter-kit.chatgpt.site/) ·
+[Product site](https://factory-starter-kit.eduardoremedios.chatgpt.site/) ·
 [Why Factory](#why-factory) ·
 [How it works](#how-factory-works) ·
 [Install](#install-factory) ·
@@ -31,7 +31,7 @@ Built for teams that want AI to design, build, test, review, document, and
 produce delivery evidence without surrendering human direction, accountability,
 or control.
 
-**[Explore the bilingual Factory product site →](https://factory-starter-kit.chatgpt.site/)**
+**[Explore the bilingual Factory product site →](https://factory-starter-kit.eduardoremedios.chatgpt.site/)**
 
 ## Why Factory?
 

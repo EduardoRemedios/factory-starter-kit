@@ -21,7 +21,7 @@
 - Public golden fixtures live under `tests/plugin_fixtures/`; private run and pilot evidence are not part of the public release package.
 - Project-specific Factory installation state is excluded from distributable plugin payloads and covered by a regression test.
 - The public README now provides plugin-first installation for the ChatGPT/Codex desktop app, Claude Code desktop, and Claude Code CLI, plus an evidence-based developer FAQ.
-- A public bilingual Factory product site now explains the AI-principal operating model, human authority boundary, governed workflow, small-pod structure, safe adoption, and plugin installation at `https://factory-starter-kit.chatgpt.site/`.
+- A public bilingual Factory product site now explains the AI-principal operating model, human authority boundary, governed workflow, small-pod structure, safe adoption, and plugin installation at `https://factory-starter-kit.eduardoremedios.chatgpt.site/`.
 
 ## Current Tracking Snapshot
 
