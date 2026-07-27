@@ -12,6 +12,7 @@ verification, human approval, and delivery evidence built into the workflow.
 [![Claude Code](https://img.shields.io/badge/Claude_Code-supported-D97757)](#claude-code-desktop-app)
 [![License](https://img.shields.io/badge/license-Apache--2.0-0f766e)](LICENSE)
 
+[Product site](https://factory-starter-kit.chatgpt.site/) ·
 [Why Factory](#why-factory) ·
 [How it works](#how-factory-works) ·
 [Install](#install-factory) ·
@@ -22,12 +23,15 @@ verification, human approval, and delivery evidence built into the workflow.
 </div>
 
 Factory gives engineering teams a repeatable way to plan, challenge, authorize,
-and verify AI-assisted software work before implementation begins. It combines
-contract-grade intent, adversarial review, risk analysis, executable
-verification, and human approval in one repository-native workflow.
+and verify software delivery where AI performs the principal technical work.
+It combines contract-grade intent, adversarial review, risk analysis,
+executable verification, and human approval in one repository-native workflow.
 
-Built for teams that want the speed of coding agents without surrendering
-engineering control.
+Built for teams that want AI to design, build, test, review, document, and
+produce delivery evidence without surrendering human direction, accountability,
+or control.
+
+**[Explore the bilingual Factory product site →](https://factory-starter-kit.chatgpt.site/)**
 
 ## Why Factory?
 

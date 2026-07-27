@@ -2,6 +2,9 @@
 
 ## 2026-07-27
 
+- Added a responsive English/Spanish Factory product site for CEOs, investors, and engineering teams, with five-second AI-principal positioning and an explicit human authority boundary.
+- Added the governed delivery workflow, modern three-person pod, bounded two-person variant, safe plugin adoption explanation, installation commands, developer FAQ, designer attribution, and a bespoke social preview.
+- Validated the site with deterministic content/privacy checks, production build and lint, real-browser English/Spanish desktop and 360px review, all 60 repository tests, plugin package drift checks, and knowledge lint.
 - Replaced copy-first README onboarding with plugin-first installation for the ChatGPT/Codex desktop app, Claude Code desktop, and Claude Code CLI.
 - Added a developer FAQ covering Factory orchestration, Claude instruction bridging, model roles, coding standards, regression testing, specifications, product vision, NFRs, evidence storage, determinism, brownfield safety, and comparisons with GSD and BMAD.
 - Prepared the privacy-safe dual-platform Factory plugin release candidate for merge to `main`; the independent pilot and stable release tag remain separate gates.
