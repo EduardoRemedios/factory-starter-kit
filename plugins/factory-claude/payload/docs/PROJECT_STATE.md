@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the current starter-kit state.
 >
-> **Last updated:** 2026-07-26
+> **Last updated:** 2026-07-27
 
 ## What Exists
 
@@ -20,12 +20,13 @@
 - Claude Code CLI and Desktop Doctor, Brownfield, Progress, and Validate journeys have passed live cross-surface verification.
 - Public golden fixtures live under `tests/plugin_fixtures/`; private run and pilot evidence are not part of the public release package.
 - Project-specific Factory installation state is excluded from distributable plugin payloads and covered by a regression test.
+- The public README now provides plugin-first installation for the ChatGPT/Codex desktop app, Claude Code desktop, and Claude Code CLI, plus an evidence-based developer FAQ.
 
 ## Current Tracking Snapshot
 
 - Current repository scope: Factory V2, starter-kit content, and the dual-platform Factory plugin release candidate.
 - Latest verified milestone: Codex and Claude technical journeys passed, and all defects found during technical verification were fixed and regression-tested.
-- Current release state: public release-candidate packaging, the independent two-user pilot, and Product Owner sign-off remain pending.
+- Current release state: the privacy-safe release candidate is prepared for `main`; the independent two-user pilot, stable release tag, and Product Owner sign-off remain pending.
 
 ## What Does NOT Exist Here
 

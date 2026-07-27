@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-27
+
+- Replaced copy-first README onboarding with plugin-first installation for the ChatGPT/Codex desktop app, Claude Code desktop, and Claude Code CLI.
+- Added a developer FAQ covering Factory orchestration, Claude instruction bridging, model roles, coding standards, regression testing, specifications, product vision, NFRs, evidence storage, determinism, brownfield safety, and comparisons with GSD and BMAD.
+- Prepared the privacy-safe dual-platform Factory plugin release candidate for merge to `main`; the independent pilot and stable release tag remain separate gates.
+
 ## 2026-07-26
 
 - Passed live Claude Code CLI and Desktop Doctor, Brownfield, Progress, and Validate journeys against Factory plugin `0.1.0`.

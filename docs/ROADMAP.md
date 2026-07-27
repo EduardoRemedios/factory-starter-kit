@@ -2,7 +2,7 @@
 
 > **Purpose:** Track starter-kit V2 and earlier process work.
 >
-> **Last updated:** 2026-07-26
+> **Last updated:** 2026-07-27
 
 ## Sprints
 
@@ -13,7 +13,7 @@
 | SPRINT_20260624_002 | Add non-technical onboarding path | Done | 2026-06-24 | `docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md` |
 | SPRINT_20260625_001 | Add Kilo model-routed stage lanes | Done | 2026-06-25 | `docs/Factory/Harnesses/KILO.md`; `./scripts/factoryctl kilo-stage` |
 | SPRINT_20260702_001 | Formalize Stage A direct-source recall repair | Done | 2026-07-02 | `docs/Factory/ORCHESTRATION.md`; `scripts/factory_pack_lint.py`; `tests/test_context_recall_repair.py` |
-| SPRINT_20260724_001 | Build and pilot dual-platform Factory plugin | Cross-surface technical verification passed; independent pilot pending | 2026-07-24 | `tests/plugin_fixtures/`; `tests/test_factory_plugin_*.py` |
+| SPRINT_20260724_001 | Build and pilot dual-platform Factory plugin | Public release candidate prepared for `main`; independent pilot pending | 2026-07-24 | `README.md`; `tests/plugin_fixtures/`; `tests/test_factory_plugin_*.py` |
 
 ## Current Candidates
 
@@ -25,4 +25,4 @@
 | Async contributor handoff hygiene | Ongoing | Use `REVIEW_READY` for review handoffs and reserve `MERGE_READY` for the final sync window after merge preflight passes. |
 | Beginner adopter enablement | Ongoing | Keep the non-technical setup guide accurate as agent tools and installer flows change. |
 | Harness model routing | Ongoing | Validate Kilo, Cursor, Codex, and Claude Code adapters without changing Factory Core stage contracts. |
-| Factory plugin rollout | In verification | Publish a privacy-safe release candidate, complete the first-time-user pilot, freeze the release candidate, and obtain Product Owner sign-off. |
+| Factory plugin rollout | In verification | Merge the privacy-safe release candidate to `main`, complete the first-time-user pilot, publish the stable tag, and obtain Product Owner sign-off. |
