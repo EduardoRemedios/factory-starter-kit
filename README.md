@@ -1,15 +1,49 @@
-# Factory Starter Kit
+<div align="center">
 
-Factory is an open-source, planning-first software delivery workflow for turning
-rough intent into bounded, testable, reviewable execution.
+# Factory
 
-It is designed for teams that want AI coding tools to move quickly without
-silently changing scope, skipping verification, losing decisions between
-sessions, or treating generated prose as proof that work is ready.
+### Governed software delivery for AI coding agents
 
-Factory is not a code generator and does not replace a project's tests, CI,
-security tooling, or engineering judgment. It provides the process, evidence,
-and authorization layer around those tools.
+Turn rough product intent into an execution-ready contract, with scope, risk,
+verification, human approval, and delivery evidence built into the workflow.
+
+[![Release candidate](https://img.shields.io/badge/release-0.1.0--rc.1-4f46e5)](#release-status)
+[![Codex](https://img.shields.io/badge/Codex-supported-111827?logo=openai&logoColor=white)](#chatgpt--codex-desktop-app-on-macos)
+[![Claude Code](https://img.shields.io/badge/Claude_Code-supported-D97757)](#claude-code-desktop-app)
+[![License](https://img.shields.io/badge/license-Apache--2.0-0f766e)](LICENSE)
+
+[Why Factory](#why-factory) ·
+[How it works](#how-factory-works) ·
+[Install](#install-factory) ·
+[Quick start](#quick-start-your-first-repository) ·
+[Developer FAQ](#developer-faq) ·
+[Documentation](#documentation)
+
+</div>
+
+Factory gives engineering teams a repeatable way to plan, challenge, authorize,
+and verify AI-assisted software work before implementation begins. It combines
+contract-grade intent, adversarial review, risk analysis, executable
+verification, and human approval in one repository-native workflow.
+
+Built for teams that want the speed of coding agents without surrendering
+engineering control.
+
+## Why Factory?
+
+AI coding tools can produce code quickly. Reliable delivery still depends on
+knowing what is authorized, what must not change, which risks matter, how the
+result will be tested, and who can approve execution.
+
+Factory makes those decisions explicit and reviewable.
+
+| Controlled scope | Adversarial review | Evidence-first delivery | One portable core |
+| --- | --- | --- | --- |
+| Lock intent, constraints, non-goals, and acceptance criteria before code changes. | Red, Blue, and Purple responsibilities challenge assumptions and resolve disagreements. | Deterministic validators and project-native tests turn completion claims into inspectable proof. | The same Factory contracts work through Codex and Claude Code, with tool-specific adapters. |
+
+Factory is not a code generator, test framework, CI service, security scanner,
+or replacement for engineering judgment. It is the process, evidence, and
+authorization layer that coordinates those capabilities.
 
 ## Release Status
 
@@ -26,7 +60,7 @@ The current plugin release candidate is `0.1.0`, pinned at
 
 The plugin does not introduce a second Factory implementation.
 
-## What Problem Does Factory Solve?
+## The delivery questions Factory answers
 
 AI coding agents are good at producing code, but a repository still needs
 answers to engineering questions that are larger than code generation:
@@ -40,11 +74,14 @@ answers to engineering questions that are larger than code generation:
 - How can another developer reconstruct what happened?
 - What happens when repository state contradicts a status report?
 
-Factory answers those questions with versioned artifacts, deterministic
-validators, adversarial review, explicit authorization, and an evidence-backed
-closeout.
+Factory answers them with versioned artifacts, deterministic validators,
+adversarial review, explicit authorization, and an evidence-backed closeout.
 
 ## How Factory Works
+
+```text
+Brief → Intent → Challenge → Risk → Verification → Plan → Human Go → Execute → Prove
+```
 
 The canonical planning sequence is:
 
@@ -68,10 +105,20 @@ In practical terms:
 Every stage handoff can be validated immediately. The final pack must pass
 `pack-lint` before it is presented for execution approval.
 
-## Plugin Installation
+## Install Factory
 
-Choose the instructions for the client you use. Install Factory once at user
-scope, then initialize it separately in each repository.
+Factory has two layers: install the plugin once in your AI coding client, then
+initialize Factory separately in each repository. This keeps reusable workflow
+logic centrally updatable while project rules, tests, decisions, and evidence
+remain with the codebase.
+
+Choose your client:
+
+| Client | Installation surface | First repository check |
+| --- | --- | --- |
+| ChatGPT / Codex desktop | macOS Terminal, then a new Codex task | `$factory-doctor` |
+| Claude Code desktop | Local Code session | `/factory:doctor` |
+| Claude Code CLI | Terminal | `/factory:doctor` |
 
 ### ChatGPT / Codex desktop app on macOS
 
@@ -194,7 +241,7 @@ $factory-doctor
 Do not start by copying Factory files manually. Let Greenfield or Brownfield
 produce the exact setup plan for the repository.
 
-## First Repository
+## Quick Start: Your First Repository
 
 Installing the plugin makes Factory available globally. Each repository still
 needs its own Factory Core, project adapter, and evidence history.
@@ -359,14 +406,20 @@ active.
 
 ### Does Factory create `VISION.md`?
 
-Not automatically. Product vision is stakeholder and Product Owner work
-upstream of Factory. An agent may help structure or challenge that thinking,
-but it must not invent stakeholder agreement.
+No. Factory does not create or require `VISION.md`.
 
-For greenfield product work, store an approved vision next to the project,
-preferably as `docs/PRODUCT_VISION.md` or an approved Product Owner Phase Brief.
-The locked Phase Intent and subsequent Factory briefs should trace back to that
-source.
+Product vision is upstream, human-owned input from a Product Owner, project
+owner, or sponsor. An agent may help structure or challenge it, but must not
+invent the vision or claim stakeholder approval.
+
+For greenfield product work, keep the approved vision with the project—for
+example as `docs/PRODUCT_VISION.md`—and use it to seed either:
+
+- a human-authored Phase Brief in the optional Product Owner lane; or
+- the initial `raw_brief.md` that enters Factory Stage A directly.
+
+The resulting Phase Intent, sprint briefs, and Factory run should remain
+traceable to that approved source.
 
 ### Are non-functional requirements and constraints handled?
 
