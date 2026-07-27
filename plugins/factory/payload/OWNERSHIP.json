@@ -31,7 +31,7 @@
     {
       "path": "docs/CHANGELOG.md",
       "classification": "project-owned",
-      "sha256": "63d85c0e0e8e1221bc4bea6167666ce2bb85fe1b56edb8c41ce77fbc011b5253"
+      "sha256": "382763335e05af0e8ef5189353308a7663841ac7163101d82c5cf3162e350ff9"
     },
     {
       "path": "docs/Factory/ARCHITECTURE.md",
@@ -241,12 +241,12 @@
     {
       "path": "docs/PROJECT_STATE.md",
       "classification": "project-owned",
-      "sha256": "5924e2d63739f6996eb2a1dd65f133e7102076247bfad59977c12b79d635e579"
+      "sha256": "0e47303f62cdff0445c66fec180e3405dd34123bc64abd359f1ef31656ddea9f"
     },
     {
       "path": "docs/ROADMAP.md",
       "classification": "project-owned",
-      "sha256": "a68fca1b25b1111fb465b90429a5d18a4ea931a4abc43264864c533d12466a54"
+      "sha256": "2dee2643d4977717b5c1d2276cc9a188060029681162935cc03a9abb9f715701"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",
