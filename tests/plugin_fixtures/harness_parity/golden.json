@@ -1,0 +1,22 @@
+{
+  "fixture_id": "HARNESS-PARITY",
+  "constraints": ["C-01", "C-04", "C-07"],
+  "input": {
+    "raw_brief_digest": "fixture-brief-v1",
+    "execution_mode": "PLANNING_ONLY"
+  },
+  "expected_normalized_result": {
+    "stage_order": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2"],
+    "required_run_files": [
+      "raw_brief.md",
+      "KNOWLEDGE_LINT.txt",
+      "CONTEXT_RECALL_REPORT.md",
+      "EXECUTION_MODE.txt",
+      "SPRINT_ID.txt"
+    ],
+    "final_state": "PACK_COMPLETE_WAITING_HUMAN_REVIEW",
+    "execution_prompt_present": false,
+    "validator_semantics_equal": true,
+    "allowed_differences": ["invocation_syntax", "plugin_manifest", "harness_metadata"]
+  }
+}

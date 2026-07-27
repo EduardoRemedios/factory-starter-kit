@@ -1,0 +1,24 @@
+{
+  "fixture_id": "PILOT-SCORECARD",
+  "constraints": ["C-10"],
+  "required_journeys": [
+    "install",
+    "doctor",
+    "greenfield",
+    "brownfield",
+    "progress",
+    "validate",
+    "update",
+    "rollback"
+  ],
+  "required_cohort_roles": ["experienced_factory_user", "first_time_factory_user"],
+  "release_threshold": {
+    "critical_open_defects": 0,
+    "high_open_defects": 0,
+    "destructive_mutations": 0,
+    "recovery_success_rate": 1.0,
+    "journey_completion_rate": 1.0,
+    "owner_signoff_required": true
+  },
+  "expected_result_when_threshold_met": "PILOT_PASS"
+}

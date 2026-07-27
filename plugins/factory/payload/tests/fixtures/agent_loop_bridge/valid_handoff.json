@@ -1,0 +1,62 @@
+{
+  "kind": "handoff",
+  "live_pr_head_sha": "abc123",
+  "input": {
+    "event_type": "factory.handoff.v1",
+    "event_id": "fh-20260518-001",
+    "created_at_utc": "2026-05-18T12:00:00Z",
+    "producer": {
+      "lane": "producer_agent",
+      "actor": "agent",
+      "tool": "codex"
+    },
+    "repo": {
+      "full_name": "owner/repo",
+      "default_branch": "main",
+      "working_tree_path_hint": "/path/to/repo"
+    },
+    "pull_request": {
+      "url": "https://example.com/owner/repo/pull/123",
+      "number": 123,
+      "branch": "codex/example",
+      "head_sha": "abc123"
+    },
+    "factory": {
+      "run_id": "RUN_20260518_1200_factory",
+      "sprint_id": "SPRINT_20260518_001",
+      "execution_mode": "PLANNING_ONLY",
+      "stage_i2_verdict": "PASS",
+      "human_go_required": false,
+      "human_go_artifact": null
+    },
+    "allowed_actions": [
+      "read_handoff",
+      "inspect_pr",
+      "inspect_ci_status",
+      "inspect_factory_pack",
+      "post_review_result"
+    ],
+    "forbidden_actions": [
+      "merge",
+      "push_commits",
+      "patch_code",
+      "open_downstream_run",
+      "generate_execution_prompt",
+      "change_policy_runtime_schema_evidence"
+    ],
+    "required_checks": [
+      "pr_diff",
+      "ci_status",
+      "factory_pack_lint_evidence",
+      "stage_i2_verdict",
+      "execution_mode_and_human_go",
+      "no_touch_boundary",
+      "test_evidence",
+      "docs_sync"
+    ]
+  },
+  "expected": {
+    "valid": true,
+    "verdict_floor": "review_may_continue"
+  }
+}

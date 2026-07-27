@@ -1,0 +1,20 @@
+{
+  "name": "factory-starter-kit",
+  "interface": {
+    "displayName": "Factory Starter Kit"
+  },
+  "plugins": [
+    {
+      "name": "factory",
+      "source": {
+        "source": "local",
+        "path": "./plugins/factory"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

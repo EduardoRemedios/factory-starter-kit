@@ -1,0 +1,15 @@
+{
+  "name": "factory-starter-kit",
+  "owner": {
+    "name": "Eduardo dos Remedios"
+  },
+  "description": "Factory plugins for safe, evidence-backed repository planning and execution.",
+  "plugins": [
+    {
+      "name": "factory",
+      "source": "./plugins/factory-claude",
+      "description": "Use Factory safely from Claude Code.",
+      "version": "0.1.0"
+    }
+  ]
+}

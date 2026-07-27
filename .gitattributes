@@ -1,0 +1,3 @@
+# Generated plugin payloads preserve the source repository byte-for-byte.
+plugins/factory/payload/** -whitespace
+plugins/factory-claude/payload/** -whitespace

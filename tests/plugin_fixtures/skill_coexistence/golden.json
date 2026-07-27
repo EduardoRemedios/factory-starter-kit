@@ -1,0 +1,22 @@
+{
+  "fixture_id": "SKILL-COEXISTENCE",
+  "constraints": ["C-08", "C-16"],
+  "cases": [
+    {
+      "case_id": "SKILL-COEXIST",
+      "repo_skills": ["factory-root-planner", "factory-purple-gate"],
+      "plugin_skills": ["factory-doctor", "factory-progress"],
+      "expected_result": "PASS",
+      "expected_reason_code": "FACTORY_SKILLS_COMPATIBLE"
+    },
+    {
+      "case_id": "SKILL-COLLISION",
+      "repo_skills": ["factory-root-planner"],
+      "plugin_skills": ["factory-root-planner"],
+      "expected_result": "HALT",
+      "expected_reason_code": "FACTORY_SKILL_COLLISION",
+      "mutations": [],
+      "automatic_deletions": []
+    }
+  ]
+}

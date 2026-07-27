@@ -1,0 +1,31 @@
+{
+  "fixture_id": "ENVIRONMENT-MATRIX",
+  "constraints": ["C-05", "C-15"],
+  "cases": [
+    {
+      "case_id": "PATH-SPACES",
+      "repository_shape": "supported_platform_path_with_spaces",
+      "expected_result": "PASS",
+      "root_resolution": "git_root"
+    },
+    {
+      "case_id": "NESTED-ROOT",
+      "repository_shape": "command_invoked_from_nested_directory",
+      "expected_result": "PASS",
+      "root_resolution": "git_root"
+    },
+    {
+      "case_id": "WORKTREE",
+      "repository_shape": "supported_git_worktree",
+      "expected_result": "PASS",
+      "root_resolution": "worktree_root"
+    },
+    {
+      "case_id": "UNSUPPORTED-ENVIRONMENT",
+      "repository_shape": "environment_not_in_compatibility_matrix",
+      "expected_result": "HALT",
+      "expected_reason_code": "FACTORY_ENVIRONMENT_UNVERIFIED",
+      "mutations": []
+    }
+  ]
+}
