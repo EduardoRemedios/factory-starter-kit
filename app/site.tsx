@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 
 type Language = "en" | "es";
 
-const repositoryUrl = "https://github.com/EduardoRemedios/factory-starter-kit";
-
 const copy = {
   en: {
     nav: {
@@ -17,13 +15,17 @@ const copy = {
     hero: {
       eyebrow: "Open-source AI delivery system",
       title: "AI builds the software.",
-      titleAccent: "Humans set the direction and stay in control.",
-      body: "Factory is the operating system for teams where AI is the principal designer, architect, developer, tester, reviewer, documenter and evidence producer—not merely a coding assistant.",
-      human:
-        "People own the vision, business constraints, consequential decisions, execution approval, accountability and final acceptance.",
-      primary: "See how it works",
-      secondary: "View on GitHub",
-      proof: ["Open source", "Codex + Claude", "Human-approved execution"],
+      titleAccent: "Humans stay in control.",
+      body: "Factory is the operating system for human-directed, AI-executed software delivery.",
+      human: "Humans own intent, constraints, approvals and accountability.",
+      primary: "Try Factory",
+      ledger: [
+        ["01", "Intent", "Human direction and constraints."],
+        ["02", "Plan", "AI decomposes the work."],
+        ["03", "Execute", "AI delivers traceable steps."],
+        ["04", "Verify", "Evidence against requirements."],
+        ["05", "Approve", "Human acceptance."],
+      ],
     },
     model: {
       kicker: "A different operating model",
@@ -134,8 +136,7 @@ const copy = {
       claude: "Claude Code",
       copy: "Copy",
       copied: "Copied",
-      detail: "Full installation and update instructions live in the public repository.",
-      repo: "Open installation guide",
+      detail: "Copy the command for your environment, then start with Doctor in a new agent session.",
     },
     faq: {
       kicker: "Straight answers",
@@ -171,7 +172,7 @@ const copy = {
       label: "The operating model for AI-principal software delivery",
       title: "Give AI the work. Keep humans in control.",
       body: "Start with the public release candidate, test it in a bounded repository and inspect the evidence for yourself.",
-      cta: "Explore Factory on GitHub",
+      cta: "Try Factory",
     },
     footer: {
       by: "Factory was designed by Eduardo A dos Remedios.",
@@ -189,13 +190,17 @@ const copy = {
     hero: {
       eyebrow: "Sistema de entrega con IA de código abierto",
       title: "La IA construye el software.",
-      titleAccent: "Las personas marcan la dirección y mantienen el control.",
-      body: "Factory es el sistema operativo para equipos en los que la IA es la principal diseñadora, arquitecta, desarrolladora, probadora, revisora, documentalista y productora de evidencias; no es simplemente un asistente de programación.",
-      human:
-        "Las personas son responsables de la visión, las restricciones del negocio, las decisiones importantes, la autorización de la ejecución, la rendición de cuentas y la aceptación final.",
-      primary: "Ver cómo funciona",
-      secondary: "Ver en GitHub",
-      proof: ["Código abierto", "Codex + Claude", "Ejecución aprobada por personas"],
+      titleAccent: "Las personas mantienen el control.",
+      body: "Factory es el sistema operativo para una entrega de software dirigida por personas y ejecutada por IA.",
+      human: "Las personas controlan la intención, las restricciones, las aprobaciones y la responsabilidad.",
+      primary: "Probar Factory",
+      ledger: [
+        ["01", "Intención", "Dirección y restricciones humanas."],
+        ["02", "Plan", "La IA descompone el trabajo."],
+        ["03", "Ejecución", "La IA entrega pasos trazables."],
+        ["04", "Verificación", "Evidencia frente a requisitos."],
+        ["05", "Aprobación", "Aceptación humana."],
+      ],
     },
     model: {
       kicker: "Un modelo operativo diferente",
@@ -306,8 +311,7 @@ const copy = {
       claude: "Claude Code",
       copy: "Copiar",
       copied: "Copiado",
-      detail: "Las instrucciones completas de instalación y actualización están en el repositorio público.",
-      repo: "Abrir guía de instalación",
+      detail: "Copia el comando para tu entorno y empieza con Doctor en una nueva sesión del agente.",
     },
     faq: {
       kicker: "Respuestas directas",
@@ -343,7 +347,7 @@ const copy = {
       label: "El modelo operativo para la entrega de software con IA como principal",
       title: "Dale el trabajo a la IA. Mantén el control humano.",
       body: "Empieza con la versión candidata pública, pruébala en un repositorio acotado e inspecciona tú mismo las evidencias.",
-      cta: "Explorar Factory en GitHub",
+      cta: "Probar Factory",
     },
     footer: {
       by: "Factory fue diseñado por Eduardo A dos Remedios.",
@@ -378,7 +382,7 @@ function CheckList({ items }: { items: readonly string[] }) {
     <ul className="check-list">
       {items.map((item) => (
         <li key={item}>
-          <span aria-hidden="true">↗</span>
+          <span aria-hidden="true" />
           {item}
         </li>
       ))}
@@ -460,57 +464,35 @@ export function FactorySite({ initialLanguage }: { initialLanguage: Language }) 
           <p className="hero-body">{text.hero.body}</p>
           <p className="human-boundary">{text.hero.human}</p>
           <div className="hero-actions">
-            <a className="button button-primary" href="#process">
-              {text.hero.primary} <span aria-hidden="true">↓</span>
-            </a>
-            <a
-              className="button button-secondary"
-              href={repositoryUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {text.hero.secondary} <span aria-hidden="true">↗</span>
+            <a className="button button-primary" href="#install">
+              {text.hero.primary}
             </a>
           </div>
-          <ul className="proof-row" aria-label="Product facts">
-            {text.hero.proof.map((item) => (
-              <li key={item}>
-                <span aria-hidden="true">✓</span>
-                {item}
+        </div>
+        <div
+          className="delivery-ledger"
+          aria-label={language === "en" ? "Factory delivery model" : "Modelo de entrega de Factory"}
+        >
+          <ol>
+            {text.hero.ledger.map(([number, title, body], index) => (
+              <li
+                className={index === 0 || index === text.hero.ledger.length - 1 ? "human-step" : ""}
+                key={number}
+              >
+                <span className="ledger-marker" aria-hidden="true" />
+                <span className="ledger-number">{number}</span>
+                <div>
+                  <h2>{title}</h2>
+                  <p>{body}</p>
+                </div>
               </li>
             ))}
-          </ul>
-        </div>
-        <div className="delivery-map" aria-label={language === "en" ? "Factory delivery map" : "Mapa de entrega de Factory"}>
-          <div className="map-grid" aria-hidden="true" />
-          <div className="map-label map-label-human">
-            <span>01</span>
-            <strong>{language === "en" ? "HUMAN INTENT" : "INTENCIÓN HUMANA"}</strong>
-            <small>{language === "en" ? "Direction + constraints" : "Dirección + límites"}</small>
-          </div>
-          <div className="map-rail" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </div>
-          <div className="map-core">
-            <span className="core-ring" aria-hidden="true" />
-            <strong>FACTORY</strong>
-            <small>{language === "en" ? "AI delivery principal" : "Principal de entrega IA"}</small>
-          </div>
-          <div className="map-output">
-            {["DESIGN", "BUILD", "TEST", "PROVE"].map((label, index) => (
-              <span key={label}>
-                <small>0{index + 2}</small>
-                {language === "es"
-                  ? ["DISEÑAR", "CREAR", "PROBAR", "DEMOSTRAR"][index]
-                  : label}
-              </span>
-            ))}
-          </div>
-          <div className="map-label map-label-go">
-            <span>GO</span>
-            <strong>{language === "en" ? "HUMAN ACCEPTANCE" : "ACEPTACIÓN HUMANA"}</strong>
+          </ol>
+          <div className="ledger-key" aria-hidden="true">
+            <span className="human-key" />
+            {language === "en" ? "Human control" : "Control humano"}
+            <span className="ai-key" />
+            {language === "en" ? "AI execution" : "Ejecución IA"}
           </div>
         </div>
       </section>
@@ -527,9 +509,6 @@ export function FactorySite({ initialLanguage }: { initialLanguage: Language }) 
             <h3>{text.model.oldTitle}</h3>
             <CheckList items={text.model.old} />
           </article>
-          <div className="shift" aria-hidden="true">
-            <span>→</span>
-          </div>
           <article className="compare-card bright">
             <p className="card-label">{text.model.newLabel}</p>
             <h3>{text.model.newTitle}</h3>
@@ -565,12 +544,10 @@ export function FactorySite({ initialLanguage }: { initialLanguage: Language }) 
         </div>
         <div className="boundary-grid">
           <article className="boundary-card human-card">
-            <div className="boundary-icon" aria-hidden="true">H</div>
             <h3>{text.boundary.humanTitle}</h3>
             <CheckList items={text.boundary.human} />
           </article>
           <article className="boundary-card ai-card">
-            <div className="boundary-icon" aria-hidden="true">AI</div>
             <h3>{text.boundary.aiTitle}</h3>
             <CheckList items={text.boundary.ai} />
           </article>
@@ -588,9 +565,6 @@ export function FactorySite({ initialLanguage }: { initialLanguage: Language }) 
             {text.pod.roles.map((role) => (
               <article className="role-card" key={role.number}>
                 <span>{role.number}</span>
-                <div className="role-avatar" aria-hidden="true">
-                  <span />
-                </div>
                 <h3>{role.title}</h3>
                 <p>{role.text}</p>
               </article>
@@ -598,11 +572,6 @@ export function FactorySite({ initialLanguage }: { initialLanguage: Language }) 
           </div>
           <div className="engine">
             <p>{text.pod.engineTitle}</p>
-            <div className="engine-track" aria-hidden="true">
-              <span />
-              <strong>F:</strong>
-              <span />
-            </div>
             <strong>{text.pod.engine}</strong>
           </div>
         </div>
@@ -633,7 +602,6 @@ export function FactorySite({ initialLanguage }: { initialLanguage: Language }) 
           ))}
         </div>
         <p className="adoption-note">
-          <span aria-hidden="true">i</span>
           {text.adoption.note}
         </p>
       </section>
@@ -674,9 +642,6 @@ export function FactorySite({ initialLanguage }: { initialLanguage: Language }) 
         </div>
         <div className="install-detail">
           <p>{text.install.detail}</p>
-          <a href={`${repositoryUrl}#install-the-plugin`} target="_blank" rel="noreferrer">
-            {text.install.repo} <span aria-hidden="true">↗</span>
-          </a>
         </div>
       </section>
 
@@ -703,8 +668,8 @@ export function FactorySite({ initialLanguage }: { initialLanguage: Language }) 
         <h2>{text.close.title}</h2>
         <div>
           <p>{text.close.body}</p>
-          <a className="button close-button" href={repositoryUrl} target="_blank" rel="noreferrer">
-            {text.close.cta} <span aria-hidden="true">↗</span>
+          <a className="button close-button" href="#install">
+            {text.close.cta}
           </a>
         </div>
       </section>

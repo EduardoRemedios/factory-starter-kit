@@ -6,8 +6,8 @@ export const metadata: Metadata = {
     "https://factory-starter-kit.eduardoremedios.chatgpt.site",
   ),
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
   },
 };
 
