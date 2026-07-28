@@ -86,24 +86,25 @@ const copy = {
     },
     pod: {
       kicker: "Small by design",
-      title: "A modern delivery pod: three people, many AI specialist lanes.",
+      title:
+        "A modern product pod: two or three accountable generalists, supported by AI specialist lanes.",
       intro:
-        "Factory replaces a large role map with a compact human control system around an AI delivery principal.",
+        "These are accountabilities, not a traditional staffing chart. People provide direction, judgment and acceptance while AI performs much of the production work.",
       roles: [
         {
           number: "01",
-          title: "Product / Domain Owner",
-          text: "Owns the problem, desired outcome, domain truth and final acceptance.",
+          title: "Product & Domain Lead",
+          text: "Owns the customer problem, business outcome, priorities, domain truth and final acceptance.",
         },
         {
           number: "02",
-          title: "AI Delivery Director",
-          text: "Directs Factory runs, translates intent into executable work and keeps delivery moving.",
+          title: "AI-Native Product Engineer",
+          text: "Directs Factory and its agents across product design, architecture, implementation, integration and delivery.",
         },
         {
           number: "03",
-          title: "Assurance & Risk Partner",
-          text: "Challenges assumptions, checks evidence and protects independent judgment.",
+          title: "Product Assurance Lead",
+          text: "Independently challenges assumptions and verifies quality, security, reliability, compliance and evidence.",
         },
       ],
       engineTitle: "The AI delivery engine",
@@ -111,7 +112,7 @@ const copy = {
         "Architecture · Development · Testing · Review · Documentation · Evidence",
       variantTitle: "Two-person variant",
       variant:
-        "For lower-risk work, delivery direction and assurance can be covered by two people—but independent challenge must still be preserved.",
+        "For lower-risk work, the core pod can be a Product & Domain Lead and an AI-Native Product Engineer. A shared Product Assurance Lead joins at defined review gates so independent challenge is preserved.",
     },
     adoption: {
       kicker: "Adopt without a rewrite",
@@ -261,24 +262,25 @@ const copy = {
     },
     pod: {
       kicker: "Pequeño por diseño",
-      title: "Un equipo de entrega moderno: tres personas y muchas especialidades de IA.",
+      title:
+        "Un equipo de producto moderno: dos o tres generalistas responsables, apoyados por especialidades de IA.",
       intro:
-        "Factory sustituye un mapa enorme de roles por un sistema compacto de control humano alrededor de un principal de entrega de IA.",
+        "Son responsabilidades, no un organigrama tradicional. Las personas aportan dirección, criterio y aceptación, mientras la IA realiza gran parte del trabajo de producción.",
       roles: [
         {
           number: "01",
-          title: "Responsable de Producto / Dominio",
-          text: "Es responsable del problema, el resultado deseado, la verdad del dominio y la aceptación final.",
+          title: "Líder de Producto y Dominio",
+          text: "Es responsable del problema del cliente, el resultado de negocio, las prioridades, la verdad del dominio y la aceptación final.",
         },
         {
           number: "02",
-          title: "Director de Entrega con IA",
-          text: "Dirige las ejecuciones de Factory, convierte la intención en trabajo ejecutable y mantiene el avance.",
+          title: "Ingeniero/a de Producto AI-Native",
+          text: "Dirige Factory y sus agentes a través del diseño de producto, la arquitectura, la implementación, la integración y la entrega.",
         },
         {
           number: "03",
-          title: "Socio de Garantía y Riesgo",
-          text: "Cuestiona supuestos, comprueba evidencias y protege el juicio independiente.",
+          title: "Líder de Aseguramiento del Producto",
+          text: "Cuestiona los supuestos de forma independiente y verifica la calidad, la seguridad, la fiabilidad, el cumplimiento y las evidencias.",
         },
       ],
       engineTitle: "El motor de entrega de IA",
@@ -286,7 +288,7 @@ const copy = {
         "Arquitectura · Desarrollo · Pruebas · Revisión · Documentación · Evidencia",
       variantTitle: "Variante de dos personas",
       variant:
-        "Para trabajos de menor riesgo, la dirección de entrega y la garantía pueden cubrirse con dos personas, pero debe conservarse el desafío independiente.",
+        "Para trabajos de menor riesgo, el núcleo puede estar formado por el Líder de Producto y Dominio y el Ingeniero/a de Producto AI-Native. Un Líder de Aseguramiento del Producto compartido interviene en puntos de revisión definidos para preservar la independencia.",
     },
     adoption: {
       kicker: "Adopción sin reescribir",

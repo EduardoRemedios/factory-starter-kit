@@ -30,7 +30,8 @@ test("server-renders the English product contract", async () => {
   const html = await response.text();
   assert.match(html, /AI builds the software\./);
   assert.match(html, /Humans stay in control\./);
-  assert.match(html, /AI Delivery Director/);
+  assert.match(html, /AI-Native Product Engineer/);
+  assert.match(html, /A shared Product Assurance Lead joins at defined review gates/);
   assert.match(html, /Factory was designed by Eduardo A dos Remedios\./);
   assert.doesNotMatch(html, /github\.com|View on GitHub|Explore Factory on GitHub/i);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton/i);
@@ -46,7 +47,8 @@ test("server-renders complete Spanish first-view meaning", async () => {
     html,
     /Las personas mantienen el control\./,
   );
-  assert.match(html, /Director de Entrega con IA/);
+  assert.match(html, /Ingeniero\/a de Producto AI-Native/);
+  assert.match(html, /Líder de Aseguramiento del Producto compartido/);
   assert.match(html, /Factory fue diseñado por Eduardo A dos Remedios\./);
   assert.doesNotMatch(html, /github\.com|Ver en GitHub|Explorar Factory en GitHub/i);
 });
