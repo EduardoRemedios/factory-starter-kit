@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "package": "factory",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "files": [
     {
       "path": ".agents/skills/factory-execution-closeout/SKILL.md",
       "classification": "release-owned",
-      "sha256": "b5d664811e3a12757afb7dc4fa89671765f20abf04907a71a279791a946f3668"
+      "sha256": "9639316cb56cbf6e6561dddaeb886a11a07814d44d4a85696769f1b778d05ccd"
     },
     {
       "path": ".agents/skills/factory-pack-consolidator/SKILL.md",
@@ -21,17 +21,17 @@
     {
       "path": ".agents/skills/factory-root-planner/SKILL.md",
       "classification": "release-owned",
-      "sha256": "4e79d17dbfd30dc618df99e3909b02254ea8e3ee33877dc1f9e382ec600eae19"
+      "sha256": "ecd505bc885db0054c0786e16fd0783d87ee9d209bde8ef86c7df4e36f7b8975"
     },
     {
       "path": "AGENTS.md",
       "classification": "project-owned",
-      "sha256": "e53f28982a11b405818bc233ed89b984e66fbb73cb36732e752722f23f1733d2"
+      "sha256": "172f3d5892ef10be2ce26554e3942a17cd48c4e1732765778b8af6c46c3e01e8"
     },
     {
       "path": "docs/CHANGELOG.md",
       "classification": "project-owned",
-      "sha256": "63d85c0e0e8e1221bc4bea6167666ce2bb85fe1b56edb8c41ce77fbc011b5253"
+      "sha256": "540b53e8e1e4d8e1816f7ede7a2f38c4546d9395c001474f53d43efd94cb5960"
     },
     {
       "path": "docs/Factory/ARCHITECTURE.md",
@@ -81,7 +81,7 @@
     {
       "path": "docs/Factory/ORCHESTRATION.md",
       "classification": "release-owned",
-      "sha256": "a6f29e375c7c0a10ea7059ad5c74752c7785863728307be922e8fe92cd908de5"
+      "sha256": "819bbba5369410d28ff919a25c00f07f87f698b75f76d984341fb7b06ac6f7de"
     },
     {
       "path": "docs/Factory/ProductOwner/BRIEF_REVIEW_CHECKLIST.md",
@@ -146,7 +146,7 @@
     {
       "path": "docs/Factory/Spec/STAGE_CONTRACTS.md",
       "classification": "release-owned",
-      "sha256": "28701c153c7dc8191d0b5c2e4e01f09c4caa36bdedd0eb6ff15c7d99af438393"
+      "sha256": "8d444c8076c66f5aba270bafba1ed835bedc629d324588c6146c2dea0e13a88e"
     },
     {
       "path": "docs/Factory/TASK_MEMORY.md",
@@ -157,6 +157,11 @@
       "path": "docs/Factory/templates/CONTEXT_RECALL_REPORT_TEMPLATE.md",
       "classification": "release-owned",
       "sha256": "fd92576ae28047cbde6d0c3482716430adb8e960da0c67f5c46f38df3af41578"
+    },
+    {
+      "path": "docs/Factory/templates/EXECUTION_CLOSEOUT_TEMPLATE.json",
+      "classification": "release-owned",
+      "sha256": "90ae01153603f15dea4cf52d458ef4f1512263da301c21b0db27531e421425b5"
     },
     {
       "path": "docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md",
@@ -241,37 +246,37 @@
     {
       "path": "docs/PROJECT_STATE.md",
       "classification": "project-owned",
-      "sha256": "5924e2d63739f6996eb2a1dd65f133e7102076247bfad59977c12b79d635e579"
+      "sha256": "f5b9e8125154c74ac76b90a2d66c7c49058d8eae26b449d734454269f271aefe"
     },
     {
       "path": "docs/ROADMAP.md",
       "classification": "project-owned",
-      "sha256": "a68fca1b25b1111fb465b90429a5d18a4ea931a4abc43264864c533d12466a54"
+      "sha256": "045394f926011bd64e7930b028c607e8a4487248855edc32f112c106c1338568"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",
       "classification": "release-owned",
-      "sha256": "daaffc97ba22d8fdd178eac1509ed11bcb683ec4c811802ec38223debb24c744"
+      "sha256": "a6bce0d70658f2994d75c4fe766c6d0206cbaed839e83a88836e0a8af8f09816"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_QUICK_START.md",
       "classification": "release-owned",
-      "sha256": "fb0e457b6a64387320e7a65838d2f3ddb26368b35b8bb374ec2311244dec686c"
+      "sha256": "6c426606f50063e9279dd4f9e0b9129208d0726599d593689012bbc95b5f2060"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_REFERENCE.md",
       "classification": "release-owned",
-      "sha256": "51442128d5279843e8c76b4446c259dbac1ff7589fac12cc547de432e8eb6226"
+      "sha256": "84ee4e5b2ea9ae619fa0713b04f11b319a8f9dfb5bf45767d43527512eb4daae"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_ROLLBACK.md",
       "classification": "release-owned",
-      "sha256": "a58306664399431e59640e5076239458a487eccab4fba5a921873fd2ccc7bcd6"
+      "sha256": "c90ac9bea170a16a490515e5a47fa530a0fb1246d5dd2e533b00a95f1b768f2e"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_TROUBLESHOOTING.md",
       "classification": "release-owned",
-      "sha256": "a77e343062a50a0f22d976a6bef8b8d942752024bb7504ed6e3b434d340dba91"
+      "sha256": "d9219269d4e2d935c0c1454b52539a8682ef55ad43e6015cc791054a87e1afc8"
     },
     {
       "path": "docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md",
@@ -301,7 +306,12 @@
     {
       "path": "scripts/factory_context_index.py",
       "classification": "release-owned",
-      "sha256": "bf36273994e576eeeead96a0b1276a13cae654ab5c06f0674fa1e87eb91341a4"
+      "sha256": "cea880184446690c4a035ad472b3e618760135a98441442005bce50a49c23018"
+    },
+    {
+      "path": "scripts/factory_execution_closeout.py",
+      "classification": "release-owned",
+      "sha256": "f1e76c223ab4defb8e3a6c06d305d77ecde2274cba36f17bb61aefdc7621193a"
     },
     {
       "path": "scripts/factory_kilo_stage.py",
@@ -314,6 +324,11 @@
       "sha256": "e91b987d6ad5aa90fbc3ced0c83925efb89058fc8a1609e15ce1f7c243324216"
     },
     {
+      "path": "scripts/factory_project_preflight.py",
+      "classification": "release-owned",
+      "sha256": "24e3e2a278a2facb3755816371a3097c3bc397038d707b0d9221d982808f5e5b"
+    },
+    {
       "path": "scripts/factory_run_metrics.py",
       "classification": "release-owned",
       "sha256": "937dcf8af25fc834518a4802742c284a29ee3dad083cff94b51197734cd74d5b"
@@ -321,7 +336,7 @@
     {
       "path": "scripts/factory_stage_lint.py",
       "classification": "release-owned",
-      "sha256": "2fca0054ccef0911773ad6c29ae373e8138e6c2899d3e6b3a338d5615638a7b9"
+      "sha256": "bc9da94b116aea71561b6b005f17ca532c1a993132fc922d68d5b7328f7a83b9"
     },
     {
       "path": "scripts/factory_task_memory.py",
@@ -331,7 +346,7 @@
     {
       "path": "scripts/factoryctl",
       "classification": "release-owned",
-      "sha256": "8c35e7f55c7e463d7ed45afba46e624913b69dc7eb26993a2c3fcb2b47701da2"
+      "sha256": "02b3ea62ed25ed2fb57c1c169a0cfcddccdeb3ddc419faee8a229c4f946a69e3"
     },
     {
       "path": "scripts/knowledge_lint.sh",

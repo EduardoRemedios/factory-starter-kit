@@ -1,5 +1,6 @@
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import unittest
@@ -48,8 +49,19 @@ class FactoryPluginBuildTests(unittest.TestCase):
         self.assertTrue((PACKAGES["codex"] / ".codex-plugin/plugin.json").is_file())
         self.assertTrue((PACKAGES["claude"] / ".claude-plugin/plugin.json").is_file())
 
-    def test_packages_include_open_source_metadata(self):
-        license_bytes = (REPO_ROOT / "LICENSE").read_bytes()
+    def test_release_version_is_aligned_everywhere(self):
+        version = self.manifest["version"]
+        self.assertEqual("0.2.0", version)
+        marketplace = json.loads(
+            (REPO_ROOT / ".claude-plugin/marketplace.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(version, marketplace["plugins"][0]["version"])
+        runtime = (SOURCE_ROOT / "runtime/factory_plugin.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn(f'PLUGIN_VERSION = "{version}"', runtime)
         for platform, package in PACKAGES.items():
             manifest_path = (
                 package / ".codex-plugin/plugin.json"
@@ -57,12 +69,15 @@ class FactoryPluginBuildTests(unittest.TestCase):
                 else package / ".claude-plugin/plugin.json"
             )
             package_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            self.assertEqual("Apache-2.0", package_manifest["license"])
-            self.assertEqual(
-                "https://github.com/EduardoRemedios/factory-starter-kit",
-                package_manifest["repository"],
+            package_ownership = json.loads(
+                (package / "OWNERSHIP.json").read_text(encoding="utf-8")
             )
-            self.assertEqual(license_bytes, (package / "LICENSE").read_bytes())
+            payload_ownership = json.loads(
+                (package / "payload/OWNERSHIP.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(version, package_manifest["version"])
+            self.assertEqual(version, package_ownership["version"])
+            self.assertEqual(version, payload_ownership["version"])
 
     def test_packages_have_exact_public_skill_set(self):
         expected_ids = {skill["id"] for skill in self.manifest["skills"]}
@@ -125,6 +140,39 @@ class FactoryPluginBuildTests(unittest.TestCase):
         source = (SOURCE_ROOT / "runtime" / "factory_plugin.py").read_bytes()
         for package in PACKAGES.values():
             self.assertEqual(source, (package / "scripts" / "factory_plugin.py").read_bytes())
+
+    def test_payload_inventory_exactly_matches_ownership_manifest(self):
+        for package in PACKAGES.values():
+            payload = package / "payload"
+            ownership = json.loads(
+                (payload / "OWNERSHIP.json").read_text(encoding="utf-8")
+            )
+            declared = {Path(entry["path"]) for entry in ownership["files"]}
+            actual = {
+                path.relative_to(payload)
+                for path in payload.rglob("*")
+                if path.is_file() and path.name != "OWNERSHIP.json"
+            }
+            self.assertEqual(declared, actual)
+
+    def test_generated_package_root_has_only_expected_paths(self):
+        for platform, package in PACKAGES.items():
+            expected = {
+                "OWNERSHIP.json",
+                "payload",
+                "scripts",
+                "skills",
+                ".codex-plugin" if platform == "codex" else ".claude-plugin",
+            }
+            self.assertEqual(expected, {path.name for path in package.iterdir()})
+
+    def test_generated_packages_are_customer_and_domain_neutral(self):
+        prohibited = re.compile(r"Symphony|AuditEdge|BMAD|\bTEA\b", re.IGNORECASE)
+        for package in PACKAGES.values():
+            for path in package.rglob("*"):
+                if path.is_file():
+                    text = path.read_text(encoding="utf-8", errors="ignore")
+                    self.assertIsNone(prohibited.search(text), str(path))
 
 
 if __name__ == "__main__":

@@ -44,14 +44,58 @@ class FactoryPluginSetupPlanTests(unittest.TestCase):
             self.assertEqual(output["plan_id"], change_plan["transaction_id"])
             self.assertEqual("greenfield", change_plan["operation"])
             self.assertIsNone(change_plan["source_version"])
-            self.assertEqual("0.1.0", change_plan["target_version"])
+            self.assertEqual("0.2.0", change_plan["target_version"])
             self.assertEqual("REVIEW_REQUIRED", change_plan["approval_state"])
+            self.assertEqual(
+                ["root", "git"],
+                [
+                    step["kind"]
+                    for step in change_plan["ordered_transaction_steps"][:2]
+                ],
+            )
+            self.assertEqual(
+                ["no_change", "create"],
+                [
+                    step["action"]
+                    for step in change_plan["ordered_transaction_steps"][:2]
+                ],
+            )
+            self.assertEqual(
+                "validation",
+                change_plan["ordered_transaction_steps"][-1]["kind"],
+            )
+            self.assertTrue(
+                any(
+                    step["kind"] == "payload"
+                    for step in change_plan["ordered_transaction_steps"]
+                )
+            )
+            self.assertTrue(
+                any(
+                    step["kind"] == "metadata"
+                    for step in change_plan["ordered_transaction_steps"]
+                )
+            )
             self.assertEqual(
                 {item["path"] for item in change_plan["ordered_file_actions"]},
                 set(change_plan["pre_digests"]),
             )
             self.assertEqual([], output["mutations"])
             self.assertEqual(before, inventory(root))
+
+    def test_absent_greenfield_root_preview_is_read_only(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            base = Path(temp_dir)
+            root = base / "new-project"
+            before = inventory(base)
+            output = preview(root, "greenfield")
+            self.assertEqual("PLAN_READY", output["state"])
+            self.assertEqual(
+                ["create", "create"],
+                [step["action"] for step in output["bootstrap_plan"]["steps"]],
+            )
+            self.assertEqual(before, inventory(base))
+            self.assertFalse(root.exists())
 
     def test_brownfield_preserves_unrelated_project_files(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -108,7 +152,7 @@ class FactoryPluginSetupPlanTests(unittest.TestCase):
         claude_version, claude_entries = RUNTIME.load_payload(
             REPO_ROOT / "plugins/factory-claude/payload"
         )
-        self.assertEqual("0.1.0", codex_version)
+        self.assertEqual("0.2.0", codex_version)
         self.assertEqual(codex_entries, claude_entries)
         self.assertTrue(codex_entries)
         self.assertTrue(

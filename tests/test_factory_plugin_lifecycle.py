@@ -58,6 +58,17 @@ def setup_plan(root: Path, payload: Path):
     )
 
 
+def greenfield_plan(root: Path, payload: Path):
+    return RUNTIME.evaluate_setup_plan(
+        root,
+        mode="greenfield",
+        harness="codex",
+        payload_root=payload,
+        platform_name="darwin",
+        python_version=(3, 11, 0),
+    )
+
+
 def update_plan(root: Path, payload: Path):
     return RUNTIME.evaluate_update_plan(
         root,
@@ -202,6 +213,125 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         self.assertEqual("FACTORY_ALREADY_CURRENT", output["reason_code"])
         self.assertEqual([], output["mutations"])
         self.assertEqual(before, inventory(self.root))
+
+    def test_greenfield_apply_bootstraps_absent_root_and_git(self):
+        root = self.base / "absent-repo"
+        plan = greenfield_plan(root, self.v1)
+        output = RUNTIME.apply_setup_plan(
+            root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", output["reason_code"])
+        self.assertTrue((root / ".git").is_dir())
+        self.assertTrue((root / "AGENTS.md").is_file())
+        state = json.loads(
+            (root / RUNTIME.INSTALLATION_STATE_PATH).read_text(encoding="utf-8")
+        )
+        receipt = json.loads(
+            (root / state["last_successful_transaction"]["receipt"]).read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(
+            {
+                "root_created": True,
+                "git_created": True,
+                "git_post_init_digest": RUNTIME.git_state_digest(root / ".git"),
+            },
+            receipt["bootstrap"],
+        )
+        self.assertEqual("AVAILABLE", receipt["recovery_status"])
+
+    def test_greenfield_plan_is_stale_if_git_appears_after_preview(self):
+        plan = greenfield_plan(self.root, self.v1)
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        before = inventory(self.root)
+        output = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_PLAN_STALE", output["reason_code"])
+        self.assertEqual(before, inventory(self.root))
+
+    def test_greenfield_interruption_after_git_init_restores_absent_root(self):
+        root = self.base / "interrupted-repo"
+        plan = greenfield_plan(root, self.v1)
+        original = RUNTIME.apply_changes
+
+        def interrupt_after_git_init(_root, _changes):
+            self.assertTrue((_root / ".git").is_dir())
+            raise OSError("fixture interruption after git init")
+
+        RUNTIME.apply_changes = interrupt_after_git_init
+        try:
+            output = RUNTIME.apply_setup_plan(
+                root,
+                plan=plan,
+                approved_plan_id=plan["plan_id"],
+                payload_root=self.v1,
+            )
+        finally:
+            RUNTIME.apply_changes = original
+        self.assertEqual("FACTORY_SETUP_ABORTED", output["reason_code"])
+        self.assertFalse(root.exists())
+
+    def test_greenfield_rollback_removes_factory_git_and_payload(self):
+        plan = greenfield_plan(self.root, self.v1)
+        applied = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", applied["reason_code"])
+        approval = RUNTIME.apply_rollback(self.root, approved=False)
+        self.assertEqual(
+            "FACTORY_ROLLBACK_APPROVAL_REQUIRED", approval["reason_code"]
+        )
+        rollback = RUNTIME.apply_rollback(self.root, approved=True)
+        self.assertEqual("FACTORY_ROLLBACK_APPLIED", rollback["reason_code"])
+        self.assertTrue(self.root.is_dir())
+        self.assertEqual({}, inventory(self.root))
+
+    def test_greenfield_rollback_preserves_changed_git_state(self):
+        plan = greenfield_plan(self.root, self.v1)
+        applied = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", applied["reason_code"])
+        write(self.root / "user.txt", "user work\n")
+        subprocess.run(["git", "-C", str(self.root), "add", "user.txt"], check=True)
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.root),
+                "-c",
+                "user.name=Factory Test",
+                "-c",
+                "user.email=factory-test@example.invalid",
+                "commit",
+                "-q",
+                "-m",
+                "user commit",
+            ],
+            check=True,
+        )
+        before = inventory(self.root)
+        rollback = RUNTIME.apply_rollback(self.root, approved=True)
+        self.assertEqual("BLOCKED", rollback["state"])
+        self.assertEqual(
+            "FACTORY_ROLLBACK_GIT_STATE_CHANGED", rollback["reason_code"]
+        )
+        self.assertEqual(before, inventory(self.root))
+        self.assertTrue((self.root / ".git").is_dir())
 
     def test_update_preview_and_interruption_do_not_mutate(self):
         self.install_v1()

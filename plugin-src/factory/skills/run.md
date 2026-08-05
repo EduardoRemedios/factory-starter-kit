@@ -9,9 +9,13 @@ Continue Factory only through the next legal action.
 3. Load the authoritative repository instructions and stage inputs for the next action.
 4. Run the required deterministic validator after each handoff and halt on failure.
 5. After I2, stop for human Go unless explicit execution authorization is already recorded.
+6. After approved execution, use the repository's `factory-execution-closeout`
+   skill and canonical `factoryctl execution-closeout` command; do not let the
+   validator choose or upgrade the authored outcome.
 
 ## Guardrails
 
 - Do not expand scope implicitly.
 - Do not treat plugin instructions as a replacement for Factory Core.
 - The selected session model serves Red, Blue, and Purple roles unless separate routing is explicitly configured.
+- `REVIEW_READY` is a review handoff, never commit, merge, tag or release authority.

@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.19
+v1.20
 
 ## Change Log
+- v1.20 (2026-08-05): Added deterministic execution-closeout recording and fail-closed progress behavior.
 - v1.19 (2026-07-02): Added the direct-source repair path for generated WEAK context recall reports.
 - v1.18 (2026-06-25): Clarified Kilo Code CLI support as External Lane Mode driven by Codex or a neutral shell.
 - v1.17 (2026-06-25): Added optional Kilo Code CLI stage runner for model-routed Factory lanes.
@@ -164,29 +165,36 @@ The Root Planner should:
 2. create the run root under `docs/Factory/runs/<RUN_ID>/`
 3. persist `raw_brief.md`
 4. run `bash scripts/knowledge_lint.sh` and persist `KNOWLEDGE_LINT.txt`
-5. refresh the continuity index with `./scripts/factoryctl context-index`
-6. generate `docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md` with:
+5. if `docs/Factory/PROJECT_PREFLIGHT.json` exists, run `./scripts/factoryctl project-preflight --run <RUN_ID>` and halt unless `PROJECT_PREFLIGHT.txt` records PASS
+6. refresh the continuity index with `./scripts/factoryctl context-index`
+7. generate `docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md` with:
    - `./scripts/factoryctl context-report --profile stage-a --scope <RUN_ID> --output docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
-7. add `--focus`, `--trace-id`, and `--required-ref` for binding upstream identifiers when the brief names them explicitly
-8. if explicit fallback scopes are not provided, rely on the default Stage A order:
+8. add `--focus`, `--trace-id`, and `--required-ref` for binding upstream identifiers when the brief names them explicitly
+9. if explicit fallback scopes are not provided, rely on the default Stage A order:
    - requested run scope
    - `docs/Factory/runs`
    - `docs/Factory/ProductOwner/phases`
    - `docs`
-9. if the written report still records `Coverage Verdict: WEAK`, use the Stage A direct-source repair path in section 2.1 or halt
-10. derive and persist `EXECUTION_MODE.txt`
-11. if advancing a unit inside an already-authorized mission:
+10. if the written report still records `Coverage Verdict: WEAK`, use the Stage A direct-source repair path in section 2.1 or halt
+11. derive and persist `EXECUTION_MODE.txt`
+12. if advancing a unit inside an already-authorized mission:
    - run `bash scripts/mission_lint.sh <MISSION_ID>`
    - persist `MISSION_LINT.txt`
    - halt if mission lint fails
-12. if the optional Codex Mission Goal Continuity adapter is enabled:
+13. if the optional Codex Mission Goal Continuity adapter is enabled:
    - confirm `docs/Factory/missions/<MISSION_ID>/MISSION_CURSOR.json` exists before using it
    - run `bash scripts/mission_cursor_lint.sh <MISSION_ID>` before continuing from the cursor or any external goal/bookmark
    - halt if mission cursor lint fails; repair source artifacts or regenerate the cursor from valid artifacts
-13. if the raw brief came from the optional PO lane:
+14. if the raw brief came from the optional PO lane:
    - confirm the brief already passed the Brief Review gate
    - treat missing upstream recall or review evidence as blocking
-14. if collecting process telemetry, run `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md`
+15. if collecting process telemetry, run `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md`
+
+### 2.0.1 Optional Project Preflight
+
+An adopting project may declare one additional fail-closed check without changing Factory Core authority. Create `docs/Factory/PROJECT_PREFLIGHT.json` with schema version 1 and an optional integer `timeout_seconds` from 1 through 300. Factory always executes the fixed repository command `scripts/factory_project_preflight --run <RUN_ID> --json` directly; the declaration cannot supply shell text or another command.
+
+The project command must return one JSON object with exactly `schema_version`, `status`, `reason_code`, and `evidence_paths`. Status is `PASS` or `FAIL`; reason codes use uppercase letters, digits, and underscores; evidence paths are existing repository-relative files. Each output stream is capped at 64 KiB. Invalid declarations, missing/non-executable commands, timeout, non-zero exit, oversized or malformed/ambiguous output, explicit failure, and unsafe evidence paths halt before Stage A with stable Core reason codes. When no declaration exists, current Factory behavior is unchanged and `PROJECT_PREFLIGHT.txt` is not required.
 
 ### 2.1 Stage A Direct-Source Repair For WEAK Recall
 Direct-source repair is a narrow fallback after generated recall remains `WEAK`. It strengthens the recall gate by replacing unresolved index references with explicit local source review evidence; it does not allow Stage A to proceed on raw weak recall.
@@ -299,7 +307,21 @@ If the run is `EXECUTION_ENABLED` and the pack passes:
 3. do not generate it for `PLANNING_ONLY` runs
 4. do not initialize downstream runs unless fan-out was explicitly approved
 
-### 6.2 Mission Execution (Mission Mode only)
+### 6.2 Execution Closeout
+
+When an execution-enabled run finishes its approved micro-sprints:
+1. retain evidence for every enabled verification-manifest check
+2. author exactly one `REVIEW_READY`, `NO_GO`, or `BLOCKED` outcome using
+   `docs/Factory/templates/EXECUTION_CLOSEOUT_TEMPLATE.json`
+3. record it only through `./scripts/factoryctl execution-closeout --run <RUN_ID> --input <DRAFT> --json`
+4. run plugin progress for the explicit run and for default selection
+5. treat any present-invalid closeout as blocking; absence alone preserves legacy behavior
+
+Closeout is derived evidence, not authority. `REVIEW_READY` permits maintainer
+review only and does not permit commit, merge, tag, push, publication, adapter
+continuation, phase closure, or mission completion.
+
+### 6.3 Mission Execution (Mission Mode only)
 If Mission Mode is active:
 1. use `MISSION_MANIFEST.md` as the mission ledger
 2. refresh `MISSION_CONTEXT_RECALL_REPORT.md` before checkpointing or authorizing the next unit

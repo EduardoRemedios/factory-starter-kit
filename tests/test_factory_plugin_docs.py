@@ -30,8 +30,8 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         self.assertTrue(
             all((DOCS_ROOT / name).is_file() for name in REQUIRED_DOCS)
         )
-        onboarding = (DOCS_ROOT / "ONBOARDING_GUIDE.md").read_text(encoding="utf-8")
-        self.assertIn("FACTORY_PLUGIN_QUICK_START.md", onboarding)
+        reference = (DOCS_ROOT / "FACTORY_PLUGIN_REFERENCE.md").read_text(encoding="utf-8")
+        self.assertIn("FACTORY_PLUGIN_QUICK_START.md", reference)
 
     def test_quick_start_names_every_public_entry_point(self):
         reference = (DOCS_ROOT / "FACTORY_PLUGIN_REFERENCE.md").read_text(
@@ -136,6 +136,28 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         self.assertIn("PYTHONDONTWRITEBYTECODE=1", validation)
         self.assertIn("git status --short", validation)
         self.assertIn("report every difference", validation)
+
+    def test_runtime_skills_use_supported_plugin_root_guidance(self):
+        skill_root = REPO_ROOT / "plugin-src/factory/skills"
+        for name in (
+            "doctor.md",
+            "greenfield.md",
+            "brownfield.md",
+            "progress.md",
+            "update.md",
+        ):
+            skill = (skill_root / name).read_text(encoding="utf-8")
+            self.assertIn("${CLAUDE_PLUGIN_ROOT}", skill)
+            self.assertIn("by absolute path", skill)
+            self.assertNotIn("<plugin-root>", skill)
+
+    def test_distributable_onboarding_is_customer_neutral(self):
+        text = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in sorted(DOCS_ROOT.glob("*.md"))
+        )
+        for prohibited in ("Symphony", "AuditEdge", "BMAD", "TEA"):
+            self.assertNotIn(prohibited, text)
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import platform
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -16,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.1.0"
+PLUGIN_VERSION = "0.2.0"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"
@@ -32,6 +33,7 @@ CODEX_PLUGIN_SKILLS = {
 }
 INSTALLATION_STATE_PATH = "docs/Factory/installation/INSTALLATION_STATE.json"
 TRANSACTION_RECEIPTS_DIR = "docs/Factory/installation/receipts"
+EXECUTION_CLOSEOUT_NAME = "EXECUTION_CLOSEOUT.json"
 
 
 def result(
@@ -371,6 +373,62 @@ def persisted_validators(run_root: Path) -> list[dict[str, str]]:
     return validators
 
 
+def evaluate_execution_closeout(root: Path, run_root: Path) -> dict[str, Any] | None:
+    closeout = run_root / EXECUTION_CLOSEOUT_NAME
+    if not closeout.exists():
+        return None
+    validator = root / "scripts" / "factory_execution_closeout.py"
+    if not validator.is_file():
+        return {
+            "status": "FAIL",
+            "reason_code": "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_MISSING",
+            "detail": "scripts/factory_execution_closeout.py",
+            "mutations": [],
+        }
+    try:
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(validator),
+                "validate",
+                "--root",
+                str(root),
+                "--run",
+                run_root.name,
+                "--json",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return {
+            "status": "FAIL",
+            "reason_code": "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_ERROR",
+            "detail": "validator_invocation",
+            "mutations": [],
+        }
+    try:
+        payload = json.loads(completed.stdout)
+    except json.JSONDecodeError:
+        return {
+            "status": "FAIL",
+            "reason_code": "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_ERROR",
+            "detail": "validator_output",
+            "mutations": [],
+        }
+    if completed.returncode not in {0, 1} or not isinstance(payload, dict):
+        return {
+            "status": "FAIL",
+            "reason_code": "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_ERROR",
+            "detail": "validator_exit",
+            "mutations": [],
+        }
+    return payload
+
+
 def evaluate_progress(root: Path, *, run_id: str | None = None) -> dict[str, Any]:
     root = root.resolve()
     run_root = select_run(root, run_id)
@@ -441,6 +499,33 @@ def evaluate_progress(root: Path, *, run_id: str | None = None) -> dict[str, Any
                 next_legal_action="obtain_explicit_human_go",
                 **common,
             )
+        closeout = evaluate_execution_closeout(root, run_root)
+        if closeout is not None:
+            if closeout.get("status") != "PASS":
+                return result(
+                    state="BLOCKED",
+                    reason_code="FACTORY_EXECUTION_CLOSEOUT_INVALID",
+                    next_legal_action="repair_the_closeout_evidence_without_bypassing_human_gates",
+                    blocker=closeout.get(
+                        "reason_code", "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_ERROR"
+                    ),
+                    closeout_detail=closeout.get("detail"),
+                    **common,
+                )
+            return result(
+                state=closeout["outcome"],
+                reason_code=closeout["reason_code"],
+                next_legal_action=closeout["next_legal_action"],
+                execution_closeout={
+                    "schema": closeout["schema"],
+                    "path": closeout["path"],
+                    "sha256": closeout["sha256"],
+                    "verification_result_count": closeout[
+                        "verification_result_count"
+                    ],
+                },
+                **common,
+            )
         if common["execution_mode"] == "EXECUTION_ENABLED" and has_human_go:
             return result(
                 state="AUTHORIZED_FOR_EXECUTION",
@@ -480,6 +565,7 @@ def stable_plan_id(value: dict[str, Any]) -> str:
             "harness",
             "plugin_version",
             "installed_version",
+            "bootstrap_plan",
             "planned_files",
         )
         if key in value
@@ -542,6 +628,18 @@ def attach_change_plan(
         "ordered_file_actions": [
             {"path": item["path"], "action": item["action"]}
             for item in value["planned_files"] + value["metadata_plan"]
+        ],
+        "ordered_transaction_steps": [
+            *value.get("bootstrap_plan", {}).get("steps", []),
+            *[
+                {"kind": "payload", "path": item["path"], "action": item["action"]}
+                for item in value["planned_files"]
+            ],
+            *[
+                {"kind": "metadata", "path": item["path"], "action": item["action"]}
+                for item in value["metadata_plan"]
+            ],
+            {"kind": "validation", "path": ".", "action": "verify"},
         ],
         "pre_digests": plan_pre_digests(
             root, value["planned_files"] + value["metadata_plan"]
@@ -642,6 +740,49 @@ def safe_target(root: Path, relative_text: str) -> Path:
     return target
 
 
+def git_state_digest(git_path: Path) -> str:
+    digest = hashlib.sha256()
+    if git_path.is_file():
+        digest.update(b"file\0")
+        digest.update(git_path.read_bytes())
+        return digest.hexdigest()
+    if not git_path.is_dir():
+        raise ValueError("FACTORY_GIT_STATE_INVALID")
+    for path in sorted(
+        git_path.rglob("*"),
+        key=lambda item: item.relative_to(git_path).as_posix(),
+    ):
+        relative = path.relative_to(git_path).as_posix().encode("utf-8")
+        if path.is_symlink():
+            digest.update(b"symlink\0" + relative + b"\0" + os.readlink(path).encode("utf-8") + b"\0")
+        elif path.is_dir():
+            digest.update(b"dir\0" + relative + b"\0")
+        elif path.is_file():
+            digest.update(b"file\0" + relative + b"\0" + path.read_bytes() + b"\0")
+        else:
+            raise ValueError("FACTORY_GIT_STATE_INVALID")
+    return digest.hexdigest()
+
+
+def greenfield_bootstrap_plan(root: Path) -> dict[str, Any]:
+    if root.exists() and not root.is_dir():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    root_action = "no_change" if root.is_dir() else "create"
+    git_path = root / ".git"
+    if git_path.is_symlink():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    git_action = "no_change" if git_path.exists() else "create"
+    return {
+        "root_existed": root.is_dir(),
+        "git_existed": git_path.exists(),
+        "git_pre_digest": git_state_digest(git_path) if git_path.exists() else None,
+        "steps": [
+            {"kind": "root", "path": ".", "action": root_action},
+            {"kind": "git", "path": ".git", "action": git_action},
+        ],
+    }
+
+
 def evaluate_setup_plan(
     root: Path,
     *,
@@ -693,6 +834,7 @@ def evaluate_setup_plan(
             )
 
     try:
+        bootstrap_plan = greenfield_bootstrap_plan(root) if mode == "greenfield" else None
         installed_files = {
             entry["path"]: entry
             for entry in installation_state["managed_files"]
@@ -748,6 +890,9 @@ def evaluate_setup_plan(
         "planned_files": planned_files,
         "conflicts": conflicts,
     }
+    if bootstrap_plan:
+        plan_details["bootstrap_plan"] = bootstrap_plan
+        plan_details["allowed_paths"] = [".", ".git", *plan_details["allowed_paths"]]
     plan_details["plan_id"] = stable_plan_id(plan_details)
     attach_change_plan(
         plan_details,
@@ -894,6 +1039,21 @@ def managed_files_from_plan(
 def validate_plan_preconditions(
     root: Path, plan: dict[str, Any], previous_state: dict[str, Any] | None
 ) -> None:
+    bootstrap = plan.get("bootstrap_plan")
+    if bootstrap:
+        root_step, git_step = bootstrap["steps"]
+        if root_step["action"] == "create" and root.exists():
+            raise ValueError("FACTORY_PLAN_STALE")
+        if root_step["action"] == "no_change" and not root.is_dir():
+            raise ValueError("FACTORY_PLAN_STALE")
+        git_path = root / ".git"
+        if git_step["action"] == "create" and git_path.exists():
+            raise ValueError("FACTORY_PLAN_STALE")
+        if git_step["action"] == "no_change" and (
+            not git_path.exists()
+            or git_state_digest(git_path) != bootstrap["git_pre_digest"]
+        ):
+            raise ValueError("FACTORY_PLAN_STALE")
     installed = {
         entry["path"]: entry
         for entry in (previous_state or {}).get("managed_files", [])
@@ -918,6 +1078,40 @@ def validate_plan_preconditions(
                 or file_sha256(target) != prior.get("expected_digest")
             ):
                 raise ValueError("FACTORY_PLAN_STALE")
+
+
+def validate_setup_result(
+    root: Path, managed_files: list[dict[str, str]], installation_state_bytes: bytes
+) -> None:
+    for entry in managed_files:
+        target = safe_target(root, entry["path"])
+        if not target.is_file() or file_sha256(target) != entry["expected_digest"]:
+            raise RuntimeError("FACTORY_SETUP_VALIDATION_FAILED")
+    state_path = safe_target(root, INSTALLATION_STATE_PATH)
+    if not state_path.is_file() or file_sha256(state_path) != bytes_sha256(
+        installation_state_bytes
+    ):
+        raise RuntimeError("FACTORY_SETUP_VALIDATION_FAILED")
+
+
+def restore_bootstrap_paths(
+    root: Path, *, root_created: bool, git_created: bool, git_digest: str | None
+) -> str | None:
+    git_path = root / ".git"
+    if git_created:
+        if (
+            not git_path.exists()
+            or git_digest is None
+            or git_state_digest(git_path) != git_digest
+        ):
+            return "FACTORY_ROLLBACK_GIT_STATE_CHANGED"
+        shutil.rmtree(git_path)
+    if root_created:
+        try:
+            root.rmdir()
+        except OSError:
+            pass
+    return None
 
 
 def apply_setup_plan(
@@ -977,6 +1171,7 @@ def apply_setup_plan(
             plan_id=plan["plan_id"],
             mutations=[],
         )
+    bootstrap = plan.get("bootstrap_plan")
     transaction_receipt = {
         "schema_version": 1,
         **plan["change_plan"],
@@ -985,7 +1180,7 @@ def apply_setup_plan(
             entry["path"]: entry["expected_digest"] for entry in managed_files
         },
         "outcome": "APPLIED",
-        "recovery_status": "NOT_REQUIRED",
+        "recovery_status": "AVAILABLE" if plan["mode"] == "greenfield" else "NOT_REQUIRED",
     }
     installation_state = {
         "schema_version": 1,
@@ -1009,30 +1204,65 @@ def apply_setup_plan(
     transaction_receipt["post_digests"][INSTALLATION_STATE_PATH] = bytes_sha256(
         installation_state_bytes
     )
-    changes.extend(
-        [
-            {
-                "path": transaction_path,
-                "action": "write",
-                "data": (
-                    json.dumps(transaction_receipt, indent=2, sort_keys=True) + "\n"
-                ).encode(),
-                "mode": 0o600,
-            },
-            {
-                "path": INSTALLATION_STATE_PATH,
-                "action": "write",
-                "data": installation_state_bytes,
-                "mode": 0o644,
-            },
-        ]
-    )
+    root_created = False
+    git_created = False
+    git_digest: str | None = None
+    snapshots: dict[str, dict[str, Any]] | None = None
     try:
-        apply_changes(root, changes)
+        if bootstrap and bootstrap["steps"][0]["action"] == "create":
+            root.mkdir()
+            root_created = True
+        if bootstrap and bootstrap["steps"][1]["action"] == "create":
+            subprocess.run(
+                ["git", "init", "-q", str(root)],
+                check=True,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+            )
+            git_created = True
+            git_digest = git_state_digest(root / ".git")
+        if bootstrap:
+            transaction_receipt["bootstrap"] = {
+                "root_created": root_created,
+                "git_created": git_created,
+                "git_post_init_digest": git_digest,
+            }
+        changes.extend(
+            [
+                {
+                    "path": transaction_path,
+                    "action": "write",
+                    "data": (
+                        json.dumps(transaction_receipt, indent=2, sort_keys=True) + "\n"
+                    ).encode(),
+                    "mode": 0o600,
+                },
+                {
+                    "path": INSTALLATION_STATE_PATH,
+                    "action": "write",
+                    "data": installation_state_bytes,
+                    "mode": 0o644,
+                },
+            ]
+        )
+        snapshots = apply_changes(root, changes)
+        validate_setup_result(root, managed_files, installation_state_bytes)
     except Exception as error:
+        if snapshots is not None:
+            try:
+                restore_snapshots(root, snapshots)
+            except Exception:
+                pass
+        rollback_reason = restore_bootstrap_paths(
+            root,
+            root_created=root_created,
+            git_created=git_created,
+            git_digest=git_digest,
+        )
         return result(
             state="BLOCKED",
-            reason_code="FACTORY_SETUP_ABORTED",
+            reason_code=rollback_reason or "FACTORY_SETUP_ABORTED",
             next_legal_action="resolve_the_write_failure_and_preview_again",
             plan_id=plan["plan_id"],
             blocker=f"{type(error).__name__}: {error}",
@@ -1046,7 +1276,11 @@ def apply_setup_plan(
         plan_id=plan["plan_id"],
         receipt=transaction_path,
         installation_state=INSTALLATION_STATE_PATH,
-        mutations=[change["path"] for change in changes],
+        mutations=[
+            *(["."] if root_created else []),
+            *([".git"] if git_created else []),
+            *[change["path"] for change in changes],
+        ],
     )
 
 
@@ -1361,6 +1595,14 @@ def apply_rollback(root: Path, *, approved: bool) -> dict[str, Any]:
             raise ValueError("FACTORY_ROLLBACK_UNAVAILABLE")
         transaction_target = safe_target(root, transaction_path)
         transaction = json.loads(transaction_target.read_text(encoding="utf-8"))
+        if transaction.get("operation") == "greenfield":
+            return apply_greenfield_rollback(
+                root,
+                installation_state=installation_state,
+                transaction=transaction,
+                transaction_path=transaction_path,
+                approved=approved,
+            )
         if (
             transaction.get("operation") != "update"
             or transaction.get("target_version")
@@ -1412,6 +1654,126 @@ def apply_rollback(root: Path, *, approved: bool) -> dict[str, Any]:
         next_legal_action="run_factory_doctor_and_validation",
         final_version=transaction["source_version"],
         mutations=sorted(snapshots) + [transaction_path],
+    )
+
+
+def _greenfield_allowed_paths(
+    installation_state: dict[str, Any], transaction_path: str
+) -> tuple[set[str], set[str]]:
+    files = {
+        entry["path"]
+        for entry in installation_state["managed_files"]
+        if isinstance(entry, dict) and isinstance(entry.get("path"), str)
+    }
+    files.update({INSTALLATION_STATE_PATH, transaction_path})
+    directories: set[str] = set()
+    for relative in files:
+        parent = Path(relative).parent
+        while parent != Path("."):
+            directories.add(parent.as_posix())
+            parent = parent.parent
+    return files, directories
+
+
+def apply_greenfield_rollback(
+    root: Path,
+    *,
+    installation_state: dict[str, Any],
+    transaction: dict[str, Any],
+    transaction_path: str,
+    approved: bool,
+) -> dict[str, Any]:
+    bootstrap = transaction.get("bootstrap")
+    if (
+        transaction.get("target_version") != installation_state["factory_version"]
+        or transaction.get("recovery_status") != "AVAILABLE"
+        or not isinstance(bootstrap, dict)
+        or not isinstance(bootstrap.get("root_created"), bool)
+        or not isinstance(bootstrap.get("git_created"), bool)
+    ):
+        raise ValueError("FACTORY_ROLLBACK_EVIDENCE_MISMATCH")
+    if not approved:
+        return result(
+            state="BLOCKED",
+            reason_code="FACTORY_ROLLBACK_APPROVAL_REQUIRED",
+            next_legal_action="explicitly_approve_rollback",
+            installed_version=installation_state["factory_version"],
+            target_version=None,
+            mutations=[],
+        )
+
+    git_path = root / ".git"
+    if bootstrap["git_created"]:
+        expected_git = bootstrap.get("git_post_init_digest")
+        if (
+            not isinstance(expected_git, str)
+            or not git_path.exists()
+            or git_state_digest(git_path) != expected_git
+        ):
+            return result(
+                state="BLOCKED",
+                reason_code="FACTORY_ROLLBACK_GIT_STATE_CHANGED",
+                next_legal_action="preserve_user_git_state_and_recover_manually",
+                mutations=[],
+            )
+
+    expected_digests = transaction.get("post_digests")
+    if not isinstance(expected_digests, dict):
+        raise ValueError("FACTORY_ROLLBACK_EVIDENCE_MISMATCH")
+    files, directories = _greenfield_allowed_paths(
+        installation_state, transaction_path
+    )
+    for relative in files - {transaction_path}:
+        target = safe_target(root, relative)
+        expected = expected_digests.get(relative)
+        if (
+            not isinstance(expected, str)
+            or not target.is_file()
+            or file_sha256(target) != expected
+        ):
+            raise ValueError("FACTORY_ROLLBACK_EVIDENCE_MISMATCH")
+
+    if bootstrap["root_created"]:
+        for path in root.rglob("*"):
+            relative = path.relative_to(root)
+            if relative.parts and relative.parts[0] == ".git":
+                continue
+            value = relative.as_posix()
+            if path.is_file() and value in files:
+                continue
+            if path.is_dir() and value in directories:
+                continue
+            raise ValueError("FACTORY_ROLLBACK_EVIDENCE_MISMATCH")
+
+    changes = [
+        {"path": relative, "action": "delete"}
+        for relative in sorted(
+            files,
+            key=lambda value: (len(Path(value).parts), value),
+            reverse=True,
+        )
+    ]
+    snapshots = apply_changes(root, changes)
+    try:
+        if bootstrap["git_created"]:
+            if git_state_digest(git_path) != bootstrap["git_post_init_digest"]:
+                raise ValueError("FACTORY_ROLLBACK_GIT_STATE_CHANGED")
+            shutil.rmtree(git_path)
+        if bootstrap["root_created"]:
+            root.rmdir()
+    except Exception:
+        restore_snapshots(root, snapshots)
+        raise
+    return result(
+        state="ROLLED_BACK",
+        reason_code="FACTORY_ROLLBACK_APPLIED",
+        next_legal_action="confirm_target_state_before_reinitializing",
+        final_version=None,
+        mutations=[
+            *sorted(files),
+            *([".git"] if bootstrap["git_created"] else []),
+            *(["."] if bootstrap["root_created"] else []),
+        ],
     )
 
 

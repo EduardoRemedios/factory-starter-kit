@@ -13,6 +13,7 @@ Treat a blocked state as a safety result, not as a prompt to force the operation
 | `FACTORY_GREENFIELD_NOT_EMPTY` | Greenfield was selected for an existing project | Use brownfield |
 | `FACTORY_PLAN_APPROVAL_REQUIRED` | Apply did not receive the exact previewed plan ID | Review and approve that plan, or preview again |
 | `FACTORY_PLAN_STALE` | Files changed after preview | Generate and review a fresh plan |
+| `FACTORY_ROLLBACK_GIT_STATE_CHANGED` | Factory-created Git changed after setup | Preserve Git and project files; recover manually |
 | `FACTORY_EVIDENCE_CONTRADICTION` | Passing prose disagrees with required disk evidence | Repair the named stage and rerun its validator |
 | `FACTORY_WEAK_RECALL` | Recall is weak without a valid direct-source repair | Refresh recall and resolve material gaps |
 | `FACTORY_HUMAN_GO_REQUIRED` | Planning is complete but execution is not authorized | Obtain explicit human Go |
@@ -20,17 +21,22 @@ Treat a blocked state as a safety result, not as a prompt to force the operation
 | `FACTORY_DOWNGRADE_UNSUPPORTED` | Update points to an older package | Use the separately approved rollback path |
 | `FACTORY_ROLLBACK_UNAVAILABLE` | No recoverable update receipt is recorded | Stop and recover from version control or an owner-approved backup |
 | `FACTORY_ROLLBACK_EVIDENCE_MISMATCH` | Installation state and transaction receipt do not agree | Stop; preserve evidence and recover manually |
+| `FACTORY_PROJECT_PREFLIGHT_FAILED` | The declared project preflight returned FAIL | Inspect its repository-relative evidence and fix the project prerequisite |
+| `FACTORY_EXECUTION_CLOSEOUT_INVALID` | A present closeout record failed strict schema, identity, pin, coverage, outcome, path, or digest validation | Preserve the record and evidence; repair through the approved run boundary and never delete it to obtain legacy fallback |
 
 ## Claude Command Is Missing
 
 1. Run `claude --version`.
-2. Update to Claude Code 2.1.216 or newer.
+2. Run `claude plugin --help`; update Claude Code if marketplace, install, or
+   validation commands are absent.
 3. Re-run strict plugin and marketplace validation.
 4. Confirm `factory@factory-starter-kit` is installed.
 5. Restart Claude Code.
 6. Invoke `/factory:doctor`.
 
-Do not diagnose namespaced command behavior using an older unsupported Claude version.
+If multiple `claude` executables are installed, confirm that every command uses
+the same supported executable. Do not diagnose namespaced command behavior with
+a binary that lacks the plugin interface.
 
 ## Codex Skill Is Missing
 

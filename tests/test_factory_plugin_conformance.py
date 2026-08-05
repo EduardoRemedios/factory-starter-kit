@@ -7,14 +7,16 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tests.factory_plugin_test_support import FIXTURES_DIR
 from tests.test_factory_plugin_status import create_run, passing_handoff, write
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.dont_write_bytecode = True
 FIXTURE = json.loads(
-    (FIXTURES_DIR / "harness_parity/golden.json").read_text(encoding="utf-8")
+    (
+        REPO_ROOT
+        / "tests/plugin_fixtures/harness_parity/golden.json"
+    ).read_text(encoding="utf-8")
 )
 
 

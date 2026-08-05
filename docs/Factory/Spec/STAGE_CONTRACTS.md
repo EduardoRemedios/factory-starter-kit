@@ -1,9 +1,11 @@
-# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.14)
+# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.16)
 
 ## Version
-v4.14
+v4.16
 
 ## Change Log
+- v4.16 (2026-08-05): Added schema-locked, non-authorizing execution-closeout evidence and fail-closed progress precedence.
+- v4.15 (2026-08-05): Added optional fail-closed project preflight after Core knowledge lint and before Stage A context recall.
 - v4.14 (2026-07-02): Added direct-source repair semantics for generated WEAK Stage A context recall reports.
 - v4.13 (2026-05-19): Added SIMPLE-CODE-GATE v2 to Stage H and post-gate execution prompt contracts for Factory-controlled code-changing runs.
 - v4.12 (2026-05-18): Added optional Codex Mission Goal Continuity adapter lint contract for derived `MISSION_CURSOR.json`; it does not alter core stage contracts or mission ledger authority.
@@ -24,6 +26,7 @@ v4.14
 - No stage may start unless its entry criteria pass.
 - No stage may complete unless its exit criteria pass.
 - Pre-run knowledge lint MUST pass (`bash scripts/knowledge_lint.sh`) before `STAGE_A` starts, and output MUST be persisted at `docs/Factory/runs/<RUN_ID>/KNOWLEDGE_LINT.txt`.
+- If `docs/Factory/PROJECT_PREFLIGHT.json` exists, `./scripts/factoryctl project-preflight --run <RUN_ID>` MUST run after knowledge lint and before context recall; `PROJECT_PREFLIGHT.txt` MUST record `FACTORY_PROJECT_PREFLIGHT_PASS` or initialization halts.
 - If the run is advancing a unit inside an already-authorized mission, pre-run mission lint MUST pass (`bash scripts/mission_lint.sh <MISSION_ID>`) before `STAGE_A` starts, and output MUST be persisted at `docs/Factory/runs/<RUN_ID>/MISSION_LINT.txt`.
 - If the optional Codex Mission Goal Continuity adapter is enabled, mission cursor lint MUST pass (`bash scripts/mission_cursor_lint.sh <MISSION_ID>`) before an agent continues from `MISSION_CURSOR.json` or an external goal/bookmark. This check is additive and does not replace `mission_lint.sh`.
 - Every stage produces `pack/HANDOFF/HANDOFF_STAGE_<STAGE_CODE>.md` containing:
@@ -84,6 +87,7 @@ A run produces:
 - `docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
 - `docs/Factory/runs/<RUN_ID>/EXECUTION_MODE.txt`
 - `docs/Factory/runs/<RUN_ID>/SPRINT_ID.txt`
+- `docs/Factory/runs/<RUN_ID>/PROJECT_PREFLIGHT.txt` (required only when the project declares `docs/Factory/PROJECT_PREFLIGHT.json`)
 - `docs/Factory/runs/<RUN_ID>/pack/`
 - `docs/Factory/runs/<RUN_ID>/EXECUTION_PROMPT.md` (required only when `EXECUTION_MODE.txt = EXECUTION_ENABLED` after `STAGE_I2` PASS plus human GO)
 
@@ -137,6 +141,7 @@ If any downstream stage discovers the locked intent is flawed:
 Inputs:
 - `LOAD`: `raw_brief.md`, `CONTEXT_RECALL_REPORT.md`
 - `DISK`: `KNOWLEDGE_LINT.txt`, `EXECUTION_MODE.txt`
+- `DISK`: `PROJECT_PREFLIGHT.txt` (only when `docs/Factory/PROJECT_PREFLIGHT.json` exists)
 - `DISK`: `MISSION_LINT.txt` (already-authorized mission-unit runs only)
 
 Outputs:
@@ -146,6 +151,7 @@ Outputs:
 Entry criteria:
 - raw brief content exists and is non-empty
 - `KNOWLEDGE_LINT.txt` exists and records a successful knowledge-lint preflight
+- if `docs/Factory/PROJECT_PREFLIGHT.json` exists, `PROJECT_PREFLIGHT.txt` exists and records `project_preflight: PASS` plus `FACTORY_PROJECT_PREFLIGHT_PASS`
 - `CONTEXT_RECALL_REPORT.md` exists and records either a generated Stage A recall pass for this run or a valid `REPAIRED_DIRECT_SOURCE_CHECK` direct-source repair addendum for a generated `WEAK` report
 - if the run is advancing a unit inside an already-authorized mission, `MISSION_LINT.txt` exists and records a successful mission-lint preflight
 - `EXECUTION_MODE.txt` exists and contains exactly one value: `PLANNING_ONLY` or `EXECUTION_ENABLED`
@@ -351,6 +357,30 @@ Exit criteria:
 - prompt has no unresolved placeholders
 - prompt includes deterministic skill routing instructions and stage-aligned guardrails
 - for code-changing execution, prompt includes SIMPLE-CODE-GATE v2 and an exit-checklist item for accepted complexity
+
+## EXECUTION_CLOSEOUT — Derived Post-execution Evidence
+
+Applicability:
+- optional for historical runs; required when an execution-enabled run claims a
+  technical `REVIEW_READY`, `NO_GO`, or `BLOCKED` outcome
+
+Contract:
+- canonical path: `docs/Factory/runs/<RUN_ID>/EXECUTION_CLOSEOUT.json`
+- schema: `factory.execution-closeout.v1`
+- author the outcome outside the validator, then record it only with
+  `./scripts/factoryctl execution-closeout --run <RUN_ID> --input <DRAFT> --json`
+- bind exact run/sprint identity, execution mode, pack manifest, execution
+  authorization, micro-sprints, verification manifest and retained evidence digests
+- cover every enabled verification check; `REVIEW_READY` requires all PASS;
+  `NOT_RUN` is valid only for a negative outcome with an exact blocker
+- the record grants no execution, merge, release, tag, adapter, phase or mission authority
+
+Progress precedence:
+- normal stage, recall, pack and human-Go contradictions are evaluated first
+- artifact absence preserves historical behavior
+- artifact presence opts into strict validation on every read
+- any invalid schema, identity, path, pin, coverage, outcome or evidence digest
+  returns a blocked contradiction; never fall back to the historical authorized state
 
 ## MISSION_WRAPPER (additive, optional — not a replacement stage chain)
 Purpose:

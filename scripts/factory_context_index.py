@@ -20,6 +20,7 @@ DEFAULT_SOURCE_PATTERNS = (
     "docs/PROJECT_STATE.md",
     "docs/ROADMAP.md",
     "docs/CHANGELOG.md",
+    "docs/upstream/**/*.md",
     "docs/Factory/**/*.md",
     "docs/onboarding/**/*.md",
     "docs/sprints/**/*.md",
@@ -200,6 +201,8 @@ def _classify_source(rel_path: str, text: str) -> dict[str, Any]:
     elif len(path_parts) >= 5 and path_parts[:4] == ("docs", "Factory", "ProductOwner", "phases"):
         phase_id = path_parts[4]
         artifact_type = "po_phase_artifact"
+    elif len(path_parts) >= 3 and path_parts[:2] == ("docs", "upstream"):
+        artifact_type = "upstream_evidence"
     elif rel_path == "AGENTS.md":
         artifact_type = "repo_context_doc"
 

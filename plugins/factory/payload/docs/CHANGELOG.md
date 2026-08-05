@@ -1,19 +1,31 @@
 # Changelog
 
-## 2026-07-27
+## 2026-08-05
 
-- Replaced copy-first README onboarding with plugin-first installation for the ChatGPT/Codex desktop app, Claude Code desktop, and Claude Code CLI.
-- Added a developer FAQ covering Factory orchestration, Claude instruction bridging, model roles, coding standards, regression testing, specifications, product vision, NFRs, evidence storage, determinism, brownfield safety, and comparisons with GSD and BMAD.
-- Prepared the privacy-safe dual-platform Factory plugin release candidate for merge to `main`; the independent pilot and stable release tag remain separate gates.
-
-## 2026-07-26
-
-- Passed live Claude Code CLI and Desktop Doctor, Brownfield, Progress, and Validate journeys against Factory plugin `0.1.0`.
-- Closed all defects found during Claude technical verification, including setup routing, exact-plan approval wording, and validation bytecode cleanliness.
-- Moved public golden fixtures into `tests/plugin_fixtures/` so the open-source test suite does not depend on private run or pilot evidence.
-- Added a public-release privacy regression that rejects organization-specific names, local usernames, and personal-communication references from published plugin surfaces.
-- Added GitHub marketplace installation guidance for both Codex and Claude packages.
-- Added Apache-2.0 license and repository metadata to both generated plugin packages.
+- Prepared Factory plugin technical RC `0.2.0` from the single authored source for deterministic Codex and Claude Code packages.
+- Added generic promoted-upstream evidence indexing and an optional, schema-locked, bounded Stage A project preflight without adding domain-specific policy to Factory Core.
+- Added transactional Greenfield bootstrap for absent or empty targets, including Git initialization, exact-plan approval, post-apply validation, interruption recovery, and guarded rollback that preserves changed Git state.
+- Made the pilot documentation customer-neutral and documented supported Claude plugin-root resolution.
+- Completed bounded two-lane Claude composition proof and full regression/privacy/no-touch closeout; RC `0.2.0` is technical `REVIEW_READY`.
+- Retained the formal pilot and all maintainer commit, tag, publication, and rollout actions as separate remaining gates.
+- Added schema-locked execution closeout and read-time progress revalidation so
+  completed execution reports `REVIEW_READY`, `NO_GO`, or `BLOCKED` without
+  granting merge, tag, publication, adapter, phase, or mission authority.
+- Reconstructed RC `0.2.0` in a retained clean review worktree and verified the
+  final generated packages, Claude composition, full regression, privacy, and
+  protected-source no-touch behavior.
+- Repaired the maintainer-review path-safety blocker in execution-closeout and
+  project-preflight evidence writes by rejecting symlinked run-root ancestors
+  before filesystem reads or writes.
+- Added adversarial coverage for symlinked `docs`, `docs/Factory`, and
+  `docs/Factory/runs`, including explicit proof that no outside closeout or
+  preflight evidence file is created, then rebuilt both plugin packages.
+- Independently reran all 12 release verification checks with complete retained
+  transcripts; every check passed and the candidate remained `REVIEW_READY`.
+- Prepared a customer-neutral public review surface containing the authored
+  plugin source, deterministic packages, canonical documentation, and
+  reproducible tests while keeping project-specific run evidence out of the
+  public distribution.
 
 ## 2026-07-24
 
