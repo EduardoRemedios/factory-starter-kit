@@ -141,16 +141,10 @@ def write_payload(package_root: Path, manifest: dict[str, Any]) -> None:
 
 
 def write_packages(staging_root: Path, manifest: dict[str, Any]) -> None:
-    public_metadata = {
-        key: manifest[key]
-        for key in ("homepage", "repository", "license")
-        if key in manifest
-    }
     for platform in PACKAGE_ROOTS:
         package_root = staging_root / platform
         (package_root / "skills").mkdir(parents=True)
         (package_root / "scripts").mkdir()
-        shutil.copy2(REPO_ROOT / "LICENSE", package_root / "LICENSE")
 
         for skill in manifest["skills"]:
             skill_id = skill["id"]
@@ -173,7 +167,6 @@ def write_packages(staging_root: Path, manifest: dict[str, Any]) -> None:
                 "version": manifest["version"],
                 "description": manifest["description"],
                 "author": manifest["author"],
-                **public_metadata,
                 "skills": "./skills/",
                 "interface": {
                     **manifest["interface"],
@@ -187,7 +180,6 @@ def write_packages(staging_root: Path, manifest: dict[str, Any]) -> None:
                 "version": manifest["version"],
                 "description": manifest["description"],
                 "author": manifest["author"],
-                **public_metadata,
             }
             manifest_path = package_root / ".claude-plugin" / "plugin.json"
 

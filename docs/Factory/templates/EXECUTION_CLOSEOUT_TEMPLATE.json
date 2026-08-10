@@ -1,0 +1,45 @@
+{
+  "authority_grants": [],
+  "completed_micro_sprints": [
+    "MS-00"
+  ],
+  "execution_authorization": {
+    "path": "EXECUTION_AUTHORIZATION.md",
+    "sha256": "REPLACE_WITH_SHA256"
+  },
+  "execution_mode": "EXECUTION_ENABLED",
+  "micro_sprints": {
+    "path": "pack/micro_sprints.md",
+    "sha256": "REPLACE_WITH_SHA256"
+  },
+  "next_legal_action": "review_the_retained_clean_worktree",
+  "outcome": "REVIEW_READY",
+  "pack_manifest": {
+    "path": "pack/PACK_MANIFEST.md",
+    "sha256": "REPLACE_WITH_SHA256"
+  },
+  "reason_code": "FACTORY_EXECUTION_REVIEW_READY",
+  "retained_evidence": [
+    {
+      "id": "EVIDENCE_ID",
+      "path": "artifacts/verification/example/evidence.txt",
+      "sha256": "REPLACE_WITH_SHA256"
+    }
+  ],
+  "run_id": "RUN_YYYYMMDD_HHMM_TAG",
+  "schema": "factory.execution-closeout.v1",
+  "sprint_id": "SPRINT_YYYYMMDD_NNN",
+  "verification_manifest": {
+    "path": "pack/verification_manifest.yaml",
+    "sha256": "REPLACE_WITH_SHA256"
+  },
+  "verification_results": [
+    {
+      "blocker": null,
+      "evidence_path": "artifacts/verification/example/VM-001.txt",
+      "id": "VM-001",
+      "sha256": "REPLACE_WITH_SHA256",
+      "status": "PASS"
+    }
+  ]
+}

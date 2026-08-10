@@ -24,6 +24,10 @@ from factory_context_index import (  # noqa: E402
     trace_context,
     write_context_report,
 )
+from factory_execution_closeout import (  # noqa: E402
+    ExecutionCloseoutError,
+    record_closeout,
+)
 from factory_kilo_stage import (  # noqa: E402
     FactoryKiloStageError,
     format_kilo_stage,
@@ -33,6 +37,11 @@ from factory_pack_lint import (  # noqa: E402
     FactoryPackLintError,
     format_pack_lint,
     lint_pack,
+)
+from factory_project_preflight import (  # noqa: E402
+    ProjectPreflightError,
+    run_project_preflight,
+    write_project_preflight_evidence,
 )
 from factory_run_metrics import (  # noqa: E402
     FactoryRunMetricsError,
@@ -164,6 +173,25 @@ def build_parser() -> argparse.ArgumentParser:
     context_report_parser.add_argument("--db-path", default=None, help="Optional override for the SQLite index path.")
     context_report_parser.add_argument("--fail-on-weak-coverage", action="store_true", help="Exit non-zero after writing the report if coverage remains WEAK after all attempted scopes.")
     context_report_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    project_preflight_parser = subparsers.add_parser(
+        "project-preflight",
+        help="Run an optional declared project preflight before Factory Stage A.",
+    )
+    project_preflight_parser.add_argument("--run", required=True, help="Factory run ID.")
+    project_preflight_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    execution_closeout_parser = subparsers.add_parser(
+        "execution-closeout",
+        help="Validate and record an authored execution-closeout outcome.",
+    )
+    execution_closeout_parser.add_argument("--run", required=True, help="Factory run ID.")
+    execution_closeout_parser.add_argument(
+        "--input",
+        required=True,
+        help="Path to the authored closeout JSON draft.",
+    )
+    execution_closeout_parser.add_argument("--json", action="store_true", help="Print JSON output.")
 
     pack_lint_parser = subparsers.add_parser(
         "pack-lint",
@@ -358,6 +386,36 @@ def main() -> int:
                 )
             return 0
 
+        if args.command == "project-preflight":
+            payload = run_project_preflight(root=root, run_id=args.run)
+            evidence_path = write_project_preflight_evidence(
+                root=root,
+                run_id=args.run,
+                result=payload,
+            )
+            payload = {**payload, "evidence_path": evidence_path.relative_to(root).as_posix()}
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"project_preflight: {'PASS' if payload['outcome'] == 'pass' else 'HALT'}")
+                print(f"reason_code: {payload['reason_code']}")
+                print(f"evidence_path: {payload['evidence_path']}")
+            return 0 if payload["outcome"] == "pass" else 1
+
+        if args.command == "execution-closeout":
+            payload = record_closeout(
+                root=root,
+                run_id=args.run,
+                input_path=Path(args.input),
+            )
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"execution_closeout: {payload['outcome']}")
+                print(f"reason_code: {payload['reason_code']}")
+                print(f"evidence_path: {payload['path']}")
+            return 0
+
         if args.command == "pack-lint":
             payload = lint_pack(
                 root=root,
@@ -408,8 +466,10 @@ def main() -> int:
 
     except (
         FactoryContextIndexError,
+        ExecutionCloseoutError,
         FactoryKiloStageError,
         FactoryPackLintError,
+        ProjectPreflightError,
         FactoryRunMetricsError,
         FactoryStageLintError,
         TaskMemoryError,

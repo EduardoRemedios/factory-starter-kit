@@ -15,11 +15,13 @@ Purpose:
 
 ## 2) Canonical Commands
 - Knowledge lint preflight: `bash scripts/knowledge_lint.sh`
+- Optional declared project preflight: `./scripts/factoryctl project-preflight --run <RUN_ID>`
 - Context index refresh: `./scripts/factoryctl context-index`
 - Stage A recall report: `./scripts/factoryctl context-report --profile stage-a --scope <RUN_ID> --output docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
 - Stage validation after each handoff: `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>`
 - Kilo external model lane (optional): `./scripts/factoryctl kilo-stage --run <RUN_ID> --stage <STAGE> --model <KILO_MODEL_ID> --variant high --auto --timeout-seconds 900`
 - Pack validation after I2: `./scripts/factoryctl pack-lint --run <RUN_ID>`
+- Execution closeout recording: `./scripts/factoryctl execution-closeout --run <RUN_ID> --input <AUTHORED_DRAFT.json> --json`
 - Run metrics initialization: `./scripts/factoryctl metrics-init --run <RUN_ID>`
 - Task memory initialization (optional): `./scripts/factoryctl memory-init`
 - Repo cartographer scan (optional): `./scripts/cartographer`
@@ -69,9 +71,11 @@ Future-Proofing and Context:
 ## 4) Factory Run Preconditions
 - Run `bash scripts/knowledge_lint.sh` before Stage A.
 - Persist lint output in run root as `KNOWLEDGE_LINT.txt`.
+- If `docs/Factory/PROJECT_PREFLIGHT.json` exists, run `./scripts/factoryctl project-preflight --run <RUN_ID>` after Core knowledge lint and before context recall; persist/pass `PROJECT_PREFLIGHT.txt` or halt.
 - Refresh the recall index and generate `CONTEXT_RECALL_REPORT.md` before Stage A.
 - After each stage handoff, run `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>` before advancing.
 - After Stage I2, run `./scripts/factoryctl pack-lint --run <RUN_ID>` before presenting the pack for human Go or No-go review.
+- After authorized execution, record `EXECUTION_CLOSEOUT.json` only through the canonical validator; present-invalid closeout evidence blocks and never falls back to legacy progress.
 - For new execution-enabled or Mission Mode runs, create `pack/verification_manifest.yaml` when runnable verification checks exist; `pack-lint` validates it when present.
 - For process improvement runs, instantiate `docs/Factory/templates/RUN_METRICS_TEMPLATE.md` as `docs/Factory/runs/<RUN_ID>/RUN_METRICS.md`.
 - Prefer `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md` from the canonical template.

@@ -30,8 +30,8 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         self.assertTrue(
             all((DOCS_ROOT / name).is_file() for name in REQUIRED_DOCS)
         )
-        onboarding = (DOCS_ROOT / "ONBOARDING_GUIDE.md").read_text(encoding="utf-8")
-        self.assertIn("FACTORY_PLUGIN_QUICK_START.md", onboarding)
+        reference = (DOCS_ROOT / "FACTORY_PLUGIN_REFERENCE.md").read_text(encoding="utf-8")
+        self.assertIn("FACTORY_PLUGIN_QUICK_START.md", reference)
 
     def test_quick_start_names_every_public_entry_point(self):
         reference = (DOCS_ROOT / "FACTORY_PLUGIN_REFERENCE.md").read_text(
@@ -129,6 +129,51 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
             self.assertIn("exact full current plan ID", skill)
             self.assertIn("Generic approval", skill)
 
+        greenfield = (skill_root / "greenfield.md").read_text(encoding="utf-8")
+        self.assertIn('--root "$PWD"', greenfield)
+        self.assertIn("same `--root`", greenfield)
+        self.assertIn("Never invent", greenfield)
+        self.assertIn("does not require an", greenfield)
+        self.assertIn("existing Git worktree", greenfield)
+        self.assertIn("authority for Greenfield versus Brownfield", greenfield)
+        self.assertIn(".claude/settings.local.json", greenfield)
+        self.assertIn("read-only preserved evidence", greenfield)
+        self.assertIn("Never edit, delete, chmod, copy", greenfield)
+
+    def test_new_project_runs_greenfield_before_doctor(self):
+        quick_start = (DOCS_ROOT / "FACTORY_PLUGIN_QUICK_START.md").read_text(
+            encoding="utf-8"
+        )
+        claude_section = quick_start.split("## Claude Code", 1)[1].split(
+            "## What Happens Before Any Write", 1
+        )[0]
+        self.assertLess(
+            claude_section.index("/factory:greenfield"),
+            claude_section.index("/factory:doctor"),
+        )
+        self.assertIn("current working directory", claude_section)
+        self.assertIn("same quoted", claude_section)
+        self.assertIn(".claude/settings.local.json", claude_section)
+        self.assertIn("Factory never manages or", claude_section)
+        self.assertIn("requires a fresh preview", claude_section)
+
+    def test_claude_greenfield_troubleshooting_preserves_user_state(self):
+        troubleshooting = (
+            DOCS_ROOT / "FACTORY_PLUGIN_TROUBLESHOOTING.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "Claude Local Settings Make Greenfield Look Non-empty",
+            troubleshooting,
+        )
+        self.assertIn(
+            "does not parse, manage, modify, or remove it", troubleshooting
+        )
+        self.assertIn("Do not delete user-owned content", troubleshooting)
+        self.assertIn(
+            "prepare a genuine existing project as a Git worktree",
+            troubleshooting,
+        )
+
     def test_validation_guidance_prevents_bytecode_cache_mutation(self):
         validation = (
             REPO_ROOT / "plugin-src/factory/skills/validate.md"
@@ -136,6 +181,28 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         self.assertIn("PYTHONDONTWRITEBYTECODE=1", validation)
         self.assertIn("git status --short", validation)
         self.assertIn("report every difference", validation)
+
+    def test_runtime_skills_use_supported_plugin_root_guidance(self):
+        skill_root = REPO_ROOT / "plugin-src/factory/skills"
+        for name in (
+            "doctor.md",
+            "greenfield.md",
+            "brownfield.md",
+            "progress.md",
+            "update.md",
+        ):
+            skill = (skill_root / name).read_text(encoding="utf-8")
+            self.assertIn("${CLAUDE_PLUGIN_ROOT}", skill)
+            self.assertIn("by absolute path", skill)
+            self.assertNotIn("<plugin-root>", skill)
+
+    def test_distributable_onboarding_is_customer_neutral(self):
+        text = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in sorted(DOCS_ROOT.glob("*.md"))
+        )
+        for prohibited in ("Symphony", "AuditEdge", "BMAD", "TEA"):
+            self.assertNotIn(prohibited, text)
 
 
 if __name__ == "__main__":

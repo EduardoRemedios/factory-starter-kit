@@ -78,6 +78,23 @@ def lint_stage(root: Path, run: str, stage: str) -> dict[str, Any]:
         _check_handoff_shape(handoff, text, stage, errors, warnings)
 
     if stage == "A":
+        declaration = root / "docs" / "Factory" / "PROJECT_PREFLIGHT.json"
+        if declaration.exists():
+            checked_files.append(str(declaration))
+            project_preflight = run_root / "PROJECT_PREFLIGHT.txt"
+            checked_files.append(str(project_preflight))
+            if not project_preflight.is_file():
+                errors.append(
+                    f"declared project preflight has no Stage A evidence: {project_preflight}"
+                )
+            else:
+                preflight_text = _read_text(project_preflight)
+                if "project_preflight: PASS" not in preflight_text:
+                    errors.append(f"project preflight did not pass: {project_preflight}")
+                if "reason_code: FACTORY_PROJECT_PREFLIGHT_PASS" not in preflight_text:
+                    errors.append(
+                        f"declared project preflight evidence has no PASS reason: {project_preflight}"
+                    )
         context_report = run_root / "CONTEXT_RECALL_REPORT.md"
         checked_files.append(str(context_report))
         if not context_report.exists():

@@ -1,6 +1,8 @@
 # Factory Plugin Rollback Guide
 
-Rollback is for restoring the project payload after an applied update. Reinstalling the harness plugin and rolling back project files are separate operations.
+Rollback restores project payload after an applied update, or reverses an unchanged
+Factory-owned Greenfield bootstrap. Reinstalling the harness plugin and rolling
+back project files are separate operations.
 
 ## Preconditions
 
@@ -8,6 +10,8 @@ Rollback is for restoring the project payload after an applied update. Reinstall
 - doctor can resolve the repository root
 - the receipt target version matches the installation-state version
 - the project owner explicitly approves rollback
+- for Greenfield, Factory created `.git` and its current digest exactly matches the
+  post-initialization digest in the setup receipt
 
 If any precondition fails, stop. Do not manufacture rollback metadata.
 
@@ -40,3 +44,6 @@ On `FACTORY_ROLLBACK_EVIDENCE_MISMATCH` or a write failure:
 - capture `git status --short` and the error JSON
 - recover only from verified version control or an owner-approved backup
 - log a High defect for the pilot
+
+On `FACTORY_ROLLBACK_GIT_STATE_CHANGED`, preserve the repository exactly as-is.
+Factory will not remove `.git` or payload after a commit or other Git-state change.
