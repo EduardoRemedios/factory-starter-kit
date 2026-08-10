@@ -1,0 +1,8 @@
+{
+  "neither_new": "install_factory_greenfield_first",
+  "factory_only": "preview_pinned_bmad_bootstrap",
+  "bmad_only": "run_factory_brownfield_preview",
+  "both": "audit_bmad_factory_boundary",
+  "brownfield_neither": "run_factory_brownfield_preview",
+  "mutations": []
+}

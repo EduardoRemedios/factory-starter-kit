@@ -1,0 +1,11 @@
+{
+  "valid": "APPLIED",
+  "stale_source": "BLOCKED_STALE_PLAN",
+  "source_symlink": "BLOCKED_UNSAFE_SOURCE",
+  "destination_symlink": "BLOCKED_UNSAFE_DESTINATION",
+  "traversal": "BLOCKED_PATH_ESCAPE",
+  "existing_snapshot": "BLOCKED_IMMUTABLE_SNAPSHOT",
+  "interrupted_apply": "RECOVERY_REQUIRED_OR_ROLLED_BACK",
+  "reuse": "SNAPSHOT_REFERENCE_VALID",
+  "destination_root": "docs/upstream/bmad/BMAD_20260810_PRODUCT_BRIEF_001"
+}

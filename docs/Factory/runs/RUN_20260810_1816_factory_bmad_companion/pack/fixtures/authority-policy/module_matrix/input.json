@@ -1,0 +1,9 @@
+{
+  "cases": [
+    {"id": "core_bmm", "modules": ["core", "bmm"], "artifact_class": "product-brief"},
+    {"id": "loop", "modules": ["core", "bmm", "bmad-loop"], "artifact_class": "product-brief"},
+    {"id": "tea", "modules": ["core", "bmm", "tea"], "artifact_class": "test-automation"},
+    {"id": "architecture", "modules": ["core", "bmm"], "artifact_class": "solution-architecture"},
+    {"id": "implementation", "modules": ["core", "bmm"], "artifact_class": "implementation-artifact"}
+  ]
+}

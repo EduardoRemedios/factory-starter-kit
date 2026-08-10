@@ -20,6 +20,7 @@
 | SPRINT_20260805_005 | Reverify release evidence and public release scope | REVIEW_READY | 2026-08-05 | `python3 -m unittest discover -s tests -v`; `python3 scripts/build_factory_plugins.py --check` |
 | SPRINT_20260810_001 | Repair Greenfield CLI empty-target bootstrap | REVIEW_READY | 2026-08-10 | `tests/test_factory_plugin_cli.py`; `docs/onboarding/FACTORY_PLUGIN_QUICK_START.md` |
 | SPRINT_20260810_002 | Preserve exact Claude-local metadata during Greenfield bootstrap | REVIEW_READY | 2026-08-10 | `tests/test_factory_plugin_setup_plan.py`; `tests/test_factory_plugin_lifecycle.py` |
+| SPRINT_20260810_003 | Plan separate upstream-evidence companion plugin | I2 PASS — awaiting execution authorization | 2026-08-10 | `docs/CHANGELOG.md` |
 
 ## Current Candidates
 
@@ -31,4 +32,5 @@
 | Async contributor handoff hygiene | Ongoing | Use `REVIEW_READY` for review handoffs and reserve `MERGE_READY` for the final sync window after merge preflight passes. |
 | Beginner adopter enablement | Ongoing | Keep the non-technical setup guide accurate as agent tools and installer flows change. |
 | Harness model routing | Ongoing | Validate Kilo, Cursor, Codex, and Claude Code adapters without changing Factory Core stage contracts. |
-| Factory plugin rollout | REVIEW_READY | Claude-local Greenfield preservation and automated verification are complete; next rerun the maintainer CLI journey in the harness-initialized directory, then complete the independent first-time-user pilot, release decisions, and Product Owner sign-off. |
+| Factory plugin rollout | REVIEW_READY | The maintainer Claude Code Greenfield/Doctor/Progress/Validate slice passed; complete remaining formal journeys, the independent first-time-user pilot, release decisions, and Product Owner sign-off. |
+| Upstream-evidence companion | I2 PASS — PLANNING_ONLY | Reviewed pack pins the enterprise upstream tool, Factory authority, immutable promotion, existing project preflight, concise Claude UX, and isolated live proof; implementation awaits exact human authorization. |

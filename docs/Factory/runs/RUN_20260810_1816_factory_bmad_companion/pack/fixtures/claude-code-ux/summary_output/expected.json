@@ -1,0 +1,8 @@
+{
+  "human_lines_max": 12,
+  "required_fields": ["state", "reason_code", "evidence", "next_legal_action"],
+  "next_action_count": 1,
+  "default_contains_full_json": false,
+  "json_available_on_explicit_request": true,
+  "settings_hash_command": false
+}

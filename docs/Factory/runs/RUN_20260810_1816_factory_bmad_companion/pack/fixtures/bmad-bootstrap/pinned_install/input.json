@@ -1,0 +1,7 @@
+{
+  "target": "/tmp/synthetic-project",
+  "installer": "bmad-method@6.10.0",
+  "modules": ["bmm"],
+  "tools": ["claude-code"],
+  "existing_modules": []
+}

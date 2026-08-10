@@ -33,22 +33,32 @@
 - Execution-closeout and project-preflight evidence paths now reject symlinks in
   every run-root ancestor before external reads or writes; focused regression
   covers `docs`, `docs/Factory`, and `docs/Factory/runs` with no-damage assertions.
+- The maintainer Claude Code Greenfield slice has now passed in a harness-initialized
+  new directory: exact setup approval applied Factory 0.2.0, Doctor reported
+  compatible/current, Progress reported no active run, and all applicable
+  validation checks passed without a Factory repository mutation.
+- A separate customer-neutral upstream-evidence companion implementation pack
+  has reached Stage I2 and pack-lint PASS; implementation remains unauthorized.
 
 ## Current Tracking Snapshot
 
 - Current repository scope: Factory V2, starter-kit content, and the dual-platform Factory plugin release candidate.
-- Latest verified milestone: `SPRINT_20260810_002` repaired the Claude-created
-  local-settings false Brownfield classification with exact-shape, ownership,
-  stale-before-Git, apply, recovery, rollback, and cross-runtime proof.
-- Current release state: corrected technical `REVIEW_READY`; the maintainer
-  Claude Code CLI journey must be rerun from the existing harness-initialized
-  directory. The independent first-time-Factory-user pilot,
+- Latest verified milestone: the live maintainer Claude Code setup slice passed
+  Greenfield, Doctor, Progress, and Validate after the `SPRINT_20260810_002`
+  metadata repair; Claude permission bookkeeping remained correctly outside
+  Factory ownership.
+- Current release state: Factory 0.2.0 remains technical `REVIEW_READY`; the
+  remaining formal journeys, independent first-time-Factory-user pilot,
   merge/tag/publication decisions, and Product Owner sign-off remain pending.
+- Current companion state: `SPRINT_20260810_003` is I2-passed planning evidence
+  awaiting an exact execution authorization bound to its pack manifest digest.
 
 ## What Does NOT Exist Here
 
 - Product-specific run history for adopters.
 - Project-specific test commands beyond starter-kit validation helpers.
+- An implemented or released upstream-evidence companion plugin; only its reviewed execution
+  contract currently exists.
 
 ## How To Verify
 

@@ -1,0 +1,11 @@
+{
+  "valid": "FACTORY_PROJECT_PREFLIGHT_PASS",
+  "missing_policy": "BMAD_POLICY_MISSING",
+  "direct_draft": "BMAD_DRAFT_CITATION_PROHIBITED",
+  "missing_snapshot": "BMAD_SNAPSHOT_MISSING",
+  "digest_mismatch": "BMAD_SNAPSHOT_DIGEST_MISMATCH",
+  "missing_review": "BMAD_PROMOTION_REVIEW_MISSING",
+  "snapshot_symlink": "BMAD_SNAPSHOT_PATH_UNSAFE",
+  "prohibited_authority": "BMAD_COMPETING_AUTHORITY",
+  "malformed_output": "FACTORY_PROJECT_PREFLIGHT_OUTPUT_INVALID"
+}

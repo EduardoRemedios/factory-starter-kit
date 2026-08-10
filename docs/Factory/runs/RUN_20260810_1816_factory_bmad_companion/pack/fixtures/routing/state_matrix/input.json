@@ -1,0 +1,9 @@
+{
+  "cases": [
+    {"id": "neither_new", "git": false, "factory": false, "bmad": false, "entries": []},
+    {"id": "factory_only", "git": true, "factory": true, "bmad": false, "entries": ["AGENTS.md"]},
+    {"id": "bmad_only", "git": true, "factory": false, "bmad": true, "entries": ["_bmad"]},
+    {"id": "both", "git": true, "factory": true, "bmad": true, "entries": ["AGENTS.md", "_bmad"]},
+    {"id": "brownfield_neither", "git": true, "factory": false, "bmad": false, "entries": ["src"]}
+  ]
+}

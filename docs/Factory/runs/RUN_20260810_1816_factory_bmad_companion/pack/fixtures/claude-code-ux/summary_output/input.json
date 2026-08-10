@@ -1,0 +1,7 @@
+{
+  "state": "READY_FOR_PROMOTION_PREVIEW",
+  "reason_code": "FACTORY_BMAD_DRAFT_REVIEWED",
+  "evidence": ["_bmad-output/planning-artifacts/product-brief.md"],
+  "next_legal_action": "preview_upstream_promotion",
+  "mutations": []
+}

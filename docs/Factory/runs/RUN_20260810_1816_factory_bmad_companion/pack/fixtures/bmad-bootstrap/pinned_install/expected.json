@@ -1,0 +1,7 @@
+{
+  "state": "PLAN_READY",
+  "command": ["npx", "bmad-method@6.10.0", "install", "--directory", "/tmp/synthetic-project", "--modules", "bmm", "--tools", "claude-code", "--yes"],
+  "required_modules": {"core": "6.10.0", "bmm": "6.10.0"},
+  "forbidden_default_modules": ["bmad-loop", "tea"],
+  "mutations": []
+}

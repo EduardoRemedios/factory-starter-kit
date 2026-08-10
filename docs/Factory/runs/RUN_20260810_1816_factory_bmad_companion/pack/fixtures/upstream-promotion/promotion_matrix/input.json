@@ -1,0 +1,7 @@
+{
+  "snapshot_id": "BMAD_20260810_PRODUCT_BRIEF_001",
+  "source": "_bmad-output/planning-artifacts/product-brief.md",
+  "workflow": "product-brief",
+  "review": "APPROVED",
+  "cases": ["valid", "stale_source", "source_symlink", "destination_symlink", "traversal", "existing_snapshot", "interrupted_apply", "reuse"]
+}

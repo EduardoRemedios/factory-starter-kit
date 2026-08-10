@@ -1,0 +1,106 @@
+schema_version: 1
+run_id: RUN_20260810_1816_factory_bmad_companion
+sprint_id: SPRINT_20260810_003
+execution_mode: PLANNING_ONLY
+checks:
+  - id: VM-001
+    tier: V2
+    type: test
+    constraint_ids: [C-01, C-11, C-12, C-15]
+    description: Validate authored and generated companion plugin contracts.
+    command: python3 -m unittest tests.test_factory_bmad_plugin_build -v
+    expected: All source, manifest, ownership, namespace, dependency, and deterministic-build tests pass.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-001.txt
+  - id: VM-002
+    tier: V2
+    type: test
+    constraint_ids: [C-02, C-03, C-04]
+    description: Validate state routing and pinned BMAD bootstrap safety.
+    command: python3 -m unittest tests.test_factory_bmad_bootstrap -v
+    expected: Five-state, no-write, conflict, partial-install, and recovery cases pass.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-002.txt
+  - id: VM-003
+    tier: V2
+    type: test
+    constraint_ids: [C-01, C-03, C-05, C-09]
+    description: Validate authority and installed-module policy classifications.
+    command: python3 -m unittest tests.test_factory_bmad_policy -v
+    expected: Allowed, prohibited, loop, TEA, and dual-use cases pass.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-003.txt
+  - id: VM-004
+    tier: V2
+    type: test
+    constraint_ids: [C-06, C-07]
+    description: Validate immutable promotion transactions and guarded rollback.
+    command: python3 -m unittest tests.test_factory_bmad_promotion -v
+    expected: Positive and adversarial promotion cases pass without outside writes.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-004.txt
+  - id: VM-005
+    tier: V2
+    type: test
+    constraint_ids: [C-08, C-09, C-10, C-12]
+    description: Validate embedded intake checklist and fail-closed project preflight.
+    command: python3 -m unittest tests.test_factory_bmad_preflight -v
+    expected: PASS and complete stable failure matrix behave as specified.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-005.txt
+  - id: VM-006
+    tier: V4
+    type: source_revalidation
+    target: https://code.claude.com/docs/en/plugin-dependencies
+    constraint_ids: [C-11]
+    description: Prove Claude Code Factory dependency composition in isolated state.
+    command: bash scripts/verify_factory_bmad_claude_composition.sh
+    expected: Strict validation and positive/negative dependency cases pass with no real-profile mutation.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-006.txt
+  - id: VM-007
+    tier: V1
+    type: static
+    constraint_ids: [C-01, C-14]
+    description: Scan docs, packages, fixtures, and evidence for policy/support/privacy violations.
+    command: python3 -m unittest tests.test_factory_bmad_docs_privacy -v
+    expected: Customer-neutral, source-backed, non-vendored public boundary passes.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-007.txt
+  - id: VM-008
+    tier: V3
+    type: no_touch
+    constraint_ids: [C-02, C-12, C-15]
+    description: Prove existing Factory and protected user state remains unchanged.
+    command: python3 -m unittest discover -s tests -v
+    expected: Full regression passes and protected digests match.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-008.txt
+  - id: VM-009
+    tier: V2
+    type: test
+    constraint_ids: [C-13]
+    description: Validate concise human summaries and explicit JSON output.
+    command: python3 -m unittest tests.test_factory_bmad_output -v
+    expected: Golden summaries contain one action and no default JSON wall or settings-only hash command.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-009.txt
+  - id: VM-010
+    tier: V3
+    type: command
+    constraint_ids: [C-01, C-02, C-03, C-04, C-05, C-06, C-07, C-08, C-09, C-10, C-11, C-12, C-13, C-14, C-15]
+    description: Run complete companion, build-current, whitespace, and knowledge gates.
+    command: bash scripts/verify_factory_bmad_release.sh
+    expected: Every deterministic release gate passes on the final package tree.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-010.txt
+  - id: VM-011
+    tier: V4
+    type: source_revalidation
+    target: npm:bmad-method@6.10.0
+    constraint_ids: [C-03, C-04, C-05, C-06, C-07, C-08, C-09, C-10, C-11, C-12, C-13]
+    description: Run isolated BMAD 6.10.0 install, promotion, and intake journey.
+    command: bash scripts/verify_factory_bmad_live_pilot.sh
+    expected: Pinned Core+BMM journey passes without loop, TEA, real-profile change, or application-pilot access.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/factory_bmad_companion/VM-011.txt

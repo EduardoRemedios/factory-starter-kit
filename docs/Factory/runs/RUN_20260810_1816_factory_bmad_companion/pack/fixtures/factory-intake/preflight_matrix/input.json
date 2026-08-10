@@ -1,0 +1,3 @@
+{
+  "cases": ["valid", "missing_policy", "direct_draft", "missing_snapshot", "digest_mismatch", "missing_review", "snapshot_symlink", "prohibited_authority", "malformed_output"]
+}

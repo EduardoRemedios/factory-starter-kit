@@ -2,6 +2,16 @@
 
 ## 2026-08-10
 
+- Completed the maintainer Claude Code Greenfield slice in a harness-initialized
+  new repository: Factory 0.2.0 applied by exact plan approval, Doctor and
+  Progress returned the expected states, and applicable Validate checks passed
+  without a Factory repository mutation.
+- Recorded Claude permission bookkeeping as volatile unmanaged harness state,
+  not a Factory-owned file or a Factory validation failure.
+- Prepared and I2-approved a separate upstream-evidence companion implementation
+  pack with an exact enterprise tool/version pin, Factory-only downstream authority,
+  immutable reviewed promotion, existing project-preflight integration,
+  concise Claude Code output, and isolated live proof requirements.
 - Repaired the Factory plugin Greenfield CLI bootstrap so an invocation without
   `--root` uses the current directory only for Greenfield, while Doctor and all
   established-project commands retain Git-root discovery.
