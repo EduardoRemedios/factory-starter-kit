@@ -50,6 +50,11 @@ Run all nine:
 8. rollback
 9. execution closeout and explicit/default progress
 
+For the Claude Greenfield journey, also repeat the preview from an otherwise
+empty disposable target containing only `.claude/settings.local.json`. Record
+that the file is reported as preserved, absent from allowed writes and
+mutations, and remains byte- and mode-identical after apply and rollback.
+
 The first-time user follows only the published quick start and reference. Author coaching is recorded as a documentation defect.
 
 ## Live Cross-Harness Check

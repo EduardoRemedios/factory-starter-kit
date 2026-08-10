@@ -11,6 +11,14 @@
 - Added subprocess regression coverage across authored, Claude, and Codex
   runtimes for empty, explicit absent/spaced, rejected nonempty, Doctor-outside-Git,
   help-text, and preview no-mutation behavior.
+- Added a fail-closed Claude Greenfield exception for the exact
+  `.claude/settings.local.json` bootstrap shape. The plan digest-pins the
+  read-only file and directory state, excludes it from Factory ownership and
+  writes, fails stale before Git on any change, and preserves it through apply,
+  recovery, and rollback.
+- Corrected genuinely non-empty non-Git guidance so Brownfield is recommended
+  only for an existing Git project, while Codex and all broader non-empty cases
+  remain blocked.
 
 ## 2026-08-05
 

@@ -10,7 +10,7 @@ Treat a blocked state as a safety result, not as a prompt to force the operation
 | `FACTORY_PROJECT_INCOMPLETE` | Some required Factory files are missing | Review the missing paths; do not invent replacements |
 | `FACTORY_CONFLICT_USER_OWNED` | A planned path has different existing content | Review and merge with the owner; do not overwrite |
 | `FACTORY_UNSAFE_PATH` | A path traverses or uses a symlinked target | Repair the repository path and preview again |
-| `FACTORY_GREENFIELD_NOT_EMPTY` | Greenfield was selected for an existing project | Use brownfield |
+| `FACTORY_GREENFIELD_NOT_EMPTY` | The target contains content outside the exact Greenfield bootstrap allowance | Use Brownfield only for an existing Git project; otherwise choose an empty target or review non-project harness content without deleting user work |
 | `FACTORY_PLAN_APPROVAL_REQUIRED` | Apply did not receive the exact previewed plan ID | Review and approve that plan, or preview again |
 | `FACTORY_PLAN_STALE` | Files changed after preview | Generate and review a fresh plan |
 | `FACTORY_ROLLBACK_GIT_STATE_CHANGED` | Factory-created Git changed after setup | Preserve Git and project files; recover manually |
@@ -61,3 +61,20 @@ The transaction reports a blocker and restores its captured prior state. Preserv
 4. If Greenfield still reports `FACTORY_GIT_ROOT_REQUIRED`, preserve the output
    as a plugin-version or stale-installation defect; do not initialize Git manually
    to hide the failure.
+
+## Claude Local Settings Make Greenfield Look Non-empty
+
+Claude Code may create `.claude/settings.local.json` in a new working
+directory. Current Greenfield treats that exact single-file shape as read-only
+preserved harness evidence. It does not parse, manage, modify, or remove it.
+
+If Greenfield still blocks:
+
+1. Confirm `.claude` is a real directory rather than a symlink.
+2. Confirm `settings.local.json` is a regular non-symlink file.
+3. Confirm there are no other entries under `.claude` and no other project
+   content at the target.
+4. Do not delete user-owned content to force Greenfield. Use an empty target, or
+   prepare a genuine existing project as a Git worktree before Brownfield.
+5. If the settings file or mode changed after preview, rerun Greenfield and
+   approve only the new exact full plan ID.

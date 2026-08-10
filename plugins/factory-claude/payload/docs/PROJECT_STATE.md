@@ -20,6 +20,10 @@
 - Greenfield CLI root selection now defaults only Greenfield to the invocation
   current directory; Doctor and every established-project command retain Git-root
   discovery, and explicit absent or spaced targets remain preview-only.
+- Claude Greenfield now tolerates only the exact harness-created
+  `.claude/settings.local.json` shape in an otherwise new target. Its path,
+  bytes, modes, types, and directory entries are plan-bound read-only evidence,
+  excluded from Factory writes and management, and preserved through lifecycle recovery.
 - Promoted upstream Markdown is indexed as generic evidence, while project-specific Stage A preflight is optional, schema-locked, bounded, and ordered after Core knowledge lint and before context recall.
 - Codex app loading, Brownfield adoption, Greenfield setup, validation, update, and exact rollback restoration have passed pre-pilot verification.
 - Project-specific Factory installation state is excluded from distributable plugin payloads and covered by a regression test.
@@ -33,13 +37,13 @@
 ## Current Tracking Snapshot
 
 - Current repository scope: Factory V2, starter-kit content, and the dual-platform Factory plugin release candidate.
-- Latest verified milestone: `SPRINT_20260810_001` repaired the Claude Code CLI
-  Greenfield bootstrap defect found during the maintainer pilot, added actual
-  dispatcher/no-mutation coverage across authored, Claude, and Codex runtimes,
-  and passed complete package, regression, schema, privacy, and lint gates.
+- Latest verified milestone: `SPRINT_20260810_002` repaired the Claude-created
+  local-settings false Brownfield classification with exact-shape, ownership,
+  stale-before-Git, apply, recovery, rollback, and cross-runtime proof.
 - Current release state: corrected technical `REVIEW_READY`; the maintainer
-  empty-directory journey must be rerun. The independent first-time-Factory-user
-  pilot, merge/tag/publication decisions, and Product Owner sign-off remain pending.
+  Claude Code CLI journey must be rerun from the existing harness-initialized
+  directory. The independent first-time-Factory-user pilot,
+  merge/tag/publication decisions, and Product Owner sign-off remain pending.
 
 ## What Does NOT Exist Here
 

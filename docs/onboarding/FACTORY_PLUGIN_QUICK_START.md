@@ -83,6 +83,13 @@ The skill passes that directory explicitly to preview and apply. For an absent
 or different target, provide its exact path; the skill must use the same quoted
 absolute path for both commands and must never choose a target on your behalf.
 
+Claude Code may create `.claude/settings.local.json` while starting in an
+otherwise new directory. Greenfield accepts only that exact Claude-local shape:
+the real `.claude` directory must contain only that regular file. The preview
+reports its digest and mode as preserved evidence, Factory never manages or
+writes it, and any change before apply requires a fresh preview. Additional
+files—including other `.claude` configuration—still make the target non-empty.
+
 Greenfield preview is read-only. After exact plan approval, it creates the target
 directory when needed, initializes Git, installs Factory, records the transaction,
 and validates the result. If setup fails, it removes Factory-created Git only when

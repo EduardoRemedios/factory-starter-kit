@@ -764,7 +764,65 @@ def git_state_digest(git_path: Path) -> str:
     return digest.hexdigest()
 
 
-def greenfield_bootstrap_plan(root: Path) -> dict[str, Any]:
+def claude_greenfield_preserved_paths(
+    root: Path, *, harness: str
+) -> list[dict[str, Any]]:
+    if harness != "claude" or not root.is_dir():
+        return []
+    directory = root / ".claude"
+    if directory.is_symlink():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    if not directory.exists():
+        return []
+    if not directory.is_dir():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    entries = sorted(path.name for path in directory.iterdir())
+    if entries != ["settings.local.json"]:
+        return []
+    settings = directory / "settings.local.json"
+    if settings.is_symlink() or not settings.is_file():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    return [
+        {
+            "path": ".claude/settings.local.json",
+            "sha256": file_sha256(settings),
+            "mode": settings.stat().st_mode & 0o777,
+            "directory": ".claude",
+            "directory_mode": directory.stat().st_mode & 0o777,
+            "directory_entries": entries,
+            "directory_type": "directory",
+            "file_type": "regular",
+        }
+    ]
+
+
+def validate_greenfield_preserved_paths(
+    root: Path,
+    *,
+    harness: str,
+    bootstrap: dict[str, Any],
+    check_top_level: bool,
+) -> None:
+    expected = bootstrap.get("preserved_paths", [])
+    if not expected:
+        return
+    try:
+        current = claude_greenfield_preserved_paths(root, harness=harness)
+    except (OSError, ValueError) as error:
+        raise ValueError("FACTORY_PLAN_STALE") from error
+    if current != expected:
+        raise ValueError("FACTORY_PLAN_STALE")
+    if check_top_level:
+        expected_entries = {".claude"}
+        if bootstrap["git_existed"]:
+            expected_entries.add(".git")
+        if {path.name for path in root.iterdir()} != expected_entries:
+            raise ValueError("FACTORY_PLAN_STALE")
+
+
+def greenfield_bootstrap_plan(
+    root: Path, *, preserved_paths: list[dict[str, Any]] | None = None
+) -> dict[str, Any]:
     if root.exists() and not root.is_dir():
         raise ValueError("FACTORY_UNSAFE_PATH")
     root_action = "no_change" if root.is_dir() else "create"
@@ -776,6 +834,7 @@ def greenfield_bootstrap_plan(root: Path) -> dict[str, Any]:
         "root_existed": root.is_dir(),
         "git_existed": git_path.exists(),
         "git_pre_digest": git_state_digest(git_path) if git_path.exists() else None,
+        "preserved_paths": preserved_paths or [],
         "steps": [
             {"kind": "root", "path": ".", "action": root_action},
             {"kind": "git", "path": ".git", "action": git_action},
@@ -822,19 +881,44 @@ def evaluate_setup_plan(
             next_legal_action="repair_the_installation_state_or_reinstall",
             **common,
         )
-    if mode == "greenfield" and root.is_dir():
-        unexpected = sorted(path.name for path in root.iterdir() if path.name != ".git")
+    preserved_paths: list[dict[str, Any]] = []
+    if mode == "greenfield" and root.is_dir() and installation_state is None:
+        try:
+            preserved_paths = claude_greenfield_preserved_paths(
+                root, harness=harness
+            )
+        except (OSError, ValueError) as error:
+            return result(
+                state="BLOCKED",
+                reason_code=str(error),
+                next_legal_action="choose_a_safe_empty_target",
+                **common,
+            )
+        preserved_top_level = {".claude"} if preserved_paths else set()
+        unexpected = sorted(
+            path.name
+            for path in root.iterdir()
+            if path.name != ".git" and path.name not in preserved_top_level
+        )
         if unexpected and installation_state is None:
             return result(
                 state="BLOCKED",
                 reason_code="FACTORY_GREENFIELD_NOT_EMPTY",
-                next_legal_action="use_brownfield_preview",
+                next_legal_action=(
+                    "use_brownfield_preview"
+                    if (root / ".git").exists()
+                    else "choose_an_empty_target_or_remove_non_project_harness_content"
+                ),
                 unexpected_paths=unexpected,
                 **common,
             )
 
     try:
-        bootstrap_plan = greenfield_bootstrap_plan(root) if mode == "greenfield" else None
+        bootstrap_plan = (
+            greenfield_bootstrap_plan(root, preserved_paths=preserved_paths)
+            if mode == "greenfield"
+            else None
+        )
         installed_files = {
             entry["path"]: entry
             for entry in installation_state["managed_files"]
@@ -1041,6 +1125,12 @@ def validate_plan_preconditions(
 ) -> None:
     bootstrap = plan.get("bootstrap_plan")
     if bootstrap:
+        validate_greenfield_preserved_paths(
+            root,
+            harness=plan["harness"],
+            bootstrap=bootstrap,
+            check_top_level=True,
+        )
         root_step, git_step = bootstrap["steps"]
         if root_step["action"] == "create" and root.exists():
             raise ValueError("FACTORY_PLAN_STALE")
@@ -1228,6 +1318,10 @@ def apply_setup_plan(
                 "git_created": git_created,
                 "git_post_init_digest": git_digest,
             }
+            if bootstrap["preserved_paths"]:
+                transaction_receipt["bootstrap"]["preserved_paths"] = bootstrap[
+                    "preserved_paths"
+                ]
         changes.extend(
             [
                 {
@@ -1247,6 +1341,13 @@ def apply_setup_plan(
             ]
         )
         snapshots = apply_changes(root, changes)
+        if bootstrap:
+            validate_greenfield_preserved_paths(
+                root,
+                harness=plan["harness"],
+                bootstrap=bootstrap,
+                check_top_level=False,
+            )
         validate_setup_result(root, managed_files, installation_state_bytes)
     except Exception as error:
         if snapshots is not None:

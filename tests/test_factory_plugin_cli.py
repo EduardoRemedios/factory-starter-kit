@@ -48,6 +48,49 @@ def run_cli(runtime: Path, cwd: Path, *args: str) -> tuple[subprocess.CompletedP
 
 
 class FactoryPluginCliTests(unittest.TestCase):
+    def test_claude_greenfield_cli_preserves_local_settings_preview(self):
+        for runtime_name in RUNTIME_NAMES:
+            with self.subTest(runtime=runtime_name), tempfile.TemporaryDirectory() as temp_dir:
+                base = Path(temp_dir)
+                runtime = runtime_for(runtime_name, base)
+                root = base / "claude initialized project"
+                write(root / ".claude/settings.local.json", '{"permissions":{}}\n')
+                before = inventory(root)
+                completed, payload = run_cli(
+                    runtime, root, "greenfield", "--harness", "claude"
+                )
+                self.assertEqual(0, completed.returncode, completed.stderr)
+                self.assertEqual("PLAN_READY", payload["state"])
+                self.assertEqual(
+                    ".claude/settings.local.json",
+                    payload["bootstrap_plan"]["preserved_paths"][0]["path"],
+                )
+                self.assertEqual([], payload["mutations"])
+                self.assertEqual(before, inventory(root))
+                self.assertFalse((root / ".git").exists())
+
+    def test_codex_harness_cli_rejects_claude_local_settings(self):
+        for runtime_name in RUNTIME_NAMES:
+            with self.subTest(runtime=runtime_name), tempfile.TemporaryDirectory() as temp_dir:
+                base = Path(temp_dir)
+                runtime = runtime_for(runtime_name, base)
+                root = base / "codex project"
+                write(root / ".claude/settings.local.json", "{}\n")
+                before = inventory(root)
+                completed, payload = run_cli(
+                    runtime, root, "greenfield", "--harness", "codex"
+                )
+                self.assertEqual(2, completed.returncode, completed.stderr)
+                self.assertEqual(
+                    "FACTORY_GREENFIELD_NOT_EMPTY", payload["reason_code"]
+                )
+                self.assertEqual(
+                    "choose_an_empty_target_or_remove_non_project_harness_content",
+                    payload["next_legal_action"],
+                )
+                self.assertEqual([], payload["mutations"])
+                self.assertEqual(before, inventory(root))
+
     def test_greenfield_defaults_to_empty_current_directory(self):
         for runtime_name in RUNTIME_NAMES:
             with self.subTest(runtime=runtime_name), tempfile.TemporaryDirectory() as temp_dir:
@@ -107,6 +150,10 @@ class FactoryPluginCliTests(unittest.TestCase):
                 self.assertEqual(2, completed.returncode, completed.stderr)
                 self.assertEqual("BLOCKED", payload["state"])
                 self.assertEqual("FACTORY_GREENFIELD_NOT_EMPTY", payload["reason_code"])
+                self.assertEqual(
+                    "choose_an_empty_target_or_remove_non_project_harness_content",
+                    payload["next_legal_action"],
+                )
                 self.assertEqual([], payload["mutations"])
                 self.assertEqual(before, inventory(root))
 

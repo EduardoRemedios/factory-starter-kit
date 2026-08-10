@@ -135,6 +135,10 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         self.assertIn("Never invent", greenfield)
         self.assertIn("does not require an", greenfield)
         self.assertIn("existing Git worktree", greenfield)
+        self.assertIn("authority for Greenfield versus Brownfield", greenfield)
+        self.assertIn(".claude/settings.local.json", greenfield)
+        self.assertIn("read-only preserved evidence", greenfield)
+        self.assertIn("Never edit, delete, chmod, copy", greenfield)
 
     def test_new_project_runs_greenfield_before_doctor(self):
         quick_start = (DOCS_ROOT / "FACTORY_PLUGIN_QUICK_START.md").read_text(
@@ -149,6 +153,26 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         )
         self.assertIn("current working directory", claude_section)
         self.assertIn("same quoted", claude_section)
+        self.assertIn(".claude/settings.local.json", claude_section)
+        self.assertIn("Factory never manages or", claude_section)
+        self.assertIn("requires a fresh preview", claude_section)
+
+    def test_claude_greenfield_troubleshooting_preserves_user_state(self):
+        troubleshooting = (
+            DOCS_ROOT / "FACTORY_PLUGIN_TROUBLESHOOTING.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "Claude Local Settings Make Greenfield Look Non-empty",
+            troubleshooting,
+        )
+        self.assertIn(
+            "does not parse, manage, modify, or remove it", troubleshooting
+        )
+        self.assertIn("Do not delete user-owned content", troubleshooting)
+        self.assertIn(
+            "prepare a genuine existing project as a Git worktree",
+            troubleshooting,
+        )
 
     def test_validation_guidance_prevents_bytecode_cache_mutation(self):
         validation = (

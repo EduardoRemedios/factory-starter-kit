@@ -19,6 +19,7 @@
 | SPRINT_20260805_004 | Repair Factory plugin run-root path safety | REVIEW_READY | 2026-08-05 | `tests/test_factory_execution_closeout.py`; `tests/test_factory_project_preflight.py` |
 | SPRINT_20260805_005 | Reverify release evidence and public release scope | REVIEW_READY | 2026-08-05 | `python3 -m unittest discover -s tests -v`; `python3 scripts/build_factory_plugins.py --check` |
 | SPRINT_20260810_001 | Repair Greenfield CLI empty-target bootstrap | REVIEW_READY | 2026-08-10 | `tests/test_factory_plugin_cli.py`; `docs/onboarding/FACTORY_PLUGIN_QUICK_START.md` |
+| SPRINT_20260810_002 | Preserve exact Claude-local metadata during Greenfield bootstrap | REVIEW_READY | 2026-08-10 | `tests/test_factory_plugin_setup_plan.py`; `tests/test_factory_plugin_lifecycle.py` |
 
 ## Current Candidates
 
@@ -30,4 +31,4 @@
 | Async contributor handoff hygiene | Ongoing | Use `REVIEW_READY` for review handoffs and reserve `MERGE_READY` for the final sync window after merge preflight passes. |
 | Beginner adopter enablement | Ongoing | Keep the non-technical setup guide accurate as agent tools and installer flows change. |
 | Harness model routing | Ongoing | Validate Kilo, Cursor, Codex, and Claude Code adapters without changing Factory Core stage contracts. |
-| Factory plugin rollout | REVIEW_READY | Greenfield CLI repair and automated verification are complete; next rerun the maintainer empty-directory journey, then complete the independent first-time-user pilot, release decisions, and Product Owner sign-off. |
+| Factory plugin rollout | REVIEW_READY | Claude-local Greenfield preservation and automated verification are complete; next rerun the maintainer CLI journey in the harness-initialized directory, then complete the independent first-time-user pilot, release decisions, and Product Owner sign-off. |
