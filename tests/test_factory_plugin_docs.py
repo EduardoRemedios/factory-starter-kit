@@ -129,6 +129,27 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
             self.assertIn("exact full current plan ID", skill)
             self.assertIn("Generic approval", skill)
 
+        greenfield = (skill_root / "greenfield.md").read_text(encoding="utf-8")
+        self.assertIn('--root "$PWD"', greenfield)
+        self.assertIn("same `--root`", greenfield)
+        self.assertIn("Never invent", greenfield)
+        self.assertIn("does not require an", greenfield)
+        self.assertIn("existing Git worktree", greenfield)
+
+    def test_new_project_runs_greenfield_before_doctor(self):
+        quick_start = (DOCS_ROOT / "FACTORY_PLUGIN_QUICK_START.md").read_text(
+            encoding="utf-8"
+        )
+        claude_section = quick_start.split("## Claude Code", 1)[1].split(
+            "## What Happens Before Any Write", 1
+        )[0]
+        self.assertLess(
+            claude_section.index("/factory:greenfield"),
+            claude_section.index("/factory:doctor"),
+        )
+        self.assertIn("current working directory", claude_section)
+        self.assertIn("same quoted", claude_section)
+
     def test_validation_guidance_prevents_bytecode_cache_mutation(self):
         validation = (
             REPO_ROOT / "plugin-src/factory/skills/validate.md"

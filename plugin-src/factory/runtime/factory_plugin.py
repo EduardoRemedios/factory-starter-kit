@@ -1783,7 +1783,11 @@ def print_json(value: dict[str, Any]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(prog="factory-plugin")
-    parser.add_argument("--root", type=Path, help="repository path; defaults to Git root")
+    parser.add_argument(
+        "--root",
+        type=Path,
+        help="repository path; defaults to current directory for greenfield; Git root otherwise",
+    )
     subparsers = parser.add_subparsers(dest="command", required=True)
     doctor_parser = subparsers.add_parser("doctor")
     doctor_parser.add_argument("--harness", required=True, choices=sorted(SUPPORTED_HARNESSES))
@@ -1807,7 +1811,12 @@ def main() -> int:
     args = parser.parse_args()
 
     try:
-        root = args.root.resolve() if args.root else resolve_git_root(Path.cwd())
+        if args.root:
+            root = args.root.resolve()
+        elif args.command == "greenfield":
+            root = Path.cwd().resolve()
+        else:
+            root = resolve_git_root(Path.cwd())
         if args.command == "doctor":
             output = evaluate_doctor(root, harness=args.harness)
         elif args.command == "progress":

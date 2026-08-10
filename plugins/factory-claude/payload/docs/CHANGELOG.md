@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-08-10
+
+- Repaired the Factory plugin Greenfield CLI bootstrap so an invocation without
+  `--root` uses the current directory only for Greenfield, while Doctor and all
+  established-project commands retain Git-root discovery.
+- Corrected new-project guidance to run Greenfield before Doctor, repeat the
+  same explicit target for preview and apply, and never invent a target or
+  translate generic approval into a plan ID.
+- Added subprocess regression coverage across authored, Claude, and Codex
+  runtimes for empty, explicit absent/spaced, rejected nonempty, Doctor-outside-Git,
+  help-text, and preview no-mutation behavior.
+
 ## 2026-08-05
 
 - Prepared Factory plugin technical RC `0.2.0` from the single authored source for deterministic Codex and Claude Code packages.

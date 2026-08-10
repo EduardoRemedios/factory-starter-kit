@@ -19,11 +19,13 @@ Windows, Linux, and Codex CLI are not part of the initial supported pilot.
 1. Open the Factory plugin from the repo marketplace link supplied by the plugin owner.
 2. Install `factory`.
 3. Start a new Codex task so the new skills are loaded.
-4. At the intended project path, invoke `$factory-doctor`.
-5. For an absent or empty project path, invoke `$factory-greenfield`.
-6. For an existing repository, invoke `$factory-brownfield`.
-7. Review the exact per-file plan. Apply only after you approve its plan ID.
-8. Invoke `$factory-validate`, then `$factory-progress`.
+4. For a new project, open the intended empty directory and invoke
+   `$factory-greenfield`. Review the exact plan and apply only after approving
+   its full plan ID; then invoke `$factory-doctor`, `$factory-validate`, and
+   `$factory-progress`.
+5. For an existing Git repository, invoke `$factory-doctor`, then
+   `$factory-brownfield`.
+6. Review every setup plan before exact approval.
 
 If a working Codex CLI is available, the equivalent non-default local-marketplace setup is:
 
@@ -57,14 +59,29 @@ claude plugin marketplace add <factory-starter-kit-root>
 claude plugin install factory@factory-starter-kit
 ```
 
-Restart Claude Code, open the project repository, and invoke:
+For a new project, restart Claude Code from the intended empty directory and
+invoke:
 
 ```text
-/factory:doctor
 /factory:greenfield
 ```
 
-Use `/factory:brownfield` instead of greenfield for an existing project.
+Review the complete preview. After approving its exact full plan ID and
+completing setup, invoke:
+
+```text
+/factory:doctor
+/factory:validate
+/factory:progress
+```
+
+For an existing Git repository, invoke `/factory:doctor` and then
+`/factory:brownfield` instead of Greenfield.
+
+Greenfield uses Claude Code's current working directory as its default target.
+The skill passes that directory explicitly to preview and apply. For an absent
+or different target, provide its exact path; the skill must use the same quoted
+absolute path for both commands and must never choose a target on your behalf.
 
 Greenfield preview is read-only. After exact plan approval, it creates the target
 directory when needed, initializes Git, installs Factory, records the transaction,
@@ -77,7 +94,7 @@ Claude setup previews a one-line `CLAUDE.md` containing `@AGENTS.md`. If `CLAUDE
 
 Greenfield, brownfield, and update first return:
 
-- the resolved Git worktree root
+- the resolved target or Git worktree root
 - installed and target versions
 - an allowed-path list
 - an ownership class for every file

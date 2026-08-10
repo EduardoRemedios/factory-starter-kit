@@ -41,8 +41,8 @@ Capture version output, install result, doctor/progress JSON, preview plans, app
 Run all nine:
 
 1. install
-2. doctor
-3. greenfield
+2. greenfield
+3. doctor
 4. brownfield
 5. progress
 6. validate

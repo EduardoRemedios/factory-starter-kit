@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the current starter-kit state.
 >
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-08-10
 
 ## What Exists
 
@@ -17,6 +17,9 @@
 - Stage A context recall now has a formal direct-source repair path for generated `WEAK` reports when unresolved refs are concrete local sources that can be read and summarized directly.
 - Factory plugin technical RC `0.2.0` has one authored source that generates Codex and Claude Code packages with Doctor, Greenfield, Brownfield, Progress, Run, Validate, and Update entry points.
 - Greenfield setup now supports an absent or empty target through an exact root/Git/payload/metadata/validation transaction with fail-closed Git ownership recovery.
+- Greenfield CLI root selection now defaults only Greenfield to the invocation
+  current directory; Doctor and every established-project command retain Git-root
+  discovery, and explicit absent or spaced targets remain preview-only.
 - Promoted upstream Markdown is indexed as generic evidence, while project-specific Stage A preflight is optional, schema-locked, bounded, and ordered after Core knowledge lint and before context recall.
 - Codex app loading, Brownfield adoption, Greenfield setup, validation, update, and exact rollback restoration have passed pre-pilot verification.
 - Project-specific Factory installation state is excluded from distributable plugin payloads and covered by a regression test.
@@ -30,12 +33,13 @@
 ## Current Tracking Snapshot
 
 - Current repository scope: Factory V2, starter-kit content, and the dual-platform Factory plugin release candidate.
-- Latest verified milestone: `SPRINT_20260805_005` independently reran every
-  release check with complete retained transcripts after the path-safety repair;
-  all 12 verification-manifest checks passed.
-- Current release state: corrected technical `REVIEW_READY`; public-scope review
-  and automated verification are complete. The first-time-user pilot,
-  merge/tag/publication decisions, and Product Owner sign-off remain pending.
+- Latest verified milestone: `SPRINT_20260810_001` repaired the Claude Code CLI
+  Greenfield bootstrap defect found during the maintainer pilot, added actual
+  dispatcher/no-mutation coverage across authored, Claude, and Codex runtimes,
+  and passed complete package, regression, schema, privacy, and lint gates.
+- Current release state: corrected technical `REVIEW_READY`; the maintainer
+  empty-directory journey must be rerun. The independent first-time-Factory-user
+  pilot, merge/tag/publication decisions, and Product Owner sign-off remain pending.
 
 ## What Does NOT Exist Here
 

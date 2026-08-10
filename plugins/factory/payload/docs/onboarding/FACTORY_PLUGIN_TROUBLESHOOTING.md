@@ -5,7 +5,7 @@ Treat a blocked state as a safety result, not as a prompt to force the operation
 | Reason code | Meaning | Next action |
 |---|---|---|
 | `FACTORY_ENVIRONMENT_UNVERIFIED` | Host or version is outside the tested pilot boundary | Use supported macOS, Git, Python 3.11+, and supported harness version |
-| `FACTORY_GIT_ROOT_REQUIRED` | Invocation is not inside a Git worktree | Open the intended repository and rerun doctor |
+| `FACTORY_GIT_ROOT_REQUIRED` | Doctor or another established-project command was invoked outside a Git worktree | For a new empty target, run Greenfield first; otherwise open the intended Git repository and rerun doctor |
 | `FACTORY_PROJECT_NOT_CONFIGURED` | Factory is not installed in the project | Preview greenfield or brownfield setup |
 | `FACTORY_PROJECT_INCOMPLETE` | Some required Factory files are missing | Review the missing paths; do not invent replacements |
 | `FACTORY_CONFLICT_USER_OWNED` | A planned path has different existing content | Review and merge with the owner; do not overwrite |
@@ -50,3 +50,14 @@ The initial pilot uses the Codex app. A broken local Codex CLI does not prove th
 ## Failed Setup or Update
 
 The transaction reports a blocker and restores its captured prior state. Preserve the JSON result, repository diff, `docs/Factory/installation/INSTALLATION_STATE.json`, and durable transaction receipt for the pilot defect log. Do not remove recovery evidence.
+
+## Greenfield Reports Git Root Required
+
+1. Confirm the installed plugin contains the current `0.2.0` release candidate.
+2. Start Claude Code from the intended empty directory and invoke
+   `/factory:greenfield`; Doctor is a post-setup check for new projects.
+3. For an absent or different target, provide the exact absolute path and require
+   the same quoted `--root` value for preview and apply.
+4. If Greenfield still reports `FACTORY_GIT_ROOT_REQUIRED`, preserve the output
+   as a plugin-version or stale-installation defect; do not initialize Git manually
+   to hide the failure.
