@@ -1,9 +1,13 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.19
+v1.23
 
 ## Change Log
+- v1.23 (2026-08-13): Made missing audited mode fail closed, aligned traceability parsing with the canonical verification column, rejected symlinked preimage manifests, and validated declared execution order.
+- v1.22 (2026-08-13): Clarified that pack-lint validates pinned preimage evidence while lifecycle VM commands perform target-byte comparison at their declared time.
+- v1.21 (2026-08-13): Made the executable verification manifest authoritative, cross-checked VM inventories, and required SHA-pinned no-touch preimage manifests.
+- v1.20 (2026-08-13): Separated immutable I2 audited mode from later digest-bound current execution authority.
 - v1.19 (2026-07-02): Added the direct-source repair path for generated WEAK context recall reports.
 - v1.18 (2026-06-25): Clarified Kilo Code CLI support as External Lane Mode driven by Codex or a neutral shell.
 - v1.17 (2026-06-25): Added optional Kilo Code CLI stage runner for model-routed Factory lanes.
@@ -61,6 +65,21 @@ Downstream run fan-out is allowed only when this additional field is explicit:
 
 If required fields are absent or malformed, the run remains `PLANNING_ONLY`.
 
+### 0.3.1 Post-I2 Cross-Mode Activation
+
+The mode recorded by `PACK_AUDIT_REPORT.md` and `verification_manifest.yaml` describes the pack Purple audited at I2. Those pack artifacts and `PACK_MANIFEST.md` remain unchanged after human review.
+
+When a pack audited as `PLANNING_ONLY` later receives explicit execution authorization:
+
+1. record current mode as `EXECUTION_ENABLED` in `EXECUTION_MODE.txt`
+2. create `EXECUTION_AUTHORIZATION.md` from the canonical template
+3. record exactly one human-Go marker, prior mode, activated mode, authorized pack-manifest SHA-256, and authorized pack-audit SHA-256
+4. run pack-lint before generating `EXECUTION_PROMPT.md` or changing implementation source
+
+Pack-lint recomputes both pinned digests. Missing audited mode, malformed, duplicated, stale, mismatched, or symlinked activation evidence fails closed. It compares verification-manifest mode with the audited pack mode during a valid cross-mode transition. Existing packs whose explicitly audited mode already matches current mode retain legacy behavior.
+
+Activation must not rewrite `PACK_MANIFEST.md`, `PACK_AUDIT_REPORT.md`, the sprint envelope, or `verification_manifest.yaml`; changing those bytes invalidates the human-approved planning evidence.
+
 ## 0.4 Mission Mode (Additive, Optional)
 Mission Mode is for ordered multi-sprint chains under one mission checkpoint.
 
@@ -89,6 +108,10 @@ Stage F should classify verification with tiers:
 - `V4` live, browser, external, or source-revalidation proof
 
 For `EXECUTION_ENABLED` and Mission Mode runs, Stage F should produce `pack/verification_manifest.yaml` when runnable checks exist. The manifest is optional so planning-only packs stay lightweight, but if it exists `pack-lint` validates its schema.
+
+When a verification manifest exists, its check IDs are the executable authority. Stage F must use a dedicated `## Checks` inventory in `verification_plan.md`, reference the same IDs in the traceability matrix's named verification coverage column, and keep all three ID sets exactly equal. If `execution_order` is present, it is authoritative and must contain every VM check exactly once; explicitly named non-VM operations may be interposed. Every `no_touch` check must reference a safe run-relative, non-symlink JSON preimage manifest and pin that manifest's SHA-256. Pack-lint validates the evidence file, schema, safe paths, and pin; the declared VM command compares target bytes at the lifecycle point named by the plan. Historical preimages do not become permanent postimplementation postimages.
+
+For Factory self-maintenance, Stage F must also inspect project-owned coupling before locking the envelope: protected digest fixtures, generated payload counterparts, and ownership manifests are explicit planned paths rather than unexpected execution drift.
 
 Execution micro-sprints may start with `MS-00 Verification Scaffold`: land or confirm tests, fixtures, no-touch checks, or static validators before feature implementation begins.
 

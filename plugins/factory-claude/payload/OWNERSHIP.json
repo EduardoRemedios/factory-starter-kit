@@ -31,7 +31,7 @@
     {
       "path": "docs/CHANGELOG.md",
       "classification": "project-owned",
-      "sha256": "63d85c0e0e8e1221bc4bea6167666ce2bb85fe1b56edb8c41ce77fbc011b5253"
+      "sha256": "362265093ae219f43d283270b2cfab3b257150023e4f5cee2e50179b6de5a13c"
     },
     {
       "path": "docs/Factory/ARCHITECTURE.md",
@@ -81,7 +81,7 @@
     {
       "path": "docs/Factory/ORCHESTRATION.md",
       "classification": "release-owned",
-      "sha256": "a6f29e375c7c0a10ea7059ad5c74752c7785863728307be922e8fe92cd908de5"
+      "sha256": "46403c84a1a6bcd54c80af4ccd741a0b23bdb12a086cbfad1be02832413ae296"
     },
     {
       "path": "docs/Factory/ProductOwner/BRIEF_REVIEW_CHECKLIST.md",
@@ -146,7 +146,7 @@
     {
       "path": "docs/Factory/Spec/STAGE_CONTRACTS.md",
       "classification": "release-owned",
-      "sha256": "28701c153c7dc8191d0b5c2e4e01f09c4caa36bdedd0eb6ff15c7d99af438393"
+      "sha256": "cbd2ce053a231b6b85e443268b1f2d0069abc5aa02ccc4ce47968f52f312fcef"
     },
     {
       "path": "docs/Factory/TASK_MEMORY.md",
@@ -157,6 +157,11 @@
       "path": "docs/Factory/templates/CONTEXT_RECALL_REPORT_TEMPLATE.md",
       "classification": "release-owned",
       "sha256": "fd92576ae28047cbde6d0c3482716430adb8e960da0c67f5c46f38df3af41578"
+    },
+    {
+      "path": "docs/Factory/templates/EXECUTION_AUTHORIZATION_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "f540d3d21dafe6d03d29098331f507d039f37c08e5d86d48c587c0707d245e71"
     },
     {
       "path": "docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md",
@@ -201,7 +206,7 @@
     {
       "path": "docs/Factory/templates/PACK_AUDIT_REPORT_TEMPLATE.md",
       "classification": "release-owned",
-      "sha256": "e92b93bb65f9eb76fa074aeaf97ac96dc9c8bdf7fbf23486b4cf68b104a57b05"
+      "sha256": "97b1febb2fc3b5a29c6baad581818ceb8547ef062e31cef64f581c2237d0ffbe"
     },
     {
       "path": "docs/Factory/templates/PACK_CHECKLIST_TEMPLATE.md",
@@ -236,17 +241,17 @@
     {
       "path": "docs/Factory/templates/VERIFICATION_MANIFEST_TEMPLATE.yaml",
       "classification": "release-owned",
-      "sha256": "23589a0264f42603d598d1ab9c67110e428ca7340b2661933f31cf25f9aff13e"
+      "sha256": "c6576053aac114eb01615de211751d2323295ca001378da4ccb4a1ab72cd64d4"
     },
     {
       "path": "docs/PROJECT_STATE.md",
       "classification": "project-owned",
-      "sha256": "5924e2d63739f6996eb2a1dd65f133e7102076247bfad59977c12b79d635e579"
+      "sha256": "b2a6f30067914d834bb34426d6fe7f25547d6a08e1771f99cb18b18a75eb3161"
     },
     {
       "path": "docs/ROADMAP.md",
       "classification": "project-owned",
-      "sha256": "a68fca1b25b1111fb465b90429a5d18a4ea931a4abc43264864c533d12466a54"
+      "sha256": "3749e162edda48c54008112501e3f49fa029a99ba54e32b54ed24975d5663ffe"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",
@@ -311,7 +316,7 @@
     {
       "path": "scripts/factory_pack_lint.py",
       "classification": "release-owned",
-      "sha256": "e91b987d6ad5aa90fbc3ced0c83925efb89058fc8a1609e15ce1f7c243324216"
+      "sha256": "84f54a0f387f26031b0a1eb1418b914e4633a6e42c96f16b23d05dea8836f884"
     },
     {
       "path": "scripts/factory_run_metrics.py",

@@ -2,7 +2,7 @@
 
 > **Purpose:** Track starter-kit V2 and earlier process work.
 >
-> **Last updated:** 2026-07-27
+> **Last updated:** 2026-08-13
 
 ## Sprints
 
@@ -14,6 +14,8 @@
 | SPRINT_20260625_001 | Add Kilo model-routed stage lanes | Done | 2026-06-25 | `docs/Factory/Harnesses/KILO.md`; `./scripts/factoryctl kilo-stage` |
 | SPRINT_20260702_001 | Formalize Stage A direct-source recall repair | Done | 2026-07-02 | `docs/Factory/ORCHESTRATION.md`; `scripts/factory_pack_lint.py`; `tests/test_context_recall_repair.py` |
 | SPRINT_20260724_001 | Build and pilot dual-platform Factory plugin | Public release candidate prepared for `main`; independent pilot pending | 2026-07-24 | `README.md`; `tests/plugin_fixtures/`; `tests/test_factory_plugin_*.py` |
+| SPRINT_20260813_001 | Repair planning-audit to execution-authorization lifecycle | Done; superseded by consolidated recovery verification | 2026-08-13 | `docs/Factory/templates/EXECUTION_AUTHORIZATION_TEMPLATE.md`; `tests/test_factory_pack_lint_activation.py` |
+| SPRINT_20260813_002 | Consolidate Factory kernel self-maintenance recovery | Done; proxy-review repairs and full regression pass | 2026-08-13 | `scripts/factory_pack_lint.py`; `tests/test_factory_pack_lint_verification_contract.py` |
 
 ## Current Candidates
 

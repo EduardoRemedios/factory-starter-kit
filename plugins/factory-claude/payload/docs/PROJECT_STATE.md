@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the current starter-kit state.
 >
-> **Last updated:** 2026-07-27
+> **Last updated:** 2026-08-13
 
 ## What Exists
 
@@ -21,11 +21,14 @@
 - Public golden fixtures live under `tests/plugin_fixtures/`; private run and pilot evidence are not part of the public release package.
 - Project-specific Factory installation state is excluded from distributable plugin payloads and covered by a regression test.
 - The public README now provides plugin-first installation for the ChatGPT/Codex desktop app, Claude Code desktop, and Claude Code CLI, plus an evidence-based developer FAQ.
+- Factory now preserves I2 audited mode as immutable pack evidence and validates any later cross-mode execution activation through a separate, exact manifest-and-audit digest-bound authorization record.
+- Factory now treats `verification_manifest.yaml` as executable verification authority, requires exact VM-ID agreement with plan and traceability, and binds no-touch checks to SHA-pinned preimage manifests.
+- Proxy-review hardening now makes absent audited mode fail closed, reads VM coverage from the canonical traceability column, rejects symlinked preimage manifests, and validates optional execution ordering.
 
 ## Current Tracking Snapshot
 
 - Current repository scope: Factory V2, starter-kit content, and the dual-platform Factory plugin release candidate.
-- Latest verified milestone: Codex and Claude technical journeys passed, and all defects found during technical verification were fixed and regression-tested.
+- Latest verified milestone: activation and verification-contract repairs, proxy-review hardening, protected-baseline checks, all 83 repository tests, knowledge lint, and deterministic package checks pass.
 - Current release state: the privacy-safe release candidate is prepared for `main`; the independent two-user pilot, stable release tag, and Product Owner sign-off remain pending.
 
 ## What Does NOT Exist Here

@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-13
+
+- Closed the proxy-review defects directly: missing audited mode now fails closed, canonical traceability columns are parsed correctly, symlinked preimage manifests are rejected, and optional execution order is validated.
+- Added focused regression fixtures for all four cases and regenerated the byte-identical Codex and Claude plugin payloads.
+- Closed the Factory self-maintenance verification gap by cross-checking plan, manifest, and traceability VM IDs and requiring SHA-pinned no-touch preimage manifests.
+- Added explicit coupled-artifact review for protected digest fixtures and generated plugin payloads before execution envelopes are locked.
+- Repaired the Factory planning-to-execution lifecycle contract so immutable I2 audited mode is distinct from later current execution authority.
+- Added digest-bound `EXECUTION_AUTHORIZATION.md` evidence and fail-closed pack-lint coverage for missing, ambiguous, unsafe, stale, or mismatched activation records.
+- Preserved matching-mode legacy compatibility and aligned verification-manifest validation with audited pack mode during valid cross-mode activation.
+
 ## 2026-07-27
 
 - Replaced copy-first README onboarding with plugin-first installation for the ChatGPT/Codex desktop app, Claude Code desktop, and Claude Code CLI.

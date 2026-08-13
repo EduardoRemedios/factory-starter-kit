@@ -1,9 +1,13 @@
-# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.14)
+# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.18)
 
 ## Version
-v4.14
+v4.18
 
 ## Change Log
+- v4.18 (2026-08-13): Closed missing-mode and symlink fail-open cases, aligned traceability parsing with the canonical coverage column, and validated optional execution ordering.
+- v4.17 (2026-08-13): Separated pack-lint validation of pinned preimage evidence from lifecycle-timed VM comparison of target bytes.
+- v4.16 (2026-08-13): Required exact executable VM inventory agreement, SHA-pinned no-touch preimages, and coupled-artifact review for self-maintenance packs.
+- v4.15 (2026-08-13): Added immutable I2 audited-mode evidence and fail-closed digest-bound cross-mode activation.
 - v4.14 (2026-07-02): Added direct-source repair semantics for generated WEAK Stage A context recall reports.
 - v4.13 (2026-05-19): Added SIMPLE-CODE-GATE v2 to Stage H and post-gate execution prompt contracts for Factory-controlled code-changing runs.
 - v4.12 (2026-05-18): Added optional Codex Mission Goal Continuity adapter lint contract for derived `MISSION_CURSOR.json`; it does not alter core stage contracts or mission ledger authority.
@@ -40,6 +44,11 @@ v4.14
   - `Use the <skill name> skill.`
   - If no relevant skill exists, prompts MUST declare that explicitly and proceed via the stage contract only.
 - Run execution mode defaults to `PLANNING_ONLY` and MUST be persisted in run-root `EXECUTION_MODE.txt`.
+- `PACK_AUDIT_REPORT.md`, `PACK_MANIFEST.md`, the sprint envelope, and `verification_manifest.yaml` are immutable after exact planning-pack human review.
+- When `verification_manifest.yaml` exists, its VM IDs MUST exactly equal the dedicated `verification_plan.md` `## Checks` inventory and the VM IDs used in the traceability matrix's named verification coverage column. If `execution_order` is present, it MUST contain every VM exactly once and is authoritative for interposed named operations.
+- Every `no_touch` manifest check MUST reference a safe run-relative, regular JSON preimage manifest and pin its exact lowercase SHA-256; the preimage manifest MUST enumerate non-empty protected file records with safe paths and exact digests.
+- A post-I2 `PLANNING_ONLY` to `EXECUTION_ENABLED` transition MUST use a regular non-symlink `EXECUTION_AUTHORIZATION.md` that records exactly one human-Go marker, prior and activated modes, and exact SHA-256 pins for the unchanged pack manifest and audit.
+- Pack-lint MUST recompute both activation pins and fail closed for a missing audited mode or missing, malformed, duplicated, stale, mismatched, or unsafe authorization evidence.
 - Factory-controlled code-changing runs MUST apply SIMPLE-CODE-GATE v2 from root `AGENTS.md`: smallest clear behavior-preserving change, no code bloat, no spooky action, no dependency creep, no silent failures, and no awkward or speculative abstractions.
 - `EXECUTION_PROMPT.md` generation and downstream run fan-out are forbidden unless `EXECUTION_MODE.txt` is `EXECUTION_ENABLED`.
 - Mission Mode, if enabled, is additive and MUST NOT alter per-unit stage entry and exit criteria, authorization contracts, or iteration caps.
@@ -85,6 +94,7 @@ A run produces:
 - `docs/Factory/runs/<RUN_ID>/EXECUTION_MODE.txt`
 - `docs/Factory/runs/<RUN_ID>/SPRINT_ID.txt`
 - `docs/Factory/runs/<RUN_ID>/pack/`
+- `docs/Factory/runs/<RUN_ID>/EXECUTION_AUTHORIZATION.md` (required only for a post-I2 cross-mode activation)
 - `docs/Factory/runs/<RUN_ID>/EXECUTION_PROMPT.md` (required only when `EXECUTION_MODE.txt = EXECUTION_ENABLED` after `STAGE_I2` PASS plus human GO)
 
 If Mission Mode is enabled, mission root additionally produces:
@@ -229,6 +239,9 @@ Exit criteria:
 - traceability matrix is complete for Critical and High items
 - fixtures follow naming conventions
 - if `verification_manifest.yaml` exists, it is valid per `VERIFICATION_MANIFEST_TEMPLATE.yaml` and `factoryctl pack-lint`
+- verification plan, manifest, and traceability VM identifier sets are exactly equal
+- each `no_touch` check has a safe, valid SHA-pinned preimage manifest; its declared VM command performs target-byte comparison at the specified lifecycle point
+- code-changing self-maintenance plans identify protected digest fixtures, generated payload counterparts, and ownership-manifest coupling before Stage H
 
 ## STAGE_G — Micro-sprint Sequencing
 Inputs:
@@ -325,6 +338,11 @@ Checks include:
 - checklist critical items are `YES`
 - audit verdict is not `FAIL`
 - execution-mode evidence is internally consistent
+- a matching audited/current mode preserves existing behavior
+- a cross-mode activation has exact, unambiguous, non-symlink authorization evidence whose pack-manifest and pack-audit pins match disk
+- verification-manifest mode matches the audited pack mode during a valid cross-mode activation
+- verification plan, executable manifest, and traceability VM identifier sets match exactly
+- every no-touch check has safe, non-empty, SHA-pinned preimage evidence; pack-lint does not reinterpret historical preimages as permanent postimplementation postimages
 
 Exit criteria:
 - `pack-lint` returns PASS before the pack is presented for human execution review
@@ -338,6 +356,7 @@ Entry criteria:
 - `STAGE_I2` verdict is PASS
 - human review decision is explicit Go
 - `EXECUTION_MODE.txt` equals `EXECUTION_ENABLED`
+- if I2 audited `PLANNING_ONLY`, `EXECUTION_AUTHORIZATION.md` exists and post-activation pack-lint passes without modifying pack artifacts
 
 Inputs:
 - `LOAD`: `pack/<SPRINT_ID>_ENVELOPE.md`, `pack/micro_sprints.md`, `pack/verification_plan.md`, `pack/traceability_matrix.md`

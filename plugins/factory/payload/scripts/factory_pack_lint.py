@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -105,7 +106,7 @@ def lint_pack(root: Path, run: str | None = None, pack_path: Path | None = None)
     if execution_mode == "PLANNING_ONLY" and (run_root / "EXECUTION_PROMPT.md").exists():
         errors.append("EXECUTION_PROMPT.md exists even though EXECUTION_MODE.txt is PLANNING_ONLY")
 
-    _check_text_contracts(
+    audited_execution_mode = _check_text_contracts(
         root=root,
         run_root=run_root,
         pack_dir=pack_dir,
@@ -119,7 +120,7 @@ def lint_pack(root: Path, run: str | None = None, pack_path: Path | None = None)
         run_root=run_root,
         pack_dir=pack_dir,
         sprint_id=sprint_id,
-        execution_mode=execution_mode,
+        execution_mode=audited_execution_mode,
         checked_files=checked_files,
         errors=errors,
         warnings=warnings,
@@ -201,7 +202,7 @@ def _check_text_contracts(
     execution_mode: str,
     errors: list[str],
     warnings: list[str],
-) -> None:
+) -> str:
     knowledge_lint = _read_text(run_root / "KNOWLEDGE_LINT.txt")
     if "knowledge_lint: PASS" not in knowledge_lint:
         errors.append("KNOWLEDGE_LINT.txt does not record knowledge_lint: PASS")
@@ -229,12 +230,9 @@ def _check_text_contracts(
     elif verdict == "FAIL":
         errors.append("PACK_AUDIT_REPORT.md verdict is FAIL")
 
-    mode_mentions = re.findall(r"(?:Execution Mode|Mode):\s*`?(PLANNING_ONLY|EXECUTION_ENABLED)`?", audit)
-    if execution_mode and mode_mentions and execution_mode not in mode_mentions:
-        errors.append(
-            "PACK_AUDIT_REPORT.md execution mode mention does not match EXECUTION_MODE.txt "
-            f"({execution_mode})"
-        )
+    audited_execution_mode = check_execution_mode_contract(
+        run_root, pack_dir, execution_mode, errors
+    )
 
     manifest = _read_text(pack_dir / "PACK_MANIFEST.md")
     if sprint_id and f"{sprint_id}_ENVELOPE.md" not in manifest:
@@ -266,6 +264,83 @@ def _check_text_contracts(
             "EXECUTION_ENABLED run has no pack/verification_manifest.yaml; "
             "this is allowed for legacy packs but expected for new execution packs"
         )
+    return audited_execution_mode
+
+
+def check_execution_mode_contract(
+    run_root: Path,
+    pack_dir: Path,
+    execution_mode: str,
+    errors: list[str],
+) -> str:
+    audit = _read_text(pack_dir / "PACK_AUDIT_REPORT.md")
+    mode_mentions = re.findall(
+        r"^\s*-\s*(?:Audited Execution Mode|Execution Mode|Mode):\s*`?(PLANNING_ONLY|EXECUTION_ENABLED)`?\s*$",
+        audit,
+        flags=re.MULTILINE,
+    )
+    if not mode_mentions:
+        errors.append("PACK_AUDIT_REPORT.md must record exactly one audited execution mode")
+        return execution_mode
+
+    distinct_modes = set(mode_mentions)
+    if len(distinct_modes) != 1:
+        errors.append("PACK_AUDIT_REPORT.md contains conflicting execution mode mentions")
+        return execution_mode
+
+    audited_mode = mode_mentions[0]
+    if audited_mode == execution_mode:
+        return audited_mode
+
+    if audited_mode != "PLANNING_ONLY" or execution_mode != "EXECUTION_ENABLED":
+        errors.append(
+            "PACK_AUDIT_REPORT.md records an unsupported execution mode transition "
+            f"({audited_mode} -> {execution_mode})"
+        )
+        return audited_mode
+
+    authorization_path = run_root / "EXECUTION_AUTHORIZATION.md"
+    if not authorization_path.exists():
+        errors.append("cross-mode activation requires EXECUTION_AUTHORIZATION.md")
+        return audited_mode
+    if authorization_path.is_symlink() or not authorization_path.is_file():
+        errors.append("EXECUTION_AUTHORIZATION.md must be a regular non-symlink file")
+        return audited_mode
+
+    authorization = _read_text(authorization_path)
+    fields = {
+        "Human Go": r"^\s*-\s*Human Go:\s*(RECORDED)\s*$",
+        "Prior Execution Mode": r"^\s*-\s*Prior Execution Mode:\s*`?(PLANNING_ONLY|EXECUTION_ENABLED)`?\s*$",
+        "Activated Execution Mode": r"^\s*-\s*Activated Execution Mode:\s*`?(PLANNING_ONLY|EXECUTION_ENABLED)`?\s*$",
+        "Authorized Pack Manifest SHA-256": r"^\s*-\s*Authorized Pack Manifest SHA-256:\s*`?([0-9a-fA-F]{64})`?\s*$",
+        "Authorized Pack Audit SHA-256": r"^\s*-\s*Authorized Pack Audit SHA-256:\s*`?([0-9a-fA-F]{64})`?\s*$",
+    }
+    values: dict[str, str] = {}
+    for label, pattern in fields.items():
+        matches = re.findall(pattern, authorization, flags=re.MULTILINE)
+        if len(matches) != 1:
+            errors.append(f"EXECUTION_AUTHORIZATION.md {label} must occur exactly once")
+        else:
+            values[label] = matches[0]
+
+    if values.get("Human Go") not in {None, "RECORDED"}:
+        errors.append("EXECUTION_AUTHORIZATION.md Human Go must be RECORDED")
+    if values.get("Prior Execution Mode") not in {None, audited_mode}:
+        errors.append("EXECUTION_AUTHORIZATION.md prior mode does not match audited mode")
+    if values.get("Activated Execution Mode") not in {None, execution_mode}:
+        errors.append("EXECUTION_AUTHORIZATION.md activated mode does not match current mode")
+
+    manifest_digest = values.get("Authorized Pack Manifest SHA-256")
+    if manifest_digest and manifest_digest.lower() != _sha256_file(pack_dir / "PACK_MANIFEST.md"):
+        errors.append("EXECUTION_AUTHORIZATION.md manifest SHA-256 mismatch")
+    audit_digest = values.get("Authorized Pack Audit SHA-256")
+    if audit_digest and audit_digest.lower() != _sha256_file(pack_dir / "PACK_AUDIT_REPORT.md"):
+        errors.append("EXECUTION_AUTHORIZATION.md audit SHA-256 mismatch")
+    return audited_mode
+
+
+def _sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def _check_artifact_shapes(
@@ -466,7 +541,7 @@ def _check_verification_manifest(
 
     manifest_execution_mode = loaded.get("execution_mode")
     if manifest_execution_mode and manifest_execution_mode != execution_mode:
-        errors.append(f"{path} execution_mode does not match EXECUTION_MODE.txt ({execution_mode})")
+        errors.append(f"{path} execution_mode does not match audited pack mode ({execution_mode})")
     elif manifest_execution_mode not in {"PLANNING_ONLY", "EXECUTION_ENABLED"}:
         errors.append(f"{path} execution_mode must be PLANNING_ONLY or EXECUTION_ENABLED")
 
@@ -485,6 +560,8 @@ def _check_verification_manifest(
         check_id = check.get("id")
         if not isinstance(check_id, str) or not check_id.strip():
             errors.append(f"{label}.id must be a non-empty string")
+        elif not re.fullmatch(r"VM-\d{3}", check_id):
+            errors.append(f"{label}.id must use the VM-NNN format")
         elif check_id in seen_ids:
             errors.append(f"{label}.id duplicates {check_id}")
         else:
@@ -532,6 +609,182 @@ def _check_verification_manifest(
 
         if tier == "V0" and check_type in {"command", "test"}:
             warnings.append(f"{label} uses tier V0 with executable type {check_type}; consider V1+")
+
+        if check_type == "no_touch":
+            _check_no_touch_preimages(
+                run_root=run_root,
+                check=check,
+                label=label,
+                checked_files=checked_files,
+                errors=errors,
+            )
+
+    _check_execution_order(loaded, seen_ids, path, errors)
+    _check_verification_id_sets(pack_dir, seen_ids, errors)
+
+
+def _check_execution_order(
+    manifest: dict[str, Any],
+    manifest_ids: set[str],
+    path: Path,
+    errors: list[str],
+) -> None:
+    if "execution_order" not in manifest:
+        return
+
+    order = manifest["execution_order"]
+    if not isinstance(order, list) or not order:
+        errors.append(f"{path} execution_order must be a non-empty list when present")
+        return
+    if not all(isinstance(item, str) and item.strip() for item in order):
+        errors.append(f"{path} execution_order must contain only non-empty strings")
+        return
+
+    duplicates = sorted({item for item in order if order.count(item) > 1})
+    if duplicates:
+        errors.append(f"{path} execution_order duplicates: {','.join(duplicates)}")
+
+    ordered_vm_ids = {item for item in order if re.fullmatch(r"VM-\d{3}", item)}
+    if ordered_vm_ids != manifest_ids:
+        errors.append(
+            f"{path} execution_order VM IDs differ from checks: "
+            f"order={','.join(sorted(ordered_vm_ids)) or 'NONE'}; "
+            f"checks={','.join(sorted(manifest_ids)) or 'NONE'}"
+        )
+
+
+def _check_verification_id_sets(
+    pack_dir: Path,
+    manifest_ids: set[str],
+    errors: list[str],
+) -> None:
+    plan_path = pack_dir / "verification_plan.md"
+    plan_checks = _extract_markdown_section(_read_text(plan_path), "Checks")
+    plan_ids = re.findall(r"^\s*-\s*(VM-\d{3})\s+[—-]\s+", plan_checks, flags=re.MULTILINE)
+    for check_id in sorted(set(plan_ids)):
+        if plan_ids.count(check_id) > 1:
+            errors.append(f"verification_plan.md duplicates {check_id} in ## Checks")
+
+    trace_ids: set[str] = set()
+    traceability = _read_text(pack_dir / "traceability_matrix.md")
+    verification_column: int | None = None
+    found_verification_column = False
+    for line in traceability.splitlines():
+        if not line.lstrip().startswith("|"):
+            verification_column = None
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        column_candidates = [
+            index
+            for index, cell in enumerate(cells)
+            if cell.lower().startswith("verification")
+            and "tier" not in cell.lower()
+        ]
+        if column_candidates:
+            if len(column_candidates) != 1:
+                errors.append("traceability_matrix.md has ambiguous verification coverage columns")
+                verification_column = None
+            else:
+                verification_column = column_candidates[0]
+                found_verification_column = True
+            continue
+        if verification_column is not None and verification_column < len(cells):
+            if all(re.fullmatch(r":?-+:?", cell) for cell in cells):
+                continue
+            trace_ids.update(re.findall(r"\bVM-\d{3}\b", cells[verification_column]))
+
+    if not found_verification_column:
+        errors.append("traceability_matrix.md is missing a verification coverage column")
+
+    sets = {
+        "verification_plan.md": set(plan_ids),
+        "verification_manifest.yaml": manifest_ids,
+        "traceability_matrix.md": trace_ids,
+    }
+    if len({frozenset(values) for values in sets.values()}) != 1:
+        details = "; ".join(
+            f"{name}={','.join(sorted(values)) or 'NONE'}"
+            for name, values in sets.items()
+        )
+        errors.append(f"verification VM ID sets differ: {details}")
+
+
+def _check_no_touch_preimages(
+    run_root: Path,
+    check: dict[str, Any],
+    label: str,
+    checked_files: list[str],
+    errors: list[str],
+) -> None:
+    relative = check.get("preimage_manifest")
+    expected_digest = check.get("preimage_manifest_sha256")
+    if not isinstance(relative, str) or not relative.strip():
+        errors.append(f"{label}.preimage_manifest is required for type no_touch")
+    if not isinstance(expected_digest, str) or not re.fullmatch(r"[0-9a-f]{64}", expected_digest):
+        errors.append(f"{label}.preimage_manifest_sha256 is required as lowercase SHA-256")
+    if not isinstance(relative, str) or not relative.strip():
+        return
+
+    relative_path = Path(relative)
+    if relative_path.is_absolute() or ".." in relative_path.parts:
+        errors.append(f"{label}.preimage_manifest must be a safe run-relative path")
+        return
+    candidate_path = run_root / relative_path
+    current = run_root
+    for part in relative_path.parts:
+        current = current / part
+        if current.is_symlink():
+            errors.append(f"{label}.preimage_manifest must be a regular non-symlink file")
+            return
+    try:
+        path = candidate_path.resolve(strict=False)
+        path.relative_to(run_root.resolve())
+    except (OSError, ValueError):
+        errors.append(f"{label}.preimage_manifest must be a safe run-relative path")
+        return
+    checked_files.append(str(path))
+    if path.is_symlink() or not path.is_file():
+        errors.append(f"{label}.preimage_manifest must be a regular non-symlink file")
+        return
+    if isinstance(expected_digest, str) and re.fullmatch(r"[0-9a-f]{64}", expected_digest):
+        if _sha256_file(path) != expected_digest:
+            errors.append(f"{label} preimage manifest SHA-256 mismatch")
+
+    try:
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"{label}.preimage_manifest is not valid JSON: {exc}")
+        return
+    files = loaded.get("files") if isinstance(loaded, dict) else None
+    if not isinstance(loaded, dict) or loaded.get("schema_version") != 1:
+        errors.append(f"{label}.preimage_manifest schema_version must be 1")
+    if not isinstance(files, dict) or not files:
+        errors.append(f"{label}.preimage_manifest files must be a non-empty mapping")
+        return
+
+    exact_roots = loaded.get("exact_roots", [])
+    if not isinstance(exact_roots, list) or not all(isinstance(item, str) for item in exact_roots):
+        errors.append(f"{label}.preimage_manifest exact_roots must be a string list")
+    else:
+        for exact_root in exact_roots:
+            candidate = Path(exact_root)
+            if candidate.is_absolute() or ".." in candidate.parts:
+                errors.append(f"{label}.preimage_manifest contains unsafe exact root {exact_root!r}")
+
+    for protected_path, record in files.items():
+        if not isinstance(protected_path, str):
+            errors.append(f"{label}.preimage_manifest contains a non-string path")
+            continue
+        candidate = Path(protected_path)
+        if candidate.is_absolute() or ".." in candidate.parts:
+            errors.append(f"{label}.preimage_manifest contains unsafe path {protected_path!r}")
+            continue
+        if not isinstance(record, dict) or record.get("type") != "file":
+            errors.append(f"{label}.preimage_manifest record must describe a file: {protected_path}")
+            continue
+        digest = record.get("sha256")
+        if not isinstance(digest, str) or not re.fullmatch(r"[0-9a-f]{64}", digest):
+            errors.append(f"{label}.preimage_manifest has invalid SHA-256: {protected_path}")
 
 
 def _check_placeholders(path: Path, text: str, errors: list[str]) -> None:

@@ -1,0 +1,36 @@
+# Execution Authorization
+
+<!--
+VALIDATION:
+- Create only for a post-I2 PLANNING_ONLY to EXECUTION_ENABLED transition.
+- Create at docs/Factory/runs/<RUN_ID>/EXECUTION_AUTHORIZATION.md.
+- Compute both SHA-256 values from the unchanged reviewed pack artifacts.
+- Each required authorization field must occur exactly once.
+- The record must be a regular non-symlink file.
+- Do not rewrite PACK_MANIFEST.md, PACK_AUDIT_REPORT.md, the sprint envelope, or verification_manifest.yaml during activation.
+-->
+
+## Version
+
+v1
+
+## Change Log
+
+- v1 (YYYY-MM-DD): Recorded digest-bound execution activation.
+
+## Authorization
+
+- Human Go: RECORDED
+- Prior Execution Mode: `PLANNING_ONLY`
+- Activated Execution Mode: `EXECUTION_ENABLED`
+- Authorized Pack Manifest SHA-256: `<64-character lowercase SHA-256>`
+- Authorized Pack Audit SHA-256: `<64-character lowercase SHA-256>`
+
+## Human Decision Reference
+
+- Record the exact human approval or its immutable local reference here.
+
+## Authority Boundary
+
+- This record activates only the reviewed pack whose exact manifest and audit hashes appear above.
+- It grants no merge, publication, release, rollout, downstream fan-out, or customer authority unless separately explicit.
