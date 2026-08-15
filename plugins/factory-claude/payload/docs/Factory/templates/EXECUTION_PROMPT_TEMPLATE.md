@@ -14,9 +14,10 @@ VALIDATION:
 -->
 
 ## Version
-v1.1
+v1.2
 
 ## Change Log
+- v1.2 (2026-08-13): Added exact Human Go, safe Python launcher, and bounded-output evidence contracts.
 - v1.1 (2026-05-19): Added SIMPLE-CODE-GATE v2 implementation guardrail for Factory-controlled code-changing execution.
 - v1 (YYYY-MM-DD): Initial execution prompt for this run.
 
@@ -25,6 +26,7 @@ v1.1
 - Sprint ID: SPRINT_YYYYMMDD_NNN
 - Created: YYYY-MM-DD HH:MM (local)
 - Source Pack: docs/Factory/runs/<RUN_ID>/pack/
+- Human Go: RECORDED
 
 ## Purpose
 One paragraph: what the execution agent must deliver and what is explicitly out of scope.
@@ -109,6 +111,13 @@ If `pack/verification_manifest.yaml` exists:
 - Treat any `halt_on_failure: true` failure as a stop condition.
 - Write or preserve evidence at each check's `evidence_path`.
 - Do not replace manifest checks with weaker prose assertions.
+
+Factory-controlled Python verification:
+- Use `./scripts/factory-python`; do not invoke a raw Python interpreter.
+
+Evidence output boundary:
+- Write complete high-volume evidence only to an exact path authorized by the envelope.
+- Emit only bounded counts, sizes, modes, digests, and verdicts through the harness; never stream an inventory body into conversational output.
 
 ## Troubleshooting and Failure Policy
 - If a gate fails, stop at the gate and report exact failing command plus root cause hypothesis.

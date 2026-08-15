@@ -12,6 +12,11 @@ Codex uses `$factory-<name>`. Claude uses `/factory:<name>`. Invocation syntax d
 | Deterministic checks | `$factory-validate` | `/factory:validate` | Validator-defined evidence only |
 | Update or rollback | `$factory-update` | `/factory:update` | Separate preview and approval for update or rollback |
 
+Greenfield supports an absent path, an empty directory, or a repository containing
+only `.git`. Its approved transaction orders root creation, Git initialization,
+payload, lifecycle metadata, receipt, and validation. Recovery never removes
+Factory-created `.git` after its recorded digest changes.
+
 ## Doctor Output
 
 Doctor reports:
@@ -36,6 +41,14 @@ Progress uses disk evidence and fails closed:
 4. `EXECUTION_ENABLED` still requires explicit human Go
 
 Progress is read-only.
+
+## Stage A Project Preflight
+
+Projects may opt in with `docs/Factory/PROJECT_PREFLIGHT.json`. When declared, the
+fixed `scripts/factory_project_preflight --run RUN_ID --json` command runs after
+Core knowledge lint and before context recall. Missing, malformed, timed-out,
+oversized, non-zero, or failing results halt Stage A. Undeclared projects retain
+the prior Core flow.
 
 ## Ownership
 

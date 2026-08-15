@@ -2,12 +2,14 @@
 
 ## Purpose
 
-Decide whether Factory plugin 0.1.0 is ready for a wider team rollout using
-named journeys, recovery evidence, and Product Owner sign-off.
+Decide whether Factory plugin 0.2.3 is ready for a team rollout using named
+journeys, recovery evidence, and Product Owner sign-off.
 
 ## Entry Gates
 
-- Claude Code is 2.1.216 or newer.
+- Claude Code has a `claude plugin` interface that passes the rollout preflight.
+- `python3 scripts/verify_factory_cli_rollout.py --json` returns no `BLOCKED`
+  checks for the marketplace root and pilot target.
 - Claude plugin and marketplace pass strict validation.
 - Codex package passes Plugin Creator validation.
 - Factory is installed and invoked successfully in a fresh Claude session and a fresh Codex app task.
@@ -19,9 +21,9 @@ If an entry gate is missing, the pilot does not start.
 
 ## Cohort
 
-- experienced Factory user: one named participant
-- first-time Factory user: one named participant
-- Product Owner and release decision: one named release owner
+- experienced Factory user: one named maintainer or trained adopter
+- first-time Factory user: one named pilot-team member
+- Product Owner and release decision: one named accountable owner
 
 Do not substitute two experienced users for the first-time-user journey.
 
@@ -88,7 +90,7 @@ Stop immediately for:
 
 ## Decision
 
-- `PILOT_PASS`: every threshold is met and the Product Owner signs off.
+- `PILOT_PASS`: every threshold is met and Eduardo signs off.
 - `PILOT_NO_GO`: any threshold is missed.
 
 No company-wide recommendation is made from a partial scorecard.

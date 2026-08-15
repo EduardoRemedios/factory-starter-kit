@@ -5,10 +5,13 @@ from __future__ import annotations
 
 import argparse
 import base64
+import copy
 import hashlib
 import json
 import os
 import platform
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -16,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.1.0"
+PLUGIN_VERSION = "0.2.3"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"
@@ -32,6 +35,7 @@ CODEX_PLUGIN_SKILLS = {
 }
 INSTALLATION_STATE_PATH = "docs/Factory/installation/INSTALLATION_STATE.json"
 TRANSACTION_RECEIPTS_DIR = "docs/Factory/installation/receipts"
+EXECUTION_CLOSEOUT_NAME = "EXECUTION_CLOSEOUT.json"
 
 
 def result(
@@ -308,6 +312,50 @@ def output_paths(handoff: Path) -> list[str]:
     return outputs
 
 
+def output_path_contradiction(root: Path, run_root: Path, handoff: Path) -> str | None:
+    if not handoff.is_file():
+        return None
+    in_outputs = False
+    saw_heading = False
+    for line in handoff.read_text(encoding="utf-8").splitlines():
+        if line == "## Outputs Produced (paths)":
+            in_outputs = True
+            saw_heading = True
+            continue
+        if in_outputs and line.startswith("## "):
+            break
+        if not in_outputs or not line.strip():
+            continue
+        if not (line.startswith("- `") and line.endswith("`") and line.count("`") == 2):
+            return "malformed_output_declaration"
+        value = line[3:-1]
+        candidate = Path(value)
+        if (
+            not value
+            or candidate.is_absolute()
+            or any(part in {"", ".", ".."} for part in candidate.parts)
+            or any(char in value for char in "*?[]{}$()|;\\")
+        ):
+            return f"unsafe_output_path:{value}"
+        anchor = root if candidate.parts[0] == "docs" else run_root
+        target = anchor / candidate
+        try:
+            target.resolve(strict=False).relative_to(anchor.resolve())
+        except ValueError:
+            return f"output_path_escapes_root:{value}"
+        if not target.exists():
+            return f"claims_missing_output:{value}"
+        if target.is_file() and target.stat().st_size == 0:
+            return f"claims_empty_output:{value}"
+        if target.is_dir() and not any(target.iterdir()):
+            return f"claims_empty_output:{value}"
+        if not target.is_file() and not target.is_dir():
+            return f"claims_unsupported_output:{value}"
+    if not saw_heading:
+        return "missing_output_declaration_section"
+    return None
+
+
 def resolve_output_path(root: Path, run_root: Path, value: str) -> Path:
     candidate = Path(value)
     if candidate.is_absolute():
@@ -331,6 +379,24 @@ def recall_is_weak(run_root: Path) -> bool:
     return weak and not repaired
 
 
+def intent_lock_problem(run_root: Path, stages: list[str]) -> str | None:
+    if "D" not in stages:
+        return None
+    report = run_root / "pack" / "intent_lock_report.md"
+    if field_value(report, "Verdict") != "PASS":
+        return "intent_purple_verdict_not_pass"
+    digest = field_value(report, "Locked SHA-256")
+    if digest is None:
+        return "intent_lock_digest_missing"
+    digest = digest.strip("`")
+    if not re.fullmatch(r"[0-9a-f]{64}", digest):
+        return "intent_lock_digest_invalid"
+    intent = run_root / "pack" / "intent.md"
+    if not intent.is_file() or file_sha256(intent) != digest:
+        return "intent_lock_digest_mismatch"
+    return None
+
+
 def passed_stages(run_root: Path) -> list[str]:
     handoff_root = run_root / "pack" / "HANDOFF"
     return [
@@ -349,9 +415,9 @@ def evidence_contradiction(root: Path, run_root: Path, stages: list[str]) -> str
         return "completed_stage_order_has_a_gap"
     for stage in stages:
         handoff = run_root / "pack" / "HANDOFF" / f"HANDOFF_STAGE_{stage}.md"
-        for value in output_paths(handoff):
-            if not resolve_output_path(root, run_root, value).exists():
-                return f"stage_{stage.lower()}_claims_missing_output:{value}"
+        contradiction = output_path_contradiction(root, run_root, handoff)
+        if contradiction:
+            return f"stage_{stage.lower()}_{contradiction}"
     knowledge = run_root / "KNOWLEDGE_LINT.txt"
     if stages and (not knowledge.is_file() or "knowledge_lint: PASS" not in knowledge.read_text(encoding="utf-8")):
         return "stage_handoff_exists_without_passing_knowledge_lint"
@@ -369,6 +435,62 @@ def persisted_validators(run_root: Path) -> list[dict[str, str]]:
     if verdict:
         validators.append({"validator": "purple_pack_audit", "status": verdict})
     return validators
+
+
+def evaluate_execution_closeout(root: Path, run_root: Path) -> dict[str, Any] | None:
+    closeout = run_root / EXECUTION_CLOSEOUT_NAME
+    if not closeout.exists():
+        return None
+    validator = root / "scripts" / "factory_execution_closeout.py"
+    if not validator.is_file():
+        return {
+            "status": "FAIL",
+            "reason_code": "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_MISSING",
+            "detail": "scripts/factory_execution_closeout.py",
+            "mutations": [],
+        }
+    try:
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(validator),
+                "validate",
+                "--root",
+                str(root),
+                "--run",
+                run_root.name,
+                "--json",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return {
+            "status": "FAIL",
+            "reason_code": "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_ERROR",
+            "detail": "validator_invocation",
+            "mutations": [],
+        }
+    try:
+        payload = json.loads(completed.stdout)
+    except json.JSONDecodeError:
+        return {
+            "status": "FAIL",
+            "reason_code": "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_ERROR",
+            "detail": "validator_output",
+            "mutations": [],
+        }
+    if completed.returncode not in {0, 1} or not isinstance(payload, dict):
+        return {
+            "status": "FAIL",
+            "reason_code": "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_ERROR",
+            "detail": "validator_exit",
+            "mutations": [],
+        }
+    return payload
 
 
 def evaluate_progress(root: Path, *, run_id: str | None = None) -> dict[str, Any]:
@@ -420,6 +542,15 @@ def evaluate_progress(root: Path, *, run_id: str | None = None) -> dict[str, Any
             next_legal_action="refresh_recall_and_resolve_material_gaps",
             **common,
         )
+    lock_problem = intent_lock_problem(run_root, stages)
+    if lock_problem:
+        return result(
+            state="BLOCKED",
+            reason_code="FACTORY_INTENT_NOT_LOCKED",
+            next_legal_action="repair_intent_and_repeat_purple",
+            blocker=lock_problem,
+            **common,
+        )
     if "I2" in stages:
         audit_verdict = field_value(run_root / "pack" / "PACK_AUDIT_REPORT.md", "Verdict")
         if audit_verdict not in {"PASS", "CONDITIONAL PASS"}:
@@ -430,15 +561,42 @@ def evaluate_progress(root: Path, *, run_id: str | None = None) -> dict[str, Any
                 **common,
             )
         execution_prompt = run_root / "EXECUTION_PROMPT.md"
-        has_human_go = (
-            execution_prompt.is_file()
-            and "- Human Go:" in execution_prompt.read_text(encoding="utf-8")
+        human_go = field_value(execution_prompt, "Human Go")
+        has_human_go = human_go == "RECORDED" or bool(
+            human_go and human_go.startswith("RECORDED ")
         )
         if common["execution_mode"] == "EXECUTION_ENABLED" and not has_human_go:
             return result(
                 state="WAITING_HUMAN_GO",
                 reason_code="FACTORY_HUMAN_GO_REQUIRED",
                 next_legal_action="obtain_explicit_human_go",
+                **common,
+            )
+        closeout = evaluate_execution_closeout(root, run_root)
+        if closeout is not None:
+            if closeout.get("status") != "PASS":
+                return result(
+                    state="BLOCKED",
+                    reason_code="FACTORY_EXECUTION_CLOSEOUT_INVALID",
+                    next_legal_action="repair_the_closeout_evidence_without_bypassing_human_gates",
+                    blocker=closeout.get(
+                        "reason_code", "FACTORY_EXECUTION_CLOSEOUT_VALIDATOR_ERROR"
+                    ),
+                    closeout_detail=closeout.get("detail"),
+                    **common,
+                )
+            return result(
+                state=closeout["outcome"],
+                reason_code=closeout["reason_code"],
+                next_legal_action=closeout["next_legal_action"],
+                execution_closeout={
+                    "schema": closeout["schema"],
+                    "path": closeout["path"],
+                    "sha256": closeout["sha256"],
+                    "verification_result_count": closeout[
+                        "verification_result_count"
+                    ],
+                },
                 **common,
             )
         if common["execution_mode"] == "EXECUTION_ENABLED" and has_human_go:
@@ -474,16 +632,22 @@ def bytes_sha256(value: bytes) -> str:
 
 def stable_plan_id(value: dict[str, Any]) -> str:
     plan_input = {
-        key: value[key]
+        key: copy.deepcopy(value[key])
         for key in (
             "mode",
             "harness",
             "plugin_version",
             "installed_version",
+            "bootstrap_plan",
             "planned_files",
         )
         if key in value
     }
+    bootstrap = plan_input.get("bootstrap_plan")
+    if isinstance(bootstrap, dict):
+        for preserved in bootstrap.get("preserved_paths", []):
+            if isinstance(preserved, dict) and "approval_sha256" in preserved:
+                preserved["sha256"] = preserved.pop("approval_sha256")
     encoded = json.dumps(
         plan_input, sort_keys=True, separators=(",", ":"), ensure_ascii=False
     ).encode()
@@ -542,6 +706,18 @@ def attach_change_plan(
         "ordered_file_actions": [
             {"path": item["path"], "action": item["action"]}
             for item in value["planned_files"] + value["metadata_plan"]
+        ],
+        "ordered_transaction_steps": [
+            *value.get("bootstrap_plan", {}).get("steps", []),
+            *[
+                {"kind": "payload", "path": item["path"], "action": item["action"]}
+                for item in value["planned_files"]
+            ],
+            *[
+                {"kind": "metadata", "path": item["path"], "action": item["action"]}
+                for item in value["metadata_plan"]
+            ],
+            {"kind": "validation", "path": ".", "action": "verify"},
         ],
         "pre_digests": plan_pre_digests(
             root, value["planned_files"] + value["metadata_plan"]
@@ -642,6 +818,130 @@ def safe_target(root: Path, relative_text: str) -> Path:
     return target
 
 
+def git_state_digest(git_path: Path) -> str:
+    digest = hashlib.sha256()
+    if git_path.is_file():
+        digest.update(b"file\0")
+        digest.update(git_path.read_bytes())
+        return digest.hexdigest()
+    if not git_path.is_dir():
+        raise ValueError("FACTORY_GIT_STATE_INVALID")
+    for path in sorted(
+        git_path.rglob("*"),
+        key=lambda item: item.relative_to(git_path).as_posix(),
+    ):
+        relative = path.relative_to(git_path).as_posix().encode("utf-8")
+        if path.is_symlink():
+            digest.update(b"symlink\0" + relative + b"\0" + os.readlink(path).encode("utf-8") + b"\0")
+        elif path.is_dir():
+            digest.update(b"dir\0" + relative + b"\0")
+        elif path.is_file():
+            digest.update(b"file\0" + relative + b"\0" + path.read_bytes() + b"\0")
+        else:
+            raise ValueError("FACTORY_GIT_STATE_INVALID")
+    return digest.hexdigest()
+
+
+def claude_greenfield_preserved_paths(
+    root: Path, *, harness: str
+) -> list[dict[str, Any]]:
+    if harness != "claude" or not root.is_dir():
+        return []
+    directory = root / ".claude"
+    if directory.is_symlink():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    if not directory.exists():
+        return []
+    if not directory.is_dir():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    entries = sorted(path.name for path in directory.iterdir())
+    if entries != ["settings.local.json"]:
+        return []
+    settings = directory / "settings.local.json"
+    if settings.is_symlink() or not settings.is_file():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    raw = settings.read_bytes()
+    approval_sha256 = bytes_sha256(raw)
+    try:
+        parsed = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        parsed = None
+    if isinstance(parsed, dict):
+        permissions = parsed.get("permissions")
+        if isinstance(permissions, dict):
+            allow = permissions.get("allow")
+            if isinstance(allow, list) and all(isinstance(item, str) for item in allow):
+                approval_value = copy.deepcopy(parsed)
+                approval_value["permissions"]["allow"] = []
+                approval_sha256 = bytes_sha256(
+                    json.dumps(
+                        approval_value,
+                        sort_keys=True,
+                        separators=(",", ":"),
+                        ensure_ascii=False,
+                    ).encode("utf-8")
+                )
+    return [
+        {
+            "path": ".claude/settings.local.json",
+            "sha256": bytes_sha256(raw),
+            "approval_sha256": approval_sha256,
+            "mode": settings.stat().st_mode & 0o777,
+            "directory": ".claude",
+            "directory_mode": directory.stat().st_mode & 0o777,
+            "directory_entries": entries,
+            "directory_type": "directory",
+            "file_type": "regular",
+        }
+    ]
+
+
+def validate_greenfield_preserved_paths(
+    root: Path,
+    *,
+    harness: str,
+    bootstrap: dict[str, Any],
+    check_top_level: bool,
+) -> None:
+    expected = bootstrap.get("preserved_paths", [])
+    if not expected:
+        return
+    try:
+        current = claude_greenfield_preserved_paths(root, harness=harness)
+    except (OSError, ValueError) as error:
+        raise ValueError("FACTORY_PLAN_STALE") from error
+    if current != expected:
+        raise ValueError("FACTORY_PLAN_STALE")
+    if check_top_level:
+        expected_entries = {".claude"}
+        if bootstrap["git_existed"]:
+            expected_entries.add(".git")
+        if {path.name for path in root.iterdir()} != expected_entries:
+            raise ValueError("FACTORY_PLAN_STALE")
+
+
+def greenfield_bootstrap_plan(
+    root: Path, *, preserved_paths: list[dict[str, Any]] | None = None
+) -> dict[str, Any]:
+    if root.exists() and not root.is_dir():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    root_action = "no_change" if root.is_dir() else "create"
+    git_path = root / ".git"
+    if git_path.is_symlink():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    git_action = "no_change" if git_path.exists() else "create"
+    return {
+        "root_existed": root.is_dir(),
+        "git_existed": git_path.exists(),
+        "git_pre_digest": git_state_digest(git_path) if git_path.exists() else None,
+        "preserved_paths": preserved_paths or [],
+        "steps": [
+            {"kind": "root", "path": ".", "action": root_action},
+            {"kind": "git", "path": ".git", "action": git_action},
+        ],
+    }
+
+
 def evaluate_setup_plan(
     root: Path,
     *,
@@ -681,18 +981,44 @@ def evaluate_setup_plan(
             next_legal_action="repair_the_installation_state_or_reinstall",
             **common,
         )
-    if mode == "greenfield" and root.is_dir():
-        unexpected = sorted(path.name for path in root.iterdir() if path.name != ".git")
+    preserved_paths: list[dict[str, Any]] = []
+    if mode == "greenfield" and root.is_dir() and installation_state is None:
+        try:
+            preserved_paths = claude_greenfield_preserved_paths(
+                root, harness=harness
+            )
+        except (OSError, ValueError) as error:
+            return result(
+                state="BLOCKED",
+                reason_code=str(error),
+                next_legal_action="choose_a_safe_empty_target",
+                **common,
+            )
+        preserved_top_level = {".claude"} if preserved_paths else set()
+        unexpected = sorted(
+            path.name
+            for path in root.iterdir()
+            if path.name != ".git" and path.name not in preserved_top_level
+        )
         if unexpected and installation_state is None:
             return result(
                 state="BLOCKED",
                 reason_code="FACTORY_GREENFIELD_NOT_EMPTY",
-                next_legal_action="use_brownfield_preview",
+                next_legal_action=(
+                    "use_brownfield_preview"
+                    if (root / ".git").exists()
+                    else "choose_an_empty_target_or_remove_non_project_harness_content"
+                ),
                 unexpected_paths=unexpected,
                 **common,
             )
 
     try:
+        bootstrap_plan = (
+            greenfield_bootstrap_plan(root, preserved_paths=preserved_paths)
+            if mode == "greenfield"
+            else None
+        )
         installed_files = {
             entry["path"]: entry
             for entry in installation_state["managed_files"]
@@ -748,6 +1074,9 @@ def evaluate_setup_plan(
         "planned_files": planned_files,
         "conflicts": conflicts,
     }
+    if bootstrap_plan:
+        plan_details["bootstrap_plan"] = bootstrap_plan
+        plan_details["allowed_paths"] = [".", ".git", *plan_details["allowed_paths"]]
     plan_details["plan_id"] = stable_plan_id(plan_details)
     attach_change_plan(
         plan_details,
@@ -872,7 +1201,18 @@ def managed_files_from_plan(
         if item["action"] == "delete":
             continue
         if item["action"] == "preserve" and item["path"] in previous:
-            files.append(previous[item["path"]])
+            prior = previous[item["path"]]
+            if prior.get("ownership_class") == item["classification"]:
+                files.append(prior)
+            else:
+                files.append(
+                    {
+                        "path": item["path"],
+                        "ownership_class": item["classification"],
+                        "expected_digest": file_sha256(root / item["path"]),
+                        "source_version": plan["plugin_version"],
+                    }
+                )
             continue
         target = root / item["path"]
         digest = (
@@ -894,6 +1234,27 @@ def managed_files_from_plan(
 def validate_plan_preconditions(
     root: Path, plan: dict[str, Any], previous_state: dict[str, Any] | None
 ) -> None:
+    bootstrap = plan.get("bootstrap_plan")
+    if bootstrap:
+        validate_greenfield_preserved_paths(
+            root,
+            harness=plan["harness"],
+            bootstrap=bootstrap,
+            check_top_level=True,
+        )
+        root_step, git_step = bootstrap["steps"]
+        if root_step["action"] == "create" and root.exists():
+            raise ValueError("FACTORY_PLAN_STALE")
+        if root_step["action"] == "no_change" and not root.is_dir():
+            raise ValueError("FACTORY_PLAN_STALE")
+        git_path = root / ".git"
+        if git_step["action"] == "create" and git_path.exists():
+            raise ValueError("FACTORY_PLAN_STALE")
+        if git_step["action"] == "no_change" and (
+            not git_path.exists()
+            or git_state_digest(git_path) != bootstrap["git_pre_digest"]
+        ):
+            raise ValueError("FACTORY_PLAN_STALE")
     installed = {
         entry["path"]: entry
         for entry in (previous_state or {}).get("managed_files", [])
@@ -918,6 +1279,40 @@ def validate_plan_preconditions(
                 or file_sha256(target) != prior.get("expected_digest")
             ):
                 raise ValueError("FACTORY_PLAN_STALE")
+
+
+def validate_setup_result(
+    root: Path, managed_files: list[dict[str, str]], installation_state_bytes: bytes
+) -> None:
+    for entry in managed_files:
+        target = safe_target(root, entry["path"])
+        if not target.is_file() or file_sha256(target) != entry["expected_digest"]:
+            raise RuntimeError("FACTORY_SETUP_VALIDATION_FAILED")
+    state_path = safe_target(root, INSTALLATION_STATE_PATH)
+    if not state_path.is_file() or file_sha256(state_path) != bytes_sha256(
+        installation_state_bytes
+    ):
+        raise RuntimeError("FACTORY_SETUP_VALIDATION_FAILED")
+
+
+def restore_bootstrap_paths(
+    root: Path, *, root_created: bool, git_created: bool, git_digest: str | None
+) -> str | None:
+    git_path = root / ".git"
+    if git_created:
+        if (
+            not git_path.exists()
+            or git_digest is None
+            or git_state_digest(git_path) != git_digest
+        ):
+            return "FACTORY_ROLLBACK_GIT_STATE_CHANGED"
+        shutil.rmtree(git_path)
+    if root_created:
+        try:
+            root.rmdir()
+        except OSError:
+            pass
+    return None
 
 
 def apply_setup_plan(
@@ -977,6 +1372,7 @@ def apply_setup_plan(
             plan_id=plan["plan_id"],
             mutations=[],
         )
+    bootstrap = plan.get("bootstrap_plan")
     transaction_receipt = {
         "schema_version": 1,
         **plan["change_plan"],
@@ -985,7 +1381,7 @@ def apply_setup_plan(
             entry["path"]: entry["expected_digest"] for entry in managed_files
         },
         "outcome": "APPLIED",
-        "recovery_status": "NOT_REQUIRED",
+        "recovery_status": "AVAILABLE" if plan["mode"] == "greenfield" else "NOT_REQUIRED",
     }
     installation_state = {
         "schema_version": 1,
@@ -1009,30 +1405,76 @@ def apply_setup_plan(
     transaction_receipt["post_digests"][INSTALLATION_STATE_PATH] = bytes_sha256(
         installation_state_bytes
     )
-    changes.extend(
-        [
-            {
-                "path": transaction_path,
-                "action": "write",
-                "data": (
-                    json.dumps(transaction_receipt, indent=2, sort_keys=True) + "\n"
-                ).encode(),
-                "mode": 0o600,
-            },
-            {
-                "path": INSTALLATION_STATE_PATH,
-                "action": "write",
-                "data": installation_state_bytes,
-                "mode": 0o644,
-            },
-        ]
-    )
+    root_created = False
+    git_created = False
+    git_digest: str | None = None
+    snapshots: dict[str, dict[str, Any]] | None = None
     try:
-        apply_changes(root, changes)
+        if bootstrap and bootstrap["steps"][0]["action"] == "create":
+            root.mkdir()
+            root_created = True
+        if bootstrap and bootstrap["steps"][1]["action"] == "create":
+            subprocess.run(
+                ["git", "init", "-q", str(root)],
+                check=True,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+            )
+            git_created = True
+            git_digest = git_state_digest(root / ".git")
+        if bootstrap:
+            transaction_receipt["bootstrap"] = {
+                "root_created": root_created,
+                "git_created": git_created,
+                "git_post_init_digest": git_digest,
+            }
+            if bootstrap["preserved_paths"]:
+                transaction_receipt["bootstrap"]["preserved_paths"] = bootstrap[
+                    "preserved_paths"
+                ]
+        changes.extend(
+            [
+                {
+                    "path": transaction_path,
+                    "action": "write",
+                    "data": (
+                        json.dumps(transaction_receipt, indent=2, sort_keys=True) + "\n"
+                    ).encode(),
+                    "mode": 0o600,
+                },
+                {
+                    "path": INSTALLATION_STATE_PATH,
+                    "action": "write",
+                    "data": installation_state_bytes,
+                    "mode": 0o644,
+                },
+            ]
+        )
+        snapshots = apply_changes(root, changes)
+        if bootstrap:
+            validate_greenfield_preserved_paths(
+                root,
+                harness=plan["harness"],
+                bootstrap=bootstrap,
+                check_top_level=False,
+            )
+        validate_setup_result(root, managed_files, installation_state_bytes)
     except Exception as error:
+        if snapshots is not None:
+            try:
+                restore_snapshots(root, snapshots)
+            except Exception:
+                pass
+        rollback_reason = restore_bootstrap_paths(
+            root,
+            root_created=root_created,
+            git_created=git_created,
+            git_digest=git_digest,
+        )
         return result(
             state="BLOCKED",
-            reason_code="FACTORY_SETUP_ABORTED",
+            reason_code=rollback_reason or "FACTORY_SETUP_ABORTED",
             next_legal_action="resolve_the_write_failure_and_preview_again",
             plan_id=plan["plan_id"],
             blocker=f"{type(error).__name__}: {error}",
@@ -1046,7 +1488,11 @@ def apply_setup_plan(
         plan_id=plan["plan_id"],
         receipt=transaction_path,
         installation_state=INSTALLATION_STATE_PATH,
-        mutations=[change["path"] for change in changes],
+        mutations=[
+            *(["."] if root_created else []),
+            *([".git"] if git_created else []),
+            *[change["path"] for change in changes],
+        ],
     )
 
 
@@ -1361,6 +1807,14 @@ def apply_rollback(root: Path, *, approved: bool) -> dict[str, Any]:
             raise ValueError("FACTORY_ROLLBACK_UNAVAILABLE")
         transaction_target = safe_target(root, transaction_path)
         transaction = json.loads(transaction_target.read_text(encoding="utf-8"))
+        if transaction.get("operation") == "greenfield":
+            return apply_greenfield_rollback(
+                root,
+                installation_state=installation_state,
+                transaction=transaction,
+                transaction_path=transaction_path,
+                approved=approved,
+            )
         if (
             transaction.get("operation") != "update"
             or transaction.get("target_version")
@@ -1415,13 +1869,157 @@ def apply_rollback(root: Path, *, approved: bool) -> dict[str, Any]:
     )
 
 
+def _greenfield_allowed_paths(
+    installation_state: dict[str, Any], transaction_path: str
+) -> tuple[set[str], set[str]]:
+    files = {
+        entry["path"]
+        for entry in installation_state["managed_files"]
+        if isinstance(entry, dict) and isinstance(entry.get("path"), str)
+    }
+    files.update({INSTALLATION_STATE_PATH, transaction_path})
+    directories: set[str] = set()
+    for relative in files:
+        parent = Path(relative).parent
+        while parent != Path("."):
+            directories.add(parent.as_posix())
+            parent = parent.parent
+    return files, directories
+
+
+def apply_greenfield_rollback(
+    root: Path,
+    *,
+    installation_state: dict[str, Any],
+    transaction: dict[str, Any],
+    transaction_path: str,
+    approved: bool,
+) -> dict[str, Any]:
+    bootstrap = transaction.get("bootstrap")
+    if (
+        transaction.get("target_version") != installation_state["factory_version"]
+        or transaction.get("recovery_status") != "AVAILABLE"
+        or not isinstance(bootstrap, dict)
+        or not isinstance(bootstrap.get("root_created"), bool)
+        or not isinstance(bootstrap.get("git_created"), bool)
+    ):
+        raise ValueError("FACTORY_ROLLBACK_EVIDENCE_MISMATCH")
+    if not approved:
+        return result(
+            state="BLOCKED",
+            reason_code="FACTORY_ROLLBACK_APPROVAL_REQUIRED",
+            next_legal_action="explicitly_approve_rollback",
+            installed_version=installation_state["factory_version"],
+            target_version=None,
+            mutations=[],
+        )
+
+    git_path = root / ".git"
+    if bootstrap["git_created"]:
+        expected_git = bootstrap.get("git_post_init_digest")
+        if (
+            not isinstance(expected_git, str)
+            or not git_path.exists()
+            or git_state_digest(git_path) != expected_git
+        ):
+            return result(
+                state="BLOCKED",
+                reason_code="FACTORY_ROLLBACK_GIT_STATE_CHANGED",
+                next_legal_action="preserve_user_git_state_and_recover_manually",
+                mutations=[],
+            )
+
+    expected_digests = transaction.get("post_digests")
+    if not isinstance(expected_digests, dict):
+        raise ValueError("FACTORY_ROLLBACK_EVIDENCE_MISMATCH")
+    files, directories = _greenfield_allowed_paths(
+        installation_state, transaction_path
+    )
+    for relative in files - {transaction_path}:
+        target = safe_target(root, relative)
+        expected = expected_digests.get(relative)
+        if (
+            not isinstance(expected, str)
+            or not target.is_file()
+            or file_sha256(target) != expected
+        ):
+            raise ValueError("FACTORY_ROLLBACK_EVIDENCE_MISMATCH")
+
+    if bootstrap["root_created"]:
+        for path in root.rglob("*"):
+            relative = path.relative_to(root)
+            if relative.parts and relative.parts[0] == ".git":
+                continue
+            value = relative.as_posix()
+            if path.is_file() and value in files:
+                continue
+            if path.is_dir() and value in directories:
+                continue
+            raise ValueError("FACTORY_ROLLBACK_EVIDENCE_MISMATCH")
+
+    changes = [
+        {"path": relative, "action": "delete"}
+        for relative in sorted(
+            files,
+            key=lambda value: (len(Path(value).parts), value),
+            reverse=True,
+        )
+    ]
+    snapshots = apply_changes(root, changes)
+    try:
+        if bootstrap["git_created"]:
+            if git_state_digest(git_path) != bootstrap["git_post_init_digest"]:
+                raise ValueError("FACTORY_ROLLBACK_GIT_STATE_CHANGED")
+            shutil.rmtree(git_path)
+        if bootstrap["root_created"]:
+            root.rmdir()
+    except Exception:
+        restore_snapshots(root, snapshots)
+        raise
+    return result(
+        state="ROLLED_BACK",
+        reason_code="FACTORY_ROLLBACK_APPLIED",
+        next_legal_action="confirm_target_state_before_reinitializing",
+        final_version=None,
+        mutations=[
+            *sorted(files),
+            *([".git"] if bootstrap["git_created"] else []),
+            *(["."] if bootstrap["root_created"] else []),
+        ],
+    )
+
+
 def print_json(value: dict[str, Any]) -> None:
     print(json.dumps(value, indent=2, sort_keys=True))
 
 
+def concise(value: dict[str, Any]) -> str:
+    lines = [
+        f"Factory: {value['state']}",
+        f"Reason: {value['reason_code']}",
+    ]
+    target = value.get("repository_root") or value.get("target")
+    if target:
+        lines.append(f"Target: {target}")
+    if value.get("plan_id"):
+        lines.append(f"Plan: {value['plan_id']}")
+    mutations = value.get("mutations")
+    if isinstance(mutations, list):
+        lines.append(f"Changes: {len(mutations)}")
+    else:
+        lines.append("Changes: 0")
+    lines.append(f"Next: {value['next_legal_action']}")
+    return "\n".join(lines)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="factory-plugin")
-    parser.add_argument("--root", type=Path, help="repository path; defaults to Git root")
+    parser.add_argument(
+        "--root",
+        type=Path,
+        help="repository path; defaults to current directory for greenfield; Git root otherwise",
+    )
+    parser.add_argument("--json", action="store_true")
     subparsers = parser.add_subparsers(dest="command", required=True)
     doctor_parser = subparsers.add_parser("doctor")
     doctor_parser.add_argument("--harness", required=True, choices=sorted(SUPPORTED_HARNESSES))
@@ -1445,7 +2043,12 @@ def main() -> int:
     args = parser.parse_args()
 
     try:
-        root = args.root.resolve() if args.root else resolve_git_root(Path.cwd())
+        if args.root:
+            root = args.root.resolve()
+        elif args.command == "greenfield":
+            root = Path.cwd().resolve()
+        else:
+            root = resolve_git_root(Path.cwd())
         if args.command == "doctor":
             output = evaluate_doctor(root, harness=args.harness)
         elif args.command == "progress":
@@ -1486,7 +2089,10 @@ def main() -> int:
             next_legal_action="invoke_from_a_supported_git_worktree",
             mutations=[],
         )
-    print_json(output)
+    if args.json:
+        print_json(output)
+    else:
+        print(concise(output))
     return 2 if output["state"] == "BLOCKED" else 0
 
 

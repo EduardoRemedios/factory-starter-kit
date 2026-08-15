@@ -10,11 +10,12 @@ description: Coordinate a Factory run from raw brief through Stage I2. Use when 
 1. Read `AGENTS.md`, `docs/Factory/ORCHESTRATION.md`, `docs/Factory/Spec/STAGE_CONTRACTS.md`, and `docs/Factory/SCRATCHPAD.md` `## Active Pitfalls (Mandatory)`.
 2. Run `bash scripts/knowledge_lint.sh` before Stage A and persist output as `docs/Factory/runs/<RUN_ID>/KNOWLEDGE_LINT.txt`.
 3. Create the run root and required files: `raw_brief.md`, `EXECUTION_MODE.txt`, `CONTEXT_RECALL_REPORT.md`, and later `SPRINT_ID.txt`.
-4. Build recall evidence with `./scripts/factoryctl context-index` and `./scripts/factoryctl context-report --profile stage-a`.
-5. Keep the run `PLANNING_ONLY` unless the raw brief explicitly authorizes `EXECUTION_ENABLED`.
-6. Coordinate stages in order: `A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> I2`.
-7. After each stage handoff, run `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>`.
-8. After I2, run `./scripts/factoryctl pack-lint --run <RUN_ID>` before human review.
+4. If `docs/Factory/PROJECT_PREFLIGHT.json` exists, run `./scripts/factoryctl project-preflight --run <RUN_ID>` after knowledge lint and before context recall; persist/pass `PROJECT_PREFLIGHT.txt` or halt.
+5. Build recall evidence with `./scripts/factoryctl context-index` and `./scripts/factoryctl context-report --profile stage-a`.
+6. Keep the run `PLANNING_ONLY` unless the raw brief explicitly authorizes `EXECUTION_ENABLED`.
+7. Coordinate stages in order: `A -> B -> C -> D -> E -> F -> G -> H -> I -> J -> I2`.
+8. After each stage handoff, run `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>`.
+9. After I2, run `./scripts/factoryctl pack-lint --run <RUN_ID>` before human review.
 
 ## Guardrails
 

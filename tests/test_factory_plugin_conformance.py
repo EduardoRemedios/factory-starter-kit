@@ -7,14 +7,16 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tests.factory_plugin_test_support import FIXTURES_DIR
-from tests.test_factory_plugin_status import create_run, passing_handoff, write
+from tests.test_factory_plugin_status import complete_i2_pack, create_run, write
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.dont_write_bytecode = True
 FIXTURE = json.loads(
-    (FIXTURES_DIR / "harness_parity/golden.json").read_text(encoding="utf-8")
+    (
+        REPO_ROOT
+        / "tests/plugin_fixtures/harness_parity/golden.json"
+    ).read_text(encoding="utf-8")
 )
 
 
@@ -41,9 +43,7 @@ class FactoryPluginConformanceTests(unittest.TestCase):
             root = Path(temp_dir)
             run_root = create_run(root)
             write(run_root / "EXECUTION_MODE.txt", "PLANNING_ONLY\n")
-            for stage in CODEX_RUNTIME.STAGE_ORDER:
-                passing_handoff(run_root, stage)
-            write(run_root / "pack/PACK_AUDIT_REPORT.md", "- Verdict: PASS\n")
+            complete_i2_pack(run_root)
             codex = CODEX_RUNTIME.evaluate_progress(root)
             claude = CLAUDE_RUNTIME.evaluate_progress(root)
             self.assertEqual(codex, claude)

@@ -44,6 +44,7 @@ Use only these tags unless explicitly extended:
 - `fingerprints`
 - `evidence_chain`
 - `runtime_patterns`
+- `harness`
 
 ---
 

@@ -13,9 +13,11 @@ VALIDATION:
 -->
 
 ## Version
-v1
+v1.2
 
 ## Change Log
+- v1.2 (2026-08-13): Added executable VM-set agreement and SHA-pinned no-touch preimage adjudication.
+- v1.1 (2026-08-13): Added explicit immutable audited execution mode for later activation validation.
 - v1 (YYYY-MM-DD): Initial Purple audit report.
 
 ## Audit Inputs (LOAD)
@@ -29,8 +31,13 @@ v1
 - PACK_CHECKLIST.md
 - PACK_MANIFEST.md
 
+Confirm that plan, executable manifest, and traceability VM sets agree exactly and that every no-touch check has a valid SHA-pinned preimage manifest before issuing PASS.
+
 ## Verdict
 - Verdict: PASS / CONDITIONAL PASS / FAIL
+- Audited Execution Mode: PLANNING_ONLY / EXECUTION_ENABLED
+
+The audited execution mode describes this exact I2 pack. Do not rewrite it after human review. A later current-mode transition is recorded separately in run-root `EXECUTION_AUTHORIZATION.md`.
 
 ## Checklist Reference (source-of-truth)
 - Checklist: PACK_CHECKLIST.md

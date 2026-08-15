@@ -2,8 +2,10 @@
 
 Preview Factory compatibility and update changes before mutation.
 
-Use the bundled lifecycle tool from the installed plugin root:
-`python3 <plugin-root>/scripts/factory_plugin.py update --harness <claude-or-codex>`.
+Use the bundled lifecycle tool. In Claude Code, run
+`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/factory_plugin.py" update --harness claude`.
+In Codex, resolve the package containing this `SKILL.md` and run its
+`scripts/factory_plugin.py` by absolute path with `update --harness codex`.
 Only after the user explicitly approves that plan ID, apply it with
 `--apply --approve-plan <plan-id>`. Use the bundled `rollback` subcommand only
 after separate explicit rollback approval.

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "run_id": "RUN_20260813_0855_factory_host_capability_contract",
+  "posture": "VERIFIED_LOCAL",
+  "host": {
+    "system": "Darwin",
+    "machine": "arm64"
+  },
+  "capabilities": [
+    {
+      "id": "shell_test",
+      "path": "/bin/test",
+      "kind": "executable_file"
+    }
+  ]
+}

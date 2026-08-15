@@ -45,6 +45,19 @@ def passing_handoff(run_root: Path, stage: str, output: str | None = None) -> No
     )
 
 
+def complete_i2_pack(run_root: Path) -> None:
+    for stage in RUNTIME.STAGE_ORDER:
+        passing_handoff(run_root, stage)
+    intent = run_root / "pack/intent.md"
+    write(intent, "# Intent\n")
+    write(
+        run_root / "pack/intent_lock_report.md",
+        "- Verdict: PASS\n"
+        f"- Locked SHA-256: `{RUNTIME.file_sha256(intent)}`\n",
+    )
+    write(run_root / "pack/PACK_AUDIT_REPORT.md", "- Verdict: PASS\n")
+
+
 class FactoryPluginStatusTests(unittest.TestCase):
     def test_doctor_is_read_only_and_reports_compatibility(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -121,14 +134,97 @@ class FactoryPluginStatusTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             run_root = create_run(root)
-            for stage in RUNTIME.STAGE_ORDER:
-                passing_handoff(run_root, stage)
-            write(run_root / "pack/PACK_AUDIT_REPORT.md", "- Verdict: PASS\n")
+            complete_i2_pack(run_root)
             before = inventory(root)
             output = RUNTIME.evaluate_progress(root)
             self.assertEqual("WAITING_HUMAN_GO", output["state"])
             self.assertEqual("FACTORY_HUMAN_GO_REQUIRED", output["reason_code"])
             self.assertEqual(before, inventory(root))
+
+    def test_human_go_label_or_negative_value_does_not_authorize(self):
+        for marker in ("- Human Go:\n", "- Human Go: NOT_RECORDED\n"):
+            with self.subTest(marker=marker.strip()), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                run_root = create_run(root)
+                complete_i2_pack(run_root)
+                write(run_root / "EXECUTION_PROMPT.md", marker)
+                output = RUNTIME.evaluate_progress(root)
+                self.assertEqual("WAITING_HUMAN_GO", output["state"])
+                self.assertEqual("FACTORY_HUMAN_GO_REQUIRED", output["reason_code"])
+
+    def test_exact_human_go_marker_authorizes_execution(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            run_root = create_run(root)
+            complete_i2_pack(run_root)
+            write(run_root / "EXECUTION_PROMPT.md", "- Human Go: RECORDED\n")
+            output = RUNTIME.evaluate_progress(root)
+            self.assertEqual("AUTHORIZED_FOR_EXECUTION", output["state"])
+            self.assertEqual("FACTORY_HUMAN_GO_RECORDED", output["reason_code"])
+
+    def test_progress_rejects_the_same_output_path_failures_as_stage_lint(self):
+        cases = (
+            "- pack/evidence.txt\n",
+            "- `pack/*.txt`\n",
+            "- `/tmp/evidence.txt`\n",
+            "- `../evidence.txt`\n",
+            "- `pack/missing.txt`\n",
+        )
+        for output_line in cases:
+            with self.subTest(output_line=output_line.strip()), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                run_root = create_run(root)
+                write(
+                    run_root / "pack/HANDOFF/HANDOFF_STAGE_A.md",
+                    "## Outputs Produced (paths)\n"
+                    f"{output_line}"
+                    "\n## Exit Criteria Status\n- PASS\n",
+                )
+                output = RUNTIME.evaluate_progress(root)
+                self.assertEqual("BLOCKED", output["state"])
+                self.assertEqual("FACTORY_EVIDENCE_CONTRADICTION", output["reason_code"])
+
+    def test_progress_accepts_nonempty_exact_output_path(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            run_root = create_run(root)
+            write(run_root / "pack/evidence.txt", "ok\n")
+            passing_handoff(run_root, "A", "pack/evidence.txt")
+            output = RUNTIME.evaluate_progress(root)
+            self.assertEqual("PLANNING_IN_PROGRESS", output["state"])
+
+    def test_failed_intent_purple_gate_blocks_stage_e(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            run_root = create_run(root)
+            for stage in ("A", "B", "C", "D"):
+                passing_handoff(run_root, stage)
+            write(run_root / "pack/intent.md", "# Intent\n")
+            write(run_root / "pack/intent_lock_report.md", "- Verdict: FAIL\n")
+            output = RUNTIME.evaluate_progress(root)
+            self.assertEqual("BLOCKED", output["state"])
+            self.assertEqual("FACTORY_INTENT_NOT_LOCKED", output["reason_code"])
+            self.assertEqual(
+                "repair_intent_and_repeat_purple",
+                output["next_legal_action"],
+            )
+
+    def test_valid_intent_lock_allows_stage_e(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            run_root = create_run(root)
+            for stage in ("A", "B", "C", "D"):
+                passing_handoff(run_root, stage)
+            intent = run_root / "pack/intent.md"
+            write(intent, "# Intent\n")
+            write(
+                run_root / "pack/intent_lock_report.md",
+                "- Verdict: PASS\n"
+                f"- Locked SHA-256: `{RUNTIME.file_sha256(intent)}`\n",
+            )
+            output = RUNTIME.evaluate_progress(root)
+            self.assertEqual("PLANNING_IN_PROGRESS", output["state"])
+            self.assertEqual("run_stage_e", output["next_legal_action"])
 
 
 if __name__ == "__main__":

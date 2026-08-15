@@ -1,14 +1,15 @@
 {
-  "schema_version": 1,
   "captured_at": "2026-07-24T15:50:00+01:00",
-  "run_id": "RUN_20260724_1448_factory_plugin",
   "files": {
     "docs/Factory/Spec/DEFINITIONS.md": "04c0888bda4d88d26dd13b3915bff3faee8bacbab8225e7bc7aa0804daef1b0f",
     "docs/Factory/Spec/NAMING_CONVENTIONS.md": "a8f7c4791cffddddb56dde5f8668f8f7e69bbd02b51c9f807e025023a9718748",
     "docs/Factory/Spec/PURPLE_GATE_CHECKLIST.md": "ab42046da62d1aa03d783ec7512c388ea54476eadf38ac01b72406e504e5dd74",
-    "docs/Factory/Spec/STAGE_CONTRACTS.md": "28701c153c7dc8191d0b5c2e4e01f09c4caa36bdedd0eb6ff15c7d99af438393",
-    "scripts/factory_pack_lint.py": "e91b987d6ad5aa90fbc3ced0c83925efb89058fc8a1609e15ce1f7c243324216",
-    "scripts/factory_stage_lint.py": "2fca0054ccef0911773ad6c29ae373e8138e6c2899d3e6b3a338d5615638a7b9",
-    "scripts/knowledge_lint.sh": "239bd404ff7483e44ff59077f18762a90818a943370d7d34b86da3b01fe988a6"
-  }
+    "docs/Factory/Spec/STAGE_CONTRACTS.md": "3f0338a8fdce7f38b3845a736d9996418f05aab6b044bbfc3ecf4d17fadc4d04",
+    "scripts/factory_pack_lint.py": "c7c7005bb0d36385f291233af839d809a366e49471549072a6586da969792a8c",
+    "scripts/factory_stage_lint.py": "905e94cec5653ae4a109b440f1388cca9adb86e27d35ca4e6694658f67300b43",
+    "scripts/knowledge_lint.sh": "40ad5164a5930c5796e329985093e3d4e30f9dc373b44f3b469e1fbda6888081",
+    "tests/test_factory_plugin_composition_live.py": "52dd40a7cc0c374ac477299c642222796515ca592942e8f1c312f345a31c27a4"
+  },
+  "run_id": "RUN_20260724_1448_factory_plugin",
+  "schema_version": 1
 }

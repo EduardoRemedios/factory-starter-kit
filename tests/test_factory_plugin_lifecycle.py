@@ -58,6 +58,17 @@ def setup_plan(root: Path, payload: Path):
     )
 
 
+def greenfield_plan(root: Path, payload: Path, harness: str = "codex"):
+    return RUNTIME.evaluate_setup_plan(
+        root,
+        mode="greenfield",
+        harness=harness,
+        payload_root=payload,
+        platform_name="darwin",
+        python_version=(3, 11, 0),
+    )
+
+
 def update_plan(root: Path, payload: Path):
     return RUNTIME.evaluate_update_plan(
         root,
@@ -84,7 +95,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         self.v2 = make_payload(
             self.base,
-            "0.2.0",
+            "0.2.1",
             {
                 "AGENTS.md": ("new starter instructions\n", "project-owned"),
                 "docs/Factory/core.md": ("factory v2\n", "release-owned"),
@@ -203,6 +214,285 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         self.assertEqual([], output["mutations"])
         self.assertEqual(before, inventory(self.root))
 
+    def test_greenfield_apply_bootstraps_absent_root_and_git(self):
+        root = self.base / "absent-repo"
+        plan = greenfield_plan(root, self.v1)
+        output = RUNTIME.apply_setup_plan(
+            root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", output["reason_code"])
+        self.assertTrue((root / ".git").is_dir())
+        self.assertTrue((root / "AGENTS.md").is_file())
+        state = json.loads(
+            (root / RUNTIME.INSTALLATION_STATE_PATH).read_text(encoding="utf-8")
+        )
+        receipt = json.loads(
+            (root / state["last_successful_transaction"]["receipt"]).read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(
+            {
+                "root_created": True,
+                "git_created": True,
+                "git_post_init_digest": RUNTIME.git_state_digest(root / ".git"),
+            },
+            receipt["bootstrap"],
+        )
+        self.assertEqual("AVAILABLE", receipt["recovery_status"])
+
+    def test_claude_greenfield_apply_preserves_unmanaged_local_settings(self):
+        settings = self.root / ".claude/settings.local.json"
+        write(settings, '{"permissions":{"allow":[]}}\n')
+        settings.chmod(0o640)
+        settings.parent.chmod(0o750)
+        expected_bytes = settings.read_bytes()
+        expected_file_mode = settings.stat().st_mode & 0o777
+        expected_directory_mode = settings.parent.stat().st_mode & 0o777
+        plan = greenfield_plan(self.root, self.v1, harness="claude")
+        self.assertEqual("PLAN_READY", plan["state"])
+        self.assertNotIn(".claude/settings.local.json", plan["allowed_paths"])
+        self.assertNotIn(
+            ".claude/settings.local.json",
+            {item["path"] for item in plan["planned_files"]},
+        )
+        output = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", output["reason_code"])
+        self.assertNotIn(".claude/settings.local.json", output["mutations"])
+        self.assertEqual(expected_bytes, settings.read_bytes())
+        self.assertEqual(expected_file_mode, settings.stat().st_mode & 0o777)
+        self.assertEqual(
+            expected_directory_mode, settings.parent.stat().st_mode & 0o777
+        )
+        state = json.loads(
+            (self.root / RUNTIME.INSTALLATION_STATE_PATH).read_text(encoding="utf-8")
+        )
+        self.assertNotIn(
+            ".claude/settings.local.json",
+            {item["path"] for item in state["managed_files"]},
+        )
+        receipt = json.loads(
+            (
+                self.root / state["last_successful_transaction"]["receipt"]
+            ).read_text(encoding="utf-8")
+        )
+        self.assertNotIn(
+            ".claude/settings.local.json",
+            {item["path"] for item in receipt["ordered_file_actions"]},
+        )
+        self.assertEqual(
+            plan["bootstrap_plan"]["preserved_paths"],
+            receipt["bootstrap"]["preserved_paths"],
+        )
+
+    def test_claude_greenfield_preserved_state_changes_are_stale_before_git(self):
+        cases = (
+            "bytes",
+            "file_mode",
+            "directory_mode",
+            "removed",
+            "settings_symlink",
+            "claude_sibling",
+            "top_level_sibling",
+        )
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir) / "repo"
+                settings = root / ".claude/settings.local.json"
+                write(settings, "{}\n")
+                plan = greenfield_plan(root, self.v1, harness="claude")
+                if case == "bytes":
+                    write(settings, '{"changed":true}\n')
+                elif case == "file_mode":
+                    settings.chmod(0o600)
+                elif case == "directory_mode":
+                    settings.parent.chmod(0o700)
+                elif case == "removed":
+                    settings.unlink()
+                elif case == "settings_symlink":
+                    settings.unlink()
+                    outside = Path(temp_dir) / "outside.json"
+                    write(outside, "{}\n")
+                    settings.symlink_to(outside)
+                elif case == "claude_sibling":
+                    write(settings.parent / "commands.md", "command\n")
+                elif case == "top_level_sibling":
+                    write(root / "README.md", "project\n")
+                before = inventory(Path(temp_dir))
+                output = RUNTIME.apply_setup_plan(
+                    root,
+                    plan=plan,
+                    approved_plan_id=plan["plan_id"],
+                    payload_root=self.v1,
+                )
+                self.assertEqual("FACTORY_PLAN_STALE", output["reason_code"])
+                self.assertEqual([], output["mutations"])
+                self.assertFalse((root / ".git").exists())
+                self.assertFalse((root / "AGENTS.md").exists())
+                self.assertEqual(before, inventory(Path(temp_dir)))
+
+    def test_claude_permission_allowlist_append_keeps_the_approved_plan_current(self):
+        settings = self.root / ".claude/settings.local.json"
+        write(settings, '{"permissions":{"allow":["Bash(first:*)"]}}\n')
+        preview = greenfield_plan(self.root, self.v1, harness="claude")
+        write(
+            settings,
+            '{"permissions":{"allow":["Bash(first:*)","Bash(second:*)"]}}\n',
+        )
+        current = greenfield_plan(self.root, self.v1, harness="claude")
+        self.assertEqual(preview["plan_id"], current["plan_id"])
+        expected = settings.read_bytes()
+        applied = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=current,
+            approved_plan_id=preview["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", applied["reason_code"])
+        self.assertEqual(expected, settings.read_bytes())
+
+    def test_claude_greenfield_recovery_and_rollback_preserve_local_settings(self):
+        settings = self.root / ".claude/settings.local.json"
+        write(settings, '{"permissions":{}}\n')
+        settings.chmod(0o640)
+        expected_bytes = settings.read_bytes()
+        expected_mode = settings.stat().st_mode & 0o777
+        plan = greenfield_plan(self.root, self.v1, harness="claude")
+        original = RUNTIME.apply_changes
+
+        def interrupt_after_git_init(_root, _changes):
+            self.assertTrue((_root / ".git").is_dir())
+            self.assertEqual(expected_bytes, settings.read_bytes())
+            raise OSError("fixture interruption after git init")
+
+        RUNTIME.apply_changes = interrupt_after_git_init
+        try:
+            interrupted = RUNTIME.apply_setup_plan(
+                self.root,
+                plan=plan,
+                approved_plan_id=plan["plan_id"],
+                payload_root=self.v1,
+            )
+        finally:
+            RUNTIME.apply_changes = original
+        self.assertEqual("FACTORY_SETUP_ABORTED", interrupted["reason_code"])
+        self.assertFalse((self.root / ".git").exists())
+        self.assertEqual(expected_bytes, settings.read_bytes())
+        self.assertEqual(expected_mode, settings.stat().st_mode & 0o777)
+
+        fresh = greenfield_plan(self.root, self.v1, harness="claude")
+        applied = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=fresh,
+            approved_plan_id=fresh["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", applied["reason_code"])
+        rollback = RUNTIME.apply_rollback(self.root, approved=True)
+        self.assertEqual("FACTORY_ROLLBACK_APPLIED", rollback["reason_code"])
+        self.assertFalse((self.root / ".git").exists())
+        self.assertEqual(
+            {".claude/settings.local.json": expected_bytes}, inventory(self.root)
+        )
+        self.assertEqual(expected_mode, settings.stat().st_mode & 0o777)
+
+    def test_greenfield_plan_is_stale_if_git_appears_after_preview(self):
+        plan = greenfield_plan(self.root, self.v1)
+        subprocess.run(["git", "init", "-q", str(self.root)], check=True)
+        before = inventory(self.root)
+        output = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_PLAN_STALE", output["reason_code"])
+        self.assertEqual(before, inventory(self.root))
+
+    def test_greenfield_interruption_after_git_init_restores_absent_root(self):
+        root = self.base / "interrupted-repo"
+        plan = greenfield_plan(root, self.v1)
+        original = RUNTIME.apply_changes
+
+        def interrupt_after_git_init(_root, _changes):
+            self.assertTrue((_root / ".git").is_dir())
+            raise OSError("fixture interruption after git init")
+
+        RUNTIME.apply_changes = interrupt_after_git_init
+        try:
+            output = RUNTIME.apply_setup_plan(
+                root,
+                plan=plan,
+                approved_plan_id=plan["plan_id"],
+                payload_root=self.v1,
+            )
+        finally:
+            RUNTIME.apply_changes = original
+        self.assertEqual("FACTORY_SETUP_ABORTED", output["reason_code"])
+        self.assertFalse(root.exists())
+
+    def test_greenfield_rollback_removes_factory_git_and_payload(self):
+        plan = greenfield_plan(self.root, self.v1)
+        applied = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", applied["reason_code"])
+        approval = RUNTIME.apply_rollback(self.root, approved=False)
+        self.assertEqual(
+            "FACTORY_ROLLBACK_APPROVAL_REQUIRED", approval["reason_code"]
+        )
+        rollback = RUNTIME.apply_rollback(self.root, approved=True)
+        self.assertEqual("FACTORY_ROLLBACK_APPLIED", rollback["reason_code"])
+        self.assertTrue(self.root.is_dir())
+        self.assertEqual({}, inventory(self.root))
+
+    def test_greenfield_rollback_preserves_changed_git_state(self):
+        plan = greenfield_plan(self.root, self.v1)
+        applied = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=self.v1,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", applied["reason_code"])
+        write(self.root / "user.txt", "user work\n")
+        subprocess.run(["git", "-C", str(self.root), "add", "user.txt"], check=True)
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(self.root),
+                "-c",
+                "user.name=Factory Test",
+                "-c",
+                "user.email=factory-test@example.invalid",
+                "commit",
+                "-q",
+                "-m",
+                "user commit",
+            ],
+            check=True,
+        )
+        before = inventory(self.root)
+        rollback = RUNTIME.apply_rollback(self.root, approved=True)
+        self.assertEqual("BLOCKED", rollback["state"])
+        self.assertEqual(
+            "FACTORY_ROLLBACK_GIT_STATE_CHANGED", rollback["reason_code"]
+        )
+        self.assertEqual(before, inventory(self.root))
+        self.assertTrue((self.root / ".git").is_dir())
+
     def test_update_preview_and_interruption_do_not_mutate(self):
         self.install_v1()
         plan = update_plan(self.root, self.v2)
@@ -274,6 +564,88 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
             (self.root / update_receipt_path).read_text(encoding="utf-8")
         )
         self.assertEqual("ROLLED_BACK", update_receipt["recovery_status"])
+
+    def test_update_reclassifies_preserved_file_without_touching_its_bytes(self):
+        old_payload = make_payload(
+            self.base,
+            "0.1.1",
+            {
+                "docs/Factory/SCRATCHPAD.md": (
+                    "release scratchpad\n",
+                    "release-owned",
+                )
+            },
+        )
+        new_payload = make_payload(
+            self.base,
+            "0.2.3",
+            {
+                "docs/Factory/SCRATCHPAD.md": (
+                    "neutral scratchpad seed\n",
+                    "project-owned",
+                )
+            },
+        )
+        initial = setup_plan(self.root, old_payload)
+        installed = RUNTIME.apply_setup_plan(
+            self.root,
+            plan=initial,
+            approved_plan_id=initial["plan_id"],
+            payload_root=old_payload,
+        )
+        self.assertEqual("FACTORY_SETUP_APPLIED", installed["reason_code"])
+
+        scratchpad = self.root / "docs/Factory/SCRATCHPAD.md"
+        write(scratchpad, "team-owned memory\n")
+        scratchpad.chmod(0o640)
+        expected_bytes = scratchpad.read_bytes()
+        expected_mode = scratchpad.stat().st_mode & 0o777
+        expected_digest = hashlib.sha256(expected_bytes).hexdigest()
+
+        plan = update_plan(self.root, new_payload)
+        item = next(
+            entry
+            for entry in plan["planned_files"]
+            if entry["path"] == "docs/Factory/SCRATCHPAD.md"
+        )
+        self.assertEqual("preserve", item["action"])
+        self.assertEqual("project-owned", item["classification"])
+        output = RUNTIME.apply_update_plan(
+            self.root,
+            plan=plan,
+            approved_plan_id=plan["plan_id"],
+            payload_root=new_payload,
+        )
+        self.assertEqual("FACTORY_UPDATE_APPLIED", output["reason_code"])
+        self.assertNotIn("docs/Factory/SCRATCHPAD.md", output["mutations"])
+        self.assertEqual(expected_bytes, scratchpad.read_bytes())
+        self.assertEqual(expected_mode, scratchpad.stat().st_mode & 0o777)
+
+        state = json.loads(
+            (self.root / RUNTIME.INSTALLATION_STATE_PATH).read_text(encoding="utf-8")
+        )
+        managed = next(
+            entry
+            for entry in state["managed_files"]
+            if entry["path"] == "docs/Factory/SCRATCHPAD.md"
+        )
+        self.assertEqual("project-owned", managed["ownership_class"])
+        self.assertEqual(expected_digest, managed["expected_digest"])
+        self.assertEqual("0.2.3", managed["source_version"])
+
+        rollback = RUNTIME.apply_rollback(self.root, approved=True)
+        self.assertEqual("FACTORY_ROLLBACK_APPLIED", rollback["reason_code"])
+        self.assertEqual(expected_bytes, scratchpad.read_bytes())
+        self.assertEqual(expected_mode, scratchpad.stat().st_mode & 0o777)
+        restored_state = json.loads(
+            (self.root / RUNTIME.INSTALLATION_STATE_PATH).read_text(encoding="utf-8")
+        )
+        restored = next(
+            entry
+            for entry in restored_state["managed_files"]
+            if entry["path"] == "docs/Factory/SCRATCHPAD.md"
+        )
+        self.assertEqual("release-owned", restored["ownership_class"])
 
     def test_modified_release_owned_file_blocks_update(self):
         self.install_v1()

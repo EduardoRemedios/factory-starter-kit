@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "claude_binary_source": "execution_authorization",
+  "claude_version_policy": "observed version must satisfy an explicit execution-authorized compatibility rule",
+  "permission_rule": "Bash(python3 *)",
+  "rejected_permission_rules": [
+    "Bash(python3:*)",
+    "Bash(*)"
+  ],
+  "required_external_root_roles": [
+    "isolated_config_root",
+    "persistent_evidence_root",
+    "greenfield_journey_root",
+    "brownfield_neither_journey_root",
+    "brownfield_bmad_journey_root",
+    "new_candidate_root"
+  ],
+  "protected_root_roles": [
+    "normal_claude_profile",
+    "normal_claude_runtime",
+    "failed_0_2_2_candidate",
+    "failed_0_2_2_test_root",
+    "failed_0_2_2_config",
+    "odyssey",
+    "unrelated_state"
+  ],
+  "retained_evidence": [
+    {
+      "role": "ms06_halt",
+      "sha256": "6b4c44c94ea0c889fbb9d89a275f45e8cb145eb7b58ea58e5466839b3ac41a84"
+    },
+    {
+      "role": "root_cause_analysis",
+      "sha256": "e7a3b35f7515fcc2199ec202633bb0b5bccd128a61d70ccdf73587d453efa14e"
+    }
+  ],
+  "cleanup_policy": "forbidden",
+  "retry_policy": "forbidden_without_new_authorization",
+  "output_policy": "structured metadata, digests, verdicts, and sanitized excerpts only",
+  "bmad_version": "6.10.0"
+}

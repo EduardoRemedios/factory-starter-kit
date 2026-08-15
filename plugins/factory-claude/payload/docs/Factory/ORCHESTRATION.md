@@ -1,9 +1,14 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.19
+v1.24
 
 ## Change Log
+- v1.24 (2026-08-13): Closed missing-mode and symlink fail-open cases, aligned traceability parsing with its canonical verification column, and validated optional execution ordering.
+- v1.23 (2026-08-13): Separated pack-lint validation of pinned preimage evidence from lifecycle-timed VM comparison of target bytes.
+- v1.22 (2026-08-13): Made the executable verification manifest authoritative, cross-checked VM inventories, and required SHA-pinned no-touch preimage manifests.
+- v1.21 (2026-08-13): Separated immutable I2 audited mode from later digest-bound current execution authority.
+- v1.20 (2026-08-05): Added deterministic execution-closeout recording and fail-closed progress behavior.
 - v1.19 (2026-07-02): Added the direct-source repair path for generated WEAK context recall reports.
 - v1.18 (2026-06-25): Clarified Kilo Code CLI support as External Lane Mode driven by Codex or a neutral shell.
 - v1.17 (2026-06-25): Added optional Kilo Code CLI stage runner for model-routed Factory lanes.
@@ -61,6 +66,21 @@ Downstream run fan-out is allowed only when this additional field is explicit:
 
 If required fields are absent or malformed, the run remains `PLANNING_ONLY`.
 
+### 0.3.1 Post-I2 Cross-Mode Activation
+
+The mode recorded by `PACK_AUDIT_REPORT.md` and `verification_manifest.yaml` describes the pack Purple audited at I2. Those pack artifacts and `PACK_MANIFEST.md` remain unchanged after human review.
+
+When a pack audited as `PLANNING_ONLY` later receives explicit execution authorization:
+
+1. record current mode as `EXECUTION_ENABLED` in `EXECUTION_MODE.txt`
+2. create `EXECUTION_AUTHORIZATION.md` from the canonical template
+3. record exactly one human-Go marker, prior mode, activated mode, authorized pack-manifest SHA-256, and authorized pack-audit SHA-256
+4. run pack-lint before generating `EXECUTION_PROMPT.md` or changing implementation source
+
+Pack-lint recomputes both pinned digests. Missing audited mode, malformed, duplicated, stale, mismatched, or symlinked activation evidence fails closed. It compares verification-manifest mode with the audited pack mode during a valid cross-mode transition. Existing packs whose explicitly audited mode already matches current mode retain legacy behavior.
+
+Activation must not rewrite `PACK_MANIFEST.md`, `PACK_AUDIT_REPORT.md`, the sprint envelope, or `verification_manifest.yaml`; changing those bytes invalidates the human-approved planning evidence.
+
 ## 0.4 Mission Mode (Additive, Optional)
 Mission Mode is for ordered multi-sprint chains under one mission checkpoint.
 
@@ -89,6 +109,10 @@ Stage F should classify verification with tiers:
 - `V4` live, browser, external, or source-revalidation proof
 
 For `EXECUTION_ENABLED` and Mission Mode runs, Stage F should produce `pack/verification_manifest.yaml` when runnable checks exist. The manifest is optional so planning-only packs stay lightweight, but if it exists `pack-lint` validates its schema.
+
+When a verification manifest exists, its check IDs are the executable authority. Stage F must use a dedicated `## Checks` inventory in `verification_plan.md`, reference the same IDs in the traceability matrix's named verification coverage column, and keep all three ID sets exactly equal. If `execution_order` is present, it is authoritative and must contain every VM check exactly once; explicitly named non-VM operations may be interposed. Every `no_touch` check must reference a safe run-relative, non-symlink JSON preimage manifest and pin that manifest's SHA-256. Pack-lint validates the evidence file, schema, safe paths, and pin; the declared VM command compares target bytes at the lifecycle point named by the plan. Historical preimages do not become permanent postimplementation postimages.
+
+For Factory self-maintenance, Stage F must also inspect project-owned coupling before locking the envelope: protected digest fixtures, generated payload counterparts, and ownership manifests are explicit planned paths rather than unexpected execution drift.
 
 Execution micro-sprints may start with `MS-00 Verification Scaffold`: land or confirm tests, fixtures, no-touch checks, or static validators before feature implementation begins.
 
@@ -164,29 +188,36 @@ The Root Planner should:
 2. create the run root under `docs/Factory/runs/<RUN_ID>/`
 3. persist `raw_brief.md`
 4. run `bash scripts/knowledge_lint.sh` and persist `KNOWLEDGE_LINT.txt`
-5. refresh the continuity index with `./scripts/factoryctl context-index`
-6. generate `docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md` with:
+5. if `docs/Factory/PROJECT_PREFLIGHT.json` exists, run `./scripts/factoryctl project-preflight --run <RUN_ID>` and halt unless `PROJECT_PREFLIGHT.txt` records PASS
+6. refresh the continuity index with `./scripts/factoryctl context-index`
+7. generate `docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md` with:
    - `./scripts/factoryctl context-report --profile stage-a --scope <RUN_ID> --output docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
-7. add `--focus`, `--trace-id`, and `--required-ref` for binding upstream identifiers when the brief names them explicitly
-8. if explicit fallback scopes are not provided, rely on the default Stage A order:
+8. add `--focus`, `--trace-id`, and `--required-ref` for binding upstream identifiers when the brief names them explicitly
+9. if explicit fallback scopes are not provided, rely on the default Stage A order:
    - requested run scope
    - `docs/Factory/runs`
    - `docs/Factory/ProductOwner/phases`
    - `docs`
-9. if the written report still records `Coverage Verdict: WEAK`, use the Stage A direct-source repair path in section 2.1 or halt
-10. derive and persist `EXECUTION_MODE.txt`
-11. if advancing a unit inside an already-authorized mission:
+10. if the written report still records `Coverage Verdict: WEAK`, use the Stage A direct-source repair path in section 2.1 or halt
+11. derive and persist `EXECUTION_MODE.txt`
+12. if advancing a unit inside an already-authorized mission:
    - run `bash scripts/mission_lint.sh <MISSION_ID>`
    - persist `MISSION_LINT.txt`
    - halt if mission lint fails
-12. if the optional Codex Mission Goal Continuity adapter is enabled:
+13. if the optional Codex Mission Goal Continuity adapter is enabled:
    - confirm `docs/Factory/missions/<MISSION_ID>/MISSION_CURSOR.json` exists before using it
    - run `bash scripts/mission_cursor_lint.sh <MISSION_ID>` before continuing from the cursor or any external goal/bookmark
    - halt if mission cursor lint fails; repair source artifacts or regenerate the cursor from valid artifacts
-13. if the raw brief came from the optional PO lane:
+14. if the raw brief came from the optional PO lane:
    - confirm the brief already passed the Brief Review gate
    - treat missing upstream recall or review evidence as blocking
-14. if collecting process telemetry, run `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md`
+15. if collecting process telemetry, run `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md`
+
+### 2.0.1 Optional Project Preflight
+
+An adopting project may declare one additional fail-closed check without changing Factory Core authority. Create `docs/Factory/PROJECT_PREFLIGHT.json` with schema version 1 and an optional integer `timeout_seconds` from 1 through 300. Factory always executes the fixed repository command `scripts/factory_project_preflight --run <RUN_ID> --json` directly; the declaration cannot supply shell text or another command.
+
+The project command must return one JSON object with exactly `schema_version`, `status`, `reason_code`, and `evidence_paths`. Status is `PASS` or `FAIL`; reason codes use uppercase letters, digits, and underscores; evidence paths are existing repository-relative files. Each output stream is capped at 64 KiB. Invalid declarations, missing/non-executable commands, timeout, non-zero exit, oversized or malformed/ambiguous output, explicit failure, and unsafe evidence paths halt before Stage A with stable Core reason codes. When no declaration exists, current Factory behavior is unchanged and `PROJECT_PREFLIGHT.txt` is not required.
 
 ### 2.1 Stage A Direct-Source Repair For WEAK Recall
 Direct-source repair is a narrow fallback after generated recall remains `WEAK`. It strengthens the recall gate by replacing unresolved index references with explicit local source review evidence; it does not allow Stage A to proceed on raw weak recall.
@@ -299,7 +330,21 @@ If the run is `EXECUTION_ENABLED` and the pack passes:
 3. do not generate it for `PLANNING_ONLY` runs
 4. do not initialize downstream runs unless fan-out was explicitly approved
 
-### 6.2 Mission Execution (Mission Mode only)
+### 6.2 Execution Closeout
+
+When an execution-enabled run finishes its approved micro-sprints:
+1. retain evidence for every enabled verification-manifest check
+2. author exactly one `REVIEW_READY`, `NO_GO`, or `BLOCKED` outcome using
+   `docs/Factory/templates/EXECUTION_CLOSEOUT_TEMPLATE.json`
+3. record it only through `./scripts/factoryctl execution-closeout --run <RUN_ID> --input <DRAFT> --json`
+4. run plugin progress for the explicit run and for default selection
+5. treat any present-invalid closeout as blocking; absence alone preserves legacy behavior
+
+Closeout is derived evidence, not authority. `REVIEW_READY` permits maintainer
+review only and does not permit commit, merge, tag, push, publication, adapter
+continuation, phase closure, or mission completion.
+
+### 6.3 Mission Execution (Mission Mode only)
 If Mission Mode is active:
 1. use `MISSION_MANIFEST.md` as the mission ledger
 2. refresh `MISSION_CONTEXT_RECALL_REPORT.md` before checkpointing or authorizing the next unit
@@ -318,6 +363,13 @@ Halt when:
 - mission continuity is broken or ambiguous
 - mission cursor lint fails or the cursor contradicts mission source artifacts
 - a PO-authored brief enters the Factory without upstream Brief Review PASS
+
+### 7.1 Execution Evidence Boundaries
+
+- Factory-controlled Python verification uses `./scripts/factory-python`, which disables bytecode writes before invoking Python.
+- Complete high-volume evidence is written only to an exact path authorized by the active envelope. Harness output contains bounded summaries, not inventory bodies or secret-bearing records.
+- Every `Outputs Produced (paths)` entry is one backtick-quoted exact relative path. Globs, expressions, absolute paths, traversal, symlink escape, malformed bullets, and missing or empty targets fail closed in both stage-lint and Progress.
+- An execution prompt records human authorization with `- Human Go: RECORDED`; the label alone or any other value is not authorization.
 
 ## 8. Minimal Output Set
 Every run should leave behind:

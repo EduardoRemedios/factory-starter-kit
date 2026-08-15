@@ -5,7 +5,7 @@
     {
       "case_id": "UPDATE-PREVIEW",
       "installed_version": "0.1.0",
-      "target_version": "0.2.0",
+      "target_version": "0.2.1",
       "expected_result": "PLAN_READY",
       "expected_reason_code": "FACTORY_UPDATE_REVIEW_REQUIRED",
       "mutations_before_approval": []
@@ -13,7 +13,7 @@
     {
       "case_id": "UPDATE-INTERRUPT",
       "installed_version": "0.1.0",
-      "target_version": "0.2.0",
+      "target_version": "0.2.1",
       "interruption": "after_staging_before_commit",
       "expected_result": "ROLLED_BACK",
       "expected_reason_code": "FACTORY_UPDATE_ABORTED",
@@ -21,7 +21,7 @@
     },
     {
       "case_id": "UPDATE-DOWNGRADE",
-      "installed_version": "0.2.0",
+      "installed_version": "0.2.1",
       "target_version": "0.1.0",
       "expected_result": "HALT",
       "expected_reason_code": "FACTORY_DOWNGRADE_UNSUPPORTED",
@@ -29,8 +29,8 @@
     },
     {
       "case_id": "UPDATE-SECOND-RUN",
-      "installed_version": "0.2.0",
-      "target_version": "0.2.0",
+      "installed_version": "0.2.1",
+      "target_version": "0.2.1",
       "expected_result": "NO_CHANGE",
       "expected_reason_code": "FACTORY_ALREADY_CURRENT",
       "mutations": []
