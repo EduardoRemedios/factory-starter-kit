@@ -7,7 +7,7 @@
 Turn rough product intent into an execution-ready contract, with scope, risk,
 verification, human approval, and delivery evidence built into the workflow.
 
-[![Release candidate](https://img.shields.io/badge/release-0.1.0--rc.1-4f46e5)](#release-status)
+[![Release candidate](https://img.shields.io/badge/release-0.2.3--rc.1-4f46e5)](#release-status)
 [![Codex](https://img.shields.io/badge/Codex-supported-111827?logo=openai&logoColor=white)](#chatgpt--codex-desktop-app-on-macos)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-supported-D97757)](#claude-code-desktop-app)
 [![License](https://img.shields.io/badge/license-Apache--2.0-0f766e)](LICENSE)
@@ -47,14 +47,15 @@ authorization layer that coordinates those capabilities.
 
 ## Release Status
 
-The current plugin release candidate is `0.1.0`, pinned at
-`factory-plugin-v0.1.0-rc.1`.
+The current plugin release candidate is `0.2.3`, pinned at
+`factory-plugin-v0.2.3-rc.1`.
 
 - Factory Core is the existing, portable process.
 - The plugin is a distribution and lifecycle layer around that core.
 - Codex and Claude Code packages are generated from one authored source.
 - The initial verified pilot surface is macOS with the ChatGPT/Codex app or
   Claude Code.
+- Claude Code CLI rollout has a read-only preflight for first-team testing.
 - Greenfield, brownfield, update, and rollback operations are preview-first and
   require approval of an exact plan ID before repository files are changed.
 
@@ -132,7 +133,7 @@ Chat conversation.
    ```bash
    /Applications/ChatGPT.app/Contents/Resources/codex \
      plugin marketplace add EduardoRemedios/factory-starter-kit \
-     --ref factory-plugin-v0.1.0-rc.1
+     --ref factory-plugin-v0.2.3-rc.1
 
    /Applications/ChatGPT.app/Contents/Resources/codex \
      plugin add factory@factory-starter-kit
@@ -156,7 +157,7 @@ terminal, the shorter equivalent is:
 
 ```bash
 codex plugin marketplace add EduardoRemedios/factory-starter-kit \
-  --ref factory-plugin-v0.1.0-rc.1
+  --ref factory-plugin-v0.2.3-rc.1
 codex plugin add factory@factory-starter-kit
 ```
 
@@ -174,7 +175,7 @@ Chat sessions or Claude Code remote sessions.
 4. In the Code session, add the marketplace and install Factory:
 
    ```text
-   /plugin marketplace add EduardoRemedios/factory-starter-kit@factory-plugin-v0.1.0-rc.1
+   /plugin marketplace add EduardoRemedios/factory-starter-kit@factory-plugin-v0.2.3-rc.1
    /plugin install factory@factory-starter-kit
    /reload-plugins
    ```
@@ -204,7 +205,7 @@ before Factory appears in that browser.
 
    ```bash
    claude plugin marketplace add \
-     EduardoRemedios/factory-starter-kit@factory-plugin-v0.1.0-rc.1
+     EduardoRemedios/factory-starter-kit@factory-plugin-v0.2.3-rc.1
    claude plugin install factory@factory-starter-kit --scope user
    ```
 
@@ -240,6 +241,21 @@ $factory-doctor
 
 Do not start by copying Factory files manually. Let Greenfield or Brownfield
 produce the exact setup plan for the repository.
+
+## First Tester Handoff
+
+For the first colleague test before team rollout, use the Factory-only Claude
+Code CLI path and keep the scope deliberately small. The goal is to validate
+installation, discovery, Greenfield setup, Doctor, Validate, Progress, and the
+human approval flow.
+
+Use the handoff checklist in
+[`docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md`](docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md).
+The tester should preserve the preflight JSON, Claude version, plugin list,
+Doctor/Validate/Progress output, final `git status --short`, and a short
+friction log.
+
+Do not include optional upstream companions in this first Factory-only test.
 
 ## Quick Start: Your First Repository
 
@@ -639,6 +655,7 @@ claude plugin validate --strict .claude-plugin/marketplace.json
 - [Claude Code desktop](https://code.claude.com/docs/en/desktop)
 - [Claude Code plugin installation](https://code.claude.com/docs/en/discover-plugins)
 - [Plugin quick start](docs/onboarding/FACTORY_PLUGIN_QUICK_START.md)
+- [First tester handoff](docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md)
 - [Plugin reference](docs/onboarding/FACTORY_PLUGIN_REFERENCE.md)
 - [Pilot runbook](docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md)
 - [Troubleshooting](docs/onboarding/FACTORY_PLUGIN_TROUBLESHOOTING.md)

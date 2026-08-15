@@ -2,6 +2,9 @@
 
 Use this path for the initial macOS pilot. The plugin makes Factory installable and discoverable; it does not bypass repository review, Factory validators, or human Go.
 
+For a one-person smoke test before team rollout, use
+[`FACTORY_FIRST_TESTER_HANDOFF.md`](FACTORY_FIRST_TESTER_HANDOFF.md).
+
 ## Pilot Requirements
 
 - macOS

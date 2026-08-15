@@ -264,9 +264,14 @@
       "sha256": "55e17a26f8e41f43bf5b7bdda581aad218fa9aa67436efc33c16087e952da45f"
     },
     {
+      "path": "docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md",
+      "classification": "release-owned",
+      "sha256": "5e7ec96febd16b750cfdb6d9ad9b8b307f9754b9a3a42e566e15b4134e312d92"
+    },
+    {
       "path": "docs/onboarding/FACTORY_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md",
       "classification": "release-owned",
-      "sha256": "bffd4b385adf33c67c0d3be40222e78c9a376db23809c1ae89b7c6c0e47d09b7"
+      "sha256": "0e684538dc255b020f4eda9e8a9634c1e4078c6a1246a638fecb72f2bf34eede"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",
@@ -276,7 +281,7 @@
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_QUICK_START.md",
       "classification": "release-owned",
-      "sha256": "34907d151c12afc0c9035b80df2d96668f443eec15df302c803aa2313add2cf6"
+      "sha256": "900442838e77f8986fda18b8ce7faa752a0f902c5091a7317d9315985c1a81d0"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_REFERENCE.md",

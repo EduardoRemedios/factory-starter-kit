@@ -10,6 +10,8 @@
   from `0.2.0` to `0.2.3`, including the repaired runtime, validation,
   execution-closeout, project-preflight, pack/stage lint, launcher, package
   builder, templates, project seeds, and focused regression fixtures.
+- Updated public README installation references to the `0.2.3` release
+  candidate and added a first-tester handoff for the pre-team CLI pilot.
 
 ## 2026-08-05
 

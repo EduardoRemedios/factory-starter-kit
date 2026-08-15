@@ -21,6 +21,9 @@
   first-team playbook. A separate integration routing matrix documents when an
   optional upstream companion is appropriate; installing Factory alone does not
   require that companion.
+- Public README installation guidance now points at the `0.2.3` release
+  candidate, and first-tester handoff instructions exist for the pre-team CLI
+  pilot.
 - Greenfield setup now supports an absent or empty target through an exact root/Git/payload/metadata/validation transaction with fail-closed Git ownership recovery.
 - Promoted upstream Markdown is indexed as generic evidence, while project-specific Stage A preflight is optional, schema-locked, bounded, and ordered after Core knowledge lint and before context recall.
 - Codex app loading, Brownfield adoption, Greenfield setup, validation, update, and exact rollback restoration have passed pre-pilot verification.
