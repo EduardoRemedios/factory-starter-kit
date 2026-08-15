@@ -3,6 +3,10 @@
 Use this playbook for the first Claude Code CLI teams that adopt Factory only.
 It does not require any upstream companion or external discovery workflow.
 
+For the first trusted-colleague smoke test, use
+[`FACTORY_FIRST_TESTER_HANDOFF.md`](FACTORY_FIRST_TESTER_HANDOFF.md) before this
+team playbook.
+
 ## Supported First-Team Surface
 
 - macOS local development machine.

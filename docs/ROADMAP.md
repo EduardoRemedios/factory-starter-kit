@@ -27,7 +27,7 @@
 | Async contributor handoff hygiene | Ongoing | Use `REVIEW_READY` for review handoffs and reserve `MERGE_READY` for the final sync window after merge preflight passes. |
 | Beginner adopter enablement | Ongoing | Keep the non-technical setup guide accurate as agent tools and installer flows change. |
 | Harness model routing | Ongoing | Validate Kilo, Cursor, Codex, and Claude Code adapters without changing Factory Core stage contracts. |
-| Factory plugin rollout | REVIEW_READY | Factory-only plugin source and generated packages are uplifted to 0.2.3. Claude Code CLI rollout now has a read-only preflight and first-team playbook. Complete the first-time-user pilot, maintainer review, release decisions, and Product Owner sign-off. |
+| Factory plugin rollout | REVIEW_READY | Factory-only plugin source and generated packages are uplifted to 0.2.3. Claude Code CLI rollout now has a read-only preflight, first-tester handoff, and first-team playbook. Complete the first-time-user pilot, maintainer review, release decisions, and Product Owner sign-off. |
 | Codex Agent Plugins v1 compatibility | Planned after 0.2.3 rollout decision | Deliver as Factory plugin 0.3.0: generate the portable root `plugin.json` from the existing authored source, retain the native Codex manifest during transition, and prove both standard-only and dual-manifest loading in Codex App. |
 | Optional upstream-evidence adapter | Deferred | Plan as a separate Factory run only after Codex compatibility passes; do not add MCP, portable dependency claims, adapter policy, or upstream-promotion writes to the 0.3.0 compatibility release. |
 

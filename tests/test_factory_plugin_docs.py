@@ -8,6 +8,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DOCS_ROOT = REPO_ROOT / "docs/onboarding"
 REQUIRED_DOCS = {
+    "FACTORY_FIRST_TESTER_HANDOFF.md",
     "FACTORY_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md",
     "FACTORY_PLUGIN_QUICK_START.md",
     "FACTORY_PLUGIN_REFERENCE.md",
@@ -33,6 +34,9 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         )
         onboarding = (DOCS_ROOT / "ONBOARDING_GUIDE.md").read_text(encoding="utf-8")
         self.assertIn("FACTORY_PLUGIN_QUICK_START.md", onboarding)
+        readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertIn("FACTORY_FIRST_TESTER_HANDOFF.md", readme)
+        self.assertIn("factory-plugin-v0.2.3-rc.1", readme)
 
     def test_quick_start_names_every_public_entry_point(self):
         reference = (DOCS_ROOT / "FACTORY_PLUGIN_REFERENCE.md").read_text(
@@ -75,11 +79,17 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         playbook = (DOCS_ROOT / "FACTORY_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md").read_text(
             encoding="utf-8"
         )
+        handoff = (DOCS_ROOT / "FACTORY_FIRST_TESTER_HANDOFF.md").read_text(
+            encoding="utf-8"
+        )
         for text in (quick_start, playbook):
             self.assertIn("verify_factory_cli_rollout.py", text)
             self.assertIn("claude plugin --help", text)
         self.assertIn("/factory:greenfield", playbook)
         self.assertIn("/factory:brownfield", playbook)
+        self.assertIn("verify_factory_cli_rollout.py", handoff)
+        self.assertIn("factory-plugin-v0.2.3-rc.1", handoff)
+        self.assertIn("/factory:greenfield", handoff)
 
     def test_troubleshooting_covers_fail_closed_reason_codes(self):
         troubleshooting = (
