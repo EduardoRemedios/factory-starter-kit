@@ -28,10 +28,19 @@ ALLOWED_SKILL_IDS = {
     "validate",
 }
 PROJECT_OWNED_SEEDS = {
-    Path("AGENTS.md"),
-    Path("docs/CHANGELOG.md"),
-    Path("docs/PROJECT_STATE.md"),
-    Path("docs/ROADMAP.md"),
+    Path("AGENTS.md"): Path("AGENTS.md"),
+    Path("docs/CHANGELOG.md"): Path(
+        "plugin-src/factory/project-seeds/docs/CHANGELOG.md"
+    ),
+    Path("docs/PROJECT_STATE.md"): Path(
+        "plugin-src/factory/project-seeds/docs/PROJECT_STATE.md"
+    ),
+    Path("docs/ROADMAP.md"): Path(
+        "plugin-src/factory/project-seeds/docs/ROADMAP.md"
+    ),
+    Path("docs/Factory/SCRATCHPAD.md"): Path(
+        "plugin-src/factory/project-seeds/docs/Factory/SCRATCHPAD.md"
+    ),
 }
 
 
@@ -63,17 +72,20 @@ def skill_text(name: str, description: str, body: str) -> str:
     )
 
 
-def payload_sources() -> list[tuple[Path, str]]:
-    sources: dict[Path, str] = {
-        path: "project-owned" for path in PROJECT_OWNED_SEEDS
+def payload_sources() -> list[tuple[Path, Path, str]]:
+    sources: dict[Path, tuple[Path, str]] = {
+        destination: (source, "project-owned")
+        for destination, source in PROJECT_OWNED_SEEDS.items()
     }
-    sources[Path("requirements.txt")] = "release-owned"
+    sources[Path("requirements.txt")] = (Path("requirements.txt"), "release-owned")
 
     for base in (Path("docs/Factory"), Path("docs/onboarding")):
         for source in sorted((REPO_ROOT / base).rglob("*")):
             if not source.is_file():
                 continue
             relative = source.relative_to(REPO_ROOT)
+            if relative in PROJECT_OWNED_SEEDS:
+                continue
             if (
                 "runs" in relative.parts
                 or "Research" in relative.parts
@@ -82,11 +94,22 @@ def payload_sources() -> list[tuple[Path, str]]:
                 continue
             if "phases" in relative.parts:
                 continue
-            sources[relative] = "release-owned"
+            sources[relative] = (relative, "release-owned")
 
     for source in sorted((REPO_ROOT / "scripts").iterdir()):
-        if source.is_file() and source.name != "build_factory_plugins.py":
-            sources[source.relative_to(REPO_ROOT)] = "release-owned"
+        if (
+            source.is_file()
+            and source.name not in {
+                "build_factory_plugins.py",
+                "build_factory_bmad_plugins.py",
+            }
+            and not (
+                source.name.startswith("verify_factory_bmad_")
+                and source.suffix in {".py", ".sh"}
+            )
+        ):
+            relative = source.relative_to(REPO_ROOT)
+            sources[relative] = (relative, "release-owned")
 
     for base in (
         Path(".agents/skills"),
@@ -100,14 +123,21 @@ def payload_sources() -> list[tuple[Path, str]]:
                 base != Path(".agents/skills")
                 or source.parent.name.startswith("factory-")
             ) and "__pycache__" not in source.parts:
-                sources[source.relative_to(REPO_ROOT)] = "release-owned"
+                relative = source.relative_to(REPO_ROOT)
+                sources[relative] = (relative, "release-owned")
 
-    sources[Path("tests/test_context_recall_repair.py")] = "release-owned"
+    recall_test = Path("tests/test_context_recall_repair.py")
+    sources[recall_test] = (recall_test, "release-owned")
 
-    missing = [path for path in sources if not (REPO_ROOT / path).is_file()]
+    missing = [source for source, _ in sources.values() if not (REPO_ROOT / source).is_file()]
     if missing:
         raise ValueError(f"missing payload sources: {missing}")
-    return sorted(sources.items(), key=lambda item: item[0].as_posix())
+    return [
+        (destination, source, classification)
+        for destination, (source, classification) in sorted(
+            sources.items(), key=lambda item: item[0].as_posix()
+        )
+    ]
 
 
 def sha256(path: Path) -> str:
@@ -117,8 +147,8 @@ def sha256(path: Path) -> str:
 def write_payload(package_root: Path, manifest: dict[str, Any]) -> None:
     payload_root = package_root / "payload"
     entries: list[dict[str, str]] = []
-    for relative, classification in payload_sources():
-        source = REPO_ROOT / relative
+    for relative, source_relative, classification in payload_sources():
+        source = REPO_ROOT / source_relative
         destination = payload_root / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, destination)
@@ -141,16 +171,10 @@ def write_payload(package_root: Path, manifest: dict[str, Any]) -> None:
 
 
 def write_packages(staging_root: Path, manifest: dict[str, Any]) -> None:
-    public_metadata = {
-        key: manifest[key]
-        for key in ("homepage", "repository", "license")
-        if key in manifest
-    }
     for platform in PACKAGE_ROOTS:
         package_root = staging_root / platform
         (package_root / "skills").mkdir(parents=True)
         (package_root / "scripts").mkdir()
-        shutil.copy2(REPO_ROOT / "LICENSE", package_root / "LICENSE")
 
         for skill in manifest["skills"]:
             skill_id = skill["id"]
@@ -165,6 +189,7 @@ def write_packages(staging_root: Path, manifest: dict[str, Any]) -> None:
 
         runtime = SOURCE_ROOT / "runtime" / "factory_plugin.py"
         shutil.copyfile(runtime, package_root / "scripts" / "factory_plugin.py")
+        shutil.copyfile(REPO_ROOT / "LICENSE", package_root / "LICENSE")
         write_payload(package_root, manifest)
 
         if platform == "codex":
@@ -173,7 +198,6 @@ def write_packages(staging_root: Path, manifest: dict[str, Any]) -> None:
                 "version": manifest["version"],
                 "description": manifest["description"],
                 "author": manifest["author"],
-                **public_metadata,
                 "skills": "./skills/",
                 "interface": {
                     **manifest["interface"],
@@ -187,7 +211,6 @@ def write_packages(staging_root: Path, manifest: dict[str, Any]) -> None:
                 "version": manifest["version"],
                 "description": manifest["description"],
                 "author": manifest["author"],
-                **public_metadata,
             }
             manifest_path = package_root / ".claude-plugin" / "plugin.json"
 

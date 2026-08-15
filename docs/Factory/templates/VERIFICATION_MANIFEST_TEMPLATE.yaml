@@ -4,11 +4,20 @@
 # Purpose: optional machine-readable verification contract for EXECUTION_ENABLED
 # and Mission Mode runs. Keep planning-only packs lightweight unless runnable
 # verification would materially reduce execution risk.
+# `execution_mode` records the mode of the pack audited at I2. It remains
+# unchanged if a later digest-bound authorization activates execution.
+# Check IDs must exactly match the dedicated verification_plan.md `## Checks`
+# inventory and IDs referenced by traceability coverage cells.
+# Pack-lint validates the preimage manifest and its pin. The command performs
+# target-byte comparison at the lifecycle point declared by the verification plan.
+# When execution_order is present, it is authoritative. It must contain every
+# VM check exactly once; named non-VM operations may be interposed explicitly.
 
 schema_version: 1
 run_id: RUN_YYYYMMDD_HHMM_TAG
 sprint_id: SPRINT_YYYYMMDD_NNN
 execution_mode: EXECUTION_ENABLED
+execution_order: [VM-001, VM-002]
 
 checks:
   - id: VM-001
@@ -31,4 +40,6 @@ checks:
     command: git diff --name-only -- forbidden/path
     expected: Command prints no changed files.
     halt_on_failure: true
+    preimage_manifest: pack/fixtures/no_touch_preimages.json
+    preimage_manifest_sha256: 64_lowercase_hex_characters
     evidence_path: artifacts/verification/no_touch.txt

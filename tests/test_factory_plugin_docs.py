@@ -8,6 +8,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DOCS_ROOT = REPO_ROOT / "docs/onboarding"
 REQUIRED_DOCS = {
+    "FACTORY_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md",
     "FACTORY_PLUGIN_QUICK_START.md",
     "FACTORY_PLUGIN_REFERENCE.md",
     "FACTORY_PLUGIN_TROUBLESHOOTING.md",
@@ -65,6 +66,20 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
             "Product Owner sign-off",
         ):
             self.assertIn(threshold, pilot)
+        self.assertIn("verify_factory_cli_rollout.py", pilot)
+
+    def test_cli_rollout_preflight_is_documented(self):
+        quick_start = (DOCS_ROOT / "FACTORY_PLUGIN_QUICK_START.md").read_text(
+            encoding="utf-8"
+        )
+        playbook = (DOCS_ROOT / "FACTORY_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md").read_text(
+            encoding="utf-8"
+        )
+        for text in (quick_start, playbook):
+            self.assertIn("verify_factory_cli_rollout.py", text)
+            self.assertIn("claude plugin --help", text)
+        self.assertIn("/factory:greenfield", playbook)
+        self.assertIn("/factory:brownfield", playbook)
 
     def test_troubleshooting_covers_fail_closed_reason_codes(self):
         troubleshooting = (
@@ -136,6 +151,68 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         self.assertIn("PYTHONDONTWRITEBYTECODE=1", validation)
         self.assertIn("git status --short", validation)
         self.assertIn("report every difference", validation)
+
+    def test_new_project_runs_greenfield_before_doctor(self):
+        quick_start = (DOCS_ROOT / "FACTORY_PLUGIN_QUICK_START.md").read_text(
+            encoding="utf-8"
+        )
+        claude_section = quick_start.split("## Claude Code", 1)[1].split(
+            "## What Happens Before Any Write", 1
+        )[0]
+        self.assertLess(
+            claude_section.index("/factory:greenfield"),
+            claude_section.index("/factory:doctor"),
+        )
+        self.assertIn("current working directory", claude_section)
+        self.assertIn("same quoted", claude_section)
+        self.assertIn(".claude/settings.local.json", claude_section)
+        self.assertIn("Factory never", claude_section)
+        self.assertIn("requires a fresh preview", claude_section)
+
+    def test_claude_greenfield_troubleshooting_preserves_user_state(self):
+        troubleshooting = (
+            DOCS_ROOT / "FACTORY_PLUGIN_TROUBLESHOOTING.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn(
+            "Claude Local Settings Make Greenfield Look Non-empty",
+            troubleshooting,
+        )
+        self.assertIn(
+            "does not parse, manage, modify, or remove it", troubleshooting
+        )
+        self.assertIn("Do not delete user-owned content", troubleshooting)
+
+    def test_runtime_skills_use_supported_plugin_root_guidance(self):
+        skill_root = REPO_ROOT / "plugin-src/factory/skills"
+        for name in (
+            "doctor.md",
+            "greenfield.md",
+            "brownfield.md",
+            "progress.md",
+            "update.md",
+        ):
+            skill = (skill_root / name).read_text(encoding="utf-8")
+            self.assertIn("${CLAUDE_PLUGIN_ROOT}", skill)
+            self.assertIn("by absolute path", skill)
+            self.assertNotIn("<plugin-root>", skill)
+
+    def test_distributable_onboarding_is_customer_neutral(self):
+        text = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in sorted(DOCS_ROOT.glob("*.md"))
+        )
+        for prohibited in ("Symphony", "AuditEdge", "BMAD", "TEA"):
+            self.assertNotIn(prohibited, text)
+
+    def test_optional_bmad_routing_matrix_preserves_factory_only_default(self):
+        matrix = (REPO_ROOT / "docs/integration/FACTORY_BMAD_ROUTING_MATRIX.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("Factory-only adoption remains the default path", matrix)
+        self.assertIn("New or empty target | Factory only", matrix)
+        self.assertIn("Existing repository, BMAD only | Factory plus BMAD", matrix)
+        self.assertIn("Installing `factory` must never require BMAD", matrix)
+        self.assertIn("Desktop", matrix)
 
 
 if __name__ == "__main__":

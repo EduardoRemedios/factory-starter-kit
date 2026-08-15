@@ -5,7 +5,11 @@ import re
 from pathlib import Path
 from typing import Any
 
-from factory_pack_lint import check_context_recall_report
+from factory_pack_lint import (
+    check_context_recall_report,
+    check_host_capability_contract,
+    check_word_cap,
+)
 
 
 class FactoryStageLintError(Exception):
@@ -76,8 +80,26 @@ def lint_stage(root: Path, run: str, stage: str) -> dict[str, Any]:
 
     if text:
         _check_handoff_shape(handoff, text, stage, errors, warnings)
+        _check_declared_outputs(root, run_root, handoff, text, errors)
 
     if stage == "A":
+        declaration = root / "docs" / "Factory" / "PROJECT_PREFLIGHT.json"
+        if declaration.exists():
+            checked_files.append(str(declaration))
+            project_preflight = run_root / "PROJECT_PREFLIGHT.txt"
+            checked_files.append(str(project_preflight))
+            if not project_preflight.is_file():
+                errors.append(
+                    f"declared project preflight has no Stage A evidence: {project_preflight}"
+                )
+            else:
+                preflight_text = _read_text(project_preflight)
+                if "project_preflight: PASS" not in preflight_text:
+                    errors.append(f"project preflight did not pass: {project_preflight}")
+                if "reason_code: FACTORY_PROJECT_PREFLIGHT_PASS" not in preflight_text:
+                    errors.append(
+                        f"declared project preflight evidence has no PASS reason: {project_preflight}"
+                    )
         context_report = run_root / "CONTEXT_RECALL_REPORT.md"
         checked_files.append(str(context_report))
         if not context_report.exists():
@@ -103,6 +125,18 @@ def lint_stage(root: Path, run: str, stage: str) -> dict[str, Any]:
             errors.append(f"expected stage output is empty: {path}")
         elif path.is_dir() and not any(path.iterdir()):
             errors.append(f"expected stage output directory is empty: {path}")
+        elif path.is_file():
+            check_stage_output_word_cap(path, _read_text(path), errors)
+
+    if stage == "F":
+        check_host_capability_contract(
+            root=root,
+            run_root=run_root,
+            pack_dir=pack_dir,
+            execution_mode=_read_text(run_root / "EXECUTION_MODE.txt").strip(),
+            checked_files=checked_files,
+            errors=errors,
+        )
 
     unique_checked_files = sorted(set(checked_files))
     return {
@@ -174,6 +208,56 @@ def _check_handoff_shape(path: Path, text: str, stage: str, errors: list[str], w
         warnings.append(f"{path} may not have instantiated the Skill Routing Contract")
 
 
+def _check_declared_outputs(
+    root: Path,
+    run_root: Path,
+    handoff: Path,
+    text: str,
+    errors: list[str],
+) -> None:
+    in_outputs = False
+    saw_heading = False
+    for line in text.splitlines():
+        if line == "## Outputs Produced (paths)":
+            in_outputs = True
+            saw_heading = True
+            continue
+        if in_outputs and line.startswith("## "):
+            break
+        if not in_outputs or not line.strip():
+            continue
+        if not (line.startswith("- `") and line.endswith("`") and line.count("`") == 2):
+            errors.append(f"{handoff} contains malformed output declaration")
+            continue
+        value = line[3:-1]
+        candidate = Path(value)
+        if (
+            not value
+            or candidate.is_absolute()
+            or any(part in {"", ".", ".."} for part in candidate.parts)
+            or any(char in value for char in "*?[]{}$()|;\\")
+        ):
+            errors.append(f"{handoff} contains unsafe output path: {value}")
+            continue
+        anchor = root if candidate.parts[0] == "docs" else run_root
+        target = anchor / candidate
+        try:
+            target.resolve(strict=False).relative_to(anchor.resolve())
+        except ValueError:
+            errors.append(f"{handoff} output path escapes its root: {value}")
+            continue
+        if not target.exists():
+            errors.append(f"{handoff} claims missing output: {value}")
+        elif target.is_file() and target.stat().st_size == 0:
+            errors.append(f"{handoff} claims empty output: {value}")
+        elif target.is_dir() and not any(target.iterdir()):
+            errors.append(f"{handoff} claims empty output: {value}")
+        elif not target.is_file() and not target.is_dir():
+            errors.append(f"{handoff} claims unsupported output: {value}")
+    if not saw_heading:
+        errors.append(f"{handoff} is missing output declaration section")
+
+
 def _stage_outputs(run_root: Path, stage: str) -> tuple[str, ...]:
     if stage == "H":
         sprint_id = _read_text(run_root / "SPRINT_ID.txt").strip()
@@ -198,6 +282,10 @@ def _word_count_without_code_blocks(text: str) -> int:
         if not in_code_block:
             lines.append(line)
     return len(re.findall(r"\b[\w'-]+\b", "\n".join(lines)))
+
+
+def check_stage_output_word_cap(path: Path, text: str, errors: list[str]) -> None:
+    check_word_cap(path, text, errors)
 
 
 def _read_text(path: Path) -> str:

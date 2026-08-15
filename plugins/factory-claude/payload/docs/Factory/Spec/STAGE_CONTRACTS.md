@@ -1,9 +1,15 @@
-# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.14)
+# docs/Factory/Spec/STAGE_CONTRACTS.md — Factory Stage Contracts (v4.20)
 
 ## Version
-v4.14
+v4.20
 
 ## Change Log
+- v4.20 (2026-08-13): Closed missing-mode and symlink fail-open cases, aligned traceability parsing with its canonical verification column, and validated optional execution ordering.
+- v4.19 (2026-08-13): Separated pack-lint validation of pinned preimage evidence from lifecycle-timed VM comparison of target bytes.
+- v4.18 (2026-08-13): Required exact executable VM inventory agreement, SHA-pinned no-touch preimages, and coupled-artifact review for self-maintenance packs.
+- v4.17 (2026-08-13): Added immutable I2 audited-mode evidence and fail-closed digest-bound cross-mode activation.
+- v4.16 (2026-08-05): Added schema-locked, non-authorizing execution-closeout evidence and fail-closed progress precedence.
+- v4.15 (2026-08-05): Added optional fail-closed project preflight after Core knowledge lint and before Stage A context recall.
 - v4.14 (2026-07-02): Added direct-source repair semantics for generated WEAK Stage A context recall reports.
 - v4.13 (2026-05-19): Added SIMPLE-CODE-GATE v2 to Stage H and post-gate execution prompt contracts for Factory-controlled code-changing runs.
 - v4.12 (2026-05-18): Added optional Codex Mission Goal Continuity adapter lint contract for derived `MISSION_CURSOR.json`; it does not alter core stage contracts or mission ledger authority.
@@ -24,6 +30,7 @@ v4.14
 - No stage may start unless its entry criteria pass.
 - No stage may complete unless its exit criteria pass.
 - Pre-run knowledge lint MUST pass (`bash scripts/knowledge_lint.sh`) before `STAGE_A` starts, and output MUST be persisted at `docs/Factory/runs/<RUN_ID>/KNOWLEDGE_LINT.txt`.
+- If `docs/Factory/PROJECT_PREFLIGHT.json` exists, `./scripts/factoryctl project-preflight --run <RUN_ID>` MUST run after knowledge lint and before context recall; `PROJECT_PREFLIGHT.txt` MUST record `FACTORY_PROJECT_PREFLIGHT_PASS` or initialization halts.
 - If the run is advancing a unit inside an already-authorized mission, pre-run mission lint MUST pass (`bash scripts/mission_lint.sh <MISSION_ID>`) before `STAGE_A` starts, and output MUST be persisted at `docs/Factory/runs/<RUN_ID>/MISSION_LINT.txt`.
 - If the optional Codex Mission Goal Continuity adapter is enabled, mission cursor lint MUST pass (`bash scripts/mission_cursor_lint.sh <MISSION_ID>`) before an agent continues from `MISSION_CURSOR.json` or an external goal/bookmark. This check is additive and does not replace `mission_lint.sh`.
 - Every stage produces `pack/HANDOFF/HANDOFF_STAGE_<STAGE_CODE>.md` containing:
@@ -40,6 +47,11 @@ v4.14
   - `Use the <skill name> skill.`
   - If no relevant skill exists, prompts MUST declare that explicitly and proceed via the stage contract only.
 - Run execution mode defaults to `PLANNING_ONLY` and MUST be persisted in run-root `EXECUTION_MODE.txt`.
+- `PACK_AUDIT_REPORT.md`, `PACK_MANIFEST.md`, the sprint envelope, and `verification_manifest.yaml` are immutable after exact planning-pack human review.
+- When `verification_manifest.yaml` exists, its VM IDs MUST exactly equal the dedicated `verification_plan.md` `## Checks` inventory and the VM IDs used in the traceability matrix's named verification coverage column. If `execution_order` is present, it MUST contain every VM exactly once and is authoritative for interposed named operations.
+- Every `no_touch` manifest check MUST reference a safe run-relative, regular non-symlink JSON preimage manifest and pin its exact lowercase SHA-256; the preimage manifest MUST enumerate non-empty protected file records with safe paths and exact digests.
+- A post-I2 `PLANNING_ONLY` to `EXECUTION_ENABLED` transition MUST use a regular non-symlink `EXECUTION_AUTHORIZATION.md` that records exactly one human-Go marker, prior and activated modes, and exact SHA-256 pins for the unchanged pack manifest and audit.
+- Pack-lint MUST recompute both activation pins and fail closed for a missing audited mode or missing, malformed, duplicated, stale, mismatched, or unsafe authorization evidence.
 - Factory-controlled code-changing runs MUST apply SIMPLE-CODE-GATE v2 from root `AGENTS.md`: smallest clear behavior-preserving change, no code bloat, no spooky action, no dependency creep, no silent failures, and no awkward or speculative abstractions.
 - `EXECUTION_PROMPT.md` generation and downstream run fan-out are forbidden unless `EXECUTION_MODE.txt` is `EXECUTION_ENABLED`.
 - Mission Mode, if enabled, is additive and MUST NOT alter per-unit stage entry and exit criteria, authorization contracts, or iteration caps.
@@ -84,7 +96,9 @@ A run produces:
 - `docs/Factory/runs/<RUN_ID>/CONTEXT_RECALL_REPORT.md`
 - `docs/Factory/runs/<RUN_ID>/EXECUTION_MODE.txt`
 - `docs/Factory/runs/<RUN_ID>/SPRINT_ID.txt`
+- `docs/Factory/runs/<RUN_ID>/PROJECT_PREFLIGHT.txt` (required only when the project declares `docs/Factory/PROJECT_PREFLIGHT.json`)
 - `docs/Factory/runs/<RUN_ID>/pack/`
+- `docs/Factory/runs/<RUN_ID>/EXECUTION_AUTHORIZATION.md` (required only for a post-I2 cross-mode activation)
 - `docs/Factory/runs/<RUN_ID>/EXECUTION_PROMPT.md` (required only when `EXECUTION_MODE.txt = EXECUTION_ENABLED` after `STAGE_I2` PASS plus human GO)
 
 If Mission Mode is enabled, mission root additionally produces:
@@ -137,6 +151,7 @@ If any downstream stage discovers the locked intent is flawed:
 Inputs:
 - `LOAD`: `raw_brief.md`, `CONTEXT_RECALL_REPORT.md`
 - `DISK`: `KNOWLEDGE_LINT.txt`, `EXECUTION_MODE.txt`
+- `DISK`: `PROJECT_PREFLIGHT.txt` (only when `docs/Factory/PROJECT_PREFLIGHT.json` exists)
 - `DISK`: `MISSION_LINT.txt` (already-authorized mission-unit runs only)
 
 Outputs:
@@ -146,6 +161,7 @@ Outputs:
 Entry criteria:
 - raw brief content exists and is non-empty
 - `KNOWLEDGE_LINT.txt` exists and records a successful knowledge-lint preflight
+- if `docs/Factory/PROJECT_PREFLIGHT.json` exists, `PROJECT_PREFLIGHT.txt` exists and records `project_preflight: PASS` plus `FACTORY_PROJECT_PREFLIGHT_PASS`
 - `CONTEXT_RECALL_REPORT.md` exists and records either a generated Stage A recall pass for this run or a valid `REPAIRED_DIRECT_SOURCE_CHECK` direct-source repair addendum for a generated `WEAK` report
 - if the run is advancing a unit inside an already-authorized mission, `MISSION_LINT.txt` exists and records a successful mission-lint preflight
 - `EXECUTION_MODE.txt` exists and contains exactly one value: `PLANNING_ONLY` or `EXECUTION_ENABLED`
@@ -229,6 +245,9 @@ Exit criteria:
 - traceability matrix is complete for Critical and High items
 - fixtures follow naming conventions
 - if `verification_manifest.yaml` exists, it is valid per `VERIFICATION_MANIFEST_TEMPLATE.yaml` and `factoryctl pack-lint`
+- verification plan, manifest, and traceability VM identifier sets are exactly equal
+- each `no_touch` check has a safe, valid SHA-pinned preimage manifest; its declared VM command performs target-byte comparison at the specified lifecycle point
+- code-changing self-maintenance plans identify protected digest fixtures, generated payload counterparts, and ownership-manifest coupling before Stage H
 
 ## STAGE_G — Micro-sprint Sequencing
 Inputs:
@@ -325,6 +344,11 @@ Checks include:
 - checklist critical items are `YES`
 - audit verdict is not `FAIL`
 - execution-mode evidence is internally consistent
+- a matching audited/current mode preserves existing behavior
+- a cross-mode activation has exact, unambiguous, non-symlink authorization evidence whose pack-manifest and pack-audit pins match disk
+- verification-manifest mode matches the audited pack mode during a valid cross-mode activation
+- verification plan, executable manifest, and traceability VM identifier sets match exactly
+- every no-touch check has safe, non-empty, SHA-pinned preimage evidence; pack-lint does not reinterpret historical preimages as permanent postimplementation postimages
 
 Exit criteria:
 - `pack-lint` returns PASS before the pack is presented for human execution review
@@ -338,6 +362,7 @@ Entry criteria:
 - `STAGE_I2` verdict is PASS
 - human review decision is explicit Go
 - `EXECUTION_MODE.txt` equals `EXECUTION_ENABLED`
+- if I2 audited `PLANNING_ONLY`, `EXECUTION_AUTHORIZATION.md` exists and post-activation pack-lint passes without modifying pack artifacts
 
 Inputs:
 - `LOAD`: `pack/<SPRINT_ID>_ENVELOPE.md`, `pack/micro_sprints.md`, `pack/verification_plan.md`, `pack/traceability_matrix.md`
@@ -349,8 +374,38 @@ Outputs:
 Exit criteria:
 - prompt is instantiated from `docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md`
 - prompt has no unresolved placeholders
+- prompt contains the exact authorization marker `- Human Go: RECORDED`; a bare field or different value does not satisfy human Go
 - prompt includes deterministic skill routing instructions and stage-aligned guardrails
 - for code-changing execution, prompt includes SIMPLE-CODE-GATE v2 and an exit-checklist item for accepted complexity
+
+## EXECUTION_CLOSEOUT — Derived Post-execution Evidence
+
+Applicability:
+- optional for historical runs; required when an execution-enabled run claims a
+  technical `REVIEW_READY`, `NO_GO`, or `BLOCKED` outcome
+
+Contract:
+- canonical path: `docs/Factory/runs/<RUN_ID>/EXECUTION_CLOSEOUT.json`
+- schema: `factory.execution-closeout.v1`
+- author the outcome outside the validator, then record it only with
+  `./scripts/factoryctl execution-closeout --run <RUN_ID> --input <DRAFT> --json`
+- bind exact run/sprint identity, execution mode, pack manifest, execution
+  authorization, micro-sprints, verification manifest and retained evidence digests
+- cover every enabled verification check; `REVIEW_READY` requires all PASS;
+  `NOT_RUN` is valid only for a negative outcome with an exact blocker
+- the record grants no execution, merge, release, tag, adapter, phase or mission authority
+
+Progress precedence:
+- normal stage, recall, pack and human-Go contradictions are evaluated first
+- artifact absence preserves historical behavior
+- artifact presence opts into strict validation on every read
+- any invalid schema, identity, path, pin, coverage, outcome or evidence digest
+  returns a blocked contradiction; never fall back to the historical authorized state
+
+Handoff output-path contract:
+- each bullet under `Outputs Produced (paths)` contains one backtick-quoted exact path relative to the run root, except paths beginning with `docs/`, which are repository-relative
+- globs, expressions, absolute paths, traversal, symlink escape, malformed bullets, and missing or empty targets fail closed
+- stage-lint and Progress apply the same path acceptance semantics
 
 ## MISSION_WRAPPER (additive, optional — not a replacement stage chain)
 Purpose:

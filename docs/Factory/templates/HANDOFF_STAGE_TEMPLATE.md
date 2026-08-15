@@ -14,9 +14,10 @@ VALIDATION:
 -->
 
 ## Version
-v1.4
+v1.5
 
 ## Change Log
+- v1.5 (2026-08-13): Required exact safe output-path declarations for stage-lint and Progress parity.
 - v1.4 (2026-06-24): Added optional Repository Handoff State section for branch/PR review versus merge readiness.
 - v1.3 (2026-03-21): Removed the dead AgentArchitecture dependency and replaced it with a generic execution-profile field.
 - v1.2 (2026-02-18): Added execution profile used, contradiction status, and applicable hard rules.
@@ -47,7 +48,7 @@ v1.4
 - Expected output artifact(s):
 
 ## Outputs Produced (paths)
--
+- `pack/exact-repository-or-run-relative-path`
 
 ## Changes Made
 -

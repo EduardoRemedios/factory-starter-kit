@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-15
+
+- Added Factory-only Claude Code CLI rollout hardening: a read-only local
+  prerequisite preflight, a guided first-team playbook, updated Greenfield-first
+  quick-start guidance, and a separate optional integration routing matrix that
+  keeps Factory standalone adoption first-class.
+- Uplifted the Factory-only plugin source and generated Claude/Codex packages
+  from `0.2.0` to `0.2.3`, including the repaired runtime, validation,
+  execution-closeout, project-preflight, pack/stage lint, launcher, package
+  builder, templates, project seeds, and focused regression fixtures.
+
+## 2026-08-05
+
+- Prepared Factory plugin technical RC `0.2.0` from the single authored source for deterministic Codex and Claude Code packages.
+- Added generic promoted-upstream evidence indexing and an optional, schema-locked, bounded Stage A project preflight without adding domain-specific policy to Factory Core.
+- Added transactional Greenfield bootstrap for absent or empty targets, including Git initialization, exact-plan approval, post-apply validation, interruption recovery, and guarded rollback that preserves changed Git state.
+- Made the pilot documentation customer-neutral and documented supported Claude plugin-root resolution.
+- Completed bounded two-lane Claude composition proof and full regression/privacy/no-touch closeout; RC `0.2.0` is technical `REVIEW_READY`.
+- Retained the formal pilot and all maintainer commit, tag, publication, and rollout actions as separate remaining gates.
+
 ## 2026-07-27
 
 - Replaced copy-first README onboarding with plugin-first installation for the ChatGPT/Codex desktop app, Claude Code desktop, and Claude Code CLI.

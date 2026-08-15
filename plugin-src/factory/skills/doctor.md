@@ -2,8 +2,10 @@
 
 Diagnose Factory without changing repository state.
 
-Use the bundled read-only evaluator from the installed plugin root:
-`python3 <plugin-root>/scripts/factory_plugin.py doctor --harness <claude-or-codex>`.
+Use the bundled read-only evaluator. In Claude Code, run
+`python3 "${CLAUDE_PLUGIN_ROOT}/scripts/factory_plugin.py" doctor --harness claude`.
+In Codex, resolve the package containing this `SKILL.md` and run its
+`scripts/factory_plugin.py` by absolute path with `--harness codex`.
 Return its evidence-backed result without softening a blocked state.
 
 ## Workflow

@@ -1,9 +1,11 @@
 import hashlib
 import json
-import subprocess
-import sys
+import re
+import tempfile
 import unittest
 from pathlib import Path
+
+from scripts import build_factory_plugins
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -36,20 +38,36 @@ class FactoryPluginBuildTests(unittest.TestCase):
         cls.manifest = json.loads(
             (SOURCE_ROOT / "manifest.json").read_text(encoding="utf-8")
         )
-        subprocess.run(
-            [sys.executable, "scripts/build_factory_plugins.py", "--check"],
-            cwd=REPO_ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
+        cls.generated_directory = tempfile.TemporaryDirectory()
+        generated_root = Path(cls.generated_directory.name)
+        build_factory_plugins.write_packages(generated_root, cls.manifest)
+        global PACKAGES
+        PACKAGES = {
+            "codex": generated_root / "codex",
+            "claude": generated_root / "claude",
+        }
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.generated_directory.cleanup()
 
     def test_required_manifests_are_present(self):
         self.assertTrue((PACKAGES["codex"] / ".codex-plugin/plugin.json").is_file())
         self.assertTrue((PACKAGES["claude"] / ".claude-plugin/plugin.json").is_file())
 
-    def test_packages_include_open_source_metadata(self):
-        license_bytes = (REPO_ROOT / "LICENSE").read_bytes()
+    def test_release_version_is_aligned_everywhere(self):
+        version = self.manifest["version"]
+        self.assertEqual("0.2.3", version)
+        marketplace = json.loads(
+            (REPO_ROOT / ".claude-plugin/marketplace.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(version, marketplace["plugins"][0]["version"])
+        runtime = (SOURCE_ROOT / "runtime/factory_plugin.py").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn(f'PLUGIN_VERSION = "{version}"', runtime)
         for platform, package in PACKAGES.items():
             manifest_path = (
                 package / ".codex-plugin/plugin.json"
@@ -57,12 +75,15 @@ class FactoryPluginBuildTests(unittest.TestCase):
                 else package / ".claude-plugin/plugin.json"
             )
             package_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            self.assertEqual("Apache-2.0", package_manifest["license"])
-            self.assertEqual(
-                "https://github.com/EduardoRemedios/factory-starter-kit",
-                package_manifest["repository"],
+            package_ownership = json.loads(
+                (package / "OWNERSHIP.json").read_text(encoding="utf-8")
             )
-            self.assertEqual(license_bytes, (package / "LICENSE").read_bytes())
+            payload_ownership = json.loads(
+                (package / "payload/OWNERSHIP.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(version, package_manifest["version"])
+            self.assertEqual(version, package_ownership["version"])
+            self.assertEqual(version, payload_ownership["version"])
 
     def test_packages_have_exact_public_skill_set(self):
         expected_ids = {skill["id"] for skill in self.manifest["skills"]}
@@ -96,15 +117,14 @@ class FactoryPluginBuildTests(unittest.TestCase):
 
     def test_second_generation_is_clean(self):
         before = {platform: tree_digest(path) for platform, path in PACKAGES.items()}
-        subprocess.run(
-            [sys.executable, "scripts/build_factory_plugins.py"],
-            cwd=REPO_ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        after = {platform: tree_digest(path) for platform, path in PACKAGES.items()}
-        self.assertEqual(before, after)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            regenerated = Path(temp_dir)
+            build_factory_plugins.write_packages(regenerated, self.manifest)
+            after = {
+                platform: tree_digest(regenerated / platform)
+                for platform in PACKAGES
+            }
+            self.assertEqual(before, after)
 
     def test_platform_payloads_are_equal(self):
         codex_payload = PACKAGES["codex"] / "payload"
@@ -125,6 +145,111 @@ class FactoryPluginBuildTests(unittest.TestCase):
         source = (SOURCE_ROOT / "runtime" / "factory_plugin.py").read_bytes()
         for package in PACKAGES.values():
             self.assertEqual(source, (package / "scripts" / "factory_plugin.py").read_bytes())
+
+    def test_package_license_is_preserved(self):
+        source = (REPO_ROOT / "LICENSE").read_bytes()
+        for package in PACKAGES.values():
+            self.assertEqual(source, (package / "LICENSE").read_bytes())
+
+    def test_safe_python_launcher_bytes_and_mode_are_preserved(self):
+        source = REPO_ROOT / "scripts/factory-python"
+        for package in PACKAGES.values():
+            generated = package / "payload/scripts/factory-python"
+            self.assertEqual(source.read_bytes(), generated.read_bytes())
+            self.assertEqual(
+                source.stat().st_mode & 0o777,
+                generated.stat().st_mode & 0o777,
+            )
+
+    def test_payload_inventory_exactly_matches_ownership_manifest(self):
+        for package in PACKAGES.values():
+            payload = package / "payload"
+            ownership = json.loads(
+                (payload / "OWNERSHIP.json").read_text(encoding="utf-8")
+            )
+            declared = {Path(entry["path"]) for entry in ownership["files"]}
+            actual = {
+                path.relative_to(payload)
+                for path in payload.rglob("*")
+                if path.is_file() and path.name != "OWNERSHIP.json"
+            }
+            self.assertEqual(declared, actual)
+
+    def test_generated_package_root_has_only_expected_paths(self):
+        for platform, package in PACKAGES.items():
+            expected = {
+                "OWNERSHIP.json",
+                "LICENSE",
+                "payload",
+                "scripts",
+                "skills",
+                ".codex-plugin" if platform == "codex" else ".claude-plugin",
+            }
+            self.assertEqual(expected, {path.name for path in package.iterdir()})
+
+    def test_generated_packages_are_customer_and_domain_neutral(self):
+        prohibited = re.compile(r"Symphony|AuditEdge|BMAD|\bTEA\b", re.IGNORECASE)
+        for package in PACKAGES.values():
+            for path in package.rglob("*"):
+                if path.is_file():
+                    text = path.read_text(encoding="utf-8", errors="ignore")
+                    self.assertIsNone(prohibited.search(text), str(path))
+
+    def test_project_owned_lifecycle_payloads_use_dedicated_neutral_seeds(self):
+        expected = {
+            Path("AGENTS.md"): Path("AGENTS.md"),
+            Path("docs/CHANGELOG.md"): Path(
+                "plugin-src/factory/project-seeds/docs/CHANGELOG.md"
+            ),
+            Path("docs/PROJECT_STATE.md"): Path(
+                "plugin-src/factory/project-seeds/docs/PROJECT_STATE.md"
+            ),
+            Path("docs/ROADMAP.md"): Path(
+                "plugin-src/factory/project-seeds/docs/ROADMAP.md"
+            ),
+            Path("docs/Factory/SCRATCHPAD.md"): Path(
+                "plugin-src/factory/project-seeds/docs/Factory/SCRATCHPAD.md"
+            ),
+        }
+        self.assertEqual(expected, build_factory_plugins.PROJECT_OWNED_SEEDS)
+
+        for destination, source in expected.items():
+            source_bytes = (REPO_ROOT / source).read_bytes()
+            source_sha256 = hashlib.sha256(source_bytes).hexdigest()
+            for package in PACKAGES.values():
+                self.assertEqual(
+                    source_bytes,
+                    (package / "payload" / destination).read_bytes(),
+                )
+                ownership = json.loads(
+                    (package / "payload/OWNERSHIP.json").read_text(encoding="utf-8")
+                )
+                entry = next(
+                    item for item in ownership["files"] if item["path"] == destination.as_posix()
+                )
+                self.assertEqual("project-owned", entry["classification"])
+                self.assertEqual(source_sha256, entry["sha256"])
+
+        for destination in (
+            Path("docs/CHANGELOG.md"),
+            Path("docs/PROJECT_STATE.md"),
+            Path("docs/ROADMAP.md"),
+            Path("docs/Factory/SCRATCHPAD.md"),
+        ):
+            self.assertNotEqual(destination, expected[destination])
+
+        payload_sources = {
+            destination: source
+            for destination, source, _classification in build_factory_plugins.payload_sources()
+        }
+        self.assertEqual(
+            expected[Path("docs/Factory/SCRATCHPAD.md")],
+            payload_sources[Path("docs/Factory/SCRATCHPAD.md")],
+        )
+        self.assertNotEqual(
+            (REPO_ROOT / "docs/Factory/SCRATCHPAD.md").read_bytes(),
+            (REPO_ROOT / expected[Path("docs/Factory/SCRATCHPAD.md")]).read_bytes(),
+        )
 
 
 if __name__ == "__main__":

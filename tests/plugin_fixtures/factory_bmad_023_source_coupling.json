@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "b48c2dc7993ce8f75dc1ba4906e7685947e9c9d9",
+  "release": "0.2.3",
+  "authored_runtime_candidates": [
+    "plugin-src/factory-bmad/runtime/factory_bmad.py"
+  ],
+  "runtime_regression_candidates": [
+    "tests/test_factory_bmad_runtime_no_bytecode.py"
+  ],
+  "live_verifier_candidates": [
+    "scripts/verify_factory_bmad_claude_composition.sh",
+    "scripts/verify_factory_bmad_live_preflight.py",
+    "tests/test_factory_bmad_claude_live.py",
+    "tests/test_factory_plugin_composition_live.py",
+    "tests/test_factory_bmad_live_preflight.py"
+  ],
+  "version_alignment_candidates": [
+    ".claude-plugin/marketplace.json",
+    "plugin-src/factory/manifest.json",
+    "plugin-src/factory-bmad/manifest.json",
+    "plugin-src/factory/runtime/factory_plugin.py",
+    "plugin-src/factory-bmad/runtime/factory_bmad.py",
+    "tests/test_factory_plugin_build.py",
+    "tests/test_factory_bmad_plugin_build.py",
+    "tests/test_factory_plugin_composition.py",
+    "tests/test_factory_plugin_lifecycle.py",
+    "tests/test_factory_plugin_setup_plan.py"
+  ],
+  "independent_fixture_candidates": [
+    "tests/plugin_fixtures/factory_bmad_023_source_coupling.json",
+    "tests/plugin_fixtures/factory_bmad_live_verifier_contract.json",
+    "tests/plugin_fixtures/protected_baseline.json"
+  ],
+  "verification_hygiene_candidates": [
+    "scripts/knowledge_lint.sh"
+  ],
+  "canonical_doc_candidates": [
+    "docs/PROJECT_STATE.md",
+    "docs/ROADMAP.md",
+    "docs/CHANGELOG.md",
+    "docs/adapters/bmad/FACTORY_BMAD_ADAPTER.md",
+    "docs/adapters/bmad/FACTORY_BMAD_QUICK_START.md",
+    "docs/adapters/bmad/FACTORY_BMAD_PILOT_BACKLOG.md"
+  ],
+  "generated_package_roots": [
+    "plugins/factory",
+    "plugins/factory-claude",
+    "plugins/factory-bmad",
+    "plugins/factory-bmad-claude"
+  ],
+  "builders": [
+    "scripts/build_factory_plugins.py",
+    "scripts/build_factory_bmad_plugins.py"
+  ],
+  "excluded_from_commit": [
+    "artifacts",
+    "docs/Factory/runs/RUN_20260815_0714_factory_bmad_023_live_recovery"
+  ]
+}
