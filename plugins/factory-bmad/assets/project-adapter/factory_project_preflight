@@ -1,0 +1,197 @@
+#!/usr/bin/env python3
+"""Fail-closed Factory project preflight for promoted BMAD evidence."""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import re
+import stat
+import sys
+from pathlib import Path
+
+sys.dont_write_bytecode = True
+
+
+RUN_RE = re.compile(r"RUN_\d{8}_\d{4}_[A-Za-z0-9_-]+")
+SNAPSHOT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{2,63}")
+HEX_RE = re.compile(r"[0-9a-f]{64}")
+RESERVED_SNAPSHOT_IDS = frozenset({"receipts", "install-receipts"})
+SNAPSHOT_MANIFEST_MODE = 0o644
+
+
+def load_policy():
+    candidates = (
+        Path(__file__).with_name("factory_bmad_policy.py"),
+        Path(__file__).parent.parent / "runtime" / "factory_bmad_policy.py",
+    )
+    path = next((candidate for candidate in candidates if candidate.is_file()), None)
+    if path is None:
+        return None
+    spec = importlib.util.spec_from_file_location("factory_bmad_project_policy", path)
+    if spec is None or spec.loader is None:
+        return None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def aggregate(manifest: dict[str, object]) -> str:
+    core = {key: value for key, value in manifest.items() if key != "aggregate_sha256"}
+    encoded = json.dumps(core, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def result(status: str, code: str, paths: list[str]) -> dict[str, object]:
+    return {
+        "schema_version": 1,
+        "status": status,
+        "reason_code": code,
+        "evidence_paths": paths,
+    }
+
+
+def field(text: str, label: str) -> str | None:
+    match = re.search(rf"^- {re.escape(label)}:\s*`?([^`\n]+)`?\s*$", text, re.MULTILINE)
+    return match.group(1).strip() if match else None
+
+
+def validate(root: Path, run_id: str) -> dict[str, object]:
+    brief = root / "docs" / "Factory" / "runs" / run_id / "raw_brief.md"
+    policy = root / "docs" / "adapters" / "bmad" / "BMAD_POLICY.md"
+    evidence = [brief.relative_to(root).as_posix(), policy.relative_to(root).as_posix()]
+    if not brief.is_file():
+        return result("FAIL", "FACTORY_BMAD_BRIEF_MISSING", [policy.relative_to(root).as_posix()] if policy.is_file() else [])
+    if not policy.is_file() or policy.is_symlink():
+        return result("FAIL", "FACTORY_BMAD_POLICY_MISSING", [brief.relative_to(root).as_posix()])
+    policy_module = load_policy()
+    if policy_module is None:
+        return result("FAIL", "FACTORY_BMAD_POLICY_MISSING", evidence)
+    lint = policy_module.policy_lint(root, "claude")
+    if lint["state"] != "READY":
+        return result("FAIL", lint["reason_code"], evidence)
+    audit_path = root / "docs/adapters/bmad/CAPABILITY_AUDIT.json"
+    reconciliation_path = root / "docs/adapters/bmad/BMAD_RECONCILIATION.json"
+    if not audit_path.is_file() or audit_path.is_symlink():
+        return result("FAIL", "FACTORY_BMAD_CAPABILITY_AUDIT_MISSING", evidence)
+    if not reconciliation_path.is_file() or reconciliation_path.is_symlink():
+        return result("FAIL", "FACTORY_BMAD_RECONCILIATION_MISSING", evidence)
+    evidence.extend([audit_path.relative_to(root).as_posix(), reconciliation_path.relative_to(root).as_posix()])
+    try:
+        recorded_audit = json.loads(audit_path.read_text(encoding="utf-8"))
+        recorded_reconciliation = json.loads(reconciliation_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return result("FAIL", "FACTORY_BMAD_CAPABILITY_AUDIT_INVALID", evidence)
+    if not isinstance(recorded_audit, dict) or recorded_audit.get("policy_version") != policy_module.POLICY_VERSION:
+        return result("FAIL", "FACTORY_BMAD_POLICY_VERSION_DRIFT", evidence)
+    if recorded_audit.get("status") != "READY" or recorded_audit.get("reason_code") != lint["reason_code"]:
+        return result("FAIL", "FACTORY_BMAD_CAPABILITY_AUDIT_INVALID", evidence)
+    if recorded_audit.get("coverage_sha256") != lint["coverage_sha256"]:
+        return result("FAIL", "FACTORY_BMAD_CAPABILITY_AUDIT_DRIFT", evidence)
+    if not isinstance(recorded_reconciliation, dict) or recorded_reconciliation.get("policy_version") != policy_module.POLICY_VERSION:
+        return result("FAIL", "FACTORY_BMAD_RECONCILIATION_DRIFT", evidence)
+    reconciliation_core = {key: value for key, value in recorded_reconciliation.items() if key != "aggregate_sha256"}
+    if recorded_reconciliation.get("aggregate_sha256") != policy_module.digest_bytes(policy_module.canonical(reconciliation_core)):
+        return result("FAIL", "FACTORY_BMAD_RECONCILIATION_DRIFT", evidence)
+    try:
+        text = brief.read_text(encoding="utf-8")
+    except (OSError, UnicodeError):
+        return result("FAIL", "FACTORY_BMAD_BRIEF_UNREADABLE", evidence)
+    if "_bmad-output/" in text:
+        return result("FAIL", "FACTORY_BMAD_DRAFT_CITATION", evidence)
+    snapshot_id = field(text, "BMAD Snapshot ID")
+    digest = field(text, "BMAD Snapshot SHA-256")
+    authority = field(text, "BMAD Authority")
+    freeze = field(text, "BMAD Context Freeze")
+    review_qualifier = field(text, "BMAD Review Qualifier")
+    if not snapshot_id or not SNAPSHOT_RE.fullmatch(snapshot_id):
+        return result("FAIL", "FACTORY_BMAD_SNAPSHOT_ID_INVALID", evidence)
+    if snapshot_id.casefold() in RESERVED_SNAPSHOT_IDS:
+        return result("FAIL", "FACTORY_BMAD_SNAPSHOT_ID_RESERVED", evidence)
+    if not digest or not HEX_RE.fullmatch(digest):
+        return result("FAIL", "FACTORY_BMAD_SNAPSHOT_DIGEST_INVALID", evidence)
+    if authority != "EVIDENCE_ONLY":
+        return result("FAIL", "FACTORY_BMAD_AUTHORITY_INVALID", evidence)
+    if freeze != "Brief Purple PASS":
+        return result("FAIL", "FACTORY_BMAD_CONTEXT_NOT_FROZEN", evidence)
+    snapshot = root / "docs" / "upstream" / "bmad" / snapshot_id
+    manifest_path = snapshot / "SNAPSHOT_MANIFEST.json"
+    if snapshot.is_symlink() or not manifest_path.is_file() or manifest_path.is_symlink():
+        return result("FAIL", "FACTORY_BMAD_SNAPSHOT_MISSING", evidence)
+    evidence.append(manifest_path.relative_to(root).as_posix())
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        return result("FAIL", "FACTORY_BMAD_MANIFEST_INVALID", evidence)
+    required = {"schema_version", "snapshot_id", "aggregate_sha256", "artifact", "review", "provenance"}
+    if not isinstance(manifest, dict) or not required.issubset(manifest):
+        return result("FAIL", "FACTORY_BMAD_MANIFEST_INVALID", evidence)
+    if manifest.get("schema_version") != 1 or manifest.get("snapshot_id") != snapshot_id:
+        return result("FAIL", "FACTORY_BMAD_MANIFEST_ID_MISMATCH", evidence)
+    if manifest.get("aggregate_sha256") != digest:
+        return result("FAIL", "FACTORY_BMAD_CITATION_HASH_MISMATCH", evidence)
+    if aggregate(manifest) != digest:
+        return result("FAIL", "FACTORY_BMAD_MANIFEST_HASH_MISMATCH", evidence)
+    artifact = manifest.get("artifact")
+    review = manifest.get("review")
+    if not isinstance(artifact, dict) or not isinstance(review, dict):
+        return result("FAIL", "FACTORY_BMAD_REVIEW_EVIDENCE_INVALID", evidence)
+    if not review.get("reviewer") or not review.get("reference") or review.get("decision") != "APPROVED":
+        return result("FAIL", "FACTORY_BMAD_REVIEW_EVIDENCE_INVALID", evidence)
+    manifest_qualifier = review.get("qualifier")
+    if manifest_qualifier is not None and (
+        not isinstance(manifest_qualifier, str)
+        or not manifest_qualifier.strip()
+        or manifest_qualifier != review_qualifier
+    ):
+        return result("FAIL", "FACTORY_BMAD_REVIEW_QUALIFIER_MISMATCH", evidence)
+    if manifest_qualifier is None and review_qualifier is not None:
+        return result("FAIL", "FACTORY_BMAD_REVIEW_QUALIFIER_MISMATCH", evidence)
+    name = artifact.get("path")
+    expected = artifact.get("sha256")
+    expected_mode = artifact.get("mode")
+    if not isinstance(name, str) or Path(name).name != name or not isinstance(expected, str) or not isinstance(expected_mode, int):
+        return result("FAIL", "FACTORY_BMAD_ARTIFACT_INVALID", evidence)
+    artifact_path = snapshot / name
+    try:
+        entries = {path.name: path.lstat() for path in snapshot.iterdir()}
+    except OSError:
+        return result("FAIL", "FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID", evidence)
+    if set(entries) != {"SNAPSHOT_MANIFEST.json", name} or any(not stat.S_ISREG(metadata.st_mode) for metadata in entries.values()):
+        return result("FAIL", "FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID", evidence)
+    if stat.S_IMODE(entries["SNAPSHOT_MANIFEST.json"].st_mode) != SNAPSHOT_MANIFEST_MODE:
+        return result("FAIL", "FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID", evidence)
+    if stat.S_IMODE(entries[name].st_mode) != expected_mode:
+        return result("FAIL", "FACTORY_BMAD_ARTIFACT_MODE_MISMATCH", evidence)
+    if sha256(artifact_path) != expected:
+        return result("FAIL", "FACTORY_BMAD_ARTIFACT_HASH_MISMATCH", evidence)
+    provenance = manifest.get("provenance")
+    workflow = provenance.get("workflow") if isinstance(provenance, dict) else None
+    workflow_name = f"bmad-{workflow}" if isinstance(workflow, str) else None
+    if not policy_module.policy_classify(workflow_name)["allowed"]:
+        return result("FAIL", "FACTORY_BMAD_PROHIBITED_AUTHORITY", evidence)
+    evidence.append(artifact_path.relative_to(root).as_posix())
+    return result("PASS", "FACTORY_BMAD_PREFLIGHT_PASS", evidence)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run", required=True)
+    parser.add_argument("--json", action="store_true", required=True)
+    args = parser.parse_args()
+    if not RUN_RE.fullmatch(args.run):
+        payload = result("FAIL", "FACTORY_BMAD_RUN_ID_INVALID", [])
+    else:
+        payload = validate(Path.cwd().resolve(), args.run)
+    print(json.dumps(payload, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

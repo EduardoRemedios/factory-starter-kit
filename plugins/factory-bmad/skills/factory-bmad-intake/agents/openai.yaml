@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory BMAD Intake"
+  short_description: "Seed Factory BMAD intake controls"
+  default_prompt: "Use $factory-bmad-intake to preview Factory BMAD intake controls."

@@ -6,12 +6,6 @@ For the installable Codex/Claude pilot path, start with `docs/onboarding/FACTORY
 
 For a non-technical, step-by-step setup path, start with `docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md`.
 
-For plugin installation and rollout:
-- start with `docs/onboarding/FACTORY_PLUGIN_QUICK_START.md`
-- use `docs/onboarding/FACTORY_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md` before piloting
-- keep `docs/onboarding/FACTORY_PLUGIN_REFERENCE.md`, `docs/onboarding/FACTORY_PLUGIN_TROUBLESHOOTING.md`, and `docs/onboarding/FACTORY_PLUGIN_ROLLBACK.md` available during adoption
-- use `docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md` for the first team rollout
-
 ## 1. What You Are Adopting
 
 You are adopting a planning and governance framework, not a product implementation.

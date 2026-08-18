@@ -22,6 +22,7 @@ Treat a blocked state as a safety result, not as a prompt to force the operation
 | `FACTORY_ROLLBACK_UNAVAILABLE` | No recoverable update receipt is recorded | Stop and recover from version control or an owner-approved backup |
 | `FACTORY_ROLLBACK_EVIDENCE_MISMATCH` | Installation state and transaction receipt do not agree | Stop; preserve evidence and recover manually |
 | `FACTORY_PROJECT_PREFLIGHT_FAILED` | The declared project preflight returned FAIL | Inspect its repository-relative evidence and fix the project prerequisite |
+| `FACTORY_EXECUTION_CLOSEOUT_INVALID` | A present closeout record failed strict schema, identity, pin, coverage, outcome, path, or digest validation | Preserve the record and evidence; repair through the approved run boundary and never delete it to obtain legacy fallback |
 
 ## Claude Command Is Missing
 
@@ -52,13 +53,14 @@ The transaction reports a blocker and restores its captured prior state. Preserv
 
 ## Greenfield Reports Git Root Required
 
-1. Start Claude Code from the intended empty directory and invoke
+1. Confirm the installed plugin contains the current `0.2.1` release candidate.
+2. Start Claude Code from the intended empty directory and invoke
    `/factory:greenfield`; Doctor is a post-setup check for new projects.
-2. For an absent or different target, provide the exact absolute path and require
+3. For an absent or different target, provide the exact absolute path and require
    the same quoted `--root` value for preview and apply.
-3. If Greenfield still reports `FACTORY_GIT_ROOT_REQUIRED`, preserve the output
-   as a plugin-version or stale-installation defect; do not initialize Git
-   manually to hide the failure.
+4. If Greenfield still reports `FACTORY_GIT_ROOT_REQUIRED`, preserve the output
+   as a plugin-version or stale-installation defect; do not initialize Git manually
+   to hide the failure.
 
 ## Claude Local Settings Make Greenfield Look Non-empty
 

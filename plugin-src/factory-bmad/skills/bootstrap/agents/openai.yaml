@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory BMAD Bootstrap"
+  short_description: "Preview pinned BMAD upstream setup"
+  default_prompt: "Use $bootstrap to preview a safe BMAD 6.10.0 upstream setup."

@@ -1,0 +1,27 @@
+{
+  "description": "Enforce the Factory BMAD upstream-only authority boundary.",
+  "hooks": {
+    "UserPromptExpansion": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/factory_bmad.py\" hook"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/factory_bmad.py\" hook"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -8,8 +8,6 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DOCS_ROOT = REPO_ROOT / "docs/onboarding"
 REQUIRED_DOCS = {
-    "FACTORY_FIRST_TESTER_HANDOFF.md",
-    "FACTORY_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md",
     "FACTORY_PLUGIN_QUICK_START.md",
     "FACTORY_PLUGIN_REFERENCE.md",
     "FACTORY_PLUGIN_TROUBLESHOOTING.md",
@@ -32,11 +30,8 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         self.assertTrue(
             all((DOCS_ROOT / name).is_file() for name in REQUIRED_DOCS)
         )
-        onboarding = (DOCS_ROOT / "ONBOARDING_GUIDE.md").read_text(encoding="utf-8")
-        self.assertIn("FACTORY_PLUGIN_QUICK_START.md", onboarding)
-        readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("FACTORY_FIRST_TESTER_HANDOFF.md", readme)
-        self.assertIn("factory-plugin-v0.2.3-rc.1", readme)
+        reference = (DOCS_ROOT / "FACTORY_PLUGIN_REFERENCE.md").read_text(encoding="utf-8")
+        self.assertIn("FACTORY_PLUGIN_QUICK_START.md", reference)
 
     def test_quick_start_names_every_public_entry_point(self):
         reference = (DOCS_ROOT / "FACTORY_PLUGIN_REFERENCE.md").read_text(
@@ -70,26 +65,6 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
             "Product Owner sign-off",
         ):
             self.assertIn(threshold, pilot)
-        self.assertIn("verify_factory_cli_rollout.py", pilot)
-
-    def test_cli_rollout_preflight_is_documented(self):
-        quick_start = (DOCS_ROOT / "FACTORY_PLUGIN_QUICK_START.md").read_text(
-            encoding="utf-8"
-        )
-        playbook = (DOCS_ROOT / "FACTORY_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md").read_text(
-            encoding="utf-8"
-        )
-        handoff = (DOCS_ROOT / "FACTORY_FIRST_TESTER_HANDOFF.md").read_text(
-            encoding="utf-8"
-        )
-        for text in (quick_start, playbook):
-            self.assertIn("verify_factory_cli_rollout.py", text)
-            self.assertIn("claude plugin --help", text)
-        self.assertIn("/factory:greenfield", playbook)
-        self.assertIn("/factory:brownfield", playbook)
-        self.assertIn("verify_factory_cli_rollout.py", handoff)
-        self.assertIn("factory-plugin-v0.2.3-rc.1", handoff)
-        self.assertIn("/factory:greenfield", handoff)
 
     def test_troubleshooting_covers_fail_closed_reason_codes(self):
         troubleshooting = (
@@ -154,13 +129,16 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
             self.assertIn("exact full current plan ID", skill)
             self.assertIn("Generic approval", skill)
 
-    def test_validation_guidance_prevents_bytecode_cache_mutation(self):
-        validation = (
-            REPO_ROOT / "plugin-src/factory/skills/validate.md"
-        ).read_text(encoding="utf-8")
-        self.assertIn("PYTHONDONTWRITEBYTECODE=1", validation)
-        self.assertIn("git status --short", validation)
-        self.assertIn("report every difference", validation)
+        greenfield = (skill_root / "greenfield.md").read_text(encoding="utf-8")
+        self.assertIn('--root "$PWD"', greenfield)
+        self.assertIn("same `--root`", greenfield)
+        self.assertIn("Never invent", greenfield)
+        self.assertIn("does not require an", greenfield)
+        self.assertIn("existing Git worktree", greenfield)
+        self.assertIn("authority for Greenfield versus Brownfield", greenfield)
+        self.assertIn(".claude/settings.local.json", greenfield)
+        self.assertIn("read-only preserved evidence", greenfield)
+        self.assertIn("Never edit, delete, chmod, copy", greenfield)
 
     def test_new_project_runs_greenfield_before_doctor(self):
         quick_start = (DOCS_ROOT / "FACTORY_PLUGIN_QUICK_START.md").read_text(
@@ -176,7 +154,7 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         self.assertIn("current working directory", claude_section)
         self.assertIn("same quoted", claude_section)
         self.assertIn(".claude/settings.local.json", claude_section)
-        self.assertIn("Factory never", claude_section)
+        self.assertIn("Factory never manages or", claude_section)
         self.assertIn("requires a fresh preview", claude_section)
 
     def test_claude_greenfield_troubleshooting_preserves_user_state(self):
@@ -191,6 +169,57 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
             "does not parse, manage, modify, or remove it", troubleshooting
         )
         self.assertIn("Do not delete user-owned content", troubleshooting)
+        self.assertIn(
+            "prepare a genuine existing project as a Git worktree",
+            troubleshooting,
+        )
+
+    def test_validation_guidance_prevents_bytecode_cache_mutation(self):
+        validation = (
+            REPO_ROOT / "plugin-src/factory/skills/validate.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("PYTHONDONTWRITEBYTECODE=1", validation)
+        self.assertIn("git status --short", validation)
+        self.assertIn("report every difference", validation)
+        self.assertIn("bounded tool output", validation)
+
+    def test_execution_contracts_require_exact_go_and_bounded_evidence(self):
+        prompt = (REPO_ROOT / "docs/Factory/templates/EXECUTION_PROMPT_TEMPLATE.md").read_text(
+            encoding="utf-8"
+        )
+        orchestration = (REPO_ROOT / "docs/Factory/ORCHESTRATION.md").read_text(
+            encoding="utf-8"
+        )
+        handoff = (REPO_ROOT / "docs/Factory/templates/HANDOFF_STAGE_TEMPLATE.md").read_text(
+            encoding="utf-8"
+        )
+        for text in (prompt, orchestration):
+            self.assertIn("- Human Go: RECORDED", text)
+            self.assertIn("./scripts/factory-python", text)
+            self.assertIn("bounded", text)
+        self.assertIn("backtick-quoted exact", orchestration)
+        self.assertIn("- `pack/exact-repository-or-run-relative-path`", handoff)
+
+    def test_validation_guidance_preserves_read_only_evidence_boundaries(self):
+        validation = (
+            REPO_ROOT / "plugin-src/factory/skills/validate.md"
+        ).read_text(encoding="utf-8")
+        for required in (
+            "same first read-only tool command",
+            "same final read-only tool command",
+            "Do not reuse a digest from an earlier checkpoint",
+            "`UNKNOWN`",
+            "bounded tool output",
+            "explicit exit status",
+            "pipe-safe failure propagation",
+            "Do not use shell redirection",
+            "`|| true`",
+            "`/tmp`",
+            "`/private/tmp`",
+            "guessed scratch directory",
+            "explicitly authorize the exact evidence path",
+        ):
+            self.assertIn(required, validation)
 
     def test_runtime_skills_use_supported_plugin_root_guidance(self):
         skill_root = REPO_ROOT / "plugin-src/factory/skills"
@@ -214,15 +243,90 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         for prohibited in ("Symphony", "AuditEdge", "BMAD", "TEA"):
             self.assertNotIn(prohibited, text)
 
-    def test_optional_bmad_routing_matrix_preserves_factory_only_default(self):
-        matrix = (REPO_ROOT / "docs/integration/FACTORY_BMAD_ROUTING_MATRIX.md").read_text(
+    def test_bmad_handover_guidance_uses_one_integrity_recall_authority_map(self):
+        for name in ("FACTORY_BMAD_QUICK_START.md", "FACTORY_BMAD_PILOT_RUNBOOK.md"):
+            text = (REPO_ROOT / "docs/adapters/bmad" / name).read_text(encoding="utf-8")
+            normalized = " ".join(text.split())
+            self.assertIn("Snapshot manifest → project preflight", text)
+            self.assertIn("Promoted `artifact.md` → Stage A recall", text)
+            self.assertIn("Factory intent → authoritative only after Purple Gate PASS", text)
+            self.assertIn("Do not use `SNAPSHOT_MANIFEST.json` as the Stage A required reference", normalized)
+
+    def test_bmad_quick_start_offers_fast_and_full_discovery_routes(self):
+        text = (REPO_ROOT / "docs/adapters/bmad/FACTORY_BMAD_QUICK_START.md").read_text(
             encoding="utf-8"
         )
-        self.assertIn("Factory-only adoption remains the default path", matrix)
-        self.assertIn("New or empty target | Factory only", matrix)
-        self.assertIn("Existing repository, BMAD only | Factory plus BMAD", matrix)
-        self.assertIn("Installing `factory` must never require BMAD", matrix)
-        self.assertIn("Desktop", matrix)
+        self.assertIn("Fast pilot handover", text)
+        self.assertIn("Full discovery", text)
+        self.assertIn("one useful technique", text)
+        self.assertIn("limitations", text)
+
+    def test_bmad_cli_rollout_docs_are_discoverable_and_bound_desktop(self):
+        adapter_root = REPO_ROOT / "docs/adapters/bmad"
+        quick_start = (adapter_root / "FACTORY_BMAD_QUICK_START.md").read_text(
+            encoding="utf-8"
+        )
+        for name in (
+            "FACTORY_BMAD_CLI_ROLLOUT_PLAYBOOK.md",
+            "FACTORY_BMAD_FIRST_TESTER_HANDOFF.md",
+            "FACTORY_BMAD_COMPATIBILITY_POLICY.md",
+            "FACTORY_BMAD_BOOTSTRAP_RECOVERY.md",
+        ):
+            self.assertTrue((adapter_root / name).is_file(), name)
+            self.assertIn(name, quick_start)
+        compatibility = (adapter_root / "FACTORY_BMAD_COMPATIBILITY_POLICY.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("verify_factory_bmad_cli_rollout.py", compatibility)
+        self.assertIn("Claude Desktop Code tab", compatibility)
+        self.assertIn("Unsupported Until Proved", compatibility)
+        recovery = (adapter_root / "FACTORY_BMAD_BOOTSTRAP_RECOVERY.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("FACTORY_BMAD_BOOTSTRAP_POST_AUDIT_FAILED", recovery)
+        self.assertIn("Do not retry bootstrap blindly", recovery)
+
+    def test_bmad_first_tester_handoff_exercises_full_flow(self):
+        handoff = (
+            REPO_ROOT / "docs/adapters/bmad/FACTORY_BMAD_FIRST_TESTER_HANDOFF.md"
+        ).read_text(encoding="utf-8")
+        for required in (
+            "ODYSSEY_V3_INITIAL_BMAD_BRIEF.md",
+            "disposable Greenfield repository",
+            "brownfield repository with neither Factory nor BMAD",
+            "brownfield repository with BMAD already present and Factory absent",
+            "verify_factory_bmad_cli_rollout.py",
+            "/factory-bmad:doctor",
+            "Factory Greenfield",
+            "/factory-bmad:bootstrap",
+            "/factory-bmad:audit",
+            "/factory-bmad:intake",
+            "/factory-bmad:promote",
+            "/factory:run",
+            "PLANNING_ONLY",
+            "promoted snapshot ID",
+            "aggregate hash",
+            "Do not cite `_bmad-output/` directly",
+            "Stop after the final Factory pack and `pack-lint`",
+        ):
+            self.assertIn(required, handoff)
+
+    def test_bmad_guidance_explains_reload_discovery_and_denial(self):
+        quick_start = (REPO_ROOT / "docs/adapters/bmad/FACTORY_BMAD_QUICK_START.md").read_text(
+            encoding="utf-8"
+        )
+        bootstrap = (REPO_ROOT / "plugin-src/factory-bmad/skills/bootstrap/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        for text in (quick_start, bootstrap):
+            self.assertIn("fresh Claude Code session", " ".join(text.split()))
+        normalized_quick_start = " ".join(quick_start.split())
+        for phrase in (
+            "autocomplete suggestion is not an invocation",
+            "Doctor was not run",
+            "/factory-bmad:doctor",
+        ):
+            self.assertIn(phrase, normalized_quick_start)
 
 
 if __name__ == "__main__":

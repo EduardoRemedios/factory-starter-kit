@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "package": "factory-bmad",
+  "version": "0.2.3",
+  "generated_from": "plugin-src/factory-bmad",
+  "files": [
+    {
+      "path": ".claude-plugin/plugin.json",
+      "sha256": "1ca069eabc87f81059b7ca83d18fb20a516c3e1dedea85bb92f8229060fda743",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/BMAD_POLICY.md",
+      "sha256": "144f9df74401ed89916f3395f39c92c81e0f1a26933201ca7637a6d9ead67ff5",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/PROJECT_PREFLIGHT.json",
+      "sha256": "5c71375d2bf341b585d9a89422c4cdd02ebb49d634785e4149d118327a8dc2f4",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/RAW_BRIEF_TEMPLATE.md",
+      "sha256": "ad83399f0ae9e3a6ab96fcc49e9363c5965cf39a9c977a91e778739bc173b785",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/factory_bmad_policy.py",
+      "sha256": "536a4d7f02258af2900092b0636d5a45e037428d66aadbe079eac2cec4b5d62e",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/factory_bmad_policy_lint",
+      "sha256": "d8b3b1f7d7d8b82268ddc70929d7dbeb0479a863f198a7a2fe35eeedfd64c424",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/factory_project_preflight",
+      "sha256": "f41c9efef187664b3353a438161564e36abdf5002215ddcfca0effe9c32b1155",
+      "classification": "release-owned"
+    },
+    {
+      "path": "hooks/hooks.json",
+      "sha256": "20739889eb0ba4d1769755e2fbc7eb9b1c4fb876afaef73ce16c2530b605d61c",
+      "classification": "release-owned"
+    },
+    {
+      "path": "scripts/factory_bmad.py",
+      "sha256": "c8b34bfa8a1b71916e41378ce0dc9b113664aa9ee76034222bcd9afce7d5c229",
+      "classification": "release-owned"
+    },
+    {
+      "path": "scripts/factory_bmad_policy.py",
+      "sha256": "536a4d7f02258af2900092b0636d5a45e037428d66aadbe079eac2cec4b5d62e",
+      "classification": "release-owned"
+    },
+    {
+      "path": "skills/audit/SKILL.md",
+      "sha256": "bc8e612c5ad187d27a15a47c81c0e41bd2de53db60253a0de38de5253aa5e87c",
+      "classification": "release-owned"
+    },
+    {
+      "path": "skills/bootstrap/SKILL.md",
+      "sha256": "050436cd6d7cfaf041e52c089cab3539fdd2ce3a890c339740848358e5aba8f7",
+      "classification": "release-owned"
+    },
+    {
+      "path": "skills/doctor/SKILL.md",
+      "sha256": "a2c89e857c2a8e7313cb121153baf4ccec99af8b82901431a001855af8d5a923",
+      "classification": "release-owned"
+    },
+    {
+      "path": "skills/intake/SKILL.md",
+      "sha256": "12ff21e0b0818e407db0d43e9d035b4f99730b3b502669e9cdd2d17730fce702",
+      "classification": "release-owned"
+    },
+    {
+      "path": "skills/promote/SKILL.md",
+      "sha256": "d4f8451dee4d843e767fa282ca7a98dba761d61c37bed20b6bea89fb3a0fd48b",
+      "classification": "release-owned"
+    }
+  ]
+}

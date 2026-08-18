@@ -10,6 +10,12 @@
       "source": "./plugins/factory-claude",
       "description": "Use Factory safely from Claude Code.",
       "version": "0.2.3"
+    },
+    {
+      "name": "factory-bmad",
+      "source": "./plugins/factory-bmad-claude",
+      "description": "Adopt Factory and BMAD in one repository with upstream-only BMAD enforcement.",
+      "version": "0.2.3"
     }
   ]
 }

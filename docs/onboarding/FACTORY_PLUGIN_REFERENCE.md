@@ -1,5 +1,8 @@
 # Factory Plugin Reference
 
+Start with the [Factory Plugin Quick Start](FACTORY_PLUGIN_QUICK_START.md), then
+use this reference for exact cross-harness behavior and evidence rules.
+
 Codex uses `$factory-<name>`. Claude uses `/factory:<name>`. Invocation syntax differs; Factory semantics and gates do not.
 
 | Journey | Codex | Claude | Repository writes |
@@ -39,6 +42,13 @@ Progress uses disk evidence and fails closed:
 2. unrepaired weak recall blocks
 3. I2 and a passing Purple audit do not imply execution authorization
 4. `EXECUTION_ENABLED` still requires explicit human Go
+5. after those checks, any `EXECUTION_CLOSEOUT.json` is revalidated against its
+   exact identities, pins, enabled checks and retained evidence digests
+
+Closeout absence preserves historical behavior. Presence opts into strict
+`factory.execution-closeout.v1`; an invalid record blocks and cannot fall back.
+Valid outcomes are `REVIEW_READY`, `NO_GO`, and `BLOCKED`. None grants merge,
+tag, publication, adapter, phase, or mission authority.
 
 Progress is read-only.
 
