@@ -133,10 +133,12 @@ claude
 /factory-bmad:doctor
 ```
 
-For the BMAD-only state, create or copy a second disposable repository with BMAD
-already present, then start from `/factory-bmad:doctor`. Doctor should route to
-Factory Brownfield first, then companion bootstrap or audit depending on the
-detected BMAD state.
+For the second brownfield starting state, create or copy a disposable repository
+where BMAD is already present and Factory is absent, then start from
+`/factory-bmad:doctor`. This is an adoption source state only; the expected
+target state is Factory and BMAD together, with Factory as downstream SDLC
+authority. Doctor should route to Factory Brownfield first, then companion
+bootstrap or audit depending on the detected BMAD state.
 
 ## BMAD Discovery
 

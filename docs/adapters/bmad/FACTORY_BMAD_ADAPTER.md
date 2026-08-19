@@ -27,7 +27,7 @@ gate. `bmad-loop` is incompatible with Factory-bound intake and blocks it.
 | Neither system, otherwise new target | Run Factory Greenfield preview first. |
 | Neither system, existing project | Run Factory Brownfield preview first. |
 | Factory only | Preview pinned BMAD Core+BMM setup. |
-| BMAD only | Run Factory Brownfield preview. |
+| BMAD present, Factory absent | Run Factory Brownfield preview. This is an adoption starting state only, not an approved operating mode. |
 | Both | Audit modules and authority before intake. |
 
 Partial or contradictory state blocks for human repair.

@@ -46,10 +46,12 @@ Run `/factory-bmad:doctor` and follow its single next action:
 - Factory present without BMAD: `/factory-bmad:bootstrap`
 - Both present: `/factory-bmad:audit`
 
-For a BMAD-only brownfield repository, Factory Brownfield apply is the first
-mutation. The bundled guard activates automatically as soon as Factory and BMAD
-coexist in that Git worktree. In an unrelated BMAD-only repository the guard is
-inactive.
+For a brownfield repository whose starting state is BMAD present and Factory
+absent, Factory Brownfield apply is the first mutation. The desired target state
+is always Factory and BMAD together, with Factory as downstream SDLC authority.
+The bundled guard activates automatically as soon as Factory and BMAD coexist in
+that Git worktree. Until then, the repository is treated only as an adoption
+candidate, not as an approved BMAD-without-Factory operating mode.
 
 Every setup command previews first. Apply only by quoting the exact full plan ID.
 

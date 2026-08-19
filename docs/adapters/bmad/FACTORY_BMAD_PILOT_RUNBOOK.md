@@ -24,8 +24,8 @@ pilot first proves setup, intake, evidence promotion, and Factory handoff.
 0. Run `scripts/verify_factory_bmad_cli_rollout.py` for the marketplace root
    and each target repository. Resolve every `BLOCKED` result before a team
    starts.
-1. Test three targets: empty/neither, brownfield/neither, and
-   brownfield/BMAD-only.
+1. Test three targets: empty/neither, brownfield/neither, and a brownfield
+   starting state where BMAD is present and Factory is absent.
 2. Install the Factory marketplace and explicitly install only `factory-bmad`.
 3. Run Doctor; complete Factory Greenfield preview and exact apply.
 4. Preview and exactly approve pinned BMAD 6.10.0 Core+BMM setup.
@@ -42,7 +42,7 @@ pilot first proves setup, intake, evidence promotion, and Factory handoff.
 12. Retain direct slash-command `UserPromptExpansion` evidence and run the hard
     generated-package `PreToolUse`/`Skill` contract: prohibited, unknown,
     malformed, and partial cases deny before sentinel execution; allowed
-    upstream and inactive BMAD-only controls remain usable. Optional model-choice
+    upstream and pre-adoption BMAD-present controls remain usable. Optional model-choice
     smoke is advisory—no Skill call is inconclusive, while an emitted prohibited
     call that is not denied is a smoke failure.
 13. Run the CI-callable `policy-lint`, package-current checks, full regression,
