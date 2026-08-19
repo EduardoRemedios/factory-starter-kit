@@ -48,7 +48,10 @@ def _load_policy():
 policy = _load_policy()
 SUPPORTED_BMAD_SKILLS = policy.SUPPORTED_BMAD_SKILLS
 SUPPORTED_TEA_SKILLS = policy.SUPPORTED_TEA_SKILLS
-ALLOWED_WORKFLOWS = {name.removeprefix("bmad-") for name in policy.ALLOWED_UPSTREAM_WORKFLOWS}
+ALLOWED_WORKFLOWS = {
+    *policy.ALLOWED_UPSTREAM_WORKFLOWS,
+    *(name.removeprefix("bmad-") for name in policy.ALLOWED_UPSTREAM_WORKFLOWS),
+}
 policy_classify = policy.policy_classify
 enforcement_activation = policy.enforcement_activation
 hook_decision = policy.hook_decision
@@ -230,6 +233,10 @@ def tree_inventory(root: Path) -> dict[str, str]:
     for path in sorted(root.rglob("*")):
         relative = path.relative_to(root)
         if ".git" in relative.parts:
+            continue
+        if relative.parts in {(".claude",), (".claude", "hooks")}:
+            continue
+        if relative.parts[:3] == (".claude", "hooks", ".state"):
             continue
         key = relative.as_posix()
         if path.is_symlink():

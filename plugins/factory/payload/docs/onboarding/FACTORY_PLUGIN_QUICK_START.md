@@ -91,13 +91,16 @@ For an existing Git repository, invoke `/factory:doctor` and then
 `/factory:brownfield` instead of Greenfield.
 
 Greenfield uses Claude Code's current working directory as its default target.
-For an absent or different target, provide its exact path and use the same quoted
-path for preview and apply.
+The skill passes that directory explicitly to preview and apply. For an absent
+or different target, provide its exact path; the skill must use the same quoted
+absolute path for both commands and must never choose a target on your behalf.
 
-Claude Code may create `.claude/settings.local.json` while starting in an
-otherwise new directory. Greenfield accepts only that exact Claude-local shape:
-the real `.claude` directory must contain only that regular file. Factory never
-manages or writes it, and any change before apply requires a fresh preview.
+Claude Code may create local harness state while starting in an otherwise new
+directory. Greenfield accepts only `.claude/settings.local.json` and volatile
+`.claude/hooks/.state/**` under `.claude`. The settings file is reported with
+digest and mode as preserved evidence; hook state is ignored for Greenfield
+emptiness and plan IDs. Factory never manages or writes either path family.
+A settings-file content or mode change still requires a fresh preview.
 Additional files, including other `.claude` configuration, still make the target
 non-empty.
 
@@ -136,6 +139,16 @@ After setup and validation:
 5. Keep the first run `PLANNING_ONLY` unless the raw brief explicitly authorizes `EXECUTION_ENABLED`.
 6. Stop after I2 and `pack-lint` for human review.
 7. Implementation requires separate explicit human Go.
+8. After approved execution, retain evidence for every enabled verification
+   check, author a closeout draft from
+   `docs/Factory/templates/EXECUTION_CLOSEOUT_TEMPLATE.json`, and record it with:
+
+```bash
+./scripts/factoryctl execution-closeout --run <RUN_ID> --input <DRAFT.json> --json
+```
+
+9. Invoke progress explicitly for that run and once with default selection.
+   `REVIEW_READY` means maintainer review only; it is not release permission.
 
 The selected session model serves Red, Blue, and Purple roles by default. Separate role-specific model routing is optional, not required.
 

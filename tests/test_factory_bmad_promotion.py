@@ -77,6 +77,13 @@ class FactoryBmadPromotionTests(unittest.TestCase):
         allowed = runtime.promote(self.root, self.args(workflow="document-project"))
         self.assertEqual("PLAN_READY", allowed["state"])
 
+    def test_prefixed_allowed_workflow_alias_is_accepted(self):
+        payload = runtime.promote(
+            self.root, self.args(workflow="bmad-product-brief")
+        )
+        self.assertEqual("PLAN_READY", payload["state"])
+        self.assertEqual("bmad-product-brief", payload["plan"]["workflow"])
+
     def test_immutable_conflict_blocks(self):
         destination = self.root / "docs/upstream/bmad/product-brief-v1"
         destination.mkdir(parents=True)

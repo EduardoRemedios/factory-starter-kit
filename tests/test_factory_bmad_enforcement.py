@@ -151,6 +151,23 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
         }
         self.assertIsNone(runtime.hook_decision(root, payload))
 
+    def test_factory_slash_command_passes_when_cwd_contains_bmad_marker(self):
+        temporary = tempfile.TemporaryDirectory(prefix="bmad-factory-test-")
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        seed_git(root)
+        seed_factory(root)
+        seed_bmad(root, capabilities=True)
+        payload = {
+            "hook_event_name": "UserPromptExpansion",
+            "cwd": str(root),
+            "expansion_type": "slash_command",
+            "command_name": "factory:doctor",
+            "command_source": "plugin",
+            "prompt": "/factory:doctor",
+        }
+        self.assertIsNone(runtime.hook_decision(root, payload))
+
     def test_denial_says_doctor_was_not_run(self):
         payload = {
             "hook_event_name": "UserPromptExpansion",

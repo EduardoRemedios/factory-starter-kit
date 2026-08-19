@@ -57,6 +57,24 @@ class FactoryBmadBootstrapTests(unittest.TestCase):
         self.assertEqual("FACTORY_BMAD_PLAN_APPROVAL_MISMATCH", payload["reason_code"])
         self.assertEqual(before, runtime.tree_inventory(root))
 
+    def test_claude_hook_state_does_not_stale_bootstrap_plan(self):
+        root = self.root(); seed_factory(root)
+        preview = runtime.bootstrap(root, "claude", None)
+        (root / ".claude/hooks/.state").mkdir(parents=True)
+        (root / ".claude/hooks/.state/hook-errors.log").write_text(
+            "harness state\n", encoding="utf-8"
+        )
+        current = runtime.bootstrap(root, "claude", None)
+        self.assertEqual(preview["plan"]["plan_id"], current["plan"]["plan_id"])
+
+        def fake_installer(*_args, **_kwargs):
+            seed_bmad(root, capabilities=True)
+            return CompletedProcess([], 0, "installed", "")
+
+        with patch.object(runtime.subprocess, "run", side_effect=fake_installer):
+            payload = runtime.bootstrap(root, "claude", preview["plan"]["plan_id"])
+        self.assertEqual("FACTORY_BMAD_BOOTSTRAP_APPLIED", payload["reason_code"])
+
     def test_inventory_records_empty_directories_and_symlinks_without_following(self):
         root = self.root()
         (root / "empty").mkdir()

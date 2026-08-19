@@ -26,7 +26,7 @@
     },
     {
       "path": "assets/project-adapter/factory_bmad_policy.py",
-      "sha256": "536a4d7f02258af2900092b0636d5a45e037428d66aadbe079eac2cec4b5d62e",
+      "sha256": "ff3b00aeb3ff79a3a1b55f4062582b643d5b1c7bc44264eb4e4bc5dcd0659c9d",
       "classification": "release-owned"
     },
     {
@@ -41,12 +41,12 @@
     },
     {
       "path": "scripts/factory_bmad.py",
-      "sha256": "c8b34bfa8a1b71916e41378ce0dc9b113664aa9ee76034222bcd9afce7d5c229",
+      "sha256": "a635f9c102bed9722cd0f436ee3fc68ae56748dbaf2f50ff68ed5a5d8bd2e69d",
       "classification": "release-owned"
     },
     {
       "path": "scripts/factory_bmad_policy.py",
-      "sha256": "536a4d7f02258af2900092b0636d5a45e037428d66aadbe079eac2cec4b5d62e",
+      "sha256": "ff3b00aeb3ff79a3a1b55f4062582b643d5b1c7bc44264eb4e4bc5dcd0659c9d",
       "classification": "release-owned"
     },
     {

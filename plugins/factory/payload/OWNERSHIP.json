@@ -276,17 +276,17 @@
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",
       "classification": "release-owned",
-      "sha256": "d83e265769f5e39ffadf155ea3fc774e04bb07cae09a2b2e86d247dee0cdbaf1"
+      "sha256": "fa20773f3ee9c3644f66b4233b47b335a7bb92d0781e2725ed199427a58512d5"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_QUICK_START.md",
       "classification": "release-owned",
-      "sha256": "900442838e77f8986fda18b8ce7faa752a0f902c5091a7317d9315985c1a81d0"
+      "sha256": "8abd19b5cf2e59265455249be36576663117c419f8467265900837952689fc02"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_REFERENCE.md",
       "classification": "release-owned",
-      "sha256": "3d28377b9a8796f73d1633b06d11f2dfb68d2c3227e87308d9519481978666c8"
+      "sha256": "84ee4e5b2ea9ae619fa0713b04f11b319a8f9dfb5bf45767d43527512eb4daae"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_ROLLBACK.md",
@@ -296,7 +296,7 @@
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_TROUBLESHOOTING.md",
       "classification": "release-owned",
-      "sha256": "49ec1da1d5b90a5da0d0d7a03c865e4e4e6258d2c81a63214654d2092beabbdc"
+      "sha256": "0bb2c5a5910c65190cd7b72a47a16c9138a73f9b1f1c6ea1e8dc21a8b2e5f051"
     },
     {
       "path": "docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md",

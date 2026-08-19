@@ -855,7 +855,13 @@ def claude_greenfield_preserved_paths(
     if not directory.is_dir():
         raise ValueError("FACTORY_UNSAFE_PATH")
     entries = sorted(path.name for path in directory.iterdir())
-    if entries != ["settings.local.json"]:
+    allowed_entries: set[str] = set()
+    if "settings.local.json" in entries:
+        allowed_entries.add("settings.local.json")
+    hooks = directory / "hooks"
+    if "hooks" in entries and claude_greenfield_harness_state_allowed(hooks):
+        allowed_entries.add("hooks")
+    if set(entries) != allowed_entries or "settings.local.json" not in allowed_entries:
         return []
     settings = directory / "settings.local.json"
     if settings.is_symlink() or not settings.is_file():
@@ -894,6 +900,41 @@ def claude_greenfield_preserved_paths(
             "file_type": "regular",
         }
     ]
+
+
+def claude_greenfield_harness_state_allowed(hooks: Path) -> bool:
+    if hooks.is_symlink() or not hooks.is_dir():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    entries = sorted(path.name for path in hooks.iterdir())
+    if entries != [".state"]:
+        return False
+    state = hooks / ".state"
+    if state.is_symlink() or not state.is_dir():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    for path in state.rglob("*"):
+        if path.is_symlink():
+            raise ValueError("FACTORY_UNSAFE_PATH")
+        if not (path.is_dir() or path.is_file()):
+            raise ValueError("FACTORY_UNSAFE_PATH")
+    return True
+
+
+def claude_greenfield_directory_allowed(root: Path, *, harness: str) -> bool:
+    if harness != "claude" or not root.is_dir():
+        return False
+    directory = root / ".claude"
+    if not directory.exists():
+        return False
+    if directory.is_symlink() or not directory.is_dir():
+        raise ValueError("FACTORY_UNSAFE_PATH")
+    entries = sorted(path.name for path in directory.iterdir())
+    allowed_entries: set[str] = set()
+    if "settings.local.json" in entries:
+        if claude_greenfield_preserved_paths(root, harness=harness):
+            allowed_entries.add("settings.local.json")
+    if "hooks" in entries and claude_greenfield_harness_state_allowed(directory / "hooks"):
+        allowed_entries.add("hooks")
+    return bool(allowed_entries) and set(entries) == allowed_entries
 
 
 def validate_greenfield_preserved_paths(
@@ -994,7 +1035,18 @@ def evaluate_setup_plan(
                 next_legal_action="choose_a_safe_empty_target",
                 **common,
             )
-        preserved_top_level = {".claude"} if preserved_paths else set()
+        try:
+            claude_directory_allowed = claude_greenfield_directory_allowed(
+                root, harness=harness
+            )
+        except (OSError, ValueError) as error:
+            return result(
+                state="BLOCKED",
+                reason_code=str(error),
+                next_legal_action="choose_a_safe_empty_target",
+                **common,
+            )
+        preserved_top_level = {".claude"} if claude_directory_allowed else set()
         unexpected = sorted(
             path.name
             for path in root.iterdir()

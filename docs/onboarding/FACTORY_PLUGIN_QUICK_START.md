@@ -2,6 +2,9 @@
 
 Use this path for the initial macOS pilot. The plugin makes Factory installable and discoverable; it does not bypass repository review, Factory validators, or human Go.
 
+For a one-person smoke test before team rollout, use
+[`FACTORY_FIRST_TESTER_HANDOFF.md`](FACTORY_FIRST_TESTER_HANDOFF.md).
+
 ## Pilot Requirements
 
 - macOS
@@ -9,10 +12,19 @@ Use this path for the initial macOS pilot. The plugin makes Factory installable 
 - Python 3.11 or newer
 - an absent or empty project path, or a Git repository you are allowed to change
 - Codex app/Desktop, or a Claude Code build whose `claude plugin` command
-  supports marketplace installation and strict validation (pilot-verified on
-  Claude Code 2.1.218)
+  supports marketplace installation and strict validation
 
 Windows, Linux, and Codex CLI are not part of the initial supported pilot.
+
+For first-team Claude Code CLI rollout, run the read-only preflight before
+installation:
+
+```bash
+python3 scripts/verify_factory_cli_rollout.py \
+  --marketplace-root /absolute/path/to/factory-starter-kit \
+  --target-root /absolute/path/to/team/repo \
+  --json
+```
 
 ## Codex App
 
@@ -83,12 +95,14 @@ The skill passes that directory explicitly to preview and apply. For an absent
 or different target, provide its exact path; the skill must use the same quoted
 absolute path for both commands and must never choose a target on your behalf.
 
-Claude Code may create `.claude/settings.local.json` while starting in an
-otherwise new directory. Greenfield accepts only that exact Claude-local shape:
-the real `.claude` directory must contain only that regular file. The preview
-reports its digest and mode as preserved evidence, Factory never manages or
-writes it, and any change before apply requires a fresh preview. Additional
-files—including other `.claude` configuration—still make the target non-empty.
+Claude Code may create local harness state while starting in an otherwise new
+directory. Greenfield accepts only `.claude/settings.local.json` and volatile
+`.claude/hooks/.state/**` under `.claude`. The settings file is reported with
+digest and mode as preserved evidence; hook state is ignored for Greenfield
+emptiness and plan IDs. Factory never manages or writes either path family.
+A settings-file content or mode change still requires a fresh preview.
+Additional files, including other `.claude` configuration, still make the target
+non-empty.
 
 Greenfield preview is read-only. After exact plan approval, it creates the target
 directory when needed, initializes Git, installs Factory, records the transaction,

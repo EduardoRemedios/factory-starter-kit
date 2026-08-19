@@ -241,11 +241,11 @@ def _deny_message(code: str, name: str | None) -> str:
     )
 
 
-def _companion_command(value: object) -> bool:
+def _factory_or_companion_command(value: object) -> bool:
     if not isinstance(value, str):
         return False
     token = value.strip().split(maxsplit=1)[0].removeprefix("/").lower()
-    return bool(re.fullmatch(r"factory-bmad:[a-z0-9][a-z0-9-]*", token))
+    return bool(re.fullmatch(r"factory(?:-bmad)?:[a-z0-9][a-z0-9-]*", token))
 
 
 def _upstream_context(event: str) -> dict[str, Any]:
@@ -273,9 +273,9 @@ def hook_decision(root: Path, payload: dict[str, Any]) -> dict[str, Any] | None:
     malformed = False
     if event == "UserPromptExpansion":
         raw_name = payload.get("command_name")
-        if _companion_command(raw_name):
+        if _factory_or_companion_command(raw_name):
             return None
-        malformed = contains_bmad_marker(payload) and canonical_bmad_name(raw_name) is None
+        malformed = contains_bmad_marker(raw_name) and canonical_bmad_name(raw_name) is None
     elif event == "PreToolUse" and payload.get("tool_name") == "Skill":
         raw_name, malformed = _skill_name(payload)
     else:

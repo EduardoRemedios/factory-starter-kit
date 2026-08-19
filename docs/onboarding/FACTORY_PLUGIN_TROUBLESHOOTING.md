@@ -53,7 +53,7 @@ The transaction reports a blocker and restores its captured prior state. Preserv
 
 ## Greenfield Reports Git Root Required
 
-1. Confirm the installed plugin contains the current `0.2.1` release candidate.
+1. Confirm the installed plugin contains the current `0.2.3` release candidate.
 2. Start Claude Code from the intended empty directory and invoke
    `/factory:greenfield`; Doctor is a post-setup check for new projects.
 3. For an absent or different target, provide the exact absolute path and require
@@ -62,18 +62,20 @@ The transaction reports a blocker and restores its captured prior state. Preserv
    as a plugin-version or stale-installation defect; do not initialize Git manually
    to hide the failure.
 
-## Claude Local Settings Make Greenfield Look Non-empty
+## Claude Local State Makes Greenfield Look Non-empty
 
-Claude Code may create `.claude/settings.local.json` in a new working
-directory. Current Greenfield treats that exact single-file shape as read-only
-preserved harness evidence. It does not parse, manage, modify, or remove it.
+Claude Code may create `.claude/settings.local.json` and
+`.claude/hooks/.state/**` in a new working directory. Current Greenfield treats
+the settings file as read-only preserved harness evidence and ignores volatile
+hook state for emptiness and plan IDs. It does not parse, manage, modify, or
+remove either path family.
 
 If Greenfield still blocks:
 
 1. Confirm `.claude` is a real directory rather than a symlink.
 2. Confirm `settings.local.json` is a regular non-symlink file.
-3. Confirm there are no other entries under `.claude` and no other project
-   content at the target.
+3. Confirm there are no other entries under `.claude` except optional
+   `.claude/hooks/.state/**`, and no other project content at the target.
 4. Do not delete user-owned content to force Greenfield. Use an empty target, or
    prepare a genuine existing project as a Git worktree before Brownfield.
 5. If the settings file or mode changed after preview, rerun Greenfield and

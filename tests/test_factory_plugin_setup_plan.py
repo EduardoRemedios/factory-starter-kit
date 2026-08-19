@@ -55,6 +55,16 @@ class FactoryPluginSetupPlanTests(unittest.TestCase):
             )
             self.assertNotIn(".claude/settings.local.json", output["allowed_paths"])
 
+    def test_claude_hook_state_does_not_make_greenfield_nonempty(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            write(root / ".claude/hooks/.state/hook-errors.log", "harness\n")
+            before = inventory(root)
+            output = preview(root, "greenfield", harness="claude")
+            self.assertEqual("PLAN_READY", output["state"])
+            self.assertEqual([], output["bootstrap_plan"]["preserved_paths"])
+            self.assertEqual(before, inventory(root))
+
     def test_codex_rejects_claude_local_settings_shape(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

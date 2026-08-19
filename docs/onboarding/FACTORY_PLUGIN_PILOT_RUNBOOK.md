@@ -2,13 +2,14 @@
 
 ## Purpose
 
-Decide whether Factory plugin 0.2.1 is ready for a team rollout using named
+Decide whether Factory plugin 0.2.3 is ready for a team rollout using named
 journeys, recovery evidence, and Product Owner sign-off.
 
 ## Entry Gates
 
-- Claude Code exposes plugin marketplace, install, and validation commands; the
-  pilot records the exact binary path and version (baseline: 2.1.218).
+- Claude Code has a `claude plugin` interface that passes the rollout preflight.
+- `python3 scripts/verify_factory_cli_rollout.py --json` returns no `BLOCKED`
+  checks for the marketplace root and pilot target.
 - Claude plugin and marketplace pass strict validation.
 - Codex package passes Plugin Creator validation.
 - Factory is installed and invoked successfully in a fresh Claude session and a fresh Codex app task.

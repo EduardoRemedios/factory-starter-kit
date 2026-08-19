@@ -162,12 +162,14 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
             DOCS_ROOT / "FACTORY_PLUGIN_TROUBLESHOOTING.md"
         ).read_text(encoding="utf-8")
         self.assertIn(
-            "Claude Local Settings Make Greenfield Look Non-empty",
+            "Claude Local State Makes Greenfield Look Non-empty",
             troubleshooting,
         )
         self.assertIn(
-            "does not parse, manage, modify, or remove it", troubleshooting
+            "does not parse, manage, modify, or",
+            troubleshooting,
         )
+        self.assertIn(".claude/hooks/.state/**", troubleshooting)
         self.assertIn("Do not delete user-owned content", troubleshooting)
         self.assertIn(
             "prepare a genuine existing project as a Git worktree",
