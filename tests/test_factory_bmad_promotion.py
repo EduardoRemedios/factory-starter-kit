@@ -82,7 +82,7 @@ class FactoryBmadPromotionTests(unittest.TestCase):
             self.root, self.args(workflow="bmad-product-brief")
         )
         self.assertEqual("PLAN_READY", payload["state"])
-        self.assertEqual("bmad-product-brief", payload["plan"]["workflow"])
+        self.assertEqual("product-brief", payload["plan"]["workflow"])
 
     def test_immutable_conflict_blocks(self):
         destination = self.root / "docs/upstream/bmad/product-brief-v1"

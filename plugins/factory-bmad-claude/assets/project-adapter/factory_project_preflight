@@ -62,6 +62,17 @@ def field(text: str, label: str) -> str | None:
     return match.group(1).strip() if match else None
 
 
+def canonical_workflow_name(policy_module, workflow: object) -> str | None:
+    if not isinstance(workflow, str):
+        return None
+    value = workflow.strip().removeprefix("/")
+    if not value:
+        return None
+    if policy_module.canonical_bmad_name(value):
+        return value
+    return policy_module.canonical_bmad_name(f"bmad-{value}")
+
+
 def validate(root: Path, run_id: str) -> dict[str, object]:
     brief = root / "docs" / "Factory" / "runs" / run_id / "raw_brief.md"
     policy = root / "docs" / "adapters" / "bmad" / "BMAD_POLICY.md"
@@ -173,7 +184,7 @@ def validate(root: Path, run_id: str) -> dict[str, object]:
         return result("FAIL", "FACTORY_BMAD_ARTIFACT_HASH_MISMATCH", evidence)
     provenance = manifest.get("provenance")
     workflow = provenance.get("workflow") if isinstance(provenance, dict) else None
-    workflow_name = f"bmad-{workflow}" if isinstance(workflow, str) else None
+    workflow_name = canonical_workflow_name(policy_module, workflow)
     if not policy_module.policy_classify(workflow_name)["allowed"]:
         return result("FAIL", "FACTORY_BMAD_PROHIBITED_AUTHORITY", evidence)
     evidence.append(artifact_path.relative_to(root).as_posix())

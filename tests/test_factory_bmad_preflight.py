@@ -49,6 +49,50 @@ class FactoryBmadPreflightTests(unittest.TestCase):
         self.assertEqual("PASS", payload["status"])
         self.assertEqual("FACTORY_BMAD_PREFLIGHT_PASS", payload["reason_code"])
 
+    def test_prefixed_workflow_alias_promotes_to_preflight_pass(self):
+        source = self.root / "_bmad-output/product/prefixed.md"
+        source.write_text("# prefixed\n", encoding="utf-8")
+        args = Namespace(
+            source="_bmad-output/product/prefixed.md",
+            snapshot_id="prefixed-v1",
+            workflow="bmad-product-brief",
+            reviewer="PO",
+            review_ref="BR-2",
+            review_qualifier=None,
+            approve_plan=None,
+        )
+        preview = runtime.promote(self.root, args)
+        self.assertEqual("product-brief", preview["plan"]["workflow"])
+        args.approve_plan = preview["plan"]["plan_id"]
+        applied = runtime.promote(self.root, args)
+        self.digest = applied["aggregate_sha256"]
+        self.write_brief(snapshot="prefixed-v1")
+        manifest = json.loads(
+            (
+                self.root
+                / "docs/upstream/bmad/prefixed-v1/SNAPSHOT_MANIFEST.json"
+            ).read_text(encoding="utf-8")
+        )
+        self.assertEqual("product-brief", manifest["provenance"]["workflow"])
+        self.assertEqual("FACTORY_BMAD_PREFLIGHT_PASS", self.run_preflight()["reason_code"])
+
+    def test_legacy_prefixed_manifest_workflow_still_passes_preflight(self):
+        manifest_path = self.root / "docs/upstream/bmad/example-v1/SNAPSHOT_MANIFEST.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["provenance"]["workflow"] = "bmad-product-brief"
+        manifest["aggregate_sha256"] = runtime.digest_bytes(
+            runtime.canonical(
+                {key: value for key, value in manifest.items() if key != "aggregate_sha256"}
+            )
+        )
+        manifest_path.write_text(
+            json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        self.digest = manifest["aggregate_sha256"]
+        self.write_brief()
+        self.assertEqual("FACTORY_BMAD_PREFLIGHT_PASS", self.run_preflight()["reason_code"])
+
     def test_seeded_project_preflight_does_not_write_bytecode(self):
         environment = os.environ.copy()
         environment.pop("PYTHONDONTWRITEBYTECODE", None)

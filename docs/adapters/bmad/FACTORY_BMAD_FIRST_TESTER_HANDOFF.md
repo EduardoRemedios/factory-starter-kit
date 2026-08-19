@@ -27,7 +27,13 @@ The tester needs:
 - Python 3.11 or newer
 - `npx`
 - Claude Code CLI with `claude plugin --help`
-- access to the checked-out Factory-BMAD candidate repository
+- access to the Factory-BMAD candidate repository cloned to a durable path such
+  as `$HOME/Code/factory-bmad-candidate`
+
+Do not run the first-tester flow from `/tmp`, a scratchpad, an extracted ZIP, or
+any path that may disappear between Claude sessions. Claude records the
+marketplace source path by marketplace name; a deleted checkout can leave
+`factory-starter-kit` registered but unloadable.
 
 ## Maintainer Prep
 
@@ -49,6 +55,10 @@ understands and accepts. Stop on `BLOCKED`.
 Install only the companion. Factory is resolved as the protected dependency.
 
 ```bash
+claude plugin marketplace list
+# If factory-starter-kit already points at an old or missing path, remove it
+# before adding the durable candidate checkout:
+# claude plugin marketplace remove factory-starter-kit
 claude plugin marketplace add "$PWD"
 claude plugin install factory-bmad@factory-starter-kit --scope user
 claude plugin list
@@ -56,7 +66,9 @@ claude plugin list
 
 If the tester already has older Factory or Factory-BMAD plugins installed,
 uninstall or update them before continuing so only this candidate is being
-tested.
+tested. If `claude plugin marketplace list` still shows `factory-starter-kit`
+pointing anywhere except the durable candidate checkout, stop and fix the
+marketplace registration before installing.
 
 ## Primary Test: Greenfield
 

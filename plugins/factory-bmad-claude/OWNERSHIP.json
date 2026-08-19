@@ -36,7 +36,7 @@
     },
     {
       "path": "assets/project-adapter/factory_project_preflight",
-      "sha256": "f41c9efef187664b3353a438161564e36abdf5002215ddcfca0effe9c32b1155",
+      "sha256": "bcfeb23dccfd519feb2210d7d83c7257617d44793237145fd5320760f9cd2228",
       "classification": "release-owned"
     },
     {
@@ -46,7 +46,7 @@
     },
     {
       "path": "scripts/factory_bmad.py",
-      "sha256": "a635f9c102bed9722cd0f436ee3fc68ae56748dbaf2f50ff68ed5a5d8bd2e69d",
+      "sha256": "3b1b0323de8c1be12729a1c66c99f0165e88900e850339cfb987e689076c39ea",
       "classification": "release-owned"
     },
     {

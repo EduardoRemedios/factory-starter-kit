@@ -254,6 +254,10 @@ def changed_paths(before: dict[str, str], after: dict[str, str]) -> list[str]:
     return sorted(key for key in set(before) | set(after) if before.get(key) != after.get(key))
 
 
+def canonical_workflow(value: str) -> str:
+    return value.removeprefix("bmad-")
+
+
 def bootstrap_plan(root: Path, harness: str) -> dict[str, Any]:
     root = root.resolve()
     state = doctor(root, harness)
@@ -315,6 +319,7 @@ def promotion_plan(root: Path, source_value: str, snapshot_id: str, workflow: st
     root = root.resolve()
     if workflow not in ALLOWED_WORKFLOWS:
         raise CompanionError("FACTORY_BMAD_WORKFLOW_PROHIBITED", workflow)
+    workflow = canonical_workflow(workflow)
     if not SNAPSHOT_RE.fullmatch(snapshot_id):
         raise CompanionError("FACTORY_BMAD_SNAPSHOT_ID_INVALID", snapshot_id)
     if snapshot_id.casefold() in RESERVED_SNAPSHOT_IDS:
