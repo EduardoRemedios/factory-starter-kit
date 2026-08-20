@@ -140,6 +140,14 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         self.assertIn("read-only preserved evidence", greenfield)
         self.assertIn("Never edit, delete, chmod, copy", greenfield)
 
+        brownfield = (skill_root / "brownfield.md").read_text(encoding="utf-8")
+        self.assertIn('--root "$PWD"', brownfield)
+        self.assertIn("same `--root`", brownfield)
+        self.assertIn("planned_files", brownfield)
+        self.assertIn("change_plan", brownfield)
+        self.assertIn("must not be", brownfield)
+        self.assertIn("proposed change count", brownfield)
+
     def test_new_project_runs_greenfield_before_doctor(self):
         quick_start = (DOCS_ROOT / "FACTORY_PLUGIN_QUICK_START.md").read_text(
             encoding="utf-8"

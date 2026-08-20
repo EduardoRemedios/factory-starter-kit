@@ -2045,6 +2045,36 @@ def print_json(value: dict[str, Any]) -> None:
     print(json.dumps(value, indent=2, sort_keys=True))
 
 
+def planned_change_count(value: dict[str, Any]) -> int | None:
+    plan = value.get("change_plan")
+    if isinstance(plan, dict):
+        steps = plan.get("ordered_transaction_steps")
+        if isinstance(steps, list):
+            return sum(
+                1
+                for step in steps
+                if isinstance(step, dict)
+                and step.get("action") in {"create", "modify", "delete"}
+            )
+        actions = plan.get("ordered_file_actions")
+        if isinstance(actions, list):
+            return sum(
+                1
+                for action in actions
+                if isinstance(action, dict)
+                and action.get("action") in {"create", "modify", "delete"}
+            )
+    planned_files = value.get("planned_files")
+    if isinstance(planned_files, list):
+        return sum(
+            1
+            for item in planned_files
+            if isinstance(item, dict)
+            and item.get("action") in {"create", "modify", "delete"}
+        )
+    return None
+
+
 def concise(value: dict[str, Any]) -> str:
     lines = [
         f"Factory: {value['state']}",
@@ -2056,7 +2086,10 @@ def concise(value: dict[str, Any]) -> str:
     if value.get("plan_id"):
         lines.append(f"Plan: {value['plan_id']}")
     mutations = value.get("mutations")
-    if isinstance(mutations, list):
+    count = planned_change_count(value)
+    if count is not None and value["state"] in {"PLAN_READY", "NO_CHANGE"}:
+        lines.append(f"Changes: {count} planned")
+    elif isinstance(mutations, list):
         lines.append(f"Changes: {len(mutations)}")
     else:
         lines.append("Changes: 0")

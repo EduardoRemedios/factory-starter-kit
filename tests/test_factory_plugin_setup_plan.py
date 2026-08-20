@@ -224,6 +224,24 @@ class FactoryPluginSetupPlanTests(unittest.TestCase):
             self.assertEqual([], output["conflicts"])
             self.assertEqual(before, inventory(root))
 
+    def test_brownfield_preview_summary_counts_planned_files_not_mutations(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            for relative in ("README.md", "src/app.py", "tests/test_app.py"):
+                write(root / relative, "project-owned\n")
+            output = preview(root, "brownfield")
+            self.assertEqual("PLAN_READY", output["state"])
+            self.assertEqual([], output["mutations"])
+            expected = sum(
+                1
+                for step in output["change_plan"]["ordered_transaction_steps"]
+                if step["action"] in {"create", "modify", "delete"}
+            )
+            self.assertGreater(expected, 0)
+            summary = RUNTIME.concise(output)
+            self.assertIn(f"Changes: {expected} planned", summary)
+            self.assertNotIn("Changes: 0", summary)
+
     def test_brownfield_conflict_halts_before_any_write(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
