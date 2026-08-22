@@ -53,7 +53,7 @@ The transaction reports a blocker and restores its captured prior state. Preserv
 
 ## Greenfield Reports Git Root Required
 
-1. Confirm the installed plugin contains the current `0.2.3` release candidate.
+1. Confirm the installed plugin contains the current `0.2.4` release candidate.
 2. Start Claude Code from the intended empty directory and invoke
    `/factory:greenfield`; Doctor is a post-setup check for new projects.
 3. For an absent or different target, provide the exact absolute path and require
@@ -61,6 +61,17 @@ The transaction reports a blocker and restores its captured prior state. Preserv
 4. If Greenfield still reports `FACTORY_GIT_ROOT_REQUIRED`, preserve the output
    as a plugin-version or stale-installation defect; do not initialize Git manually
    to hide the failure.
+
+## Claude Reinstall Still Uses Old Code
+
+Claude Code may keep a marketplace package under
+`~/.claude/plugins/cache/factory-starter-kit/<plugin>/<version>`. If a candidate
+is rebuilt without a version bump, reinstalling can silently reuse those cached
+bytes. Before retesting a candidate, uninstall the affected Factory plugin, run
+`claude plugin prune`, and rerun the rollout preflight. If the preflight reports
+a `claude_cache_*` blocker, remove only the stale
+`~/.claude/plugins/cache/factory-starter-kit` cache directory and rerun
+preflight before reinstalling.
 
 ## Claude Local State Makes Greenfield Look Non-empty
 

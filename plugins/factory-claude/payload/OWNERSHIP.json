@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "factory",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "files": [
     {
       "path": ".agents/skills/factory-execution-closeout/SKILL.md",
@@ -276,7 +276,7 @@
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",
       "classification": "release-owned",
-      "sha256": "fa20773f3ee9c3644f66b4233b47b335a7bb92d0781e2725ed199427a58512d5"
+      "sha256": "fca07f0a431b0f3ae685e69e790cf4b4143e94067201bc03c4d0545369cc3fdd"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_QUICK_START.md",
@@ -296,7 +296,7 @@
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_TROUBLESHOOTING.md",
       "classification": "release-owned",
-      "sha256": "0bb2c5a5910c65190cd7b72a47a16c9138a73f9b1f1c6ea1e8dc21a8b2e5f051"
+      "sha256": "79567d7c3e53e976e1b253a62b53649fa1d4aa5b6d5e7f3aeffb0af8e7a01b58"
     },
     {
       "path": "docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md",
@@ -396,7 +396,7 @@
     {
       "path": "scripts/verify_factory_cli_rollout.py",
       "classification": "release-owned",
-      "sha256": "4d6eebcfd79e404e8c89e426b8c603e5cd9c54f5800197cd41178c7ecda41591"
+      "sha256": "f3d87b0f3b9d239b01cf9a8526c11a47fd8ac47941177ebb5c77c59d08582f9e"
     },
     {
       "path": "tests/fixtures/agent_loop_bridge/valid_handoff.json",

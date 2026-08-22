@@ -9,7 +9,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PREFLIGHT = REPO_ROOT / "scripts/verify_factory_bmad_live_preflight.py"
 CONTRACT = REPO_ROOT / "tests/plugin_fixtures/factory_bmad_live_verifier_contract.json"
-SOURCE_COUPLING = REPO_ROOT / "tests/plugin_fixtures/factory_bmad_023_source_coupling.json"
+SOURCE_COUPLING = REPO_ROOT / "tests/plugin_fixtures/factory_bmad_024_source_coupling.json"
 
 
 class FactoryBmadLivePreflightTests(unittest.TestCase):
@@ -27,18 +27,18 @@ class FactoryBmadLivePreflightTests(unittest.TestCase):
         (candidate / "plugin-src/factory-bmad").mkdir(parents=True)
         (candidate / ".claude-plugin").mkdir()
         (candidate / "plugin-src/factory/manifest.json").write_text(
-            json.dumps({"version": "0.2.3"}), encoding="utf-8"
+            json.dumps({"version": "0.2.4"}), encoding="utf-8"
         )
         (candidate / "plugin-src/factory-bmad/manifest.json").write_text(
-            json.dumps({"version": "0.2.3", "factory_dependency": "~0.2.3"}),
+            json.dumps({"version": "0.2.4", "factory_dependency": "~0.2.4"}),
             encoding="utf-8",
         )
         (candidate / ".claude-plugin/marketplace.json").write_text(
             json.dumps(
                 {
                     "plugins": [
-                        {"name": "factory", "version": "0.2.3"},
-                        {"name": "factory-bmad", "version": "0.2.3"},
+                        {"name": "factory", "version": "0.2.4"},
+                        {"name": "factory-bmad", "version": "0.2.4"},
                     ]
                 }
             ),
@@ -91,7 +91,7 @@ class FactoryBmadLivePreflightTests(unittest.TestCase):
             "--permission-rule",
             permission_rule,
             "--release-version",
-            "0.2.3",
+            "0.2.4",
             "--bmad-version",
             "6.10.0",
             "--config-root",
@@ -149,7 +149,7 @@ class FactoryBmadLivePreflightTests(unittest.TestCase):
                     "--expected-permission-rule",
                     "Bash(python3 *)",
                     "--expected-release-version",
-                    "0.2.3",
+                    "0.2.4",
                 ],
                 text=True,
                 capture_output=True,

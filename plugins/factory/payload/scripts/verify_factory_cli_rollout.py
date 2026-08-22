@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import platform
 import re
@@ -16,6 +17,7 @@ from typing import Any
 
 DEFAULT_CLAUDE_PREFIX = "2.1."
 STATUSES = {"PASS": 0, "WARN": 1, "BLOCKED": 2}
+CACHE_MARKETPLACE_NAME = "factory-starter-kit"
 
 
 def check(check_id: str, status: str, detail: str) -> dict[str, str]:
@@ -54,6 +56,13 @@ def load_json(path: Path) -> dict[str, Any] | None:
     return value if isinstance(value, dict) else None
 
 
+def tree_entries(root: Path) -> dict[str, str]:
+    return {
+        path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(item for item in root.rglob("*") if item.is_file())
+    }
+
+
 def source_constant(path: Path, name: str) -> str | None:
     try:
         text = path.read_text(encoding="utf-8")
@@ -68,6 +77,61 @@ def version_at_least(value: str, minimum: tuple[int, int]) -> bool:
     if len(parts) < 2 or not all(part.isdigit() for part in parts[:2]):
         return False
     return tuple(int(part) for part in parts[:2]) >= minimum
+
+
+def claude_cache_checks(root: Path, cache_root: Path) -> list[dict[str, str]]:
+    source = root / "plugins/factory-claude"
+    manifest = load_json(source / ".claude-plugin/plugin.json")
+    version = manifest.get("version") if isinstance(manifest, dict) else None
+    if not isinstance(version, str):
+        return [
+            check(
+                "claude_cache_factory",
+                "BLOCKED",
+                "missing source version in plugins/factory-claude/.claude-plugin/plugin.json",
+            )
+        ]
+    cached = cache_root / CACHE_MARKETPLACE_NAME / "factory" / version
+    if not cached.exists():
+        return [
+            check(
+                "claude_cache_factory",
+                "PASS",
+                f"no cached factory {version} under {cache_root / CACHE_MARKETPLACE_NAME}",
+            )
+        ]
+    if not cached.is_dir():
+        return [
+            check(
+                "claude_cache_factory",
+                "BLOCKED",
+                f"{cached} is not a directory",
+            )
+        ]
+    source_entries = tree_entries(source)
+    cached_entries = tree_entries(cached)
+    mismatched = [
+        path for path, digest in source_entries.items() if cached_entries.get(path) != digest
+    ]
+    if not mismatched:
+        return [
+            check(
+                "claude_cache_factory",
+                "PASS",
+                f"cached factory {version} matches marketplace source",
+            )
+        ]
+    return [
+        check(
+            "claude_cache_factory",
+            "BLOCKED",
+            (
+                f"cached factory {version} differs from marketplace source; "
+                "uninstall factory, run `claude plugin prune`, then reinstall "
+                f"from the durable checkout; mismatched={mismatched[:5]}"
+            ),
+        )
+    ]
 
 
 def marketplace_checks(root: Path) -> list[dict[str, str]]:
@@ -187,6 +251,11 @@ def main() -> int:
     parser.add_argument("--marketplace-root", type=Path, default=Path.cwd())
     parser.add_argument("--target-root", type=Path)
     parser.add_argument("--claude-bin")
+    parser.add_argument(
+        "--claude-cache-root",
+        type=Path,
+        default=Path.home() / ".claude/plugins/cache",
+    )
     parser.add_argument("--expected-claude-prefix", default=DEFAULT_CLAUDE_PREFIX)
     parser.add_argument("--skip-external", action="store_true")
     parser.add_argument("--json", action="store_true")
@@ -195,6 +264,7 @@ def main() -> int:
 
     checks = [
         *marketplace_checks(args.marketplace_root),
+        *claude_cache_checks(args.marketplace_root, args.claude_cache_root.expanduser()),
         *external_checks(args),
         *target_checks(args.target_root.resolve() if args.target_root else None),
     ]

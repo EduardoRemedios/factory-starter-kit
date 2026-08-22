@@ -22,8 +22,8 @@ class FactoryBmadPluginBuildTests(unittest.TestCase):
         codex = json.loads((PACKAGES["codex"] / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
         claude = json.loads((PACKAGES["claude"] / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
         self.assertEqual("factory-bmad", codex["name"])
-        self.assertEqual([{"name": "factory", "version": "~0.2.3"}], claude["dependencies"])
-        self.assertEqual("0.2.3", claude["version"])
+        self.assertEqual([{"name": "factory", "version": "~0.2.4"}], claude["dependencies"])
+        self.assertEqual("0.2.4", claude["version"])
         self.assertEqual({f"factory-bmad-{name}" for name in expected}, {path.name for path in (PACKAGES["codex"] / "skills").iterdir()})
         self.assertEqual(expected, {path.name for path in (PACKAGES["claude"] / "skills").iterdir()})
 

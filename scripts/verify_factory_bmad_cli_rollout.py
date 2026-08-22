@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import platform
 import re
@@ -14,10 +15,15 @@ from pathlib import Path
 from typing import Any
 
 
-EXPECTED_RELEASE = "0.2.3"
+EXPECTED_RELEASE = "0.2.4"
 EXPECTED_BMAD = "6.10.0"
 DEFAULT_CLAUDE_PREFIX = "2.1."
 STATUSES = {"PASS": 0, "WARN": 1, "BLOCKED": 2}
+CACHE_MARKETPLACE_NAME = "factory-starter-kit"
+CACHE_PACKAGES = {
+    "factory": Path("plugins/factory-claude"),
+    "factory-bmad": Path("plugins/factory-bmad-claude"),
+}
 
 
 def check(check_id: str, status: str, detail: str) -> dict[str, str]:
@@ -56,6 +62,13 @@ def load_json(path: Path) -> dict[str, Any] | None:
     return value if isinstance(value, dict) else None
 
 
+def tree_entries(root: Path) -> dict[str, str]:
+    return {
+        path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(item for item in root.rglob("*") if item.is_file())
+    }
+
+
 def source_constant(path: Path, name: str) -> str | None:
     try:
         text = path.read_text(encoding="utf-8")
@@ -70,6 +83,94 @@ def version_at_least(value: str, minimum: tuple[int, int]) -> bool:
     if len(parts) < 2 or not all(part.isdigit() for part in parts[:2]):
         return False
     return tuple(int(part) for part in parts[:2]) >= minimum
+
+
+def claude_cache_checks(root: Path, cache_root: Path) -> list[dict[str, str]]:
+    checks: list[dict[str, str]] = []
+    marketplace_cache = cache_root / CACHE_MARKETPLACE_NAME
+    if not marketplace_cache.exists():
+        return [
+            check(
+                "claude_cache",
+                "PASS",
+                f"no {CACHE_MARKETPLACE_NAME} cache under {cache_root}",
+            )
+        ]
+    if not marketplace_cache.is_dir():
+        return [
+            check(
+                "claude_cache",
+                "BLOCKED",
+                f"{marketplace_cache} is not a directory",
+            )
+        ]
+
+    for plugin_name, source_relative in CACHE_PACKAGES.items():
+        source = root / source_relative
+        manifest = load_json(source / ".claude-plugin/plugin.json")
+        version = manifest.get("version") if isinstance(manifest, dict) else None
+        if not isinstance(version, str):
+            checks.append(
+                check(
+                    f"claude_cache_{plugin_name}",
+                    "BLOCKED",
+                    f"missing source version in {source_relative}/.claude-plugin/plugin.json",
+                )
+            )
+            continue
+        plugin_cache = marketplace_cache / plugin_name
+        cached_versions = (
+            sorted(path.name for path in plugin_cache.iterdir() if path.is_dir())
+            if plugin_cache.is_dir()
+            else []
+        )
+        cached = plugin_cache / version
+        if not cached.exists():
+            checks.append(
+                check(
+                    f"claude_cache_{plugin_name}",
+                    "PASS",
+                    f"no cached {plugin_name} {version}; cached_versions={cached_versions}",
+                )
+            )
+            continue
+        if not cached.is_dir():
+            checks.append(
+                check(
+                    f"claude_cache_{plugin_name}",
+                    "BLOCKED",
+                    f"{cached} is not a directory",
+                )
+            )
+            continue
+        source_entries = tree_entries(source)
+        cached_entries = tree_entries(cached)
+        mismatched = [
+            path
+            for path, digest in source_entries.items()
+            if cached_entries.get(path) != digest
+        ]
+        if not mismatched:
+            checks.append(
+                check(
+                    f"claude_cache_{plugin_name}",
+                    "PASS",
+                    f"cached {plugin_name} {version} matches marketplace source",
+                )
+            )
+        else:
+            checks.append(
+                check(
+                    f"claude_cache_{plugin_name}",
+                    "BLOCKED",
+                    (
+                        f"cached {plugin_name} {version} differs from marketplace source; "
+                        "uninstall factory-bmad and factory, run `claude plugin prune`, "
+                        f"then reinstall from the durable checkout; mismatched={mismatched[:5]}"
+                    ),
+                )
+            )
+    return checks
 
 
 def marketplace_checks(root: Path) -> list[dict[str, str]]:
@@ -221,6 +322,11 @@ def main() -> int:
     parser.add_argument("--marketplace-root", type=Path, default=Path.cwd())
     parser.add_argument("--target-root", type=Path)
     parser.add_argument("--claude-bin")
+    parser.add_argument(
+        "--claude-cache-root",
+        type=Path,
+        default=Path.home() / ".claude/plugins/cache",
+    )
     parser.add_argument("--expected-claude-prefix", default=DEFAULT_CLAUDE_PREFIX)
     parser.add_argument("--skip-external", action="store_true")
     parser.add_argument("--json", action="store_true")
@@ -229,6 +335,7 @@ def main() -> int:
 
     checks = [
         *marketplace_checks(args.marketplace_root),
+        *claude_cache_checks(args.marketplace_root, args.claude_cache_root.expanduser()),
         *external_checks(args),
         *target_checks(args.target_root.resolve() if args.target_root else None),
     ]

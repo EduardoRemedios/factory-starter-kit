@@ -55,7 +55,7 @@ def claude_with_plugin_cli() -> str:
 
 
 def dependency_result(
-    *, factory_version: str | None, enabled: bool, required: str = "=0.2.3"
+    *, factory_version: str | None, enabled: bool, required: str = "=0.2.4"
 ) -> dict[str, object]:
     if factory_version is None or not enabled:
         return {"outcome": "halt", "reason": "dependency-unsatisfied"}
@@ -91,7 +91,7 @@ def make_marketplace(base: Path) -> tuple[Path, Path, Path]:
                 "version": "1.0.0",
                 "description": "Adapter-neutral composition fixture.",
                 "author": {"name": "Factory Test"},
-                "dependencies": [{"name": "factory", "version": "=0.2.3"}],
+                "dependencies": [{"name": "factory", "version": "=0.2.4"}],
             },
             indent=2,
         )
@@ -113,7 +113,7 @@ def make_marketplace(base: Path) -> tuple[Path, Path, Path]:
                     {
                         "name": "factory",
                         "source": "./plugins/factory",
-                        "version": "0.2.3",
+                        "version": "0.2.4",
                     },
                     {
                         "name": "companion-fixture",
@@ -144,7 +144,7 @@ def make_marketplace(base: Path) -> tuple[Path, Path, Path]:
         ],
         check=True,
     )
-    for tag in ("factory--v0.2.3", "companion-fixture--v1.0.0"):
+    for tag in ("factory--v0.2.4", "companion-fixture--v1.0.0"):
         subprocess.run(["git", "-C", str(marketplace), "tag", tag], check=True)
     return marketplace, factory, companion
 
@@ -167,7 +167,7 @@ class FactoryPluginCompositionTests(unittest.TestCase):
             )
         )
         self.assertEqual(
-            [{"name": "factory", "version": "=0.2.3"}],
+            [{"name": "factory", "version": "=0.2.4"}],
             manifest["dependencies"],
         )
         tags = subprocess.run(
@@ -176,10 +176,10 @@ class FactoryPluginCompositionTests(unittest.TestCase):
             capture_output=True,
             text=True,
         ).stdout.splitlines()
-        self.assertIn("factory--v0.2.3", tags)
+        self.assertIn("factory--v0.2.4", tags)
         self.assertEqual(
             {"outcome": "pass", "dependency_resolved": True, "enabled": True},
-            dependency_result(factory_version="0.2.3", enabled=True),
+            dependency_result(factory_version="0.2.4", enabled=True),
         )
 
     def test_cp02_cp03_cp04_dependency_failures_halt(self):
@@ -189,7 +189,7 @@ class FactoryPluginCompositionTests(unittest.TestCase):
         )
         self.assertEqual(
             "dependency-unsatisfied",
-            dependency_result(factory_version="0.2.3", enabled=False)["reason"],
+            dependency_result(factory_version="0.2.4", enabled=False)["reason"],
         )
         self.assertEqual(
             "dependency-version-unsatisfied",

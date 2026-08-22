@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "package": "factory-bmad",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "generated_from": "plugin-src/factory-bmad",
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "1ca069eabc87f81059b7ca83d18fb20a516c3e1dedea85bb92f8229060fda743",
+      "sha256": "24e9af6214178024153ac2d73fb55738a3e7629d39b8ad89f59d4c4893fead64",
       "classification": "release-owned"
     },
     {
@@ -46,7 +46,7 @@
     },
     {
       "path": "scripts/factory_bmad.py",
-      "sha256": "3b1b0323de8c1be12729a1c66c99f0165e88900e850339cfb987e689076c39ea",
+      "sha256": "9658d822035f700fb8afa147e3c6f8dbd58bcf91fbb007d4b36efd4cd61c829b",
       "classification": "release-owned"
     },
     {

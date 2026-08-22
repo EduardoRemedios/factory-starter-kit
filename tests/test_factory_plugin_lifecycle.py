@@ -578,7 +578,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         new_payload = make_payload(
             self.base,
-            "0.2.3",
+            "0.2.4",
             {
                 "docs/Factory/SCRATCHPAD.md": (
                     "neutral scratchpad seed\n",
@@ -631,7 +631,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         self.assertEqual("project-owned", managed["ownership_class"])
         self.assertEqual(expected_digest, managed["expected_digest"])
-        self.assertEqual("0.2.3", managed["source_version"])
+        self.assertEqual("0.2.4", managed["source_version"])
 
         rollback = RUNTIME.apply_rollback(self.root, approved=True)
         self.assertEqual("FACTORY_ROLLBACK_APPLIED", rollback["reason_code"])

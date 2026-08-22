@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-22
+
+- Advanced the coordinated Factory and Factory-BMAD Claude Code candidate to
+  `0.2.4` after first-tester greenfield, brownfield-neither, and BMAD-only
+  brownfield rehearsals passed on the repaired `0.2.3` branch.
+- Repaired the F10 rollout integrity blocker where Claude Code could silently
+  reuse a stale same-version `factory` dependency cache during retest. The
+  rollout preflights now compare same-version cached package bytes against the
+  durable marketplace checkout and block stale-cache retests before install.
+- Updated first-tester and first-team CLI handoff docs to uninstall both
+  `factory-bmad` and `factory`, run `claude plugin prune`, rerun preflight, and
+  only then reinstall from the durable checkout.
+
 ## 2026-08-15
 
 - Added Claude Code CLI rollout hardening for first-team adoption: a read-only

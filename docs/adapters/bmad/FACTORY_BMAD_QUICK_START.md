@@ -21,11 +21,21 @@ See `FACTORY_BMAD_CLI_ROLLOUT_PLAYBOOK.md`,
 
 ## Install a checked-out release candidate
 
+If either uninstall command reports that the plugin is not installed, continue
+to prune and preflight.
+
 ```bash
 claude plugin marketplace list
 # If factory-starter-kit points at an old or missing path:
 # claude plugin marketplace remove factory-starter-kit
+claude plugin uninstall factory-bmad@factory-starter-kit
+claude plugin uninstall factory@factory-starter-kit
+claude plugin prune
 claude plugin marketplace add /absolute/path/to/factory-starter-kit
+./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
+  --marketplace-root /absolute/path/to/factory-starter-kit \
+  --target-root /absolute/path/to/team/repo \
+  --json
 claude plugin install factory-bmad@factory-starter-kit
 ```
 
@@ -33,7 +43,7 @@ Use a durable checkout path such as `$HOME/Code/factory-bmad-candidate`; do not
 register a temporary or scratchpad path as the marketplace source.
 
 This is one explicit user installation. The companion declares Factory
-`~0.2.3` as an automatic dependency, so users do not separately install or
+`~0.2.4` as an automatic dependency, so users do not separately install or
 manage Factory. Missing, disabled, or incompatible dependency state halts
 instead of duplicating Factory Core.
 

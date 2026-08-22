@@ -15,7 +15,7 @@ Before using this team playbook, run one trusted-colleague full-flow test with
   `python3` on the Claude hook PATH.
 - `npx` available for the pinned BMAD bootstrap.
 - Local Claude Code session, not Claude Desktop, cloud session, WSL, or Cowork.
-- Factory and Factory-BMAD installed from the same checked-out `0.2.3`
+- Factory and Factory-BMAD installed from the same checked-out `0.2.4`
   marketplace root.
 - The marketplace root is a durable local checkout, not `/tmp`, a scratchpad, an
   extracted ZIP, or any path that can disappear between sessions.
@@ -37,6 +37,8 @@ recorded why it does not affect the planned journey.
 
 Prepare one 30-minute guided setup call. The maintainer, not the team, owns
 interpreting blocked reason codes during the first use.
+If either uninstall command below reports that the plugin is not installed,
+continue to prune and preflight.
 
 ## Team Happy Path
 
@@ -55,11 +57,19 @@ interpreting blocked reason codes during the first use.
    claude plugin marketplace list
    # If factory-starter-kit points at an old or missing path:
    # claude plugin marketplace remove factory-starter-kit
+   claude plugin uninstall factory-bmad@factory-starter-kit
+   claude plugin uninstall factory@factory-starter-kit
+   claude plugin prune
    claude plugin marketplace add /absolute/path/to/factory-starter-kit
+   ./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
+     --marketplace-root /absolute/path/to/factory-starter-kit \
+     --target-root /absolute/path/to/team/repo \
+     --json
    claude plugin install factory-bmad@factory-starter-kit
    ```
 
-4. Confirm `factory-starter-kit` now points at the supplied durable checkout.
+4. Confirm the rollout preflight has no `BLOCKED` result and
+   `factory-starter-kit` now points at the supplied durable checkout.
 5. Start a fresh Claude Code session in the target directory.
 6. Invoke `/factory-bmad:doctor`.
 7. Follow only the single next action returned by Doctor.
@@ -87,6 +97,7 @@ Stop and preserve output when any of these happen:
 - `npx` is missing
 - `factory-starter-kit` points at an old, missing, or non-durable marketplace
   source
+- rollout preflight reports a stale `claude_cache_*` result
 - a preview plan changes after review
 - BMAD bootstrap returns `FACTORY_BMAD_BOOTSTRAP_POST_AUDIT_FAILED`
 - any unexpected file appears outside the reported mutation set

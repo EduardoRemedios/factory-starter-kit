@@ -1,6 +1,6 @@
 {
   "name": "factory-bmad",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Adopt Factory and BMAD in one repository with upstream-only BMAD enforcement and immutable Factory intake.",
   "author": {
     "name": "Eduardo dos Remedios"
@@ -8,7 +8,7 @@
   "dependencies": [
     {
       "name": "factory",
-      "version": "~0.2.3"
+      "version": "~0.2.4"
     }
   ]
 }

@@ -5,8 +5,8 @@ rollout.
 
 ## Pinned Surfaces
 
-- Factory: `0.2.3`
-- Factory-BMAD: `0.2.3`
+- Factory: `0.2.4`
+- Factory-BMAD: `0.2.4`
 - BMAD installer: `bmad-method@6.10.0`
 - BMAD modules: Core and BMM only
 - Claude surface: Claude Code CLI local macOS session
@@ -50,6 +50,7 @@ Requalify before continuing if any of these changes:
 - Node/npm/npx availability
 - BMAD package version, module names, skill names, or manifest shape
 - Factory or Factory-BMAD package version/dependency declaration
+- Claude plugin cache behavior or any stale `factory-starter-kit` cache finding
 
 ## Unsupported Until Proved
 
