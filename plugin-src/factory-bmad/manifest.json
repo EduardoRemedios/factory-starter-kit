@@ -1,9 +1,9 @@
 {
   "name": "factory-bmad",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Adopt Factory and BMAD in one repository with upstream-only BMAD enforcement and immutable Factory intake.",
   "author": {"name": "Eduardo dos Remedios"},
-  "factory_dependency": "~0.2.4",
+  "factory_dependency": "~0.2.5",
   "interface": {
     "displayName": "Factory BMAD Companion",
     "shortDescription": "Route BMAD evidence into Factory safely.",

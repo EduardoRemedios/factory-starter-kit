@@ -2,7 +2,7 @@
 
 > **Purpose:** Track starter-kit V2 and earlier process work.
 >
-> **Last updated:** 2026-08-22
+> **Last updated:** 2026-08-24
 
 ## Sprints
 
@@ -31,7 +31,8 @@
 | SPRINT_20260812_006 | Repair the Factory and Factory-BMAD 0.2.1 lifecycle | REVIEW_READY; final Factory contract repairs integrated | 2026-08-13 | `scripts/factory_pack_lint.py`; `tests/test_factory_pack_lint_activation_verification.py` |
 | SPRINT_20260814_001 | Repair and qualify Factory and Factory-BMAD 0.2.2 | FIXED_AWAITING_RETEST; deterministic qualification passed | 2026-08-14 | `docs/adapters/bmad/FACTORY_BMAD_PILOT_BACKLOG.md`; `tests/test_factory_pack_lint_core.py` |
 | SPRINT_20260815_001 | Recover and qualify Factory and Factory-BMAD 0.2.3 | AMENDED_SOURCE_LIVE_QUALIFIED; publication pending | 2026-08-15 | `artifacts/verification/factory_bmad_023_recovery/LIVE_REQUALIFICATION_ADAPTER_REPAIR.md` |
-| SPRINT_20260822_001 | Repair Factory-BMAD first-tester cache integrity blocker | REVIEW_READY; first-tester matrix passed, F10 repaired in 0.2.4 candidate | 2026-08-22 | `scripts/verify_factory_bmad_cli_rollout.py`; `docs/adapters/bmad/FACTORY_BMAD_FIRST_TESTER_HANDOFF.md` |
+| SPRINT_20260822_001 | Repair Factory-BMAD first-tester cache integrity blocker | REVIEW_READY; first-tester matrix passed, F10 repaired and tester-smoked in 0.2.4 | 2026-08-22 | `scripts/verify_factory_bmad_cli_rollout.py`; `docs/adapters/bmad/FACTORY_BMAD_FIRST_TESTER_HANDOFF.md` |
+| SPRINT_20260824_001 | Prepare Claude Code CLI first-team rollout polish | REVIEW_READY | 2026-08-24 | `plugin-src/factory/runtime/factory_plugin.py`; `plugin-src/factory-bmad/runtime/factory_bmad.py`; `docs/adapters/bmad/FACTORY_BMAD_CLI_ROLLOUT_PLAYBOOK.md` |
 
 ## Current Candidates
 
@@ -44,4 +45,4 @@
 | Beginner adopter enablement | Ongoing | Keep the non-technical setup guide accurate as agent tools and installer flows change. |
 | Harness model routing | Ongoing | Validate Kilo, Cursor, Codex, and Claude Code adapters without changing Factory Core stage contracts. |
 | Factory plugin rollout | REVIEW_READY | The maintainer Claude Code Greenfield/Doctor/Progress/Validate slice passed; first-team CLI rollout now has a preflight and guided support path. Complete remaining formal journeys, the independent first-time-user pilot, release decisions, and Product Owner sign-off. |
-| Upstream-evidence companion | 0.2.4 REVIEW_READY + CLI rollout hardening | The 0.2.3 first-tester matrix passed for greenfield, brownfield-neither, and BMAD-only brownfield. The 0.2.4 candidate bumps both plugin identities and adds same-version Claude cache comparison so stale dependency bytes block before retest or rollout. First-team Claude Code CLI rollout is guarded by a read-only preflight, greenfield first-tester full-flow handoff, brownfield rehearsal requirement, compatibility policy, guided playbook, and bootstrap recovery guide. Claude Desktop remains unsupported until separately validated. Merge, publication, and rollout remain separate decisions. |
+| Upstream-evidence companion | 0.2.5 REVIEW_READY + CLI rollout hardening | The 0.2.3 first-tester matrix passed for greenfield, brownfield-neither, and BMAD-only brownfield. The 0.2.4 candidate bumped both plugin identities and added same-version Claude cache comparison so stale dependency bytes block before retest or rollout; Mark smoke-tested that guard. The 0.2.5 candidate keeps that guard and adds clearer approval-plan labels plus corrected prune/cache guidance for first-team operators. Claude Desktop remains unsupported until separately validated. Merge, publication, and rollout remain separate decisions. |

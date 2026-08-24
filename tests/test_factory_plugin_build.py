@@ -57,7 +57,7 @@ class FactoryPluginBuildTests(unittest.TestCase):
 
     def test_release_version_is_aligned_everywhere(self):
         version = self.manifest["version"]
-        self.assertEqual("0.2.4", version)
+        self.assertEqual("0.2.5", version)
         marketplace = json.loads(
             (REPO_ROOT / ".claude-plugin/marketplace.json").read_text(
                 encoding="utf-8"

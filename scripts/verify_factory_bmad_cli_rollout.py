@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 
-EXPECTED_RELEASE = "0.2.4"
+EXPECTED_RELEASE = "0.2.5"
 EXPECTED_BMAD = "6.10.0"
 DEFAULT_CLAUDE_PREFIX = "2.1."
 STATUSES = {"PASS": 0, "WARN": 1, "BLOCKED": 2}

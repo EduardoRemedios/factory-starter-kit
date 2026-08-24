@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-24
+
+- Advanced the coordinated Factory and Factory-BMAD Claude Code candidate to
+  `0.2.5` for first-team CLI rollout readiness after Mark verified the F10
+  cache-integrity guard on `0.2.4`.
+- Clarified that `claude plugin prune` is dependency-state cleanup and may leave
+  cached payload directories on disk; rollout preflight remains the authority
+  for same-version cache integrity.
+- Improved Factory and Factory-BMAD concise output by labelling approval values
+  as `Approval Plan ID`; Factory-BMAD bootstrap also labels the separate
+  inventory digest as `Pre-inventory SHA-256`, reducing approval-gate ambiguity
+  for first-team testers.
+
 ## 2026-08-22
 
 - Advanced the coordinated Factory and Factory-BMAD Claude Code candidate to

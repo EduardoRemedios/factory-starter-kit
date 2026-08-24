@@ -6,7 +6,7 @@ greenfield repository, not to build a production application.
 
 ## Scope
 
-- Candidate: coordinated Factory and Factory-BMAD `0.2.4`
+- Candidate: coordinated Factory and Factory-BMAD `0.2.5`
 - Surface: Claude Code CLI on macOS
 - Primary test target: disposable Greenfield repository
 - Follow-up rehearsal targets before team rollout:
@@ -54,10 +54,11 @@ understands and accepts. Stop on `BLOCKED`.
 
 Install only the companion. Factory is resolved as the protected dependency.
 Before each candidate retest, remove both the companion and its Factory
-dependency from Claude Code, then prune the cache. Claude Code can retain an
-auto-installed dependency under the same version, and a reinstall may otherwise
-reuse stale package bytes. If either uninstall command reports that the plugin
-is not installed, continue to prune and preflight.
+dependency from Claude Code, then prune no-longer-needed plugin state. Claude
+Code can retain cached payload directories after uninstall/prune; the rollout
+preflight is the authority for whether the cached package bytes match this
+checkout. If either uninstall command reports that the plugin is not installed,
+continue to prune and preflight.
 
 ```bash
 claude plugin marketplace list
@@ -81,9 +82,10 @@ uninstall or update them before continuing so only this candidate is being
 tested. If `claude plugin marketplace list` still shows `factory-starter-kit`
 pointing anywhere except the durable candidate checkout, stop and fix the
 marketplace registration before installing. If the rollout preflight reports a
-`claude_cache_*` blocker, prune again or remove only the stale
+`claude_cache_*` blocker, remove only the stale
 `~/.claude/plugins/cache/factory-starter-kit` cache directory, then rerun
-preflight before installing.
+preflight before installing. Do not assume `claude plugin prune` removes cached
+payload directories.
 
 ## Primary Test: Greenfield
 

@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.2.4"
+PLUGIN_VERSION = "0.2.5"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"
@@ -2084,7 +2084,7 @@ def concise(value: dict[str, Any]) -> str:
     if target:
         lines.append(f"Target: {target}")
     if value.get("plan_id"):
-        lines.append(f"Plan: {value['plan_id']}")
+        lines.append(f"Approval Plan ID: {value['plan_id']}")
     mutations = value.get("mutations")
     count = planned_change_count(value)
     if count is not None and value["state"] in {"PLAN_READY", "NO_CHANGE"}:

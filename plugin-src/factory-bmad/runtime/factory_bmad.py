@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.2.4"
+PLUGIN_VERSION = "0.2.5"
 BMAD_VERSION = "6.10.0"
 SNAPSHOT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{2,63}")
 RESERVED_SNAPSHOT_IDS = frozenset({"receipts", "install-receipts"})
@@ -563,7 +563,10 @@ def concise(payload: dict[str, Any]) -> str:
     if target:
         lines.append(f"Target: {target}")
     if payload.get("plan"):
-        lines.append(f"Plan: {payload['plan']['plan_id']}")
+        plan = payload["plan"]
+        lines.append(f"Approval Plan ID: {plan['plan_id']}")
+        if plan.get("operation") == "bootstrap" and plan.get("pre_inventory_sha256"):
+            lines.append(f"Pre-inventory SHA-256: {plan['pre_inventory_sha256']}")
     if payload.get("receipt"):
         lines.append(f"Receipt: {payload['receipt']}")
     changes = payload.get("mutations")

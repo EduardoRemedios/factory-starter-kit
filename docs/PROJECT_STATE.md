@@ -2,7 +2,7 @@
 
 > **Purpose:** Single source of truth for the current starter-kit state.
 >
-> **Last updated:** 2026-08-22
+> **Last updated:** 2026-08-24
 
 ## What Exists
 
@@ -16,16 +16,15 @@
 - Kilo Code CLI stage routing now exists as an optional harness adapter with `./scripts/factoryctl kilo-stage`.
 - Stage A context recall now has a formal direct-source repair path for generated `WEAK` reports when unresolved refs are concrete local sources that can be read and summarized directly.
 - Factory plugin technical RC `0.2.0` has one authored source that generates Codex and Claude Code packages with Doctor, Greenfield, Brownfield, Progress, Run, Validate, and Update entry points.
-- Factory and Factory-BMAD now have coherent authored `0.2.4` maintenance
+- Factory and Factory-BMAD now have coherent authored `0.2.5` maintenance
   identities. Runtime-owned no-bytecode protection, current Claude permission
-  preflight, evidence-preserving live verification, and complete protected-root
-  comparison are integrated; all four generated packages are current. The
-  original `0.2.3` closeout passed deterministic and isolated live
-  qualification; the current amended source additionally repairs a
-  project-adapter bytecode leak and the F10 stale Claude plugin cache retest
-  blocker. First-tester greenfield, brownfield-neither, and BMAD-only
-  brownfield rehearsals passed before the cache-integrity bump. Publication and
-  rollout remain separate decisions.
+  preflight, evidence-preserving live verification, complete protected-root
+  comparison, same-version Claude cache comparison, and first-team CLI approval
+  labels are integrated; all four generated packages are current. The original
+  `0.2.3` closeout passed deterministic and isolated live qualification; the
+  `0.2.4` cache-integrity bump repaired the F10 stale Claude plugin cache retest
+  blocker and was tester-smoked before the `0.2.5` operator-label polish.
+  Publication and rollout remain separate decisions.
 - Greenfield setup now supports an absent or empty target through an exact root/Git/payload/metadata/validation transaction with fail-closed Git ownership recovery.
 - Greenfield CLI root selection now defaults only Greenfield to the invocation
   current directory; Doctor and every established-project command retain Git-root
@@ -90,13 +89,13 @@
 ## Current Tracking Snapshot
 
 - Current repository scope: Factory V2, starter-kit content, and the dual-platform Factory plugin release candidate.
-- Latest verified milestone: the coordinated Factory/Factory-BMAD 0.2.4 source
-  preserves the passed first-tester matrix and adds stale Claude cache
-  detection before retest or rollout.
-- Current release state: Factory 0.2.4 maintenance is `REVIEW_READY`; the
+- Latest verified milestone: the coordinated Factory/Factory-BMAD 0.2.5 source
+  preserves the passed first-tester matrix, retains the 0.2.4 cache-integrity
+  guard, and adds explicit approval-plan labels before first-team CLI rollout.
+- Current release state: Factory 0.2.5 maintenance is `REVIEW_READY`; the
   independent first-time-user pilot, merge/tag/publication decisions, and
   Product Owner sign-off remain pending.
-- Current companion state: the 0.2.4 maintenance candidate is `REVIEW_READY`
+- Current companion state: the 0.2.5 maintenance candidate is `REVIEW_READY`
   with additional CLI rollout hardening for the first two adopter teams.
   A post-closeout audit found that `SPRINT_20260811_003`
   retained at least 63 created evidence paths against an approved maximum of

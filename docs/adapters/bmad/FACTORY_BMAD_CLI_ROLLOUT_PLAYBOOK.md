@@ -15,7 +15,7 @@ Before using this team playbook, run one trusted-colleague full-flow test with
   `python3` on the Claude hook PATH.
 - `npx` available for the pinned BMAD bootstrap.
 - Local Claude Code session, not Claude Desktop, cloud session, WSL, or Cowork.
-- Factory and Factory-BMAD installed from the same checked-out `0.2.4`
+- Factory and Factory-BMAD installed from the same checked-out `0.2.5`
   marketplace root.
 - The marketplace root is a durable local checkout, not `/tmp`, a scratchpad, an
   extracted ZIP, or any path that can disappear between sessions.
@@ -38,7 +38,9 @@ recorded why it does not affect the planned journey.
 Prepare one 30-minute guided setup call. The maintainer, not the team, owns
 interpreting blocked reason codes during the first use.
 If either uninstall command below reports that the plugin is not installed,
-continue to prune and preflight.
+continue to prune and preflight. Treat `claude plugin prune` as dependency-state
+cleanup; the rollout preflight is the cache-content authority because cached
+payload directories may remain on disk.
 
 ## Team Happy Path
 

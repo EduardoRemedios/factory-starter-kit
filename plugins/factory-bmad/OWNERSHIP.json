@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "package": "factory-bmad",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "generated_from": "plugin-src/factory-bmad",
   "files": [
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "65c9c95f397476d5c0decd991f679f6189740a492bd1d540a33ea516ccd862d2",
+      "sha256": "a608fbe264042a9869a11fce70be100ee123a90d62005aa7332bf629bbebdf3f",
       "classification": "release-owned"
     },
     {
@@ -41,7 +41,7 @@
     },
     {
       "path": "scripts/factory_bmad.py",
-      "sha256": "9658d822035f700fb8afa147e3c6f8dbd58bcf91fbb007d4b36efd4cd61c829b",
+      "sha256": "171a9b3d409961bf5e2af09737830cbb24523244da1e1b0f42c5cfc4ff819c0e",
       "classification": "release-owned"
     },
     {

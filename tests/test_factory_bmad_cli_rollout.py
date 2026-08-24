@@ -55,15 +55,15 @@ class FactoryBmadCliRolloutTests(unittest.TestCase):
                 encoding="utf-8",
             )
             (root / "plugins/factory-claude/.claude-plugin/plugin.json").write_text(
-                json.dumps({"version": "0.2.4"}),
+                json.dumps({"version": "0.2.5"}),
                 encoding="utf-8",
             )
             (root / "plugins/factory-bmad-claude/.claude-plugin/plugin.json").write_text(
-                json.dumps({"version": "0.2.4", "dependencies": [{"name": "factory", "version": "~0.2.3"}]}),
+                json.dumps({"version": "0.2.5", "dependencies": [{"name": "factory", "version": "~0.2.3"}]}),
                 encoding="utf-8",
             )
             (root / "plugin-src/factory-bmad/manifest.json").write_text(
-                json.dumps({"version": "0.2.4", "bmad_version": "6.10.0"}),
+                json.dumps({"version": "0.2.5", "bmad_version": "6.10.0"}),
                 encoding="utf-8",
             )
             (root / "plugins/factory-bmad-claude/hooks/hooks.json").write_text(
@@ -103,7 +103,7 @@ class FactoryBmadCliRolloutTests(unittest.TestCase):
             root = base / "candidate"
             cache = base / "cache"
             source = root / "plugins/factory-claude"
-            cached = cache / "factory-starter-kit/factory/0.2.4"
+            cached = cache / "factory-starter-kit/factory/0.2.5"
             (root / ".claude-plugin").mkdir(parents=True)
             (root / "plugins/factory-bmad-claude/.claude-plugin").mkdir(parents=True)
             (root / "plugins/factory-bmad-claude/hooks").mkdir(parents=True)
@@ -115,22 +115,22 @@ class FactoryBmadCliRolloutTests(unittest.TestCase):
                 encoding="utf-8",
             )
             (source / ".claude-plugin/plugin.json").write_text(
-                json.dumps({"version": "0.2.4"}),
+                json.dumps({"version": "0.2.5"}),
                 encoding="utf-8",
             )
             (source / "sentinel.txt").write_text("current\n", encoding="utf-8")
             (cached / ".claude-plugin").mkdir()
             (cached / ".claude-plugin/plugin.json").write_text(
-                json.dumps({"version": "0.2.4"}),
+                json.dumps({"version": "0.2.5"}),
                 encoding="utf-8",
             )
             (cached / "sentinel.txt").write_text("stale\n", encoding="utf-8")
             (root / "plugins/factory-bmad-claude/.claude-plugin/plugin.json").write_text(
-                json.dumps({"version": "0.2.4", "dependencies": [{"name": "factory", "version": "~0.2.4"}]}),
+                json.dumps({"version": "0.2.5", "dependencies": [{"name": "factory", "version": "~0.2.5"}]}),
                 encoding="utf-8",
             )
             (root / "plugin-src/factory-bmad/manifest.json").write_text(
-                json.dumps({"version": "0.2.4", "bmad_version": "6.10.0"}),
+                json.dumps({"version": "0.2.5", "bmad_version": "6.10.0"}),
                 encoding="utf-8",
             )
             (root / "plugins/factory-bmad-claude/hooks/hooks.json").write_text(

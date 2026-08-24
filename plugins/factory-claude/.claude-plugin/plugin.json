@@ -1,6 +1,6 @@
 {
   "name": "factory",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Install, inspect, plan, run, validate, and update Factory workflows without weakening Factory Core gates.",
   "author": {
     "name": "Eduardo dos Remedios"

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "factory",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "files": [
     {
       "path": ".agents/skills/factory-execution-closeout/SKILL.md",
@@ -276,7 +276,7 @@
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",
       "classification": "release-owned",
-      "sha256": "fca07f0a431b0f3ae685e69e790cf4b4143e94067201bc03c4d0545369cc3fdd"
+      "sha256": "eadfd1daf401d4ec431af32b5fe83106550b39e85c5e0296733269982947d917"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_QUICK_START.md",
@@ -296,7 +296,7 @@
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_TROUBLESHOOTING.md",
       "classification": "release-owned",
-      "sha256": "79567d7c3e53e976e1b253a62b53649fa1d4aa5b6d5e7f3aeffb0af8e7a01b58"
+      "sha256": "9432e24c006f3a220552a77b8e182519b65bfa14b11599999c8a69d87b20c6b8"
     },
     {
       "path": "docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md",

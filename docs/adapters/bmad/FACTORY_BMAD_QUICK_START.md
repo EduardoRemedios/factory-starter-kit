@@ -22,7 +22,9 @@ See `FACTORY_BMAD_CLI_ROLLOUT_PLAYBOOK.md`,
 ## Install a checked-out release candidate
 
 If either uninstall command reports that the plugin is not installed, continue
-to prune and preflight.
+to prune and preflight. `claude plugin prune` may leave cached payload
+directories on disk; the rollout preflight blocks if same-version cached bytes
+do not match the checkout.
 
 ```bash
 claude plugin marketplace list
@@ -43,7 +45,7 @@ Use a durable checkout path such as `$HOME/Code/factory-bmad-candidate`; do not
 register a temporary or scratchpad path as the marketplace source.
 
 This is one explicit user installation. The companion declares Factory
-`~0.2.4` as an automatic dependency, so users do not separately install or
+`~0.2.5` as an automatic dependency, so users do not separately install or
 manage Factory. Missing, disabled, or incompatible dependency state halts
 instead of duplicating Factory Core.
 

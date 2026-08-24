@@ -23,7 +23,21 @@ class FactoryBmadOutputTests(unittest.TestCase):
         self.assertNotIn("{", text)
         self.assertNotIn("settings.local.json", text)
         self.assertIn("Target:", text)
+        self.assertIn("Approval Plan ID:", text)
+        self.assertIn("Pre-inventory SHA-256:", text)
         self.assertIn("Changes:", text)
+
+    def test_bootstrap_summary_distinguishes_plan_id_from_inventory_hash(self):
+        temporary = tempfile.TemporaryDirectory(); self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name); seed_factory(root)
+        payload = runtime.bootstrap(root, "claude", None)
+        text = runtime.concise(payload)
+        self.assertIn(f"Approval Plan ID: {payload['plan']['plan_id']}", text)
+        self.assertIn(
+            f"Pre-inventory SHA-256: {payload['plan']['pre_inventory_sha256']}",
+            text,
+        )
+        self.assertNotIn("Plan:", text)
 
     def test_bootstrap_apply_requires_a_fresh_claude_session_before_intake(self):
         payload = runtime.result(
@@ -64,7 +78,9 @@ class FactoryBmadOutputTests(unittest.TestCase):
             )
             self.assertLessEqual(len(summary.stdout.splitlines()), 7)
             self.assertIn("Target:", summary.stdout)
+            self.assertIn("Approval Plan ID:", summary.stdout)
             self.assertIn("Changes:", summary.stdout)
+            self.assertNotIn("Plan:", summary.stdout)
             self.assertNotIn('"planned_files"', summary.stdout)
             structured = subprocess.run(
                 [*command, "--json", "greenfield", "--harness", "claude"],
