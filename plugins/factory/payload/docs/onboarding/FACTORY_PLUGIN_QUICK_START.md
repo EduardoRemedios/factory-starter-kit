@@ -109,7 +109,12 @@ directory when needed, initializes Git, installs Factory, records the transactio
 and validates the result. If setup fails, it removes Factory-created Git only when
 the recorded Git digest is unchanged.
 
-Claude setup previews a one-line `CLAUDE.md` containing `@AGENTS.md`. If `CLAUDE.md` already contains other instructions, setup halts for owner review.
+Claude setup previews a one-line `CLAUDE.md` containing `@AGENTS.md`. If
+`CLAUDE.md` already contains other instructions, setup halts for owner review.
+For Brownfield recovery, preserve the existing content in a project-owned
+document, make `CLAUDE.md` exactly `@AGENTS.md`, and rerun preview. The full
+project guidance belongs in `AGENTS.md` or a linked project document, not in
+`CLAUDE.md`.
 
 ## What Happens Before Any Write
 

@@ -8,7 +8,7 @@ Treat a blocked state as a safety result, not as a prompt to force the operation
 | `FACTORY_GIT_ROOT_REQUIRED` | Doctor or another established-project command was invoked outside a Git worktree | For a new empty target, run Greenfield first; otherwise open the intended Git repository and rerun doctor |
 | `FACTORY_PROJECT_NOT_CONFIGURED` | Factory is not installed in the project | Preview greenfield or brownfield setup |
 | `FACTORY_PROJECT_INCOMPLETE` | Some required Factory files are missing | Review the missing paths; do not invent replacements |
-| `FACTORY_CONFLICT_USER_OWNED` | A planned path has different existing content | Review and merge with the owner; do not overwrite |
+| `FACTORY_CONFLICT_USER_OWNED` | A planned path has different existing content | Review and merge with the owner; do not overwrite. If the path is `CLAUDE.md`, use the recovery steps below |
 | `FACTORY_UNSAFE_PATH` | A path traverses or uses a symlinked target | Repair the repository path and preview again |
 | `FACTORY_GREENFIELD_NOT_EMPTY` | The target contains content outside the exact Greenfield bootstrap allowance | Use Brownfield only for an existing Git project; otherwise choose an empty target or review non-project harness content without deleting user work |
 | `FACTORY_PLAN_APPROVAL_REQUIRED` | Apply did not receive the exact previewed plan ID | Review and approve that plan, or preview again |
@@ -46,6 +46,26 @@ a binary that lacks the plugin interface.
 4. Invoke `$factory-doctor`.
 
 The initial pilot uses the Codex app. A broken local Codex CLI does not prove that the app plugin failed.
+
+## Brownfield Blocks on CLAUDE.md
+
+Claude Code needs `CLAUDE.md`, but Factory expects that file to be a one-line
+bridge to the shared repository guidance:
+
+```md
+@AGENTS.md
+```
+
+If Brownfield reports `FACTORY_CONFLICT_USER_OWNED` for `CLAUDE.md`, do not
+apply the blocked plan. Preserve the existing `CLAUDE.md` content in a
+project-owned document such as `docs/project/CLAUDE_GUIDE.md`, then replace
+`CLAUDE.md` with exactly the one-line bridge above. Rerun Brownfield, review the
+new plan ID, and apply only by quoting that new exact plan ID.
+
+After Factory is installed, merge any still-useful project-specific Claude
+guidance into `AGENTS.md` or keep it in the preserved project document and link
+to it from `AGENTS.md`. Do not put the full project guide back into
+`CLAUDE.md`; it should remain the Claude Code bridge.
 
 ## Failed Setup or Update
 

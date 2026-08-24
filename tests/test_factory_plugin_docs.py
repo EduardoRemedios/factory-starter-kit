@@ -81,6 +81,9 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
             "FACTORY_ROLLBACK_EVIDENCE_MISMATCH",
         ):
             self.assertIn(reason, troubleshooting)
+        self.assertIn("Brownfield Blocks on CLAUDE.md", troubleshooting)
+        self.assertIn("@AGENTS.md", troubleshooting)
+        self.assertIn("Do not put the full project guide back into", troubleshooting)
 
     def test_marketplace_policy_values_match_codex_contract(self):
         marketplace = json.loads(

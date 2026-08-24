@@ -172,6 +172,10 @@ that Git worktree. Until then, the repository is treated only as an adoption
 candidate, not as an approved BMAD-without-Factory operating mode.
 
 Every setup command previews first. Apply only by quoting the exact full plan ID.
+If Brownfield blocks because `CLAUDE.md` already exists, keep `CLAUDE.md` but
+make it exactly the one-line Claude Code bridge `@AGENTS.md`. Preserve the old
+content in a project-owned document, rerun `/factory:brownfield`, and apply only
+the new exact plan ID.
 
 After BMAD bootstrap applies, close and open a fresh Claude Code session before
 trying an installed BMAD skill. Then run `/factory-bmad:doctor` again and follow
