@@ -43,13 +43,13 @@ claude plugin install factory-bmad@factory-starter-kit
 Claude resolves the separate Factory package automatically; users do not run a
 second install. `/factory-bmad:doctor` remains the only adoption front door.
 
-The 0.2.3 maintenance candidate includes plugin-bundled guards for direct slash-command
-expansion and model-initiated Skill invocation. Enforcement activates only when
-Factory and present/partial BMAD coexist in the current Git worktree. Approved
-upstream `bmad-*` names are explicitly allowlisted; every other or unknown name
-is denied by default. Capability audit and brownfield reconciliation preserve
-existing code and BMAD files while preventing legacy downstream artifacts from
-becoming binding Factory authority.
+The 0.2.5 Claude Code CLI pilot candidate includes plugin-bundled guards for
+direct slash-command expansion and model-initiated Skill invocation.
+Enforcement activates only when Factory and present/partial BMAD coexist in the
+current Git worktree. Approved upstream `bmad-*` names are explicitly
+allowlisted; every other or unknown name is denied by default. Capability audit
+and brownfield reconciliation preserve existing code and BMAD files while
+preventing legacy downstream artifacts from becoming binding Factory authority.
 
 The implementation, focused suites, deterministic packages, and disposable
 repository journeys are present. Runtime policy loading activates no-bytecode
@@ -60,9 +60,10 @@ package's exact `PreToolUse`/`Skill` command, submits the production event schem
 and proves denial prevents downstream sentinel execution. Retained direct
 expansion evidence and optional model-choice smoke are reported separately; a
 model choosing not to call a Skill is inconclusive, not a release failure. The
-amended 0.2.3 source has passed isolated Claude Code CLI live requalification.
-That still grants no merge, publication, application pilot, or organization
-rollout by itself.
+amended 0.2.3 source passed isolated Claude Code CLI live requalification, and
+the 0.2.5 pilot candidate adds first-team rollout preflight, cache-integrity
+protection, and clearer approval-plan labels. That still grants no publication
+or organization rollout by itself.
 
 ## Evidence flow
 
