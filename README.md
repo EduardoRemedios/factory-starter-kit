@@ -7,9 +7,9 @@
 Turn rough product intent into an execution-ready contract, with scope, risk,
 verification, human approval, and delivery evidence built into the workflow.
 
-[![Release candidate](https://img.shields.io/badge/release-0.2.3--rc.1-4f46e5)](#release-status)
+[![Release candidate](https://img.shields.io/badge/release-0.2.5--cli--pilot-4f46e5)](#release-status)
 [![Codex](https://img.shields.io/badge/Codex-supported-111827?logo=openai&logoColor=white)](#chatgpt--codex-desktop-app-on-macos)
-[![Claude Code](https://img.shields.io/badge/Claude_Code-supported-D97757)](#claude-code-desktop-app)
+[![Claude Code CLI](https://img.shields.io/badge/Claude_Code_CLI-pilot_supported-D97757)](#claude-code-cli)
 [![License](https://img.shields.io/badge/license-Apache--2.0-0f766e)](LICENSE)
 
 [Why Factory](#why-factory) ·
@@ -47,15 +47,16 @@ authorization layer that coordinates those capabilities.
 
 ## Release Status
 
-The current plugin release candidate is `0.2.3`, pinned at
-`factory-plugin-v0.2.3-rc.1`.
+The current Claude Code CLI pilot candidate is `0.2.5` on `main`.
 
 - Factory Core is the existing, portable process.
 - The plugin is a distribution and lifecycle layer around that core.
 - Codex and Claude Code packages are generated from one authored source.
-- The initial verified pilot surface is macOS with the ChatGPT/Codex app or
-  Claude Code.
-- Claude Code CLI rollout has a read-only preflight for first-team testing.
+- The initial verified rollout surface is macOS with Claude Code CLI.
+- Factory-BMAD is the companion path for teams that use BMAD upstream and
+  Factory downstream in one repository.
+- Claude Desktop remains unsupported until a separate Desktop validation lane
+  passes.
 - Greenfield, brownfield, update, and rollback operations are preview-first and
   require approval of an exact plan ID before repository files are changed.
 
@@ -118,8 +119,9 @@ Choose your client:
 | Client | Installation surface | First repository check |
 | --- | --- | --- |
 | ChatGPT / Codex desktop | macOS Terminal, then a new Codex task | `$factory-doctor` |
-| Claude Code desktop | Local Code session | `/factory:doctor` |
-| Claude Code CLI | Terminal | `/factory:doctor` |
+| Claude Code CLI, Factory only | Terminal | `/factory:doctor` |
+| Claude Code CLI, BMAD + Factory | Terminal | `/factory-bmad:doctor` |
+| Claude Desktop | Pending validation | Do not pilot yet |
 
 ### ChatGPT / Codex desktop app on macOS
 
@@ -128,12 +130,16 @@ Chat conversation.
 
 1. Update and restart the ChatGPT desktop app.
 2. Open Terminal.
-3. Register the public Factory marketplace and install the plugin:
+3. Clone this repository at the approved pilot commit or branch, then register
+   that durable local checkout and install the plugin:
 
    ```bash
+   git clone https://github.com/EduardoRemedios/factory-starter-kit.git
+   cd factory-starter-kit
+   git checkout main
+
    /Applications/ChatGPT.app/Contents/Resources/codex \
-     plugin marketplace add EduardoRemedios/factory-starter-kit \
-     --ref factory-plugin-v0.2.3-rc.1
+     plugin marketplace add "$PWD"
 
    /Applications/ChatGPT.app/Contents/Resources/codex \
      plugin add factory@factory-starter-kit
@@ -157,40 +163,18 @@ terminal, the shorter equivalent is:
 
 ```bash
 codex plugin marketplace add EduardoRemedios/factory-starter-kit \
-  --ref factory-plugin-v0.2.3-rc.1
+  --ref main
 codex plugin add factory@factory-starter-kit
 ```
 
 You can inspect installed plugins in the desktop app under **Plugins**. Plugin
 skills are loaded into new tasks.
 
-### Claude Code desktop app
+### Claude Desktop
 
-Use the **Code** tab in Claude Desktop. Plugins are not available in ordinary
-Chat sessions or Claude Code remote sessions.
-
-1. Update and restart Claude Desktop.
-2. Open the **Code** tab.
-3. Select **Local** and choose the repository folder.
-4. In the Code session, add the marketplace and install Factory:
-
-   ```text
-   /plugin marketplace add EduardoRemedios/factory-starter-kit@factory-plugin-v0.2.3-rc.1
-   /plugin install factory@factory-starter-kit
-   /reload-plugins
-   ```
-
-5. Confirm that the reload reports the Factory plugin and skills without a load
-   error.
-6. Run:
-
-   ```text
-   /factory:doctor
-   ```
-
-You can also use **+ → Plugins** in the Code session to inspect, enable,
-disable, or uninstall configured plugins. The marketplace must be registered
-before Factory appears in that browser.
+Claude Desktop is not part of the current supported pilot. Do not roll Factory
+or Factory-BMAD into a Desktop team workflow until the separate Desktop
+validation lane passes.
 
 ### Claude Code CLI
 
@@ -201,22 +185,42 @@ before Factory appears in that browser.
    claude --version
    ```
 
-2. Add the marketplace and install Factory for your user account:
+2. Clone this repository into a durable local path:
 
    ```bash
-   claude plugin marketplace add \
-     EduardoRemedios/factory-starter-kit@factory-plugin-v0.2.3-rc.1
+   mkdir -p "$HOME/Code"
+   git clone https://github.com/EduardoRemedios/factory-starter-kit.git \
+     "$HOME/Code/factory-starter-kit"
+   cd "$HOME/Code/factory-starter-kit"
+   git checkout main
+   ```
+
+3. Run the read-only rollout preflight:
+
+   ```bash
+   ./scripts/factory-python scripts/verify_factory_cli_rollout.py \
+     --marketplace-root "$PWD" \
+     --target-root /path/to/your/repository \
+     --json
+   ```
+
+   Stop on `BLOCKED`.
+
+4. Add the marketplace and install Factory for your user account:
+
+   ```bash
+   claude plugin marketplace add "$PWD"
    claude plugin install factory@factory-starter-kit --scope user
    ```
 
-3. Change to the repository you want to use and start Claude Code:
+5. Change to the repository you want to use and start Claude Code:
 
    ```bash
    cd /path/to/your/repository
    claude
    ```
 
-4. In the Claude Code session, run:
+6. In the Claude Code session, run:
 
    ```text
    /reload-plugins
@@ -225,6 +229,43 @@ before Factory appears in that browser.
 
 Use `--scope project` instead of `--scope user` only when the repository team
 has intentionally chosen a project-scoped plugin declaration.
+
+### Claude Code CLI with BMAD and Factory
+
+For teams using BMAD and Factory together, install only the companion. It
+declares Factory `~0.2.5` as its protected dependency.
+
+```bash
+cd "$HOME/Code/factory-starter-kit"
+claude plugin marketplace list
+# If factory-starter-kit points at an old or missing path:
+# claude plugin marketplace remove factory-starter-kit
+claude plugin uninstall factory-bmad@factory-starter-kit
+claude plugin uninstall factory@factory-starter-kit
+claude plugin prune
+./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
+  --marketplace-root "$PWD" \
+  --target-root /path/to/team/repository \
+  --json
+claude plugin marketplace add "$PWD"
+claude plugin install factory-bmad@factory-starter-kit --scope user
+```
+
+If the rollout preflight reports a `claude_cache_*` blocker, remove only the
+stale `~/.claude/plugins/cache/factory-starter-kit` directory and rerun the
+preflight before installing. `claude plugin prune` may leave cached payload
+directories on disk.
+
+Start Claude Code in the target repository and run:
+
+```text
+/reload-plugins
+/factory-bmad:doctor
+```
+
+Follow only the single `next_legal_action` returned by Doctor. Every setup or
+bootstrap action previews first and must be approved by quoting the exact full
+current plan ID.
 
 ### Confirm the installation
 
@@ -235,7 +276,7 @@ read-only compatibility check for the current repository:
 # Codex
 $factory-doctor
 
-# Claude Code desktop or CLI
+# Claude Code CLI
 /factory:doctor
 ```
 
@@ -244,10 +285,9 @@ produce the exact setup plan for the repository.
 
 ## First Tester Handoff
 
-For the first colleague test before team rollout, use the Factory-only Claude
-Code CLI path and keep the scope deliberately small. The goal is to validate
-installation, discovery, Greenfield setup, Doctor, Validate, Progress, and the
-human approval flow.
+For Factory-only testing, use the Factory-only Claude Code CLI path and keep the
+scope deliberately small. The goal is to validate installation, discovery,
+Greenfield setup, Doctor, Validate, Progress, and the human approval flow.
 
 Use the handoff checklist in
 [`docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md`](docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md).
@@ -255,7 +295,10 @@ The tester should preserve the preflight JSON, Claude version, plugin list,
 Doctor/Validate/Progress output, final `git status --short`, and a short
 friction log.
 
-Do not include optional upstream companions in this first Factory-only test.
+For BMAD + Factory testing, use
+[`docs/adapters/bmad/FACTORY_BMAD_FIRST_TESTER_HANDOFF.md`](docs/adapters/bmad/FACTORY_BMAD_FIRST_TESTER_HANDOFF.md)
+and
+[`docs/adapters/bmad/FACTORY_BMAD_CLI_ROLLOUT_PLAYBOOK.md`](docs/adapters/bmad/FACTORY_BMAD_CLI_ROLLOUT_PLAYBOOK.md).
 
 ## Quick Start: Your First Repository
 
@@ -652,7 +695,7 @@ claude plugin validate --strict .claude-plugin/marketplace.json
 ## Documentation
 
 - [OpenAI plugins](https://learn.chatgpt.com/docs/plugins)
-- [Claude Code desktop](https://code.claude.com/docs/en/desktop)
+- [Claude Desktop docs - pending Factory validation](https://code.claude.com/docs/en/desktop)
 - [Claude Code plugin installation](https://code.claude.com/docs/en/discover-plugins)
 - [Plugin quick start](docs/onboarding/FACTORY_PLUGIN_QUICK_START.md)
 - [First tester handoff](docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md)

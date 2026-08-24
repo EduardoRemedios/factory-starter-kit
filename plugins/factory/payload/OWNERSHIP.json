@@ -266,12 +266,12 @@
     {
       "path": "docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md",
       "classification": "release-owned",
-      "sha256": "5e7ec96febd16b750cfdb6d9ad9b8b307f9754b9a3a42e566e15b4134e312d92"
+      "sha256": "14176654d346a2362235f278de8f139a8e6252bdad6149b8fe6e9dec5c82558d"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md",
       "classification": "release-owned",
-      "sha256": "0e684538dc255b020f4eda9e8a9634c1e4078c6a1246a638fecb72f2bf34eede"
+      "sha256": "873eb11bca67d2916a815a76cb8c46ea5ee49ef7bebce87da89219e4fb0b0602"
     },
     {
       "path": "docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md",

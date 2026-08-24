@@ -21,7 +21,8 @@ team playbook.
 Run this before a team starts:
 
 ```bash
-python3 scripts/verify_factory_cli_rollout.py \
+cd /absolute/path/to/factory-starter-kit
+./scripts/factory-python scripts/verify_factory_cli_rollout.py \
   --marketplace-root /absolute/path/to/factory-starter-kit \
   --target-root /absolute/path/to/team/repo \
   --json
@@ -46,9 +47,19 @@ does not affect the intended journey.
 3. Install Factory from the supplied marketplace root:
 
    ```bash
+   claude plugin uninstall factory@factory-starter-kit
+   claude plugin prune
+   /absolute/path/to/factory-starter-kit/scripts/factory-python \
+     /absolute/path/to/factory-starter-kit/scripts/verify_factory_cli_rollout.py \
+     --marketplace-root /absolute/path/to/factory-starter-kit \
+     --target-root /absolute/path/to/team/repo \
+     --json
    claude plugin marketplace add /absolute/path/to/factory-starter-kit
    claude plugin install factory@factory-starter-kit
    ```
+
+   If uninstall reports that the plugin is not installed, continue to prune and
+   preflight.
 
 4. Start a fresh Claude Code session in the target directory.
 5. For a new project, invoke `/factory:greenfield` first.

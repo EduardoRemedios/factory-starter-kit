@@ -5,6 +5,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RUNTIME_PATH = REPO_ROOT / "plugin-src/factory-bmad/runtime/factory_bmad.py"
+sys.dont_write_bytecode = True
 SPEC = importlib.util.spec_from_file_location("factory_bmad_runtime", RUNTIME_PATH)
 runtime = importlib.util.module_from_spec(SPEC)
 assert SPEC.loader is not None

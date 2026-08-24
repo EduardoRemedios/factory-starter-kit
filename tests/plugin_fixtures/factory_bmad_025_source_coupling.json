@@ -6,7 +6,8 @@
     "plugin-src/factory-bmad/runtime/factory_bmad.py"
   ],
   "runtime_regression_candidates": [
-    "tests/test_factory_bmad_runtime_no_bytecode.py"
+    "tests/test_factory_bmad_runtime_no_bytecode.py",
+    "tests/test_factory_bmad_support.py"
   ],
   "live_verifier_candidates": [
     "scripts/verify_factory_bmad_claude_composition.sh",

@@ -6,7 +6,7 @@ repository, not to test optional upstream companions or a production project.
 
 ## Scope
 
-- Factory-only plugin release candidate: `factory-plugin-v0.2.3-rc.1`
+- Factory-only plugin release candidate: `0.2.5` on `main`
 - Surface: Claude Code CLI on macOS
 - Test target: disposable empty Git repository
 - Out of scope: optional upstream companions, Claude Desktop, production code changes,
@@ -29,9 +29,9 @@ Ask the tester to start from a clean terminal and run:
 ```bash
 git clone https://github.com/EduardoRemedios/factory-starter-kit.git
 cd factory-starter-kit
-git checkout factory-plugin-v0.2.3-rc.1
+git checkout main
 
-python3 scripts/verify_factory_cli_rollout.py \
+./scripts/factory-python scripts/verify_factory_cli_rollout.py \
   --marketplace-root "$PWD" \
   --target-root "$HOME/factory-first-tester-greenfield" \
   --json | tee factory-first-tester-preflight.json
@@ -45,13 +45,21 @@ understands and accepts. Stop on `BLOCKED`.
 Install from the checked-out release candidate:
 
 ```bash
+claude plugin uninstall factory@factory-starter-kit
+claude plugin prune
+./scripts/factory-python scripts/verify_factory_cli_rollout.py \
+  --marketplace-root "$PWD" \
+  --target-root "$HOME/factory-first-tester-greenfield" \
+  --json | tee factory-first-tester-preflight.json
 claude plugin marketplace add "$PWD"
 claude plugin install factory@factory-starter-kit --scope user
 claude plugin list
 ```
 
-If the tester already has an older Factory plugin installed, uninstall or update
-it before continuing so only one Factory candidate is being tested.
+If uninstall reports that the plugin is not installed, continue to prune and
+preflight. If the tester already has an older Factory plugin installed,
+uninstall or update it before continuing so only one Factory candidate is being
+tested.
 
 ## Greenfield Test
 
