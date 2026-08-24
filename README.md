@@ -235,19 +235,26 @@ has intentionally chosen a project-scoped plugin declaration.
 For teams using BMAD and Factory together, install only the companion. It
 declares Factory `~0.2.5` as its protected dependency.
 
+For self-service setup, start with the
+[Factory BMAD quick start](docs/adapters/bmad/FACTORY_BMAD_QUICK_START.md).
+It explains how to run the preflight script from Terminal and how to find the
+project path.
+
 ```bash
 cd "$HOME/Code/factory-starter-kit"
+PROJECT_ROOT="/absolute/path/to/team/repository"
+
 claude plugin marketplace list
 # If factory-starter-kit points at an old or missing path:
 # claude plugin marketplace remove factory-starter-kit
 claude plugin uninstall factory-bmad@factory-starter-kit
 claude plugin uninstall factory@factory-starter-kit
 claude plugin prune
+claude plugin marketplace add "$PWD"
 ./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
   --marketplace-root "$PWD" \
-  --target-root /path/to/team/repository \
+  --target-root "$PROJECT_ROOT" \
   --json
-claude plugin marketplace add "$PWD"
 claude plugin install factory-bmad@factory-starter-kit --scope user
 ```
 

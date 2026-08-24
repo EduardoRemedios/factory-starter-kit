@@ -4,22 +4,111 @@ Use Claude Code CLI. This technical pilot does not claim Claude Desktop support.
 Keep Factory and the companion in the same Factory Starter Kit marketplace so
 the versioned Factory dependency can resolve.
 
-For the first two teams, run the CLI rollout preflight and use the guided
-playbook before installing anything in a team repository:
-
-```bash
-./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
-  --marketplace-root /absolute/path/to/factory-starter-kit \
-  --target-root /absolute/path/to/team/repo \
-  --json
-```
+This page is written for self-service setup. You can copy and paste the command
+blocks into the macOS Terminal. A "script" is just a command you run from
+Terminal.
 
 See `FACTORY_BMAD_CLI_ROLLOUT_PLAYBOOK.md`,
 `FACTORY_BMAD_FIRST_TESTER_HANDOFF.md`,
 `FACTORY_BMAD_COMPATIBILITY_POLICY.md`, and
 `FACTORY_BMAD_BOOTSTRAP_RECOVERY.md`.
 
-## Install a checked-out release candidate
+## Before You Start
+
+You need:
+
+- macOS
+- Claude Code CLI
+- Git
+- Python 3.11 or newer
+- `npx`
+- a local copy of the project repository you want to use with Factory
+
+Open Terminal and check the tools:
+
+```bash
+claude --version
+claude plugin --help
+git --version
+python3 --version
+npx --version
+```
+
+If any command says `command not found`, stop and ask the maintainer for that
+tool to be installed.
+
+## Clone the Factory Starter Kit
+
+Run:
+
+```bash
+mkdir -p "$HOME/Code"
+git clone https://github.com/EduardoRemedios/factory-starter-kit.git \
+  "$HOME/Code/factory-starter-kit"
+cd "$HOME/Code/factory-starter-kit"
+git checkout main
+```
+
+If the folder already exists, update it instead:
+
+```bash
+cd "$HOME/Code/factory-starter-kit"
+git pull --ff-only
+git checkout main
+```
+
+This folder is the marketplace root:
+
+```text
+$HOME/Code/factory-starter-kit
+```
+
+Do not use a temporary folder, an extracted ZIP, or `/tmp`.
+
+## Find Your Project Path
+
+The project path is the folder for the application repository where you want to
+use BMAD and Factory.
+
+If you know the folder, open it in Terminal and run:
+
+```bash
+cd /path/to/your/project
+pwd
+```
+
+Copy the full path printed by `pwd`. It should look similar to:
+
+```text
+<home-folder>/Code/your-project
+```
+
+In the commands below, replace `/absolute/path/to/your/project` with that full
+path. Keep the quotes.
+
+## Run the Preflight Check
+
+The preflight check is read-only. It checks your Mac, Claude Code, the Factory
+package, and the target project path before installation.
+
+```bash
+cd "$HOME/Code/factory-starter-kit"
+PROJECT_ROOT="/absolute/path/to/your/project"
+
+./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
+  --marketplace-root "$PWD" \
+  --target-root "$PROJECT_ROOT" \
+  --json
+```
+
+Read the `"state"` line near the end:
+
+- `"state": "PASS"` means continue.
+- `"state": "WARN"` means continue only if the warning is understood.
+- `"state": "BLOCKED"` means stop and send the full Terminal output to the
+  maintainer.
+
+## Install From the Starter Kit Checkout
 
 If either uninstall command reports that the plugin is not installed, continue
 to prune and preflight. `claude plugin prune` may leave cached payload
@@ -27,22 +116,25 @@ directories on disk; the rollout preflight blocks if same-version cached bytes
 do not match the checkout.
 
 ```bash
+cd "$HOME/Code/factory-starter-kit"
+PROJECT_ROOT="/absolute/path/to/your/project"
+
 claude plugin marketplace list
 # If factory-starter-kit points at an old or missing path:
 # claude plugin marketplace remove factory-starter-kit
 claude plugin uninstall factory-bmad@factory-starter-kit
 claude plugin uninstall factory@factory-starter-kit
 claude plugin prune
-claude plugin marketplace add /absolute/path/to/factory-starter-kit
+claude plugin marketplace add "$PWD"
 ./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
-  --marketplace-root /absolute/path/to/factory-starter-kit \
-  --target-root /absolute/path/to/team/repo \
+  --marketplace-root "$PWD" \
+  --target-root "$PROJECT_ROOT" \
   --json
-claude plugin install factory-bmad@factory-starter-kit
+claude plugin install factory-bmad@factory-starter-kit --scope user
 ```
 
-Use a durable checkout path such as `$HOME/Code/factory-bmad-candidate`; do not
-register a temporary or scratchpad path as the marketplace source.
+Use the durable checkout path above; do not register a temporary or scratchpad
+path as the marketplace source.
 
 This is one explicit user installation. The companion declares Factory
 `~0.2.5` as an automatic dependency, so users do not separately install or
@@ -50,6 +142,20 @@ manage Factory. Missing, disabled, or incompatible dependency state halts
 instead of duplicating Factory Core.
 
 ## Start
+
+Start Claude Code from your project repository:
+
+```bash
+cd "$PROJECT_ROOT"
+claude
+```
+
+Inside Claude Code, run:
+
+```text
+/reload-plugins
+/factory-bmad:doctor
+```
 
 Run `/factory-bmad:doctor` and follow its single next action:
 

@@ -25,9 +25,12 @@ Before using this team playbook, run one trusted-colleague full-flow test with
 Run this before a team starts:
 
 ```bash
+cd "$HOME/Code/factory-starter-kit"
+PROJECT_ROOT="/absolute/path/to/team/repo"
+
 ./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
-  --marketplace-root /absolute/path/to/factory-starter-kit \
-  --target-root /absolute/path/to/team/repo \
+  --marketplace-root "$PWD" \
+  --target-root "$PROJECT_ROOT" \
   --json
 ```
 
@@ -35,8 +38,9 @@ Do not start the pilot while the preflight state is `BLOCKED`. A `WARN` state is
 allowed only when the maintainer has explained the warning to the team owner and
 recorded why it does not affect the planned journey.
 
-Prepare one 30-minute guided setup call. The maintainer, not the team, owns
-interpreting blocked reason codes during the first use.
+The setup is self-service. Team members should copy and paste the command
+blocks exactly, replacing only the project path. A script is a Terminal command;
+no separate programming knowledge is required.
 If either uninstall command below reports that the plugin is not installed,
 continue to prune and preflight. Treat `claude plugin prune` as dependency-state
 cleanup; the rollout preflight is the cache-content authority because cached
@@ -44,7 +48,7 @@ payload directories may remain on disk.
 
 ## Team Happy Path
 
-1. Open a terminal in the intended repository or empty target directory.
+1. Open Terminal.
 2. Confirm the same Claude binary will be used throughout:
 
    ```bash
@@ -53,33 +57,65 @@ payload directories may remain on disk.
    claude plugin --help
    ```
 
-3. Install from the supplied marketplace root:
+3. Clone the Factory Starter Kit and record the project path:
 
    ```bash
+   mkdir -p "$HOME/Code"
+   git clone https://github.com/EduardoRemedios/factory-starter-kit.git \
+     "$HOME/Code/factory-starter-kit"
+   cd "$HOME/Code/factory-starter-kit"
+   git checkout main
+
+   PROJECT_ROOT="/absolute/path/to/team/repo"
+   ```
+
+   If the folder already exists, update it instead:
+
+   ```bash
+   cd "$HOME/Code/factory-starter-kit"
+   git pull --ff-only
+   git checkout main
+   ```
+
+   To find the project path, open the project folder in Terminal and run
+   `pwd`. Copy the full path printed by `pwd` into `PROJECT_ROOT`.
+
+4. Install from the checked-out marketplace root:
+
+   ```bash
+   cd "$HOME/Code/factory-starter-kit"
+   PROJECT_ROOT="/absolute/path/to/team/repo"
+
    claude plugin marketplace list
    # If factory-starter-kit points at an old or missing path:
    # claude plugin marketplace remove factory-starter-kit
    claude plugin uninstall factory-bmad@factory-starter-kit
    claude plugin uninstall factory@factory-starter-kit
    claude plugin prune
-   claude plugin marketplace add /absolute/path/to/factory-starter-kit
+   claude plugin marketplace add "$PWD"
    ./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
-     --marketplace-root /absolute/path/to/factory-starter-kit \
-     --target-root /absolute/path/to/team/repo \
+     --marketplace-root "$PWD" \
+     --target-root "$PROJECT_ROOT" \
      --json
-   claude plugin install factory-bmad@factory-starter-kit
+   claude plugin install factory-bmad@factory-starter-kit --scope user
    ```
 
-4. Confirm the rollout preflight has no `BLOCKED` result and
+5. Confirm the rollout preflight has no `BLOCKED` result and
    `factory-starter-kit` now points at the supplied durable checkout.
-5. Start a fresh Claude Code session in the target directory.
-6. Invoke `/factory-bmad:doctor`.
-7. Follow only the single next action returned by Doctor.
-8. Approve setup or bootstrap only by quoting the exact full current plan ID.
-9. After BMAD bootstrap applies, close and reopen Claude Code before invoking
+6. Start a fresh Claude Code session in the target directory:
+
+   ```bash
+   cd "$PROJECT_ROOT"
+   claude
+   ```
+
+7. Invoke `/factory-bmad:doctor`.
+8. Follow only the single next action returned by Doctor.
+9. Approve setup or bootstrap only by quoting the exact full current plan ID.
+10. After BMAD bootstrap applies, close and reopen Claude Code before invoking
    any BMAD skill.
-10. Use only allowed upstream BMAD discovery workflows.
-11. Promote reviewed evidence, draft the Factory brief from the promoted
+11. Use only allowed upstream BMAD discovery workflows.
+12. Promote reviewed evidence, draft the Factory brief from the promoted
     snapshot, and stop at Factory human review gates.
 
 Use `ODYSSEY_V3_INITIAL_BMAD_BRIEF.md` as the default first-test product seed
