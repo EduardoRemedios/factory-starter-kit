@@ -1,0 +1,5 @@
+VM-005 - PASS (V3 focused regression)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: Public FACTORY_BMAD_NON_CANONICAL_LAYOUT, subordinate layout_reason_code, and enforcement FACTORY_BMAD_ENFORCEMENT_ACTIVE_UNSAFE_LAYOUT coexist for nested, both, partial, ambiguous, and symlink layouts; all layout tests passed, including the corrective-reconciled tests/test_factory_bmad_bootstrap.py test_partial_state_blocks, which now asserts the public code plus subordinate layout_reason_code FACTORY_BMAD_PARTIAL_STATE per the locked contract. The prior NO_GO attempt's failure evidence is retained externally.
+Full evidence: MS-05/corrective_full_regression.log and MS-05/full_regression.log in the external evidence root.

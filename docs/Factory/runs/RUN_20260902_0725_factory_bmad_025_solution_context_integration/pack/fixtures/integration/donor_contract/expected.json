@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "before_write": {
+    "base_head_exact": true,
+    "base_initial_status_contains_only_authorized_run_artifacts": true,
+    "donor_git_and_complete_tree_preimages_pinned": true,
+    "donor_status_matches_activation": true,
+    "donor_symlink_and_mode_inventory_complete": true
+  },
+  "after_closeout": {
+    "donor_bytes_equal": true,
+    "donor_git_state_equal": true,
+    "existing_worktree_registrations_equal": true
+  },
+  "mismatch_action": "HALT"
+}

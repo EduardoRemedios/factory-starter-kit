@@ -1,0 +1,5 @@
+VM-012 - PASS (V3 regression)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: The complete discovery suite passed: 339 tests, 0 failures, 3 pre-existing skips, with the single check-only builder invocation. The 53-test authored gate families, release-fixture gate, post-builder generated gate, privacy, no-bytecode, runtime path safety, dependency, cache-integrity, and CLI preflight coverage all held.
+Full evidence: MS-05/corrective_full_regression.log in the external evidence root.

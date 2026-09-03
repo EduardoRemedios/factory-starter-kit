@@ -1,0 +1,5 @@
+VM-009 - PASS (V3 package regression)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: Generated-package tests passed, including packaged-hook sentinel matrix, generated command-contract, policy-copy parity, and package-build/currentness; the package-current test performed the single check-only builder invocation and the two generated roots match authored source exactly.
+Full evidence: MS-05/corrective_full_regression.log in the external evidence root.

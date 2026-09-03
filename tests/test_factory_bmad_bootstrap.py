@@ -36,7 +36,10 @@ class FactoryBmadBootstrapTests(unittest.TestCase):
         root = self.root(); (root / "_bmad").mkdir()
         payload = runtime.doctor(root, "claude")
         self.assertEqual("BLOCKED", payload["state"])
-        self.assertEqual("FACTORY_BMAD_PARTIAL_STATE", payload["reason_code"])
+        self.assertEqual("FACTORY_BMAD_NON_CANONICAL_LAYOUT", payload["reason_code"])
+        self.assertEqual(
+            "FACTORY_BMAD_PARTIAL_STATE", payload["evidence"]["layout_reason_code"]
+        )
 
     def test_preview_is_zero_write_and_exactly_pinned(self):
         root = self.root(); seed_factory(root)

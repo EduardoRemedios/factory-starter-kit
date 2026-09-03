@@ -1,0 +1,5 @@
+VM-007 - PASS (V3 policy regression)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: Architecture, UX, and spec workflows require the exact BMAD 6.10.0 skill/customization/manifest/override profiles and receive only non-authority solution context; all solution-profile policy tests passed.
+Full evidence: MS-05/corrective_full_regression.log in the external evidence root.

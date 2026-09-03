@@ -1,0 +1,5 @@
+VM-003 - PASS (V3 fixture/static)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: The collision contract fixture is intact and its overlapping runtime/test coverage was exercised by passing collision and reconciliation tests; no textual donor precedence or generated-byte transplant was observed.
+Full evidence: MS-05/corrective_full_regression.log in the external evidence root.

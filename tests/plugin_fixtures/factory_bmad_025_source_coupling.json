@@ -31,6 +31,7 @@
   "independent_fixture_candidates": [
     "tests/plugin_fixtures/factory_bmad_025_source_coupling.json",
     "tests/plugin_fixtures/factory_bmad_live_verifier_contract.json",
+    "tests/plugin_fixtures/factory_bmad_solution_context_contract.json",
     "tests/plugin_fixtures/protected_baseline.json"
   ],
   "verification_hygiene_candidates": [

@@ -1,0 +1,185 @@
+# Executable verification contract for RUN_20260902_0725_factory_bmad_025_solution_context_integration.
+# Added by the human-authorized manifest repair (2026-09-03) after the MS-05
+# pre-activation blocker; it maps the approved verification_plan.md checks
+# VM-001 through VM-015 without changing their meaning, ownership, or budgets.
+# execution_mode records the I2-audited pack mode and stays PLANNING_ONLY when
+# a later digest-bound authorization temporarily activates execution.
+# Closeout evidence paths live under artifacts/verification/<run id>/ per the
+# sprint envelope's closeout-evidence budget; full logs stay in the external
+# evidence root named by verification_plan.md.
+
+schema_version: 1
+run_id: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+sprint_id: SPRINT_20260902_001
+execution_mode: PLANNING_ONLY
+
+checks:
+  - id: VM-001
+    tier: V4
+    type: source_revalidation
+    constraint_ids:
+      - C-005
+    description: Exact base HEAD/branch and complete donor path/type/mode/digest/Git-status/worktree-registration inventories match activation pins before writes and after closeout.
+    target: pack/fixtures/integration/donor_contract/input.json
+    expected: All pinned inventories are byte-identical before writes and after closeout.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-001.txt
+
+  - id: VM-002
+    tier: V3
+    type: test
+    constraint_ids:
+      - C-009
+    description: Status contract regression - no prior 0.2.3 verdict is accepted as combined 0.2.5 qualification and the final vocabulary stays bounded and independently scanned.
+    command: ./scripts/factory-python -m unittest discover -s tests -p 'test_*.py' -v
+    expected: Full discovery suite passes with no status overclaim.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-002.txt
+
+  - id: VM-003
+    tier: V3
+    type: fixture
+    constraint_ids:
+      - C-002
+      - C-008
+    description: Collision fixture covers every overlapping runtime/test file and forbids textual donor precedence or generated-byte transplant.
+    target: pack/fixtures/integration/collision_contract/input.json
+    expected: Fixture contract holds for every overlapping path.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-003.txt
+
+  - id: VM-004
+    tier: V3
+    type: test
+    constraint_ids:
+      - C-002
+      - C-008
+    description: Focused regression retains 0.2.5 identity, cache/approval behavior, Factory and Factory-BMAD command passthrough, CLI rollout, and existing nested capability evidence.
+    command: ./scripts/factory-python -m unittest discover -s tests -p 'test_*.py' -v
+    expected: All identity and compatibility regressions pass inside the full discovery suite.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-004.txt
+
+  - id: VM-005
+    tier: V3
+    type: test
+    constraint_ids:
+      - C-003
+      - C-007
+    description: Doctor/Audit public FACTORY_BMAD_NON_CANONICAL_LAYOUT, subordinate layout_reason_code, and enforcement FACTORY_BMAD_ENFORCEMENT_ACTIVE_UNSAFE_LAYOUT coexist for nested, both, partial, ambiguous, and symlink layouts.
+    command: ./scripts/factory-python -m unittest discover -s tests -p 'test_*.py' -v
+    expected: Layout coexistence regressions pass inside the full discovery suite.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-005.txt
+
+  - id: VM-006
+    tier: V3
+    type: test
+    constraint_ids:
+      - C-003
+    description: Negative regression - malformed, unknown, loop, delivery, quick-dev, sprint, code-review, unattended, and TEA-authority paths deny before causal sentinels through both hook paths.
+    command: ./scripts/factory-python -m unittest discover -s tests -p 'test_*.py' -v
+    expected: Every negative path denies before sentinel execution.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-006.txt
+
+  - id: VM-007
+    tier: V3
+    type: test
+    constraint_ids:
+      - C-001
+      - C-004
+    description: Policy regression - architecture, UX, and spec require exact BMAD 6.10.0 skill/customization/manifest/override profiles and receive only non-authority solution context.
+    command: ./scripts/factory-python -m unittest discover -s tests -p 'test_*.py' -v
+    expected: Solution-profile policy regressions pass inside the full discovery suite.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-007.txt
+
+  - id: VM-008
+    tier: V3
+    type: test
+    constraint_ids:
+      - C-001
+      - C-004
+    description: Promotion/preflight regression - multi-file immutable promotion, tamper/traversal/symlink rejection, supersession, claim outcomes, and no Factory authority pass.
+    command: ./scripts/factory-python -m unittest discover -s tests -p 'test_*.py' -v
+    expected: Promotion and preflight regressions pass with no authority escalation.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-008.txt
+
+  - id: VM-009
+    tier: V3
+    type: test
+    constraint_ids:
+      - C-006
+    description: Package regression - exactly one replacement builder updates only two generated roots; ownership, parity, package-current, modes, and topology match source.
+    command: ./scripts/factory-python -m unittest discover -s tests -p 'test_*.py' -v
+    expected: Generated-package regressions pass with exact topology.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-009.txt
+
+  - id: VM-010
+    tier: V4
+    type: manual
+    constraint_ids:
+      - C-005
+    description: No-touch proof - Factory Core/generated Factory, donors, Git/config, dependencies, unrelated docs/tests, pilot roots, and registrations remain byte-equal via postimage comparison against the activation preimages retained in the external evidence root.
+    expected: Every protected postimage is byte-identical to its activation preimage.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-010.txt
+
+  - id: VM-011
+    tier: V3
+    type: test
+    constraint_ids:
+      - C-004
+    description: Isolated index regression - generic legacy marker yields zero recall while the selected promoted marker is positively indexed; no AuditEdge claim is made.
+    command: ./scripts/factory-python -m unittest discover -s tests -p 'test_*.py' -v
+    expected: Index regressions pass with no external-system claim.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-011.txt
+
+  - id: VM-012
+    tier: V3
+    type: test
+    constraint_ids:
+      - C-008
+    description: Gate-composition regression - the 53-test MS-02 authored gate, MS-03 release-fixture/promotion gate, post-builder generated gate, and final full suite cover privacy, no-bytecode, runtime path safety, dependency, cache-integrity, and CLI preflight without premature generated parity.
+    command: ./scripts/factory-python -m unittest discover -s tests -p 'test_*.py' -v
+    expected: The complete discovery suite passes with the single check-only builder invocation.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-012.txt
+
+  - id: VM-013
+    tier: V3
+    type: manual
+    constraint_ids:
+      - C-006
+      - C-010
+    description: Lifecycle audit - authored gates preceded the one replacement builder, generated-package checks ran only after that replacement, the final full regression contains the single check-only builder invocation, and residue is absent, adjudicated from builder receipts and retained logs.
+    expected: Builder invocation counts and ordering match the approved lifecycle exactly.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-013.txt
+
+  - id: VM-014
+    tier: V3
+    type: manual
+    constraint_ids:
+      - C-010
+    description: Coupling audit - actual authored/generated write sets equal fixture allowlists and exact topology/budgets, adjudicated from activation ledgers; unexpected paths halt.
+    expected: Write sets equal the approved allowlists and budgets exactly.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-014.txt
+
+  - id: VM-015
+    tier: V3
+    type: command
+    constraint_ids:
+      - C-001
+      - C-009
+      - C-010
+    description: Governance checks - knowledge lint passes, with git diff check, Stage F-I2 lints, pack-lint, SIMPLE-CODE-GATE, status ceiling, and the explicit MS-06/AuditEdge/Git/rollout exclusions recorded in the same evidence set.
+    command: bash scripts/knowledge_lint.sh
+    expected: knowledge_lint reports PASS and the companion governance checks all pass.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260902_0725_factory_bmad_025_solution_context_integration/VM-015.txt

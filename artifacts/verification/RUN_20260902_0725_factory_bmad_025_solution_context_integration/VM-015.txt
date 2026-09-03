@@ -1,0 +1,5 @@
+VM-015 - PASS (V3 governance audit)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: knowledge_lint PASS (59 files), git diff --check clean, stage-lint F/G/H/I/J/I2 all PASS, pack-lint PASS (35 files, 0 errors, 0 warnings). SIMPLE-CODE-GATE satisfied: the single change is the smallest behavior-preserving assertion reconciliation. MS-06, BMAD invocation, AuditEdge, Git actions, publication, pilot, and rollout remained excluded.
+Full evidence: MS-05/corrective_governance_checks.log in the external evidence root.

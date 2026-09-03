@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "authored_modified_allowlist": [
+    "docs/CHANGELOG.md",
+    "docs/PROJECT_STATE.md",
+    "docs/ROADMAP.md",
+    "docs/adapters/bmad/BMAD_POLICY.md",
+    "docs/adapters/bmad/FACTORY_BMAD_QUICK_START.md",
+    "plugin-src/factory-bmad/project-adapter/BMAD_POLICY.md",
+    "plugin-src/factory-bmad/project-adapter/RAW_BRIEF_TEMPLATE.md",
+    "plugin-src/factory-bmad/project-adapter/factory_project_preflight",
+    "plugin-src/factory-bmad/runtime/factory_bmad.py",
+    "plugin-src/factory-bmad/runtime/factory_bmad_policy.py",
+    "plugin-src/factory-bmad/skills/audit/SKILL.md",
+    "plugin-src/factory-bmad/skills/promote/SKILL.md",
+    "tests/plugin_fixtures/factory_bmad_025_source_coupling.json",
+    "tests/test_factory_bmad_activation.py",
+    "tests/test_factory_bmad_capabilities.py",
+    "tests/test_factory_bmad_enforcement.py",
+    "tests/test_factory_bmad_preflight.py",
+    "tests/test_factory_bmad_promotion.py",
+    "tests/test_factory_bmad_reconciliation.py",
+    "tests/test_factory_bmad_support.py"
+  ],
+  "authored_created_allowlist": [
+    "tests/plugin_fixtures/factory_bmad_solution_context_contract.json"
+  ],
+  "generated_roots": ["plugins/factory-bmad", "plugins/factory-bmad-claude"],
+  "builder": "scripts/build_factory_bmad_plugins.py",
+  "protected_paths": [
+    ".claude-plugin/marketplace.json",
+    "plugin-src/factory",
+    "plugins/factory",
+    "plugins/factory-claude",
+    "plugin-src/factory-bmad/manifest.json",
+    "requirements.txt",
+    "scripts/build_factory_bmad_plugins.py",
+    "scripts/factory-python"
+  ],
+  "protected_external_roots": [
+    "/Users/eduardodosremedios/factory-starter-kit",
+    "/Users/eduardodosremedios/factory-starter-kit-0.2.3-uplift",
+    "/Users/eduardodosremedios/factory-bmad-0.2.2-repair",
+    "/Users/eduardodosremedios/factory-pilot-candidates/factory-bmad-0.2.2",
+    "/Users/eduardodosremedios/factory-pilot-candidates/factory-bmad-0.2.3"
+  ]
+}

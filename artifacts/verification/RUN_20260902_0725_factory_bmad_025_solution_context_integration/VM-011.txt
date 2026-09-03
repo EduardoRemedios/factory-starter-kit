@@ -1,0 +1,5 @@
+VM-011 - PASS (V3 isolated index regression)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: The generic legacy marker yields zero recall while the selected promoted marker is positively indexed; all isolated index tests passed and no AuditEdge claim is made.
+Full evidence: MS-05/corrective_full_regression.log in the external evidence root.

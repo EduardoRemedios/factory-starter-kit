@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import csv
 import json
 import os
 import re
@@ -11,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 
-POLICY_VERSION = "1.0.0"
+POLICY_VERSION = "1.1.0"
 SUPPORTED_BMAD_VERSION = "6.10.0"
 SUPPORTED_TEA_VERSION = "v1.21.1"
 
@@ -78,7 +79,7 @@ SUPPORTED_TEA_SKILLS = frozenset({
     "bmad-testarch-trace",
 })
 
-ALLOWED_UPSTREAM_WORKFLOWS = frozenset({
+DISCOVERY_AUTHORING_WORKFLOWS = frozenset({
     "bmad-brainstorming",
     "bmad-create-prd",
     "bmad-document-project",
@@ -91,9 +92,36 @@ ALLOWED_UPSTREAM_WORKFLOWS = frozenset({
     "bmad-prfaq",
     "bmad-product-brief",
     "bmad-technical-research",
-    "bmad-ux",
     "bmad-validate-prd",
 })
+
+SOLUTION_CONTEXT_AUTHORING_WORKFLOWS = frozenset({
+    "bmad-architecture",
+    "bmad-spec",
+    "bmad-ux",
+})
+
+ALLOWED_UPSTREAM_WORKFLOWS = DISCOVERY_AUTHORING_WORKFLOWS | SOLUTION_CONTEXT_AUTHORING_WORKFLOWS
+
+# These receipts pin only the BMAD 6.10.0 capability bytes reviewed in MS-01.
+# Future versions or changed customization must fail closed and be requalified.
+SOLUTION_CONTEXT_CAPABILITY_PROFILES = {
+    "bmad-architecture": {
+        "logical_path": "bmm/3-solutioning/bmad-architecture/SKILL.md",
+        "skill_sha256": "a56c7a0abc45e1dba719ae5e66b7169a1098b403e7fd69b30c19f16c12cddc6a",
+        "customize_sha256": "137b418e1bb940411a6e77460a7c74af66a6ad732edcc7c7363746995b89e65d",
+    },
+    "bmad-spec": {
+        "logical_path": "core/bmad-spec/SKILL.md",
+        "skill_sha256": "a2baaf6b6bf000403a3b309b3dae48d328ece922e726541924585afbaf131b16",
+        "customize_sha256": "b0181ba5d4038feb779a7a082a265df753220f868b66b5adb0fb2ed18401c763",
+    },
+    "bmad-ux": {
+        "logical_path": "bmm/2-plan-workflows/bmad-ux/SKILL.md",
+        "skill_sha256": "250d2794f2b8e316bb1ba4666f0728970afd8a5d2707ac1cceac6c21e63730b6",
+        "customize_sha256": "c6f94676004a24eed7ff1d546d5b7e7b3889b84d9bab6bbb56bc297d6eabaeb8",
+    },
+}
 
 BMAD_MANIFESTS = (
     Path("_bmad/_config/manifest.yaml"),
@@ -108,6 +136,15 @@ DOWNSTREAM_PATH_TERMS = (
     "architecture", "epic", "story", "sprint", "implementation", "code-review",
     "correct-course", "retrospective", "dev-auto", "dev-story", "quick-dev", "spec",
 )
+LEGACY_EVIDENCE_ROOT = Path("docs/adapters/bmad/legacy-evidence")
+LAYOUT_SCAN_IGNORES = frozenset({
+    ".git", ".hg", ".svn", ".venv", "venv", "node_modules", "__pycache__",
+})
+LINK_SCAN_SUFFIXES = frozenset({
+    ".md", ".txt", ".json", ".yaml", ".yml", ".toml", ".py", ".sh",
+    ".js", ".jsx", ".ts", ".tsx",
+})
+MAX_LINK_SCAN_BYTES = 1024 * 1024
 
 FACTORY_BOUND_UPSTREAM_CONTEXT = (
     "Factory-bound BMAD session: remain at product-discovery level. "
@@ -115,6 +152,16 @@ FACTORY_BOUND_UPSTREAM_CONTEXT = (
     "advanced elicitation, architecture, specs, epics or stories, sprint planning, "
     "implementation, QA automation, or code review. Treat all BMAD output as draft "
     "evidence; Factory remains the sole downstream SDLC authority."
+)
+
+FACTORY_BOUND_SOLUTION_CONTEXT = (
+    "Factory-bound BMAD solution-context session: produce mutable candidate authoring only beneath "
+    "_bmad-output. Do not use external or design handoffs, activation/completion callbacks, or invoke "
+    "nested BMAD skills. Architecture, UX, and specs remain proposed SOLUTION_CONTEXT / EVIDENCE_ONLY; "
+    "BMAD labels such as canonical, binding, final, implementation-ready, or release approved have no "
+    "Factory authority. Factory independently hardens intent and scope, plans implementation and "
+    "verification, and requires exact-pack human Go before execution. This invocation gate is not a "
+    "filesystem sandbox; stop on any write outside the BMAD draft workspace."
 )
 
 
@@ -167,8 +214,12 @@ def policy_classify(value: object) -> dict[str, Any]:
             "reason_code": "FACTORY_BMAD_HOOK_INPUT_INVALID",
             "policy_version": POLICY_VERSION,
         }
-    if name in ALLOWED_UPSTREAM_WORKFLOWS:
-        classification = "ALLOWED_UPSTREAM"
+    if name in DISCOVERY_AUTHORING_WORKFLOWS:
+        classification = "ALLOWED_DISCOVERY_AUTHORING"
+        allowed = True
+        code = "FACTORY_BMAD_WORKFLOW_ALLOWED"
+    elif name in SOLUTION_CONTEXT_AUTHORING_WORKFLOWS:
+        classification = "ALLOWED_SOLUTION_CONTEXT_AUTHORING"
         allowed = True
         code = "FACTORY_BMAD_WORKFLOW_ALLOWED"
     elif name in SUPPORTED_TEA_SKILLS:
@@ -205,8 +256,120 @@ def _factory_present(root: Path) -> bool:
     return (root / "docs/Factory/ARCHITECTURE.md").is_file() and (root / "scripts/factoryctl").is_file()
 
 
+def _path_is_within(relative: Path, prefix: Path) -> bool:
+    return relative.parts[: len(prefix.parts)] == prefix.parts
+
+
+def _manifest_candidates(installation_root: Path) -> list[Path]:
+    return [
+        installation_root / relative
+        for relative in BMAD_MANIFESTS
+        if (installation_root / relative).is_file() or (installation_root / relative).is_symlink()
+    ]
+
+
+def _nested_bmad_roots(root: Path) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+    for current_value, directory_names, _ in os.walk(root, topdown=True, followlinks=False):
+        current = Path(current_value)
+        kept: list[str] = []
+        for name in sorted(directory_names):
+            child = current / name
+            relative = child.relative_to(root)
+            if name in LAYOUT_SCAN_IGNORES or _path_is_within(relative, LEGACY_EVIDENCE_ROOT):
+                continue
+            if name != "_bmad":
+                kept.append(name)
+                continue
+            if relative == Path("_bmad"):
+                continue
+            installation_root = child.parent
+            manifests = _manifest_candidates(installation_root)
+            records.append({
+                "installation_root": installation_root.relative_to(root).as_posix(),
+                "active_root": relative.as_posix(),
+                "manifest_paths": [path.relative_to(root).as_posix() for path in manifests],
+                "symlink": child.is_symlink() or any(path.is_symlink() for path in manifests),
+            })
+        directory_names[:] = kept
+    return sorted(records, key=lambda record: record["active_root"])
+
+
+def assess_bmad_layout(root: Path) -> dict[str, Any]:
+    root = root.resolve()
+    canonical_root = root / "_bmad"
+    canonical_marker = canonical_root.exists() or canonical_root.is_symlink()
+    canonical_manifests = _manifest_candidates(root)
+    canonical_symlink = canonical_root.is_symlink() or any(path.is_symlink() for path in canonical_manifests)
+    nested = _nested_bmad_roots(root)
+    nested_markers = non_canonical_bmad_layouts(root)
+    nested_installation_roots = {record["installation_root"] for record in nested}
+    supplemental_markers = [record for record in nested_markers if record["path"] not in nested_installation_roots]
+    archive = root / LEGACY_EVIDENCE_ROOT
+    archive_present = archive.exists() or archive.is_symlink()
+    nested_complete = [record for record in nested if len(record["manifest_paths"]) == 1 and not record["symlink"]]
+    nested_partial = [record for record in nested if len(record["manifest_paths"]) != 1]
+    root_output_only = (root / "_bmad-output").exists() and not canonical_marker and not nested
+
+    if archive.is_symlink():
+        state = "legacy_archive_symlink"
+        reason = "FACTORY_BMAD_LEGACY_ARCHIVE_SYMLINK"
+        safe = False
+    elif canonical_symlink or any(record["symlink"] for record in nested):
+        state = "active_root_symlink"
+        reason = "FACTORY_BMAD_ACTIVE_ROOT_SYMLINK"
+        safe = False
+    elif (
+        len(canonical_manifests) > 1
+        or len(nested_complete) > 1
+        or any(len(record["manifest_paths"]) > 1 for record in nested)
+    ):
+        state = "ambiguous"
+        reason = "FACTORY_BMAD_MANIFEST_AMBIGUOUS"
+        safe = False
+    elif canonical_marker and len(canonical_manifests) == 1 and (nested or supplemental_markers):
+        state = "canonical_and_nested"
+        reason = "FACTORY_BMAD_MULTIPLE_ACTIVE_ROOTS"
+        safe = False
+    elif nested_partial or supplemental_markers or (canonical_marker and len(canonical_manifests) != 1) or root_output_only:
+        state = "partial"
+        reason = "FACTORY_BMAD_PARTIAL_STATE"
+        safe = False
+    elif len(nested_complete) == 1:
+        state = "nested_active"
+        reason = "FACTORY_BMAD_NESTED_LAYOUT"
+        safe = False
+    elif canonical_marker and len(canonical_manifests) == 1:
+        state = "canonical_root"
+        reason = "FACTORY_BMAD_LAYOUT_CANONICAL"
+        safe = True
+    elif archive_present:
+        state = "legacy_archive_outside_index"
+        reason = "FACTORY_BMAD_LEGACY_ARCHIVE_INERT"
+        safe = True
+    else:
+        state = "absent"
+        reason = "FACTORY_BMAD_LAYOUT_ABSENT"
+        safe = True
+
+    return {
+        "schema_version": 1,
+        "state": state,
+        "reason_code": reason,
+        "safe": safe,
+        "canonical_active_root": "_bmad",
+        "canonical_manifest": canonical_manifests[0].relative_to(root).as_posix() if len(canonical_manifests) == 1 else None,
+        "canonical_manifest_paths": [path.relative_to(root).as_posix() for path in canonical_manifests],
+        "nested_installations": nested,
+        "nested_marker_layouts": nested_markers,
+        "legacy_evidence_root": LEGACY_EVIDENCE_ROOT.as_posix(),
+        "legacy_archive_present": archive_present,
+        "active_marker_present": canonical_marker or bool(nested) or bool(supplemental_markers) or root_output_only,
+    }
+
+
 def _bmad_marker_present(root: Path) -> bool:
-    if (root / "_bmad").exists() or (root / "_bmad-output").exists():
+    if assess_bmad_layout(root)["active_marker_present"]:
         return True
     for directory in (root / ".claude/skills", root / ".claude/commands"):
         if directory.is_dir() and any("bmad-" in child.name.lower() for child in directory.iterdir()):
@@ -219,14 +382,48 @@ def _manifest_path(root: Path) -> tuple[Path | None, bool]:
     return (found[0] if len(found) == 1 else None, len(found) > 1)
 
 
+def non_canonical_bmad_layouts(root: Path) -> list[dict[str, Any]]:
+    root = root.resolve()
+    if not root.is_dir():
+        return []
+    layouts: list[dict[str, Any]] = []
+    for child in sorted(root.iterdir(), key=lambda item: item.name):
+        if child.name in LAYOUT_SCAN_IGNORES or child.is_symlink() or not child.is_dir():
+            continue
+        prefix = child.relative_to(root).as_posix()
+        manifests = [
+            (child / relative).relative_to(root).as_posix()
+            for relative in BMAD_MANIFESTS
+            if (child / relative).is_file()
+        ]
+        markers: list[str] = []
+        for marker in (Path("_bmad"), Path("_bmad-output")):
+            if (child / marker).exists():
+                markers.append((child / marker).relative_to(root).as_posix())
+        for marker in (Path(".claude/skills"), Path(".claude/commands")):
+            directory = child / marker
+            if directory.is_dir() and any("bmad-" in item.name.lower() for item in directory.iterdir()):
+                markers.append(directory.relative_to(root).as_posix())
+        if manifests or markers:
+            layouts.append({"path": prefix, "manifests": manifests, "markers": sorted(markers)})
+    return layouts
+
+
 def enforcement_activation(root: Path) -> dict[str, Any]:
     repository = git_root(root)
     if repository is None:
         return {"active": False, "reason_code": "FACTORY_BMAD_ENFORCEMENT_INACTIVE_NO_GIT"}
     if not _factory_present(repository):
         return {"active": False, "reason_code": "FACTORY_BMAD_ENFORCEMENT_INACTIVE_NO_FACTORY"}
-    if not _bmad_marker_present(repository):
+    layout = assess_bmad_layout(repository)
+    if not layout["active_marker_present"]:
         return {"active": False, "reason_code": "FACTORY_BMAD_ENFORCEMENT_INACTIVE_NO_BMAD"}
+    if not layout["safe"] or layout["state"] != "canonical_root":
+        return {
+            "active": True,
+            "reason_code": "FACTORY_BMAD_ENFORCEMENT_ACTIVE_UNSAFE_LAYOUT",
+            "layout_reason_code": layout["reason_code"],
+        }
     manifest, ambiguous = _manifest_path(repository)
     if ambiguous or manifest is None:
         return {"active": True, "reason_code": "FACTORY_BMAD_ENFORCEMENT_ACTIVE_PARTIAL"}
@@ -248,12 +445,81 @@ def _factory_or_companion_command(value: object) -> bool:
     return bool(re.fullmatch(r"factory(?:-bmad)?:[a-z0-9][a-z0-9-]*", token))
 
 
-def _upstream_context(event: str) -> dict[str, Any]:
+def _upstream_context(event: str, context: str = FACTORY_BOUND_UPSTREAM_CONTEXT) -> dict[str, Any]:
     return {
         "hookSpecificOutput": {
             "hookEventName": event,
-            "additionalContext": FACTORY_BOUND_UPSTREAM_CONTEXT,
+            "additionalContext": context,
         }
+    }
+
+
+def _regular_file(root: Path, relative: Path) -> Path | None:
+    cursor = root
+    for part in relative.parts:
+        cursor /= part
+        if cursor.is_symlink():
+            return None
+    return cursor if cursor.is_file() else None
+
+
+def _inert_override(path: Path) -> bool:
+    try:
+        return all(not line or line.startswith("#") for line in (item.strip() for item in path.read_text(encoding="utf-8").splitlines()))
+    except (OSError, UnicodeError):
+        return False
+
+
+def solution_context_authorization(root: Path, name: str) -> dict[str, Any]:
+    profile = SOLUTION_CONTEXT_CAPABILITY_PROFILES.get(name)
+    if profile is None:
+        return {"allowed": False, "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_MISSING", "name": name}
+    root = root.resolve()
+    layout = assess_bmad_layout(root)
+    if not layout["safe"] or layout["state"] != "canonical_root":
+        return {
+            "allowed": False,
+            "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_STATE_INVALID",
+            "layout_reason_code": layout["reason_code"],
+            "name": name,
+        }
+    manifest, ambiguous = _manifest_path(root)
+    if ambiguous or manifest is None or manifest.is_symlink():
+        return {"allowed": False, "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_STATE_INVALID", "name": name}
+    try:
+        installation_version, modules = parse_manifest(manifest)
+    except (OSError, UnicodeError, ValueError):
+        return {"allowed": False, "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_STATE_INVALID", "name": name}
+    if installation_version != SUPPORTED_BMAD_VERSION or any(modules.get(module) != SUPPORTED_BMAD_VERSION for module in ("core", "bmm")):
+        return {"allowed": False, "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_VERSION_MISMATCH", "name": name}
+
+    skill_root = Path(".claude/skills") / name
+    skill = _regular_file(root, skill_root / "SKILL.md")
+    customize = _regular_file(root, skill_root / "customize.toml")
+    files_manifest = _regular_file(root, Path("_bmad/_config/files-manifest.csv"))
+    team_override = _regular_file(root, Path("_bmad/custom/config.toml"))
+    user_override = _regular_file(root, Path("_bmad/custom/config.user.toml"))
+    if None in {skill, customize, files_manifest, team_override, user_override}:
+        return {"allowed": False, "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_STATE_INVALID", "name": name}
+    if digest_file(skill) != profile["skill_sha256"] or digest_file(customize) != profile["customize_sha256"]:
+        return {"allowed": False, "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_DIGEST_MISMATCH", "name": name}
+    try:
+        with files_manifest.open(newline="", encoding="utf-8") as stream:
+            matches = [row for row in csv.DictReader(stream) if row.get("path") == profile["logical_path"]]
+    except (OSError, UnicodeError, csv.Error):
+        return {"allowed": False, "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_STATE_INVALID", "name": name}
+    if len(matches) != 1 or matches[0].get("hash") != profile["skill_sha256"]:
+        return {"allowed": False, "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_MANIFEST_MISMATCH", "name": name}
+    if not _inert_override(team_override) or not _inert_override(user_override):
+        return {"allowed": False, "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE", "name": name}
+    return {
+        "allowed": True,
+        "reason_code": "FACTORY_BMAD_SOLUTION_PROFILE_ALLOWED",
+        "name": name,
+        "policy_version": POLICY_VERSION,
+        "bmad_version": SUPPORTED_BMAD_VERSION,
+        "skill_sha256": profile["skill_sha256"],
+        "customize_sha256": profile["customize_sha256"],
     }
 
 
@@ -289,13 +555,23 @@ def hook_decision(root: Path, payload: dict[str, Any]) -> dict[str, Any] | None:
         return None
     if malformed:
         code = "FACTORY_BMAD_HOOK_INPUT_INVALID"
-    elif activation["reason_code"] == "FACTORY_BMAD_ENFORCEMENT_ACTIVE_PARTIAL":
+    elif activation["reason_code"] in {
+        "FACTORY_BMAD_ENFORCEMENT_ACTIVE_PARTIAL",
+        "FACTORY_BMAD_ENFORCEMENT_ACTIVE_UNSAFE_LAYOUT",
+    }:
         code = "FACTORY_BMAD_ENFORCEMENT_STATE_INVALID"
     else:
         verdict = policy_classify(name)
         if verdict["allowed"]:
-            return _upstream_context(event)
-        code = verdict["reason_code"]
+            if name in SOLUTION_CONTEXT_AUTHORING_WORKFLOWS:
+                authorization = solution_context_authorization(root, name)
+                if authorization["allowed"]:
+                    return _upstream_context(event, FACTORY_BOUND_SOLUTION_CONTEXT)
+                code = authorization["reason_code"]
+            else:
+                return _upstream_context(event)
+        else:
+            code = verdict["reason_code"]
     reason = _deny_message(code, name)
     if event == "UserPromptExpansion":
         return {"decision": "block", "reason": reason}
@@ -352,6 +628,20 @@ def _path_record(root: Path, path: Path, name: str, classification: str) -> dict
     }
 
 
+def classify_modules(modules: dict[str, str]) -> dict[str, str]:
+    classifications: dict[str, str] = {}
+    for name in sorted(modules):
+        if name == "bmad-loop":
+            classifications[name] = "PROHIBITED_BLOCKER"
+        elif name == "tea":
+            classifications[name] = "OPTIONAL_STAGE_F_EVIDENCE_ONLY"
+        elif name in {"core", "bmm"}:
+            classifications[name] = "POLICY_COVERED"
+        else:
+            classifications[name] = "UNRECOGNIZED_BLOCKING"
+    return classifications
+
+
 def _named_capabilities(root: Path, directory: Path, kind: str) -> list[dict[str, str]]:
     if not directory.is_dir() or directory.is_symlink():
         return []
@@ -380,19 +670,20 @@ def _named_capabilities(root: Path, directory: Path, kind: str) -> list[dict[str
     return records
 
 
-def capability_inventory(root: Path) -> dict[str, list[dict[str, str]]]:
+def capability_inventory_for(root: Path, install_root: Path) -> dict[str, list[dict[str, str]]]:
     root = root.resolve()
+    install_root = install_root.resolve()
     capabilities = {
-        "skills": _named_capabilities(root, root / ".claude/skills", "skills"),
-        "commands": _named_capabilities(root, root / ".claude/commands", "commands"),
-        "agents": _named_capabilities(root, root / ".claude/agents", "agents"),
-        "hooks": _named_capabilities(root, root / ".claude/hooks", "hooks"),
+        "skills": _named_capabilities(root, install_root / ".claude/skills", "skills"),
+        "commands": _named_capabilities(root, install_root / ".claude/commands", "commands"),
+        "agents": _named_capabilities(root, install_root / ".claude/agents", "agents"),
+        "hooks": _named_capabilities(root, install_root / ".claude/hooks", "hooks"),
         "configuration": [],
     }
-    manifest, _ = _manifest_path(root)
+    manifest, _ = _manifest_path(install_root)
     if manifest is not None:
         capabilities["configuration"].append(_path_record(root, manifest, "bmad-manifest", "VERSION_EVIDENCE"))
-    settings = root / ".claude/settings.json"
+    settings = install_root / ".claude/settings.json"
     if settings.is_file() and not settings.is_symlink():
         try:
             text = settings.read_text(encoding="utf-8") if settings.stat().st_size <= 1024 * 1024 else ""
@@ -403,8 +694,155 @@ def capability_inventory(root: Path) -> dict[str, list[dict[str, str]]]:
     return capabilities
 
 
+def capability_inventory(root: Path) -> dict[str, list[dict[str, str]]]:
+    root = root.resolve()
+    return capability_inventory_for(root, root)
+
+
+def non_canonical_bmad_evidence(root: Path) -> list[dict[str, Any]]:
+    root = root.resolve()
+    evidence: list[dict[str, Any]] = []
+    for layout in non_canonical_bmad_layouts(root):
+        install_root = root / layout["path"]
+        entry: dict[str, Any] = {
+            **layout,
+            "installation_version": None,
+            "modules": {},
+            "module_classifications": {},
+            "capabilities": capability_inventory_for(root, install_root),
+        }
+        if len(layout["manifests"]) == 1:
+            try:
+                installation_version, modules = parse_manifest(root / layout["manifests"][0])
+            except (OSError, UnicodeError, ValueError):
+                entry["manifest_status"] = "UNREADABLE"
+            else:
+                entry["installation_version"] = installation_version
+                entry["modules"] = modules
+                entry["module_classifications"] = classify_modules(modules)
+        elif len(layout["manifests"]) > 1:
+            entry["manifest_status"] = "AMBIGUOUS"
+        else:
+            entry["manifest_status"] = "MISSING"
+        evidence.append(entry)
+    return evidence
+
+
+def _inventory_tree(root: Path, directory: Path) -> list[dict[str, str]]:
+    if directory.is_symlink():
+        relative = directory.relative_to(root).as_posix()
+        return [{
+            "path": relative,
+            "kind": "symlink",
+            "sha256": digest_bytes(f"symlink:{os.readlink(directory)}".encode()),
+        }]
+    if not directory.is_dir():
+        return []
+    records: list[dict[str, str]] = []
+    for current_value, directory_names, file_names in os.walk(directory, topdown=True, followlinks=False):
+        current = Path(current_value)
+        kept: list[str] = []
+        for name in sorted(directory_names):
+            path = current / name
+            relative = path.relative_to(root).as_posix()
+            if path.is_symlink():
+                records.append({
+                    "path": relative,
+                    "kind": "symlink",
+                    "sha256": digest_bytes(f"symlink:{os.readlink(path)}".encode()),
+                })
+            else:
+                records.append({
+                    "path": relative,
+                    "kind": "directory",
+                    "sha256": digest_bytes(b"directory"),
+                })
+                kept.append(name)
+        directory_names[:] = kept
+        for name in sorted(file_names):
+            path = current / name
+            relative = path.relative_to(root).as_posix()
+            if path.is_symlink():
+                records.append({
+                    "path": relative,
+                    "kind": "symlink",
+                    "sha256": digest_bytes(f"symlink:{os.readlink(path)}".encode()),
+                })
+            elif path.is_file():
+                records.append({"path": relative, "kind": "file", "sha256": digest_file(path)})
+    return sorted(records, key=lambda record: record["path"])
+
+
+def _link_impacts(root: Path, source_relative: Path) -> list[dict[str, Any]]:
+    source_value = source_relative.as_posix()
+    reference_pattern = re.compile(
+        rf"(?<![A-Za-z0-9_.-])/?{re.escape(source_value)}(?:/|(?=$|[\s)`'\"#]))"
+    )
+    impacts: list[dict[str, Any]] = []
+    for current_value, directory_names, file_names in os.walk(root, topdown=True, followlinks=False):
+        current = Path(current_value)
+        kept: list[str] = []
+        for name in sorted(directory_names):
+            child = current / name
+            relative = child.relative_to(root)
+            if (
+                name in LAYOUT_SCAN_IGNORES
+                or _path_is_within(relative, source_relative)
+                or _path_is_within(relative, LEGACY_EVIDENCE_ROOT)
+                or child.is_symlink()
+            ):
+                continue
+            kept.append(name)
+        directory_names[:] = kept
+        for name in sorted(file_names):
+            path = current / name
+            relative = path.relative_to(root)
+            if path.is_symlink() or path.suffix.lower() not in LINK_SCAN_SUFFIXES:
+                continue
+            try:
+                if path.stat().st_size > MAX_LINK_SCAN_BYTES:
+                    continue
+                text = path.read_text(encoding="utf-8")
+            except (OSError, UnicodeError):
+                continue
+            source_sha = digest_file(path)
+            for line_number, line in enumerate(text.splitlines(), start=1):
+                if reference_pattern.search(line):
+                    impacts.append({
+                        "path": relative.as_posix(),
+                        "line": line_number,
+                        "source_sha256": source_sha,
+                        "reference_sha256": digest_bytes(line.encode()),
+                    })
+    return impacts
+
+
+def _remediation_previews(root: Path, layout: dict[str, Any]) -> list[dict[str, Any]]:
+    previews: list[dict[str, Any]] = []
+    installation_roots = sorted({record["installation_root"] for record in layout["nested_installations"]})
+    for source_value in installation_roots:
+        source_relative = Path(source_value)
+        source = root / source_relative
+        target_relative = LEGACY_EVIDENCE_ROOT / source_relative
+        target = root / target_relative
+        core = {
+            "schema_version": 1,
+            "operation": "RELOCATION_PREVIEW_ONLY",
+            "authority": "INERT_EVIDENCE_ONLY",
+            "source": source_relative.as_posix(),
+            "target": target_relative.as_posix(),
+            "target_collision": target.exists() or target.is_symlink(),
+            "source_inventory": _inventory_tree(root, source),
+            "link_impacts": _link_impacts(root, source_relative),
+            "mutations": [],
+        }
+        previews.append({**core, "plan_sha256": digest_bytes(canonical(core))})
+    return previews
+
+
 def reconcile_brownfield(root: Path) -> dict[str, Any]:
     root = root.resolve()
+    layout = assess_bmad_layout(root)
     output = root / "_bmad-output"
     artifacts: list[dict[str, str]] = []
     if output.is_dir() and not output.is_symlink():
@@ -425,6 +863,9 @@ def reconcile_brownfield(root: Path) -> dict[str, Any]:
         "policy_version": POLICY_VERSION,
         "authority": "FACTORY_ONLY",
         "brownfield_baseline": "EXISTING_CODE_PRESERVED",
+        "layout": layout,
+        "legacy_archive_inventory": _inventory_tree(root, root / LEGACY_EVIDENCE_ROOT),
+        "remediation_previews": _remediation_previews(root, layout),
         "artifacts": artifacts,
     }
     return {**core, "aggregate_sha256": digest_bytes(canonical(core))}
@@ -432,9 +873,11 @@ def reconcile_brownfield(root: Path) -> dict[str, Any]:
 
 def capability_audit(root: Path, harness: str) -> dict[str, Any]:
     root = root.resolve()
+    layout = assess_bmad_layout(root)
     manifest, ambiguous = _manifest_path(root)
     capabilities = capability_inventory(root)
     reconciliation = reconcile_brownfield(root)
+    non_canonical = non_canonical_bmad_evidence(root)
     base = {
         "harness": harness,
         "policy_version": POLICY_VERSION,
@@ -442,26 +885,27 @@ def capability_audit(root: Path, harness: str) -> dict[str, Any]:
         "modules": {},
         "module_classifications": {},
         "capabilities": capabilities,
+        "layout": layout,
+        "layout_reason_code": layout["reason_code"],
         "reconciliation": reconciliation,
+        "non_canonical_bmad_layouts": non_canonical,
         "uncovered_capabilities": [],
         "missing_capabilities": [],
     }
-    if not _factory_present(root) or manifest is None or ambiguous:
+    if not layout["safe"]:
+        return result(
+            "BLOCKED",
+            "FACTORY_BMAD_NON_CANONICAL_LAYOUT",
+            "review_zero_write_remediation_preview",
+            **base,
+        )
+    if not _factory_present(root) or layout["state"] != "canonical_root" or manifest is None or ambiguous:
         return result("BLOCKED", "FACTORY_BMAD_AUDIT_PREREQUISITES_MISSING", "run_factory_bmad_doctor", **base)
     try:
         installation_version, modules = parse_manifest(manifest)
     except (OSError, UnicodeError, ValueError):
         return result("BLOCKED", "FACTORY_BMAD_MANIFEST_UNREADABLE", "repair_bmad_manifest_with_human_review", **base)
-    classifications: dict[str, str] = {}
-    for name in sorted(modules):
-        if name == "bmad-loop":
-            classifications[name] = "PROHIBITED_BLOCKER"
-        elif name == "tea":
-            classifications[name] = "OPTIONAL_STAGE_F_EVIDENCE_ONLY"
-        elif name in {"core", "bmm"}:
-            classifications[name] = "POLICY_COVERED"
-        else:
-            classifications[name] = "UNRECOGNIZED_BLOCKING"
+    classifications = classify_modules(modules)
     base.update({"installation_version": installation_version, "modules": modules, "module_classifications": classifications})
     if "bmad-loop" in modules:
         return result("BLOCKED", "FACTORY_BMAD_LOOP_INSTALLED", "human_remove_or_isolate_bmad_loop_before_intake", **base)
@@ -490,6 +934,7 @@ def capability_audit(root: Path, harness: str) -> dict[str, Any]:
         "policy_version": POLICY_VERSION,
         "installation_version": installation_version,
         "modules": modules,
+        "layout": layout,
         "capabilities": capabilities,
         "missing_capabilities": missing,
         "uncovered_capabilities": uncovered,

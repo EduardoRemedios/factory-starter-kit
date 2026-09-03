@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "collisions": {
+    "plugin-src/factory-bmad/runtime/factory_bmad.py": ["plugin-0.2.5-identity", "multi-file-promotion"],
+    "plugin-src/factory-bmad/runtime/factory_bmad_policy.py": ["0.2.5-command-and-layout-guards", "solution-context-policy"],
+    "tests/test_factory_bmad_activation.py": ["public-layout-compatibility", "unsafe-layout-activation"],
+    "tests/test_factory_bmad_capabilities.py": ["nested-capability-evidence", "granular-layout-cases"],
+    "tests/test_factory_bmad_enforcement.py": ["factory-command-passthrough", "solution-profile-and-permanent-denial"]
+  }
+}

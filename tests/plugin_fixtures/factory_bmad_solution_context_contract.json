@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "contract": "FACTORY_BMAD_SOLUTION_CONTEXT",
+  "policy_version": "1.1.0",
+  "snapshot_schema_version": 2,
+  "evidence_type": "SOLUTION_CONTEXT",
+  "authority": "EVIDENCE_ONLY",
+  "semantic_non_authority_phrases": [
+    "canonical",
+    "binding",
+    "final",
+    "implementation-ready",
+    "release approved"
+  ],
+  "must_deny": [
+    "bmad-loop",
+    "bmad-loop-sweep",
+    "bmad-quick-dev",
+    "bmad-dev-auto",
+    "bmad-dev-story",
+    "bmad-sprint-planning",
+    "bmad-sprint-status",
+    "bmad-code-review",
+    "bmad-tea-atdd",
+    "bmad-tea-ci",
+    "bmad-future-delivery"
+  ],
+  "allowed_claim_outcomes": [
+    "ACCEPTED",
+    "REJECTED",
+    "MODIFIED",
+    "DEFERRED",
+    "CONFLICT"
+  ],
+  "required_manifest_fields": [
+    "schema_version",
+    "snapshot_id",
+    "evidence_type",
+    "authority",
+    "policy_version",
+    "artifacts",
+    "review",
+    "provenance",
+    "aggregate_sha256"
+  ],
+  "valid_claim_receipt": {
+    "schema_version": 1,
+    "receipt_type": "BMAD_CLAIM_DISPOSITIONS",
+    "snapshot": {
+      "snapshot_id": "fixture-v1",
+      "aggregate_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "path": "docs/upstream/bmad/fixture-v1"
+    },
+    "claims": [
+      {
+        "claim_id": "C-1",
+        "outcome": "ACCEPTED",
+        "rationale": "accepted rationale",
+        "intent_reference": "INTENT-1",
+        "reviewer": "Human Reviewer",
+        "conflict_or_supersession": "NONE"
+      },
+      {
+        "claim_id": "C-2",
+        "outcome": "REJECTED",
+        "rationale": "rejected rationale",
+        "intent_reference": "INTENT-2",
+        "reviewer": "Human Reviewer",
+        "conflict_or_supersession": "NONE"
+      },
+      {
+        "claim_id": "C-3",
+        "outcome": "MODIFIED",
+        "rationale": "modified rationale",
+        "intent_reference": "INTENT-3",
+        "reviewer": "Human Reviewer",
+        "conflict_or_supersession": "NONE"
+      },
+      {
+        "claim_id": "C-4",
+        "outcome": "DEFERRED",
+        "rationale": "deferred rationale",
+        "intent_reference": "INTENT-4",
+        "reviewer": "Human Reviewer",
+        "conflict_or_supersession": "NONE"
+      },
+      {
+        "claim_id": "C-5",
+        "outcome": "CONFLICT",
+        "rationale": "conflict rationale",
+        "intent_reference": "INTENT-5",
+        "reviewer": "Human Reviewer",
+        "conflict_or_supersession": "CLAIM-C-1"
+      }
+    ],
+    "aggregate_sha256": "f04001d6793183145ca93acdd181429068e7b592c067c76bb874cced168a8b89"
+  },
+  "negative_cases": [
+    "wrong_authority",
+    "wrong_evidence_type",
+    "wrong_or_stale_policy_version",
+    "missing_plan_identity",
+    "floating_snapshot_id",
+    "tampered_artifact",
+    "duplicate_brief_field",
+    "unknown_claim_outcome",
+    "duplicate_claim_id",
+    "conflict_without_link",
+    "receipt_snapshot_mismatch"
+  ]
+}

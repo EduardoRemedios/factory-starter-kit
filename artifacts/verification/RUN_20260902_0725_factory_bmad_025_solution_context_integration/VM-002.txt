@@ -1,0 +1,5 @@
+VM-002 - PASS (V3 status contract)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: All status-contract and vocabulary tests passed in the fully passing discovery run (339 tests, 0 failures, 3 pre-existing skips); no prior 0.2.3 verdict was accepted as combined 0.2.5 qualification and no status overclaim was found.
+Full evidence: MS-05/corrective_full_regression.log in the external evidence root.

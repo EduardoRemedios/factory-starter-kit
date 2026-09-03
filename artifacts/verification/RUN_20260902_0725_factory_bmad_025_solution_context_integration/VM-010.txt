@@ -1,0 +1,5 @@
+VM-010 - PASS (V4 no-touch)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: The corrective activation window changed nothing outside the single authorized test file, the run-root controls, and the authorized in-repo evidence path: filtered git status inventories match between preimage and postimage. Factory Core, generated Factory, donors, Git/config, dependencies, unrelated docs/tests, pilot roots, and registrations were not modified.
+Full evidence: MS-05/corrective_no_touch_preimage.txt and MS-05/corrective_no_touch_postimage.txt in the external evidence root.

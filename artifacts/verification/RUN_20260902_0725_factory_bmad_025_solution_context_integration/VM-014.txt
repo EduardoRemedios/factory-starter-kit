@@ -1,0 +1,5 @@
+VM-014 - PASS (V3 coupling audit)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: The corrective write set is exactly the one authorized path tests/test_factory_bmad_bootstrap.py (4 insertions, 1 deletion), explicitly ledgered as a human-authorized corrective touch that raises the sprint's unique modified topology from 38 to 39 paths. All other historical write sets equal the fixture allowlists and exact topology per the archived milestone ledgers. No unexpected path appeared.
+Full evidence: MS-05/corrective_no_touch_postimage.txt and the archived milestone ledgers in the external evidence root.

@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-09-03
+
+- Deterministically qualified the integrated Factory-BMAD 0.2.5 solution-context
+  candidate under
+  `RUN_20260902_0725_factory_bmad_025_solution_context_integration`: MS-04
+  regenerated both derived packages (exactly 18 modified generated files, 9/9
+  gate PASS) and the MS-05 corrective activation passed the complete 339-test
+  discovery suite, all governance lints, and full no-touch verification. Human
+  evidence review accepted the run; achieved status is
+  `FACTORY_BMAD_025_INTEGRATION_DETERMINISTICALLY_QUALIFIED`.
+- Repaired the run's planning pack after a fail-closed MS-05 pre-activation
+  stop: added the executable `pack/verification_manifest.yaml` binding VM-001
+  through VM-015, restored VM-011 to its traceability cell, and recorded the
+  run's first canonical `EXECUTION_CLOSEOUT.json` (`REVIEW_READY`) through the
+  updated closeout validator, which now survives restoration to
+  `PLANNING_ONLY` and control archival.
+- One ledgered corrective touch reconciled a stale bootstrap test expectation
+  to the locked layout contract (public `FACTORY_BMAD_NON_CANONICAL_LAYOUT`
+  with subordinate `layout_reason_code`). MS-06, BMAD workflow invocation,
+  AuditEdge, merge, publication, pilot, and rollout remain separately gated
+  and unclaimed.
+
+## 2026-08-27
+
+- Added fail-closed Factory-BMAD detection for nested BMAD installs such as
+  `bmad/_bmad`. Doctor and Audit now report
+  `FACTORY_BMAD_NON_CANONICAL_LAYOUT` instead of treating nested BMAD as absent
+  or suggesting bootstrap, and the audit evidence preserves nested module and
+  capability classifications including `bmad-loop` blockers.
+
 ## 2026-08-24
 
 - Advanced the coordinated Factory and Factory-BMAD Claude Code candidate to

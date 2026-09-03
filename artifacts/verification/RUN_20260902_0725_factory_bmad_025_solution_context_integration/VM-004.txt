@@ -1,0 +1,5 @@
+VM-004 - PASS (V3 focused regression)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: 0.2.5 identity, cache/approval behavior, Factory and Factory-BMAD command passthrough, CLI rollout, and nested capability evidence tests all passed.
+Full evidence: MS-05/corrective_full_regression.log in the external evidence root.

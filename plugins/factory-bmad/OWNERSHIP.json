@@ -11,7 +11,7 @@
     },
     {
       "path": "assets/project-adapter/BMAD_POLICY.md",
-      "sha256": "144f9df74401ed89916f3395f39c92c81e0f1a26933201ca7637a6d9ead67ff5",
+      "sha256": "3026b0d80fb2f366133dc0d0fb1e425083c8cd884ccff4d52d57ba1786484bac",
       "classification": "release-owned"
     },
     {
@@ -21,12 +21,12 @@
     },
     {
       "path": "assets/project-adapter/RAW_BRIEF_TEMPLATE.md",
-      "sha256": "ad83399f0ae9e3a6ab96fcc49e9363c5965cf39a9c977a91e778739bc173b785",
+      "sha256": "94fce5894fa3e4f16724cc9a043cf34c6aca4d0dae0137bd2d1b489d0d7840a0",
       "classification": "release-owned"
     },
     {
       "path": "assets/project-adapter/factory_bmad_policy.py",
-      "sha256": "ff3b00aeb3ff79a3a1b55f4062582b643d5b1c7bc44264eb4e4bc5dcd0659c9d",
+      "sha256": "e72762ede0d0b92313d1fc7d3aff24fc79c05b66d447dee8398b3eb9200fe548",
       "classification": "release-owned"
     },
     {
@@ -36,22 +36,22 @@
     },
     {
       "path": "assets/project-adapter/factory_project_preflight",
-      "sha256": "bcfeb23dccfd519feb2210d7d83c7257617d44793237145fd5320760f9cd2228",
+      "sha256": "ee21ce230bd15fcd533d82fb892d969c4b10736c1899997d79a26203e4e4bbfe",
       "classification": "release-owned"
     },
     {
       "path": "scripts/factory_bmad.py",
-      "sha256": "171a9b3d409961bf5e2af09737830cbb24523244da1e1b0f42c5cfc4ff819c0e",
+      "sha256": "792e4e03a013a64f2bef3b0c19bd2ef85181b9e4c165c1e9664c6c6b7697e99c",
       "classification": "release-owned"
     },
     {
       "path": "scripts/factory_bmad_policy.py",
-      "sha256": "ff3b00aeb3ff79a3a1b55f4062582b643d5b1c7bc44264eb4e4bc5dcd0659c9d",
+      "sha256": "e72762ede0d0b92313d1fc7d3aff24fc79c05b66d447dee8398b3eb9200fe548",
       "classification": "release-owned"
     },
     {
       "path": "skills/factory-bmad-audit/SKILL.md",
-      "sha256": "4c4bf5e11c79895e434d7bb3f41c18b4c95b40961d02e1876f543f6a497a103b",
+      "sha256": "a16669ad5430f75885edaef4d1fdc953db02b5fe298fd4fa1aab53ea3180c21e",
       "classification": "release-owned"
     },
     {
@@ -91,7 +91,7 @@
     },
     {
       "path": "skills/factory-bmad-promote/SKILL.md",
-      "sha256": "a8d2ae6b40678a65e5fec5d6df8b2aec9289c42d98e5c86e37933b809b0cddfa",
+      "sha256": "963c54c85f3b86c3e18cd9ea56b727e4da09afcb00d0fe36084c5825ee4bfe39",
       "classification": "release-owned"
     },
     {

@@ -164,6 +164,18 @@ Run `/factory-bmad:doctor` and follow its single next action:
 - Factory present without BMAD: `/factory-bmad:bootstrap`
 - Both present: `/factory-bmad:audit`
 
+If Doctor reports `FACTORY_BMAD_NON_CANONICAL_LAYOUT`, stop. Do not run
+`/factory-bmad:bootstrap`, because that can create a second root-level BMAD
+install beside an existing nested install such as `bmad/_bmad`. Preserve the
+reported paths and review whether the nested BMAD tree should be migrated,
+isolated as historical evidence, or handled by a separately approved
+configured-path flow.
+
+If the nested BMAD tree has its own `AGENTS.md`, do not overwrite it. Root
+`AGENTS.md` may define the repository and Factory contract, but BMAD-scoped work
+must preserve and explicitly defer to the nested BMAD contract until a migration
+or configured-path flow is approved.
+
 For a brownfield repository whose starting state is BMAD present and Factory
 absent, Factory Brownfield apply is the first mutation. The desired target state
 is always Factory and BMAD together, with Factory as downstream SDLC authority.

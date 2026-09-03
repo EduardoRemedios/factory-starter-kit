@@ -20,8 +20,11 @@ from typing import Any
 PLUGIN_VERSION = "0.2.5"
 BMAD_VERSION = "6.10.0"
 SNAPSHOT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{2,63}")
-RESERVED_SNAPSHOT_IDS = frozenset({"receipts", "install-receipts"})
+RESERVED_SNAPSHOT_IDS = frozenset({"latest", "receipts", "install-receipts"})
 SNAPSHOT_MANIFEST_MODE = 0o644
+SOLUTION_CONTEXT_SCHEMA_VERSION = 2
+SOLUTION_CONTEXT_TYPE = "SOLUTION_CONTEXT"
+EVIDENCE_ONLY = "EVIDENCE_ONLY"
 PLUGIN_ROOT = Path(__file__).resolve().parent.parent
 ADAPTER_ROOT = PLUGIN_ROOT / "assets" / "project-adapter"
 if not ADAPTER_ROOT.is_dir():
@@ -52,7 +55,9 @@ ALLOWED_WORKFLOWS = {
     *policy.ALLOWED_UPSTREAM_WORKFLOWS,
     *(name.removeprefix("bmad-") for name in policy.ALLOWED_UPSTREAM_WORKFLOWS),
 }
+SOLUTION_CONTEXT_ONLY_PROMOTION = {"architecture", "spec"}
 policy_classify = policy.policy_classify
+assess_bmad_layout = policy.assess_bmad_layout
 enforcement_activation = policy.enforcement_activation
 hook_decision = policy.hook_decision
 capability_audit = policy.capability_audit
@@ -110,6 +115,56 @@ def snapshot_inventory(snapshot: Path, artifact_name: str) -> dict[str, dict[str
     if inventory["SNAPSHOT_MANIFEST.json"]["mode"] != SNAPSHOT_MANIFEST_MODE:
         raise CompanionError("FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID")
     return inventory
+
+
+def recursive_file_inventory(directory: Path, *, prefix: str = "") -> dict[str, dict[str, Any]]:
+    if directory.is_symlink() or not directory.is_dir():
+        raise CompanionError("FACTORY_BMAD_SOURCE_MISSING")
+    inventory: dict[str, dict[str, Any]] = {}
+    for path in sorted(directory.rglob("*")):
+        metadata = path.lstat()
+        relative = path.relative_to(directory).as_posix()
+        if stat.S_ISDIR(metadata.st_mode):
+            continue
+        if not stat.S_ISREG(metadata.st_mode):
+            raise CompanionError("FACTORY_BMAD_SYMLINK_REJECTED" if stat.S_ISLNK(metadata.st_mode) else "FACTORY_BMAD_SOURCE_TYPE_INVALID", relative)
+        destination = f"{prefix}/{relative}" if prefix else relative
+        inventory[destination] = {
+            "mode": stat.S_IMODE(metadata.st_mode),
+            "sha256": digest_file(path),
+            "source_path": relative,
+            "source_sha256": digest_file(path),
+        }
+    if not inventory:
+        raise CompanionError("FACTORY_BMAD_SOURCE_EMPTY")
+    return inventory
+
+
+def solution_snapshot_inventory(snapshot: Path, artifacts: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    if snapshot.is_symlink() or not snapshot.is_dir() or not isinstance(artifacts, dict) or not artifacts:
+        raise CompanionError("FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID")
+    actual: dict[str, dict[str, Any]] = {}
+    for path in sorted(snapshot.rglob("*")):
+        metadata = path.lstat()
+        relative = path.relative_to(snapshot).as_posix()
+        if stat.S_ISDIR(metadata.st_mode):
+            continue
+        if not stat.S_ISREG(metadata.st_mode):
+            raise CompanionError("FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID")
+        actual[relative] = {"kind": "file", "mode": stat.S_IMODE(metadata.st_mode), "sha256": digest_file(path)}
+    expected_paths = {"SNAPSHOT_MANIFEST.json", *artifacts}
+    if set(actual) != expected_paths or actual["SNAPSHOT_MANIFEST.json"]["mode"] != SNAPSHOT_MANIFEST_MODE:
+        raise CompanionError("FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID")
+    for name, expected in artifacts.items():
+        if not isinstance(name, str) or not isinstance(expected, dict):
+            raise CompanionError("FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID")
+        path = Path(name)
+        if path.is_absolute() or ".." in path.parts or path.parts[:1] != ("content",):
+            raise CompanionError("FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID")
+        record = actual[name]
+        if record["mode"] != expected.get("mode") or record["sha256"] != expected.get("sha256"):
+            raise CompanionError("FACTORY_BMAD_SNAPSHOT_INVENTORY_INVALID")
+    return actual
 
 
 def result(state: str, code: str, action: str, **details: Any) -> dict[str, Any]:
@@ -180,9 +235,11 @@ def factory_state(root: Path) -> tuple[bool, bool]:
 
 
 def bmad_state(root: Path) -> tuple[bool, bool, Path | None]:
-    manifest = bmad_manifest_path(root)
-    present = manifest is not None
-    partial = (root / "_bmad").exists() and not present
+    layout = assess_bmad_layout(root)
+    manifest_value = layout["canonical_manifest"]
+    manifest = root / manifest_value if isinstance(manifest_value, str) else None
+    present = layout["state"] == "canonical_root"
+    partial = not layout["safe"]
     return present, partial, manifest
 
 
@@ -196,12 +253,31 @@ def meaningful_entries(root: Path) -> list[str]:
 def doctor(root: Path, harness: str) -> dict[str, Any]:
     root = root.resolve()
     factory, factory_partial = factory_state(root)
+    layout = assess_bmad_layout(root)
     bmad, bmad_partial, manifest = bmad_state(root)
+    non_canonical = policy.non_canonical_bmad_layouts(root)
     evidence = {
         "root": str(root), "harness": harness, "factory_present": factory,
         "bmad_present": bmad, "bmad_manifest": str(manifest.relative_to(root)) if manifest else None,
+        "bmad_layout": layout,
     }
-    if factory_partial or bmad_partial:
+    if bmad_partial:
+        action = (
+            "repair_or_remove_partial_state_with_human_review"
+            if layout["reason_code"] == "FACTORY_BMAD_PARTIAL_STATE"
+            else "review_zero_write_remediation_preview"
+        )
+        return result(
+            "BLOCKED",
+            "FACTORY_BMAD_NON_CANONICAL_LAYOUT",
+            action,
+            evidence={
+                **evidence,
+                "layout_reason_code": layout["reason_code"],
+                "non_canonical_bmad_layouts": non_canonical,
+            },
+        )
+    if factory_partial:
         return result("BLOCKED", "FACTORY_BMAD_PARTIAL_STATE", "repair_or_remove_partial_state_with_human_review", evidence=evidence)
     if factory and bmad:
         return result("BOTH_PRESENT", "FACTORY_BMAD_BOTH_PRESENT", "run_factory_bmad_audit", evidence=evidence)
@@ -315,24 +391,90 @@ def bootstrap(root: Path, harness: str, approval: str | None) -> dict[str, Any]:
     return result("APPLIED", "FACTORY_BMAD_BOOTSTRAP_APPLIED", "restart_claude_then_run_factory_bmad_doctor", target=str(root), receipt=receipt.relative_to(root).as_posix(), mutations=changes)
 
 
-def promotion_plan(root: Path, source_value: str, snapshot_id: str, workflow: str, reviewer: str, review_ref: str, review_qualifier: str | None = None) -> dict[str, Any]:
+def promotion_plan(
+    root: Path,
+    source_value: str,
+    snapshot_id: str,
+    workflow: str,
+    reviewer: str,
+    review_ref: str,
+    review_qualifier: str | None = None,
+    *,
+    evidence_type: str | None = None,
+    authority: str | None = None,
+    plan_identity: str | None = None,
+    supersedes_snapshot_id: str | None = None,
+    supersedes_sha256: str | None = None,
+) -> dict[str, Any]:
     root = root.resolve()
     if workflow not in ALLOWED_WORKFLOWS:
         raise CompanionError("FACTORY_BMAD_WORKFLOW_PROHIBITED", workflow)
     workflow = canonical_workflow(workflow)
+    if workflow in SOLUTION_CONTEXT_ONLY_PROMOTION and evidence_type != SOLUTION_CONTEXT_TYPE:
+        raise CompanionError("FACTORY_BMAD_SOLUTION_CONTEXT_REQUIRED", workflow)
     if not SNAPSHOT_RE.fullmatch(snapshot_id):
         raise CompanionError("FACTORY_BMAD_SNAPSHOT_ID_INVALID", snapshot_id)
     if snapshot_id.casefold() in RESERVED_SNAPSHOT_IDS:
         raise CompanionError("FACTORY_BMAD_SNAPSHOT_ID_RESERVED", snapshot_id)
     source, relative = safe_relative(root, source_value, prefix=Path("_bmad-output"))
-    if not source.is_file():
-        raise CompanionError("FACTORY_BMAD_SOURCE_MISSING", source_value)
     if not reviewer.strip() or not review_ref.strip():
         raise CompanionError("FACTORY_BMAD_REVIEW_EVIDENCE_INVALID")
     qualifier = review_qualifier.strip() if review_qualifier is not None else None
     if review_qualifier is not None and (not qualifier or len(qualifier) > 500):
         raise CompanionError("FACTORY_BMAD_REVIEW_EVIDENCE_INVALID")
     destination = root / "docs/upstream/bmad" / snapshot_id
+    if evidence_type is not None:
+        if evidence_type != SOLUTION_CONTEXT_TYPE:
+            raise CompanionError("FACTORY_BMAD_EVIDENCE_TYPE_INVALID", evidence_type)
+        if authority != EVIDENCE_ONLY:
+            raise CompanionError("FACTORY_BMAD_AUTHORITY_INVALID", authority or "")
+        if not isinstance(plan_identity, str) or not plan_identity.strip() or len(plan_identity.strip()) > 200:
+            raise CompanionError("FACTORY_BMAD_PLAN_IDENTITY_INVALID")
+        if not source.is_dir() or source.is_symlink():
+            raise CompanionError("FACTORY_BMAD_SOURCE_TYPE_INVALID", source_value)
+        if (supersedes_snapshot_id is None) != (supersedes_sha256 is None):
+            raise CompanionError("FACTORY_BMAD_SUPERSESSION_INVALID")
+        supersedes = None
+        if supersedes_snapshot_id is not None:
+            if not SNAPSHOT_RE.fullmatch(supersedes_snapshot_id) or supersedes_snapshot_id.casefold() in RESERVED_SNAPSHOT_IDS or supersedes_snapshot_id == snapshot_id:
+                raise CompanionError("FACTORY_BMAD_SUPERSESSION_INVALID")
+            if not isinstance(supersedes_sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", supersedes_sha256):
+                raise CompanionError("FACTORY_BMAD_SUPERSESSION_INVALID")
+            prior_manifest = root / "docs/upstream/bmad" / supersedes_snapshot_id / "SNAPSHOT_MANIFEST.json"
+            try:
+                prior = json.loads(prior_manifest.read_text(encoding="utf-8"))
+            except (OSError, UnicodeError, json.JSONDecodeError) as error:
+                raise CompanionError("FACTORY_BMAD_SUPERSESSION_INVALID") from error
+            if not isinstance(prior, dict) or prior.get("aggregate_sha256") != supersedes_sha256:
+                raise CompanionError("FACTORY_BMAD_SUPERSESSION_INVALID")
+            supersedes = {"snapshot_id": supersedes_snapshot_id, "aggregate_sha256": supersedes_sha256}
+        artifacts = recursive_file_inventory(source, prefix="content")
+        base = {
+            "schema_version": SOLUTION_CONTEXT_SCHEMA_VERSION,
+            "operation": "promote",
+            "plugin_version": PLUGIN_VERSION,
+            "policy_version": policy.POLICY_VERSION,
+            "evidence_type": SOLUTION_CONTEXT_TYPE,
+            "authority": EVIDENCE_ONLY,
+            "source": relative.as_posix(),
+            "source_artifacts": artifacts,
+            "source_aggregate_sha256": digest_bytes(canonical(artifacts)),
+            "snapshot_id": snapshot_id,
+            "destination": destination.relative_to(root).as_posix(),
+            "workflow": workflow,
+            "plan_identity": plan_identity.strip(),
+            "reviewer": reviewer.strip(),
+            "review_reference": review_ref.strip(),
+        }
+        if supersedes is not None:
+            base["supersedes"] = supersedes
+        if qualifier is not None:
+            base["review_qualifier"] = qualifier
+        return {**base, "plan_id": plan_id(base)}
+    if authority is not None or plan_identity is not None or supersedes_snapshot_id is not None or supersedes_sha256 is not None:
+        raise CompanionError("FACTORY_BMAD_PROMOTION_ARGUMENTS_INVALID")
+    if not source.is_file():
+        raise CompanionError("FACTORY_BMAD_SOURCE_MISSING", source_value)
     artifact_name = "artifact" + (source.suffix or ".txt")
     base = {
         "schema_version": 1, "operation": "promote", "plugin_version": PLUGIN_VERSION,
@@ -348,6 +490,30 @@ def promotion_plan(root: Path, source_value: str, snapshot_id: str, workflow: st
 
 
 def snapshot_manifest(plan: dict[str, Any]) -> dict[str, Any]:
+    if plan.get("schema_version") == SOLUTION_CONTEXT_SCHEMA_VERSION:
+        core = {
+            "schema_version": SOLUTION_CONTEXT_SCHEMA_VERSION,
+            "snapshot_id": plan["snapshot_id"],
+            "evidence_type": SOLUTION_CONTEXT_TYPE,
+            "authority": EVIDENCE_ONLY,
+            "policy_version": plan["policy_version"],
+            "artifacts": plan["source_artifacts"],
+            "review": {"decision": "APPROVED", "reviewer": plan["reviewer"], "reference": plan["review_reference"]},
+            "provenance": {
+                "system": "BMAD",
+                "bmad_version": BMAD_VERSION,
+                "workflow": plan["workflow"],
+                "promotion_plan_id": plan["plan_id"],
+                "plan_identity": plan["plan_identity"],
+                "source_root": plan["source"],
+                "source_aggregate_sha256": plan["source_aggregate_sha256"],
+            },
+        }
+        if "supersedes" in plan:
+            core["supersedes"] = plan["supersedes"]
+        if "review_qualifier" in plan:
+            core["review"]["qualifier"] = plan["review_qualifier"]
+        return {**core, "aggregate_sha256": digest_bytes(canonical(core))}
     core = {
         "schema_version": 1, "snapshot_id": plan["snapshot_id"],
         "artifact": {"path": plan["artifact_name"], "mode": plan["source_mode"], "sha256": plan["source_sha256"], "source_path": plan["source"], "source_sha256": plan["source_sha256"]},
@@ -362,7 +528,15 @@ def snapshot_manifest(plan: dict[str, Any]) -> dict[str, Any]:
 def promote(root: Path, args: argparse.Namespace) -> dict[str, Any]:
     root = root.resolve()
     try:
-        plan = promotion_plan(root, args.source, args.snapshot_id, args.workflow, args.reviewer, args.review_ref, getattr(args, "review_qualifier", None))
+        plan = promotion_plan(
+            root, args.source, args.snapshot_id, args.workflow, args.reviewer, args.review_ref,
+            getattr(args, "review_qualifier", None),
+            evidence_type=getattr(args, "evidence_type", None),
+            authority=getattr(args, "authority", None),
+            plan_identity=getattr(args, "plan_identity", None),
+            supersedes_snapshot_id=getattr(args, "supersedes_snapshot_id", None),
+            supersedes_sha256=getattr(args, "supersedes_sha256", None),
+        )
     except CompanionError as error:
         return result("BLOCKED", error.code, "correct_promotion_request", detail=error.detail)
     destination = root / plan["destination"]
@@ -372,15 +546,18 @@ def promote(root: Path, args: argparse.Namespace) -> dict[str, Any]:
         if not destination.is_symlink():
             try:
                 existing = json.loads(existing_manifest.read_text(encoding="utf-8"))
-                inventory = snapshot_inventory(destination, plan["artifact_name"])
+                inventory = solution_snapshot_inventory(destination, manifest["artifacts"]) if plan["schema_version"] == SOLUTION_CONTEXT_SCHEMA_VERSION else snapshot_inventory(destination, plan["artifact_name"])
             except (OSError, UnicodeError, json.JSONDecodeError):
                 existing = None
                 inventory = {}
             except CompanionError:
                 existing = None
                 inventory = {}
-            artifact_record = inventory.get(plan["artifact_name"], {})
-            if existing == manifest and artifact_record.get("sha256") == plan["source_sha256"] and artifact_record.get("mode") == plan["source_mode"]:
+            exact_inventory = plan["schema_version"] == SOLUTION_CONTEXT_SCHEMA_VERSION or (
+                inventory.get(plan["artifact_name"], {}).get("sha256") == plan["source_sha256"]
+                and inventory.get(plan["artifact_name"], {}).get("mode") == plan["source_mode"]
+            )
+            if existing == manifest and exact_inventory:
                 return result("REUSABLE", "FACTORY_BMAD_SNAPSHOT_REUSABLE", "cite_snapshot_id_and_digest", snapshot_id=plan["snapshot_id"], aggregate_sha256=manifest["aggregate_sha256"])
         return result("BLOCKED", "FACTORY_BMAD_SNAPSHOT_IMMUTABLE_CONFLICT", "choose_new_snapshot_id_or_review_existing")
     if args.approve_plan is None:
@@ -388,7 +565,15 @@ def promote(root: Path, args: argparse.Namespace) -> dict[str, Any]:
     if args.approve_plan != plan["plan_id"]:
         return result("BLOCKED", "FACTORY_BMAD_PLAN_APPROVAL_MISMATCH", "review_current_plan", plan=plan)
     source = root / plan["source"]
-    if digest_file(source) != plan["source_sha256"]:
+    if plan["schema_version"] == SOLUTION_CONTEXT_SCHEMA_VERSION:
+        try:
+            source_current = recursive_file_inventory(source, prefix="content")
+        except CompanionError:
+            source_current = {}
+        source_stale = source_current != plan["source_artifacts"]
+    else:
+        source_stale = digest_file(source) != plan["source_sha256"]
+    if source_stale:
         return result("BLOCKED", "FACTORY_BMAD_PLAN_STALE", "regenerate_promotion_plan")
     parent = destination.parent
     parent.mkdir(parents=True, exist_ok=True)
@@ -396,9 +581,16 @@ def promote(root: Path, args: argparse.Namespace) -> dict[str, Any]:
     if temporary.exists():
         return result("BLOCKED", "FACTORY_BMAD_PARTIAL_TRANSACTION", "inspect_partial_transaction")
     temporary.mkdir()
-    artifact_path = temporary / plan["artifact_name"]
-    shutil.copyfile(source, artifact_path)
-    artifact_path.chmod(plan["source_mode"])
+    if plan["schema_version"] == SOLUTION_CONTEXT_SCHEMA_VERSION:
+        for name, artifact in plan["source_artifacts"].items():
+            artifact_path = temporary / name
+            artifact_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source / artifact["source_path"], artifact_path)
+            artifact_path.chmod(artifact["mode"])
+    else:
+        artifact_path = temporary / plan["artifact_name"]
+        shutil.copyfile(source, artifact_path)
+        artifact_path.chmod(plan["source_mode"])
     manifest_path = temporary / "SNAPSHOT_MANIFEST.json"
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     manifest_path.chmod(SNAPSHOT_MANIFEST_MODE)
@@ -406,8 +598,8 @@ def promote(root: Path, args: argparse.Namespace) -> dict[str, Any]:
     receipts = parent / "receipts"
     receipts.mkdir(exist_ok=True)
     receipt_path = receipts / f"promotion-{plan['plan_id']}.json"
-    files = snapshot_inventory(destination, plan["artifact_name"])
-    receipt = {"schema_version": 1, "operation": "promotion", "plan_id": plan["plan_id"], "snapshot_id": plan["snapshot_id"], "snapshot_path": plan["destination"], "aggregate_sha256": manifest["aggregate_sha256"], "created_files": files, "outcome": "APPLIED"}
+    files = solution_snapshot_inventory(destination, manifest["artifacts"]) if plan["schema_version"] == SOLUTION_CONTEXT_SCHEMA_VERSION else snapshot_inventory(destination, plan["artifact_name"])
+    receipt = {"schema_version": plan["schema_version"], "operation": "promotion", "plan_id": plan["plan_id"], "snapshot_id": plan["snapshot_id"], "snapshot_path": plan["destination"], "aggregate_sha256": manifest["aggregate_sha256"], "created_files": files, "outcome": "APPLIED"}
     receipt_path.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result("APPLIED", "FACTORY_BMAD_PROMOTION_APPLIED", "cite_snapshot_id_and_digest", snapshot_id=plan["snapshot_id"], aggregate_sha256=manifest["aggregate_sha256"], receipt=receipt_path.relative_to(root).as_posix(), mutations=sorted([f"{plan['destination']}/{name}" for name in files] + [receipt_path.relative_to(root).as_posix()]))
 
@@ -430,9 +622,12 @@ def rollback_plan(root: Path, receipt_value: str) -> tuple[dict[str, Any], Path,
         raise CompanionError("FACTORY_BMAD_ROLLBACK_STATE_INVALID")
     try:
         manifest = json.loads((snapshot / "SNAPSHOT_MANIFEST.json").read_text(encoding="utf-8"))
-        artifact = manifest.get("artifact", {}) if isinstance(manifest, dict) else {}
-        artifact_name = artifact.get("path") if isinstance(artifact, dict) else None
-        actual = snapshot_inventory(snapshot, artifact_name) if isinstance(artifact_name, str) else {}
+        if isinstance(manifest, dict) and manifest.get("schema_version") == SOLUTION_CONTEXT_SCHEMA_VERSION:
+            actual = solution_snapshot_inventory(snapshot, manifest.get("artifacts"))
+        else:
+            artifact = manifest.get("artifact", {}) if isinstance(manifest, dict) else {}
+            artifact_name = artifact.get("path") if isinstance(artifact, dict) else None
+            actual = snapshot_inventory(snapshot, artifact_name) if isinstance(artifact_name, str) else {}
     except (OSError, UnicodeError, json.JSONDecodeError, CompanionError):
         actual = {}
     if actual != files:
@@ -599,6 +794,11 @@ def parser() -> argparse.ArgumentParser:
     promote_parser.add_argument("--reviewer", required=True)
     promote_parser.add_argument("--review-ref", required=True)
     promote_parser.add_argument("--review-qualifier")
+    promote_parser.add_argument("--evidence-type", choices=(SOLUTION_CONTEXT_TYPE,))
+    promote_parser.add_argument("--authority", choices=(EVIDENCE_ONLY,))
+    promote_parser.add_argument("--plan-identity")
+    promote_parser.add_argument("--supersedes-snapshot-id")
+    promote_parser.add_argument("--supersedes-sha256")
     promote_parser.add_argument("--approve-plan")
     intake_parser = sub.add_parser("intake")
     intake_parser.add_argument("--harness", choices=("claude", "codex"), default="claude")

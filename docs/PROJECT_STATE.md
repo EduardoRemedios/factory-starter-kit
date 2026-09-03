@@ -107,6 +107,22 @@
   `DETERMINISTIC_PACKAGED_PRETOOLUSE` is the hard enforcement proof, and
   `ADVISORY_MODEL_CHOICE_SMOKE` is not required for the release verdict. Merge,
   application pilot, publication, and rollout remain separate human decisions.
+- Solution-context integration state: the 0.2.5 candidate is integrating the
+  BMAD solution-context authoring boundary under
+  `RUN_20260902_0725_factory_bmad_025_solution_context_integration`. BMAD
+  PRD/UX/architecture/spec authoring may produce non-binding
+  `SOLUTION_CONTEXT` evidence; human promotion freezes hash-pinned snapshots
+  and claim dispositions; Factory/Conductor retains all implementation
+  planning, verification, execution authorization, and closeout authority.
+  BMAD implementation, sprint execution, code review authority, unattended
+  development, quick-dev, and bmad-loop remain prohibited. The integrated
+  candidate is deterministically qualified: MS-01 through MS-05 closed under
+  archived digest-bound activations, the complete 339-test discovery suite,
+  governance lints, and no-touch verification passed, and the canonical
+  `EXECUTION_CLOSEOUT.json` records `REVIEW_READY` with human evidence review
+  accepted on 2026-09-03. Achieved status is
+  `FACTORY_BMAD_025_INTEGRATION_DETERMINISTICALLY_QUALIFIED`; MS-06,
+  AuditEdge, and any rollout decision remain separately gated and unclaimed.
 - Publication-boundary source verification now protects every Git ref by
   default while allowing only disclosed rotation under the exact
   `refs/codex/turn-diffs/` prefix. Focused disposable-repository tests cover

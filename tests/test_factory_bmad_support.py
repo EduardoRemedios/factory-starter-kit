@@ -43,3 +43,7 @@ def seed_bmad(root: Path, modules: dict[str, str] | None = None, *, capabilities
                 skill.parent.mkdir(parents=True, exist_ok=True)
                 skill.write_text(f"---\nname: {name}\n---\n", encoding="utf-8")
     return path
+
+
+def seed_nested_bmad(root: Path, modules: dict[str, str] | None = None, *, capabilities: bool = False) -> Path:
+    return seed_bmad(root / "bmad", modules, capabilities=capabilities)

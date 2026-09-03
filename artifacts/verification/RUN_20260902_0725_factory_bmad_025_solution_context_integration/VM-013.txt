@@ -1,0 +1,5 @@
+VM-013 - PASS (V3 lifecycle audit)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: Authored gates preceded the single MS-04 replacement builder invocation, generated-package checks ran only after that replacement, the final full regression contained exactly the one check-only builder invocation, and no builder residue or bytecode appeared in the activation-window postimage.
+Full evidence: MS-04/builder_receipt.json and MS-05/corrective_full_regression.log in the external evidence root.

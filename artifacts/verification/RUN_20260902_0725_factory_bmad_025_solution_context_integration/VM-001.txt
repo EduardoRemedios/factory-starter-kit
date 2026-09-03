@@ -1,0 +1,5 @@
+VM-001 - PASS (V4 source revalidation)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: Base HEAD 70dc4e4a31caebe28983dc7581afef5672e1ef7b, PACK_MANIFEST.md d1b411ed8c3b980190833618450f5836dbfd844378e2aed53d42688afad4e987, PACK_AUDIT_REPORT.md 9cd093288f447f03bb6ea2403948dca9041540ae9e4579b44f9fd7d5c1b047c3, verification_manifest.yaml 88deca23d0c433f037393a5ffd9ed6d9449d82b2bbf9882e1ad48e90196269c4, and both validator digests matched the live authorization pins before writes and after closeout.
+Full evidence: MS-05/pins_revalidation.txt in the external evidence root.

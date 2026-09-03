@@ -1,0 +1,5 @@
+VM-008 - PASS (V3 promotion/preflight regression)
+Run: RUN_20260902_0725_factory_bmad_025_solution_context_integration
+Activation: digest-bound MS-05 corrective activation, 2026-09-03
+Result: Multi-file immutable promotion, tamper/traversal/symlink rejection, supersession, claim accepted/rejected/modified/deferred/conflict outcomes, and the no-Factory-authority boundary all passed.
+Full evidence: MS-05/corrective_full_regression.log in the external evidence root.

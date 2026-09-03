@@ -39,6 +39,12 @@ are not in the upstream invocation allowlist. Factory Stage F may accept
 human-reviewed TEA output as optional evidence; TEA never becomes an execution
 or quality gate.
 
+Factory-BMAD supports the canonical root BMAD layout. A nested install such as
+`bmad/_bmad`, `bmad/_bmad-output`, or `bmad/.claude/skills` is not silently
+treated as absent. It blocks as `FACTORY_BMAD_NON_CANONICAL_LAYOUT` until a
+human reviews whether to migrate, isolate, or authorize a separate configured
+path flow.
+
 Drafts stay in `_bmad-output/`. Human-approved snapshots live immutably at
 `docs/upstream/bmad/<SNAPSHOT_ID>/`. Briefs cite snapshot ID and digest. Only
 Factory locked intent binds, and cited BMAD context freezes at Brief Purple PASS.

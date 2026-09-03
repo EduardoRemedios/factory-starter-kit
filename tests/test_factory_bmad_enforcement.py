@@ -6,14 +6,15 @@ import shutil
 import subprocess
 import sys
 import unittest
+from unittest import mock
 from pathlib import Path
 
-from tests.test_factory_bmad_support import REPO_ROOT, runtime, seed_bmad, seed_factory, seed_git
+from tests.test_factory_bmad_support import REPO_ROOT, runtime, seed_bmad, seed_factory, seed_git, seed_nested_bmad
 
 
 CLAUDE_PACKAGE = REPO_ROOT / "plugins/factory-bmad-claude"
 PRETOOLUSE_CASES = [
-    ("PT-01", "factory_bmad_active", "bmad-architecture", "deny", "FACTORY_BMAD_WORKFLOW_PROHIBITED", "absent"),
+    ("PT-01", "factory_bmad_active", "bmad-architecture", "deny", "FACTORY_BMAD_SOLUTION_PROFILE_STATE_INVALID", "absent"),
     ("PT-02", "factory_bmad_active", "bmad-future-autonomous", "deny", "FACTORY_BMAD_WORKFLOW_PROHIBITED", "absent"),
     ("PT-03", "factory_bmad_active", "bmad-architecture", "deny", "FACTORY_BMAD_HOOK_INPUT_INVALID", "absent"),
     ("PT-04", "factory_partial_bmad", "bmad-product-brief", "deny", "FACTORY_BMAD_ENFORCEMENT_STATE_INVALID", "absent"),
@@ -69,19 +70,47 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
         seed_bmad(root, capabilities=True)
         return root
 
+    def exact_profile(self, name):
+        root = self.root()
+        skill_root = root / ".claude/skills" / name
+        customize = skill_root / "customize.toml"
+        customize.write_text("# exact test profile\n", encoding="utf-8")
+        custom = root / "_bmad/custom"
+        custom.mkdir(parents=True, exist_ok=True)
+        (custom / "config.toml").write_text("# inert project overrides\n", encoding="utf-8")
+        (custom / "config.user.toml").write_text("# inert user overrides\n", encoding="utf-8")
+        profile = {
+            **runtime.policy.SOLUTION_CONTEXT_CAPABILITY_PROFILES[name],
+            "skill_sha256": runtime.digest_file(skill_root / "SKILL.md"),
+            "customize_sha256": runtime.digest_file(customize),
+        }
+        files_manifest = root / "_bmad/_config/files-manifest.csv"
+        files_manifest.write_text(
+            f"path,hash\n{profile['logical_path']},{profile['skill_sha256']}\n",
+            encoding="utf-8",
+        )
+        return root, mock.patch.dict(
+            runtime.policy.SOLUTION_CONTEXT_CAPABILITY_PROFILES,
+            {name: profile},
+        )
+
     def test_exact_upstream_allowlist(self):
         for name in (
             "bmad-brainstorming", "bmad-forge-idea", "bmad-prfaq",
-            "bmad-product-brief", "bmad-prd", "bmad-ux",
+            "bmad-product-brief", "bmad-prd",
             "bmad-document-project", "bmad-domain-research",
             "bmad-market-research", "bmad-technical-research", "bmad-help",
         ):
             verdict = runtime.policy_classify(name)
-            self.assertEqual("ALLOWED_UPSTREAM", verdict["classification"], name)
+            self.assertEqual("ALLOWED_DISCOVERY_AUTHORING", verdict["classification"], name)
+            self.assertTrue(verdict["allowed"], name)
+        for name in ("bmad-ux", "bmad-architecture", "bmad-spec"):
+            verdict = runtime.policy_classify(name)
+            self.assertEqual("ALLOWED_SOLUTION_CONTEXT_AUTHORING", verdict["classification"], name)
             self.assertTrue(verdict["allowed"], name)
 
     def test_prohibited_and_unknown_default_deny(self):
-        prohibited = runtime.policy_classify("bmad-architecture")
+        prohibited = runtime.policy_classify("bmad-create-architecture")
         self.assertEqual("PROHIBITED_DOWNSTREAM", prohibited["classification"])
         self.assertEqual("FACTORY_BMAD_WORKFLOW_PROHIBITED", prohibited["reason_code"])
         self.assertEqual("PROHIBITED_DOWNSTREAM", runtime.policy_classify("bmad-generate-project-context")["classification"])
@@ -92,7 +121,7 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
         self.assertEqual("OPTIONAL_STAGE_F_EVIDENCE_ONLY", tea["classification"])
         self.assertFalse(tea["allowed"])
 
-    def test_direct_slash_command_is_blocked_before_expansion(self):
+    def test_unqualified_solution_context_is_blocked_before_expansion(self):
         payload = {
             "hook_event_name": "UserPromptExpansion",
             "cwd": str(self.root()),
@@ -104,7 +133,77 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
         }
         decision = runtime.hook_decision(self.root(), payload)
         self.assertEqual("block", decision["decision"])
-        self.assertIn("FACTORY_BMAD_WORKFLOW_PROHIBITED", decision["reason"])
+        self.assertIn("FACTORY_BMAD_SOLUTION_PROFILE_STATE_INVALID", decision["reason"])
+
+    def test_exact_solution_profiles_pass_both_hook_paths_with_non_authority_context(self):
+        for name in ("bmad-ux", "bmad-architecture", "bmad-spec"):
+            with self.subTest(name=name):
+                root, profile = self.exact_profile(name)
+                with profile:
+                    direct = runtime.hook_decision(root, {
+                        "hook_event_name": "UserPromptExpansion",
+                        "command_name": name,
+                    })
+                    skill = runtime.hook_decision(root, {
+                        "hook_event_name": "PreToolUse", "tool_name": "Skill",
+                        "tool_input": {"skill": name},
+                    })
+                direct_context = direct["hookSpecificOutput"]["additionalContext"]
+                skill_context = skill["hookSpecificOutput"]["additionalContext"]
+                for context in (direct_context, skill_context):
+                    self.assertIn("SOLUTION_CONTEXT / EVIDENCE_ONLY", context)
+                    self.assertIn("not a filesystem sandbox", context)
+                    self.assertIn("exact-pack human Go", context)
+
+    def test_solution_profile_drift_and_overrides_fail_closed(self):
+        cases = ("skill_digest", "files_manifest", "override", "version", "symlink")
+        for case in cases:
+            with self.subTest(case=case):
+                root, profile = self.exact_profile("bmad-architecture")
+                if case == "skill_digest":
+                    (root / ".claude/skills/bmad-architecture/SKILL.md").write_text("changed\n", encoding="utf-8")
+                    expected = "FACTORY_BMAD_SOLUTION_PROFILE_DIGEST_MISMATCH"
+                elif case == "files_manifest":
+                    (root / "_bmad/_config/files-manifest.csv").write_text("path,hash\nwrong,deadbeef\n", encoding="utf-8")
+                    expected = "FACTORY_BMAD_SOLUTION_PROFILE_MANIFEST_MISMATCH"
+                elif case == "override":
+                    (root / "_bmad/custom/config.toml").write_text("enabled = true\n", encoding="utf-8")
+                    expected = "FACTORY_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE"
+                elif case == "version":
+                    (root / "_bmad/_config/manifest.yaml").write_text(
+                        "installation:\n  version: 6.11.0\nmodules:\n- name: core\n  version: 6.11.0\n- name: bmm\n  version: 6.11.0\n",
+                        encoding="utf-8",
+                    )
+                    expected = "FACTORY_BMAD_SOLUTION_PROFILE_VERSION_MISMATCH"
+                else:
+                    customize = root / ".claude/skills/bmad-architecture/customize.toml"
+                    outside = root / "outside-customize.toml"
+                    outside.write_text("# outside\n", encoding="utf-8")
+                    customize.unlink()
+                    customize.symlink_to(outside)
+                    expected = "FACTORY_BMAD_SOLUTION_PROFILE_STATE_INVALID"
+                with profile:
+                    decision = runtime.hook_decision(root, {
+                        "hook_event_name": "PreToolUse", "tool_name": "Skill",
+                        "tool_input": {"skill": "bmad-architecture"},
+                    })
+                self.assertEqual("deny", decision["hookSpecificOutput"]["permissionDecision"])
+                self.assertIn(expected, decision["hookSpecificOutput"]["permissionDecisionReason"])
+
+    def test_parent_permission_is_non_transitive_and_must_deny_fixture_stays_denied(self):
+        root, profile = self.exact_profile("bmad-architecture")
+        with profile:
+            parent = runtime.hook_decision(root, {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": "bmad-architecture"}})
+        self.assertNotIn("permissionDecision", parent["hookSpecificOutput"])
+        fixture = json.loads((REPO_ROOT / "tests/plugin_fixtures/factory_bmad_solution_context_contract.json").read_text(encoding="utf-8"))
+        for phrase in fixture["semantic_non_authority_phrases"]:
+            self.assertIn(phrase, parent["hookSpecificOutput"]["additionalContext"])
+        for name in fixture["must_deny"]:
+            with self.subTest(name=name):
+                direct = runtime.hook_decision(root, {"hook_event_name": "UserPromptExpansion", "command_name": name})
+                skill = runtime.hook_decision(root, {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": name}})
+                self.assertEqual("block", direct["decision"])
+                self.assertEqual("deny", skill["hookSpecificOutput"]["permissionDecision"])
 
     def test_model_skill_is_denied_before_execution(self):
         payload = {
@@ -137,6 +236,19 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
             guidance["hookSpecificOutput"]["additionalContext"],
         )
         self.assertIsNone(runtime.hook_decision(root, unrelated))
+
+    def test_nested_bmad_layout_blocks_even_allowed_upstream_invocation(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        root = Path(temporary.name)
+        seed_git(root); seed_factory(root); seed_nested_bmad(root)
+        payload = {
+            "hook_event_name": "UserPromptExpansion", "cwd": str(root),
+            "expansion_type": "slash_command", "command_name": "bmad-product-brief",
+        }
+        decision = runtime.hook_decision(root, payload)
+        self.assertEqual("block", decision["decision"])
+        self.assertIn("FACTORY_BMAD_ENFORCEMENT_STATE_INVALID", decision["reason"])
 
     def test_normal_namespaced_companion_promote_is_unrelated_to_bmad_guard(self):
         root = self.root()
