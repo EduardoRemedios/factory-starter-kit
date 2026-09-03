@@ -315,6 +315,58 @@ class ExecutionCloseoutTests(unittest.TestCase):
         draft["authority_grants"] = ["release"]
         self.assert_invalid(run, draft, "FACTORY_EXECUTION_CLOSEOUT_AUTHORITY_VIOLATION")
 
+    def archive_controls(self, run_root: Path) -> None:
+        write(run_root / "EXECUTION_MODE.txt", "PLANNING_ONLY\n")
+        (run_root / "EXECUTION_AUTHORIZATION.md").rename(
+            run_root / "MS05_EXECUTION_AUTHORIZATION.md"
+        )
+        (run_root / "EXECUTION_PROMPT.md").rename(run_root / "MS05_EXECUTION_PROMPT.md")
+
+    def test_ec13_recorded_closeout_survives_restoration_and_archival(self):
+        run = self.make_run()
+        self.record(run, self.draft(run))
+        self.archive_controls(run)
+        payload = CLOSEOUT.validate_closeout_file(self.root, run.name)
+        self.assertEqual("REVIEW_READY", payload["outcome"])
+        progress = RUNTIME.evaluate_progress(self.root, run_id=run.name)
+        self.assertEqual("REVIEW_READY", progress["state"])
+        self.assertEqual("FACTORY_EXECUTION_REVIEW_READY", progress["reason_code"])
+
+    def test_ec14_record_still_requires_live_execution_enabled_mode(self):
+        run = self.make_run()
+        draft = self.draft(run)
+        write(run / "EXECUTION_MODE.txt", "PLANNING_ONLY\n")
+        with self.assertRaises(CLOSEOUT.ExecutionCloseoutError) as caught:
+            self.record(run, draft)
+        self.assertEqual(
+            "FACTORY_EXECUTION_CLOSEOUT_IDENTITY_MISMATCH",
+            caught.exception.reason_code,
+        )
+
+    def test_ec15_restored_closeout_fails_without_matching_archived_authorization(self):
+        run = self.make_run()
+        self.record(run, self.draft(run))
+        self.archive_controls(run)
+        archived = run / "MS05_EXECUTION_AUTHORIZATION.md"
+        original = archived.read_text(encoding="utf-8")
+        archived.write_text("tampered\n", encoding="utf-8")
+        with self.assertRaises(CLOSEOUT.ExecutionCloseoutError) as caught:
+            CLOSEOUT.validate_closeout_file(self.root, run.name)
+        self.assertEqual(
+            "FACTORY_EXECUTION_CLOSEOUT_PIN_MISMATCH",
+            caught.exception.reason_code,
+        )
+        outside = self.root / "outside_authorization.md"
+        outside.write_text(original, encoding="utf-8")
+        link = run / "MS06_EXECUTION_AUTHORIZATION.md"
+        link.symlink_to(outside)
+        with self.assertRaises(CLOSEOUT.ExecutionCloseoutError) as caught:
+            CLOSEOUT.validate_closeout_file(self.root, run.name)
+        self.assertEqual(
+            "FACTORY_EXECUTION_CLOSEOUT_PIN_MISMATCH",
+            caught.exception.reason_code,
+        )
+
     def test_explicit_and_default_run_selection_are_distinct(self):
         older = self.make_run("RUN_20260805_0001_closed")
         self.record(older, self.draft(older))

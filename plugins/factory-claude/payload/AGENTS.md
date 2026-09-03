@@ -78,7 +78,7 @@ Future-Proofing and Context:
 - After each stage handoff, run `./scripts/factoryctl stage-lint --run <RUN_ID> --stage <STAGE>` before advancing.
 - After Stage I2, run `./scripts/factoryctl pack-lint --run <RUN_ID>` before presenting the pack for human Go or No-go review.
 - After authorized execution, record `EXECUTION_CLOSEOUT.json` only through the canonical validator; present-invalid closeout evidence blocks and never falls back to legacy progress.
-- For new execution-enabled or Mission Mode runs, create `pack/verification_manifest.yaml` when runnable verification checks exist; `pack-lint` validates it when present.
+- For execution-enabled or Mission Mode runs, `pack/verification_manifest.yaml` is mandatory whenever `verification_plan.md` declares runnable VM checks: the canonical execution closeout cannot be recorded without it, `pack-lint` fails an execution-enabled run that lacks it, and a planning-only pack gets a warning that it cannot legally close after activation. When present, `pack-lint` validates it.
 - For process improvement runs, instantiate `docs/Factory/templates/RUN_METRICS_TEMPLATE.md` as `docs/Factory/runs/<RUN_ID>/RUN_METRICS.md`.
 - Prefer `./scripts/factoryctl metrics-init --run <RUN_ID>` to create `RUN_METRICS.md` from the canonical template.
 - Optional task memory and cartographer outputs are advisory artifacts only; they do not replace Factory source artifacts, pack-lint, stage-lint, or human Go/No-go.

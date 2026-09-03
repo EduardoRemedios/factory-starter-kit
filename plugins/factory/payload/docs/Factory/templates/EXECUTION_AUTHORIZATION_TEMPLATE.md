@@ -8,6 +8,7 @@ VALIDATION:
 - Each required authorization field must occur exactly once.
 - The record must be a regular non-symlink file.
 - Do not rewrite PACK_MANIFEST.md, PACK_AUDIT_REPORT.md, the sprint envelope, or verification_manifest.yaml during activation.
+- Confirm closeout producibility before activation: when verification_plan.md declares runnable VM checks, pack/verification_manifest.yaml must already exist in the audited pack (pack-lint fails an execution-enabled run without it), and the closeout must be recorded while this authorization is live and EXECUTION_MODE.txt is EXECUTION_ENABLED.
 -->
 
 ## Version
