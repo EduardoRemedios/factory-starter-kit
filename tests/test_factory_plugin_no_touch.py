@@ -8,6 +8,9 @@ from tests.factory_plugin_test_support import BASELINE_PATH, REPO_ROOT, load_jso
 CURRENT_SPRINT_ALLOWED_LEGACY_PATHS = {
     "docs/Factory/Spec/STAGE_CONTRACTS.md",
     "scripts/factory_stage_lint.py",
+    # Lifecycle-closeout contract fix: manifest presence is now enforced for
+    # execution-enabled runs whose plan declares runnable VM checks.
+    "scripts/factory_pack_lint.py",
 }
 
 

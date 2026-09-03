@@ -1,9 +1,11 @@
 # docs/Factory/templates/VERIFICATION_MANIFEST_TEMPLATE.yaml
 #
 # Create at: docs/Factory/runs/<RUN_ID>/pack/verification_manifest.yaml
-# Purpose: optional machine-readable verification contract for EXECUTION_ENABLED
-# and Mission Mode runs. Keep planning-only packs lightweight unless runnable
-# verification would materially reduce execution risk.
+# Purpose: machine-readable verification contract for EXECUTION_ENABLED and
+# Mission Mode runs. Mandatory whenever verification_plan.md declares runnable
+# VM checks: the canonical execution closeout cannot be recorded without it and
+# pack-lint fails an execution-enabled run that lacks it. Only packs with no
+# runnable VM inventory may omit it (planning-only packs stay lightweight).
 # `execution_mode` records the mode of the pack audited at I2. It remains
 # unchanged if a later digest-bound authorization activates execution.
 # Check IDs must exactly match the dedicated verification_plan.md `## Checks`

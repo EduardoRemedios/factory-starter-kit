@@ -191,7 +191,35 @@ def load_closeout(path: Path) -> dict[str, Any]:
     return exact_object(value, TOP_LEVEL_KEYS, "closeout")
 
 
-def validate_closeout(root: Path, run_id: str, value: dict[str, Any]) -> dict[str, Any]:
+def validate_authorization_reference(
+    run_root: Path, value: Any, *, recorded: bool
+) -> None:
+    reference = exact_object(value, REFERENCE_KEYS, "execution_authorization")
+    if reference["path"] != "EXECUTION_AUTHORIZATION.md":
+        fail("FACTORY_EXECUTION_CLOSEOUT_PIN_MISMATCH", "execution_authorization")
+    expected = validate_digest(reference["sha256"], "execution_authorization")
+    live = run_root / "EXECUTION_AUTHORIZATION.md"
+    if not recorded or live.is_symlink() or live.exists():
+        path = safe_file(run_root, "EXECUTION_AUTHORIZATION.md", "execution_authorization")
+        if sha256_file(path) != expected:
+            fail("FACTORY_EXECUTION_CLOSEOUT_PIN_MISMATCH", "execution_authorization")
+        return
+    # A recorded closeout may outlive control archival: accept a byte-identical
+    # archived authorization (e.g. MS05_EXECUTION_AUTHORIZATION.md) at run root.
+    for candidate in sorted(run_root.iterdir()):
+        if (
+            candidate.name.endswith("_EXECUTION_AUTHORIZATION.md")
+            and not candidate.is_symlink()
+            and candidate.is_file()
+            and sha256_file(candidate) == expected
+        ):
+            return
+    fail("FACTORY_EXECUTION_CLOSEOUT_PIN_MISMATCH", "execution_authorization_archived")
+
+
+def validate_closeout(
+    root: Path, run_id: str, value: dict[str, Any], *, recorded: bool = False
+) -> dict[str, Any]:
     root = root.resolve()
     value = exact_object(value, TOP_LEVEL_KEYS, "closeout")
     run_root = safe_run_root(root, run_id)
@@ -203,9 +231,12 @@ def validate_closeout(root: Path, run_id: str, value: dict[str, Any]) -> dict[st
     if not sprint_path.is_file() or value["sprint_id"] != sprint_path.read_text(encoding="utf-8").strip():
         fail("FACTORY_EXECUTION_CLOSEOUT_IDENTITY_MISMATCH", "sprint_id")
     mode_path = run_root / "EXECUTION_MODE.txt"
+    # Recording demands live EXECUTION_ENABLED; a recorded closeout stays valid
+    # after the run is restored to PLANNING_ONLY.
+    allowed_modes = {"EXECUTION_ENABLED", "PLANNING_ONLY"} if recorded else {"EXECUTION_ENABLED"}
     if (
         not mode_path.is_file()
-        or mode_path.read_text(encoding="utf-8").strip() != "EXECUTION_ENABLED"
+        or mode_path.read_text(encoding="utf-8").strip() not in allowed_modes
         or value["execution_mode"] != "EXECUTION_ENABLED"
     ):
         fail("FACTORY_EXECUTION_CLOSEOUT_IDENTITY_MISMATCH", "execution_mode")
@@ -224,11 +255,8 @@ def validate_closeout(root: Path, run_id: str, value: dict[str, Any]) -> dict[st
         label="pack_manifest",
         expected_path="pack/PACK_MANIFEST.md",
     )
-    validate_reference(
-        run_root,
-        value["execution_authorization"],
-        label="execution_authorization",
-        expected_path="EXECUTION_AUTHORIZATION.md",
+    validate_authorization_reference(
+        run_root, value["execution_authorization"], recorded=recorded
     )
     micro_path = validate_reference(
         run_root,
@@ -322,7 +350,7 @@ def validate_closeout_file(root: Path, run_id: str) -> dict[str, Any]:
     if not path.is_file() or path.is_symlink():
         fail("FACTORY_EXECUTION_CLOSEOUT_MISSING", CLOSEOUT_NAME)
     value = load_closeout(path)
-    validated = validate_closeout(root, run_id, value)
+    validated = validate_closeout(root, run_id, value, recorded=True)
     return {**validated, "path": path.relative_to(root.resolve()).as_posix(), "sha256": sha256_file(path)}
 
 

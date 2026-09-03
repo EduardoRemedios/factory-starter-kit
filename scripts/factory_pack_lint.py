@@ -270,13 +270,40 @@ def _check_text_contracts(
     if execution_mode == "EXECUTION_ENABLED" and not (run_root / "EXECUTION_PROMPT.md").exists():
         warnings.append("EXECUTION_ENABLED run has no EXECUTION_PROMPT.md yet; this is expected before human Go")
 
-    manifest_path = pack_dir / VERIFICATION_MANIFEST
-    if execution_mode == "EXECUTION_ENABLED" and not manifest_path.exists():
+    check_verification_manifest_presence(
+        pack_dir=pack_dir,
+        execution_mode=execution_mode,
+        errors=errors,
+        warnings=warnings,
+    )
+    return audited_execution_mode
+
+
+def check_verification_manifest_presence(
+    *,
+    pack_dir: Path,
+    execution_mode: str,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    if (pack_dir / VERIFICATION_MANIFEST).exists():
+        return
+    plan_ids = _plan_vm_ids(pack_dir)
+    if plan_ids:
+        detail = (
+            f"verification_plan.md ## Checks declares {len(set(plan_ids))} runnable VM checks "
+            "but pack/verification_manifest.yaml is absent; the run "
+            "cannot record a canonical execution closeout without it"
+        )
+        if execution_mode == "EXECUTION_ENABLED":
+            errors.append(detail)
+        else:
+            warnings.append(detail)
+    elif execution_mode == "EXECUTION_ENABLED":
         warnings.append(
             "EXECUTION_ENABLED run has no pack/verification_manifest.yaml; "
             "this is allowed for legacy packs but expected for new execution packs"
         )
-    return audited_execution_mode
 
 
 def check_execution_mode_contract(
@@ -674,15 +701,19 @@ def _check_execution_order(
         )
 
 
+def _plan_vm_ids(pack_dir: Path) -> list[str]:
+    plan_checks = _extract_markdown_section(
+        _read_text(pack_dir / "verification_plan.md"), "Checks"
+    )
+    return re.findall(r"^\s*-\s*(VM-\d{3})\s+[—-]\s+", plan_checks, flags=re.MULTILINE)
+
+
 def _check_verification_id_sets(
     pack_dir: Path,
     manifest_ids: set[str],
     errors: list[str],
 ) -> None:
-    plan_checks = _extract_markdown_section(
-        _read_text(pack_dir / "verification_plan.md"), "Checks"
-    )
-    plan_ids = re.findall(r"^\s*-\s*(VM-\d{3})\s+[—-]\s+", plan_checks, flags=re.MULTILINE)
+    plan_ids = _plan_vm_ids(pack_dir)
     for check_id in sorted(set(plan_ids)):
         if plan_ids.count(check_id) > 1:
             errors.append(f"verification_plan.md duplicates {check_id} in ## Checks")

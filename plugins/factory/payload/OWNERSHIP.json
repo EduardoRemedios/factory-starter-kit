@@ -26,7 +26,7 @@
     {
       "path": "AGENTS.md",
       "classification": "project-owned",
-      "sha256": "70799fc5ddf41a86724e8f895a07099b7a0ade324d282fc9dcbb7ddf76ae4877"
+      "sha256": "6e648d116889946195b0221398d8c97b93dcab3f1a01b76f2268766d5bb8a897"
     },
     {
       "path": "docs/CHANGELOG.md",
@@ -81,7 +81,7 @@
     {
       "path": "docs/Factory/ORCHESTRATION.md",
       "classification": "release-owned",
-      "sha256": "c55d461420eedfd2f89e8a102e80741f61622abbe30d2d49027fe3bdbedf5bf6"
+      "sha256": "fe671207b07112cabe9e7fd81dd9150a3417d2d2c9cf87befcbac673c22e7b51"
     },
     {
       "path": "docs/Factory/ProductOwner/BRIEF_REVIEW_CHECKLIST.md",
@@ -161,7 +161,7 @@
     {
       "path": "docs/Factory/templates/EXECUTION_AUTHORIZATION_TEMPLATE.md",
       "classification": "release-owned",
-      "sha256": "f540d3d21dafe6d03d29098331f507d039f37c08e5d86d48c587c0707d245e71"
+      "sha256": "47be26b9f4a91e5d50f345811ecfeff51e5aaadd056ac0cb78bc9435d1a6853d"
     },
     {
       "path": "docs/Factory/templates/EXECUTION_CLOSEOUT_TEMPLATE.json",
@@ -251,7 +251,7 @@
     {
       "path": "docs/Factory/templates/VERIFICATION_MANIFEST_TEMPLATE.yaml",
       "classification": "release-owned",
-      "sha256": "c6576053aac114eb01615de211751d2323295ca001378da4ccb4a1ab72cd64d4"
+      "sha256": "f13a1a5ffd25a193962a19f15d910864475d6fcada32e483c912c3061762c2cd"
     },
     {
       "path": "docs/PROJECT_STATE.md",
@@ -336,7 +336,7 @@
     {
       "path": "scripts/factory_execution_closeout.py",
       "classification": "release-owned",
-      "sha256": "f1e76c223ab4defb8e3a6c06d305d77ecde2274cba36f17bb61aefdc7621193a"
+      "sha256": "e443fbb75dd1aed3752611e1602339594f72070d87cd082c149f21cd48d86160"
     },
     {
       "path": "scripts/factory_host_capability.py",
@@ -351,7 +351,7 @@
     {
       "path": "scripts/factory_pack_lint.py",
       "classification": "release-owned",
-      "sha256": "c7c7005bb0d36385f291233af839d809a366e49471549072a6586da969792a8c"
+      "sha256": "db6614f92f1b0bd338e9cdf1f7302084218dad885f28d4483b7ea7691d7d6a86"
     },
     {
       "path": "scripts/factory_project_preflight.py",

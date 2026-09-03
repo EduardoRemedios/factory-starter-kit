@@ -107,6 +107,76 @@ class FactoryPackLintActivationTests(unittest.TestCase):
         return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+class FactoryPackLintManifestPresenceTests(unittest.TestCase):
+    def test_execution_enabled_with_planned_vm_checks_requires_manifest(self) -> None:
+        with self.pack(plan_ids=("VM-001", "VM-002")) as pack_dir:
+            errors, warnings = self.check(pack_dir, "EXECUTION_ENABLED")
+            self.assertTrue(
+                any("cannot record a canonical execution closeout" in item for item in errors),
+                errors,
+            )
+            self.assertEqual([], warnings)
+
+    def test_execution_enabled_without_planned_vm_checks_keeps_legacy_warning(self) -> None:
+        with self.pack(plan_ids=()) as pack_dir:
+            errors, warnings = self.check(pack_dir, "EXECUTION_ENABLED")
+            self.assertEqual([], errors)
+            self.assertTrue(
+                any("allowed for legacy packs" in item for item in warnings),
+                warnings,
+            )
+
+    def test_planning_only_with_planned_vm_checks_warns_of_uncloseable_pack(self) -> None:
+        with self.pack(plan_ids=("VM-001",)) as pack_dir:
+            errors, warnings = self.check(pack_dir, "PLANNING_ONLY")
+            self.assertEqual([], errors)
+            self.assertTrue(
+                any("cannot record a canonical execution closeout" in item for item in warnings),
+                warnings,
+            )
+
+    def test_present_manifest_emits_no_presence_diagnostics(self) -> None:
+        with self.pack(plan_ids=("VM-001",), manifest=True) as pack_dir:
+            for mode in ("PLANNING_ONLY", "EXECUTION_ENABLED"):
+                errors, warnings = self.check(pack_dir, mode)
+                self.assertEqual([], errors)
+                self.assertEqual([], warnings)
+
+    @staticmethod
+    def check(pack_dir: Path, execution_mode: str) -> tuple[list[str], list[str]]:
+        errors: list[str] = []
+        warnings: list[str] = []
+        pack_lint.check_verification_manifest_presence(
+            pack_dir=pack_dir,
+            execution_mode=execution_mode,
+            errors=errors,
+            warnings=warnings,
+        )
+        return errors, warnings
+
+    class pack:
+        def __init__(self, *, plan_ids: tuple[str, ...], manifest: bool = False) -> None:
+            self.plan_ids = plan_ids
+            self.manifest = manifest
+            self.temporary = tempfile.TemporaryDirectory()
+
+        def __enter__(self) -> Path:
+            pack_dir = Path(self.temporary.name) / "RUN_TEST" / "pack"
+            pack_dir.mkdir(parents=True)
+            checks = "".join(f"- {item} — check\n" for item in self.plan_ids)
+            (pack_dir / "verification_plan.md").write_text(
+                f"# Plan\n\n## Checks\n\n{checks}", encoding="utf-8"
+            )
+            if self.manifest:
+                (pack_dir / "verification_manifest.yaml").write_text(
+                    "schema_version: 1\n", encoding="utf-8"
+                )
+            return pack_dir
+
+        def __exit__(self, exc_type: object, exc: object, traceback: object) -> None:
+            self.temporary.cleanup()
+
+
 class FactoryPackLintVerificationContractTests(unittest.TestCase):
     def test_canonical_traceability_column_is_used(self) -> None:
         with self.fixture(canonical_traceability=True) as (run_root, pack_dir):

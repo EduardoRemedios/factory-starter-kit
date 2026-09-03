@@ -1,9 +1,10 @@
 # docs/Factory/ORCHESTRATION.md — Factory Pipeline Runner Guide (Starter Kit)
 
 ## Version
-v1.24
+v1.25
 
 ## Change Log
+- v1.25 (2026-09-03): Made `pack/verification_manifest.yaml` mandatory for execution-enabled runs whose verification plan declares runnable VM checks (pack-lint fails closed), and let a recorded execution closeout stay valid after mode restoration and control archival while recording itself stays strict.
 - v1.24 (2026-08-13): Closed missing-mode and symlink fail-open cases, aligned traceability parsing with its canonical verification column, and validated optional execution ordering.
 - v1.23 (2026-08-13): Separated pack-lint validation of pinned preimage evidence from lifecycle-timed VM comparison of target bytes.
 - v1.22 (2026-08-13): Made the executable verification manifest authoritative, cross-checked VM inventories, and required SHA-pinned no-touch preimage manifests.
@@ -108,7 +109,7 @@ Stage F should classify verification with tiers:
 - `V3` regression or conformance gate
 - `V4` live, browser, external, or source-revalidation proof
 
-For `EXECUTION_ENABLED` and Mission Mode runs, Stage F should produce `pack/verification_manifest.yaml` when runnable checks exist. The manifest is optional so planning-only packs stay lightweight, but if it exists `pack-lint` validates its schema.
+For `EXECUTION_ENABLED` and Mission Mode runs, Stage F must produce `pack/verification_manifest.yaml` whenever `verification_plan.md` declares a runnable `## Checks` VM inventory: the canonical execution closeout cannot be recorded without it, so `pack-lint` fails an execution-enabled run that lacks it and warns a planning-only pack that it cannot legally close after activation. Only packs with no runnable VM inventory may omit the manifest (planning-only packs stay lightweight); if it exists `pack-lint` validates its schema.
 
 When a verification manifest exists, its check IDs are the executable authority. Stage F must use a dedicated `## Checks` inventory in `verification_plan.md`, reference the same IDs in the traceability matrix's named verification coverage column, and keep all three ID sets exactly equal. If `execution_order` is present, it is authoritative and must contain every VM check exactly once; explicitly named non-VM operations may be interposed. Every `no_touch` check must reference a safe run-relative, non-symlink JSON preimage manifest and pin that manifest's SHA-256. Pack-lint validates the evidence file, schema, safe paths, and pin; the declared VM command compares target bytes at the lifecycle point named by the plan. Historical preimages do not become permanent postimplementation postimages.
 
@@ -310,7 +311,7 @@ For `PLANNING_ONLY` runs, the pack is terminal planning evidence.
 
 For `EXECUTION_ENABLED` runs, execution may begin only after explicit human Go.
 
-If `pack/verification_manifest.yaml` exists, `pack-lint` validates it. If an execution-enabled pack has runnable checks but no manifest, treat that as a process smell even when legacy compatibility keeps the lint result non-blocking.
+If `pack/verification_manifest.yaml` exists, `pack-lint` validates it. If an execution-enabled pack declares runnable VM checks in `verification_plan.md` but has no manifest, `pack-lint` fails closed: such a run is structurally unable to record its canonical execution closeout. Legacy compatibility remains only for packs whose plan declares no VM inventory, where the absence stays a warning.
 
 ### 5.1 Repository Handoff To Maintainer Review
 When Factory output is delivered through a branch or pull request, the handoff should state:
@@ -339,6 +340,8 @@ When an execution-enabled run finishes its approved micro-sprints:
 3. record it only through `./scripts/factoryctl execution-closeout --run <RUN_ID> --input <DRAFT> --json`
 4. run plugin progress for the explicit run and for default selection
 5. treat any present-invalid closeout as blocking; absence alone preserves legacy behavior
+6. record the closeout while `EXECUTION_MODE.txt` is still `EXECUTION_ENABLED` and `EXECUTION_AUTHORIZATION.md` is still live; recording refuses a restored or archived state
+7. after recording, the run may be restored to `PLANNING_ONLY` and its controls archived (e.g. `MS05_EXECUTION_AUTHORIZATION.md`): the recorded closeout stays valid as long as a byte-identical archived authorization remains at the run root
 
 Closeout is derived evidence, not authority. `REVIEW_READY` permits maintainer
 review only and does not permit commit, merge, tag, push, publication, adapter
