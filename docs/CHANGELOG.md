@@ -11,6 +11,14 @@
   migration, qualification, decided open questions).
 - Migration step 1: golden-pack regression fixtures under `tests/golden_packs/`
   with `tests/test_golden_packs.py`.
+- Migration steps 3-5: added `docs/Conductor/INVARIANTS.md` and the AGENTS.md
+  managed block; added `conductorctl contract-lint {intent,execution,completion}`
+  (G1/G2/G3 deterministic validation over the contract schemas, countersign
+  digests, receipts, postimage, Statement of Completion, gap requests),
+  `conductorctl receipts run|attest` (the only legitimate author of signed
+  evidence receipts and manifest results), and `conductorctl postimage
+  capture|compare` (protected-root write-boundary proof). End-to-end tests
+  in `tests/test_contract_lint.py` include tamper and stale-authority cases.
 - Migration step 2b: landed the Conductor contract schemas (JSON Schema
   2020-12) under `docs/Conductor/contracts/` with templates, and the BMAD
   adapter contracts (lane policy, adapter config) under
