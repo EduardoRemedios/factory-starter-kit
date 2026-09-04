@@ -1,0 +1,148 @@
+{
+  "check": "VM-001-corrective1",
+  "checks": [
+    {
+      "actual": "c23be98034215c17c9c49a7e9b6302cb2ad1f18d",
+      "expected": "c23be98034215c17c9c49a7e9b6302cb2ad1f18d",
+      "name": "candidate_commit",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/factory-bmad-0.2.5-solution-context"
+    },
+    {
+      "actual": "EXECUTION_ENABLED",
+      "expected": "EXECUTION_ENABLED",
+      "name": "execution_mode_active",
+      "pass": true,
+      "path": "EXECUTION_MODE.txt"
+    },
+    {
+      "actual": "6c0e9c34287630b966f2558baaa85ac1c8f102ce8a16d5334ba389e4914c953d",
+      "expected": "6c0e9c34287630b966f2558baaa85ac1c8f102ce8a16d5334ba389e4914c953d",
+      "name": "pack_manifest",
+      "pass": true,
+      "path": "docs/Factory/runs/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/pack/PACK_MANIFEST.md"
+    },
+    {
+      "actual": "48f4c683c0e8f828810a191dc23b47ae0e0369d967b04034af2695acce591604",
+      "expected": "48f4c683c0e8f828810a191dc23b47ae0e0369d967b04034af2695acce591604",
+      "name": "pack_audit",
+      "pass": true,
+      "path": "docs/Factory/runs/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/pack/PACK_AUDIT_REPORT.md"
+    },
+    {
+      "actual": "a64bff70a66c85199287774e4afb8be8fc8e5f2692e3fc183766a4b9532c2966",
+      "expected": "a64bff70a66c85199287774e4afb8be8fc8e5f2692e3fc183766a4b9532c2966",
+      "name": "verification_manifest",
+      "pass": true,
+      "path": "docs/Factory/runs/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/pack/verification_manifest.yaml"
+    },
+    {
+      "actual": "bd10994c1dbe597de10befc34a9aaadcadf6e3539741e6d973e63cbe7e99da16",
+      "expected": "bd10994c1dbe597de10befc34a9aaadcadf6e3539741e6d973e63cbe7e99da16",
+      "name": "live_preflight_driver",
+      "pass": true,
+      "path": "scripts/verify_factory_bmad_live_preflight.py"
+    },
+    {
+      "actual": "6c3d23ecf94ccc5dced0ebb2495e2e0385da63632363514ca1285f354653d82d",
+      "expected": "6c3d23ecf94ccc5dced0ebb2495e2e0385da63632363514ca1285f354653d82d",
+      "name": "composition_driver",
+      "pass": true,
+      "path": "scripts/verify_factory_bmad_claude_composition.sh"
+    },
+    {
+      "actual": "a4b65bf09035e59af673d035a595696b681d7a8e0e56c8ed8681fd9fd70e0ce6",
+      "expected": "a4b65bf09035e59af673d035a595696b681d7a8e0e56c8ed8681fd9fd70e0ce6",
+      "name": "live_pilot_driver",
+      "pass": true,
+      "path": "scripts/verify_factory_bmad_live_pilot.sh"
+    },
+    {
+      "actual": "b5998ab5c1822de4d2ee867a9bcbdfaada2beb34bb396cfff82d98e811042168",
+      "expected": "b5998ab5c1822de4d2ee867a9bcbdfaada2beb34bb396cfff82d98e811042168",
+      "name": "live_verifier_contract",
+      "pass": true,
+      "path": "tests/plugin_fixtures/factory_bmad_live_verifier_contract.json"
+    },
+    {
+      "actual": "17f7a7d1752ad5ab6dde3b11e1916a76f8d3fe2c658407333926d744c8f5d7cb",
+      "expected": "17f7a7d1752ad5ab6dde3b11e1916a76f8d3fe2c658407333926d744c8f5d7cb",
+      "name": "source_coupling",
+      "pass": true,
+      "path": "tests/plugin_fixtures/factory_bmad_025_source_coupling.json"
+    },
+    {
+      "actual": "dd6b2e8436d4fa212cfb9ca085d4c65c7d6ea352b5cd68428cf04c89cabf59c9",
+      "expected": "dd6b2e8436d4fa212cfb9ca085d4c65c7d6ea352b5cd68428cf04c89cabf59c9",
+      "name": "preimage_PREIMAGE_DIGEST_REPORT.json",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01-corrective1/protected_preimages_20260903T185700Z/PREIMAGE_DIGEST_REPORT.json"
+    },
+    {
+      "actual": "1ebf932172fd1e77c09f78eac02237f2881d69dc50c356f2c7c17375c86f5747",
+      "expected": "1ebf932172fd1e77c09f78eac02237f2881d69dc50c356f2c7c17375c86f5747",
+      "name": "preimage_normal_claude_profile.json",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01-corrective1/protected_preimages_20260903T185700Z/normal_claude_profile.json"
+    },
+    {
+      "actual": "71aa51138f058fdac52f11055a3b6ab0aff9a1f3584d1dccbeb7123f4b4ad59e",
+      "expected": "71aa51138f058fdac52f11055a3b6ab0aff9a1f3584d1dccbeb7123f4b4ad59e",
+      "name": "preimage_normal_claude_runtime.json",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01-corrective1/protected_preimages_20260903T185700Z/normal_claude_runtime.json"
+    },
+    {
+      "actual": "04c45105707d8dac916a9671036a1ff06cfaea06c4df926c5874d2c33b712396",
+      "expected": "04c45105707d8dac916a9671036a1ff06cfaea06c4df926c5874d2c33b712396",
+      "name": "preimage_failed_0_2_2_candidate.json",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01-corrective1/protected_preimages_20260903T185700Z/failed_0_2_2_candidate.json"
+    },
+    {
+      "actual": "80a9b8cb09722d9bdc4273f84b812d71f9d7f01e64ce033ce24147a481731411",
+      "expected": "80a9b8cb09722d9bdc4273f84b812d71f9d7f01e64ce033ce24147a481731411",
+      "name": "preimage_failed_0_2_2_test_root.json",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01-corrective1/protected_preimages_20260903T185700Z/failed_0_2_2_test_root.json"
+    },
+    {
+      "actual": "bb01cd32840d4adc306285bb777ad46e2e15da378e2b1dc9c7f712ca2e33a380",
+      "expected": "bb01cd32840d4adc306285bb777ad46e2e15da378e2b1dc9c7f712ca2e33a380",
+      "name": "preimage_failed_0_2_2_config.json",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01-corrective1/protected_preimages_20260903T185700Z/failed_0_2_2_config.json"
+    },
+    {
+      "actual": "7eaa4073ef8e51ce9fe8388e8a5670eaf30e8092d80e1ed7d5f1c57f809a43d3",
+      "expected": "7eaa4073ef8e51ce9fe8388e8a5670eaf30e8092d80e1ed7d5f1c57f809a43d3",
+      "name": "preimage_odyssey.json",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01-corrective1/protected_preimages_20260903T185700Z/odyssey.json"
+    },
+    {
+      "actual": "26f30fed459fea7f214c71a1de9d79e8cf3b76d322f6a2ed41e8b4fc8121e08f",
+      "expected": "26f30fed459fea7f214c71a1de9d79e8cf3b76d322f6a2ed41e8b4fc8121e08f",
+      "name": "preimage_unrelated_state.json",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01-corrective1/protected_preimages_20260903T185700Z/unrelated_state.json"
+    },
+    {
+      "actual": true,
+      "expected": true,
+      "name": "claude_binary_exists_executable",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/.local/bin/claude"
+    },
+    {
+      "actual": "2.1.",
+      "expected": "2.1.",
+      "name": "claude_version_prefix",
+      "pass": true,
+      "path": "/Users/eduardodosremedios/.local/bin/claude"
+    }
+  ],
+  "evidence_sha256_without_self": "6f7303d07f089c0bcf244df1798538a9629f2e526789e6e12a73cd844459cbf1",
+  "schema_version": 1,
+  "state": "PASS"
+}

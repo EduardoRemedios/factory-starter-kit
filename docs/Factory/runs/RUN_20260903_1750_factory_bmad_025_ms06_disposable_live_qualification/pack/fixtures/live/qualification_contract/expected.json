@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "allowed_workflow_outcome": {
+    "runs_live": true,
+    "emits_typed_solution_context": true,
+    "authority": "EVIDENCE_ONLY",
+    "factory_state_change": "none"
+  },
+  "denial_outcome": {
+    "denied_before_causal_sentinel": true,
+    "sentinel_executed": false,
+    "both_hook_paths": true
+  },
+  "promotion_outcome": {
+    "human_reviewed": true,
+    "snapshot_hash_pinned": true,
+    "immutable": true,
+    "claim_dispositions_recorded": true
+  },
+  "teardown_outcome": {
+    "evidence_exported_with_digests": true,
+    "disposable_repository_removed": true,
+    "protected_paths_byte_identical": true,
+    "harness_caches_clean": true,
+    "registrations_unchanged": true
+  },
+  "partial_success_rule": "any missing or failed proof yields NO_GO or BLOCKED"
+}

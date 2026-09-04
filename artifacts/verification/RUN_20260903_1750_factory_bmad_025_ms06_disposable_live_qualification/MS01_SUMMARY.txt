@@ -1,0 +1,70 @@
+MS-01 DISPOSABLE LIVE QUALIFICATION SUMMARY
+
+Run: RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification
+Activation: MS-01 only
+Final state: BLOCKED
+Reason code: FACTORY_BMAD_MS01_PROTECTED_POSTIMAGE_MISMATCH
+Execution mode after stop: PLANNING_ONLY
+
+Authorized scope honored:
+- Candidate source/test/generated package mutation: none.
+- Factory Core mutation: none.
+- Donor/protected-root intentional mutation: none.
+- Git commit/merge/push: none.
+- BMAD invocation: none.
+- MS-02/MS-03 action: none.
+- AuditEdge/publication/pilot/release/rollout: none.
+
+Checks completed:
+- VM-001 pin revalidation: PASS.
+  Evidence: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-001.txt
+  Evidence SHA-256: c37bd605d6957f9741edddcd82a7abdce4590654768953bf4cca90ffb99d6dc1
+- VM-002 containment preflight: PASS.
+  Evidence: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-002.txt
+  Evidence SHA-256: d4e34a3c876eb8b810244a88d88ef4702b1d5de06b57a4eb8e11bbd4435299ef
+  Preflight verdict SHA-256: 0aa3870ed37224b930851a59df83905f635dd1e3a6fab47ed09f51fa637361c0
+  Preflight file SHA-256: 405741fb2166b49d534180c81f7f7ea54fae949da4639046bfd95a3959f48c35
+- Disposable Factory-only provisioning: PASS on retry after parent-directory creation.
+  Target: /Users/eduardodosremedios/factory-bmad-025-ms06-disposable/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01/brownfield-neither
+  Plan ID: da53d84e263bb05fc2dad2866f92dc3446f5345c85b6fa7de01f00a0e7fff3c8
+  Plan SHA-256: 524b2b5a4f9fa237f1111e82883733fe654595f36cece4273be26b05c7d0f856
+  Initial failed apply receipt SHA-256: ca589cb8437f6d7f620d683a164eaccf6dfeeff738a5158dbf6f5dc87ab0536c
+  Retry apply receipt SHA-256: 83489f6d38af3da9234de336d522d32593c5650a5afd8df4c043642dc97b556b
+  Companion doctor result after apply: FACTORY_ONLY / FACTORY_BMAD_FACTORY_ONLY.
+- Unused journey roots:
+  greenfield: absent.
+  brownfield-bmad: absent.
+  config root: absent.
+
+Blocking finding:
+- Strict protected postimage comparison failed for role unrelated_state.
+- Protected root: /Users/eduardodosremedios/factory-starter-kit
+- Expected entry count: 53731.
+- Actual entry count: 53731.
+- Expected aggregate SHA-256: ac2271e636bd4a543ea82e92ec5a4f3e460bdf227018f84131f2d430cfd50e67.
+- Actual aggregate SHA-256: e90cb0549292442daa436f68adad422a255b4389209cfdfc37fb06782ca7b948.
+- Strict compare evidence: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/protected_postimage_compare_ms01.json
+- Strict compare evidence SHA-256: bbb408b5dd563ae576cf13482a80391b115a8b4f5ba6532e5a5b4faf20ff645d
+
+Root-cause diagnostic:
+- The changed paths are under .git/refs/codex/turn-diffs inside the protected unrelated_state root.
+- Diagnostic comparison excluding only .git/refs/codex/turn-diffs passes for all protected roles.
+- Diagnostic evidence: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/protected_postimage_compare_ms01_codex_refs_excluded.json
+- Diagnostic evidence SHA-256: a37251ea0f54ec8f0ca3b2bdc480146970895c37ee901060cc68e9bcbaa9a82e
+- This diagnostic is not a VM pass substitute because the exclusion was not part of the approved MS-01 contract.
+
+Evidence bounds:
+- External evidence file count after MS-01 stop: 16.
+- External evidence size after MS-01 stop: 17 MiB.
+- In-repo MS-01 evidence files before this summary: 4.
+
+Disposition:
+- MS-01 cannot be reported PASS because the strict "no protected path touched" exit criterion did not hold against the originally pinned preimages.
+- Do not proceed to MS-02.
+- Preserve the disposable root and all evidence. Do not auto-clean or rewrite preimages.
+
+Next legal action:
+- Human review this BLOCKED result.
+- Separately authorize one of:
+  1. a corrected MS-01 retry with a stable unrelated_state root that excludes volatile Codex app turn-diff refs by contract before preimage capture; or
+  2. a contract amendment explicitly excluding .git/refs/codex/turn-diffs from protected-root byte equality, followed by fresh preimage capture and rerun.

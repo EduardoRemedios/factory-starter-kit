@@ -1,0 +1,124 @@
+# Executable verification contract for RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification.
+# execution_mode records the I2-audited pack mode and stays PLANNING_ONLY when a
+# later digest-bound authorization temporarily activates execution. Disposable
+# roots, harness binaries, and evidence roots reach the pinned drivers only
+# through activation-pinned environment values; no command carries an absolute
+# path. Closeout evidence paths live under artifacts/verification/<run id>/.
+
+schema_version: 1
+run_id: RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification
+sprint_id: SPRINT_20260903_001
+execution_mode: PLANNING_ONLY
+
+checks:
+  - id: VM-001
+    tier: V4
+    type: source_revalidation
+    constraint_ids:
+      - C-002
+    description: Candidate commit, plugin package digests, driver digests, BMAD 6.10.0 tree digests, and the live qualification contract fixture match activation pins before any live action and after closeout.
+    target: pack/fixtures/live/qualification_contract/input.json
+    expected: All pinned inventories are byte-identical before live actions and after closeout.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-001.txt
+
+  - id: VM-002
+    tier: V3
+    type: command
+    constraint_ids:
+      - C-005
+    description: Containment preflight - the disposable root is fresh, empty, non-symlinked, outside every protected root, and free of symlinks into protected paths, verified before seeding with activation-pinned arguments.
+    command: ./scripts/factory-python scripts/verify_factory_bmad_live_preflight.py
+    expected: Preflight passes with the activation-pinned disposable root.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-002.txt
+
+  - id: VM-003
+    tier: V4
+    type: command
+    constraint_ids:
+      - C-006
+    description: Live authoring proof - architecture, UX, and spec workflows run through the pinned drivers across both hook paths and complete without touching Factory state.
+    command: bash scripts/verify_factory_bmad_claude_composition.sh
+    expected: All three authoring workflows complete live with clean driver verdicts.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-003.txt
+
+  - id: VM-004
+    tier: V3
+    type: command
+    constraint_ids:
+      - C-001
+      - C-004
+    description: Typed-output validation - every emitted solution context is typed SOLUTION_CONTEXT with EVIDENCE_ONLY authority, non-binding, and unable to alter the disposable repository's Factory authority chain.
+    command: bash scripts/verify_factory_bmad_claude_composition.sh
+    expected: Every emitted context validates as typed, non-binding evidence.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-004.txt
+
+  - id: VM-005
+    tier: V4
+    type: command
+    constraint_ids:
+      - C-001
+      - C-003
+      - C-006
+    description: Live denial proof - prohibited, unknown, malformed, and unsafe-layout paths deny before causal sentinels through both hook paths with sentinel non-execution evidenced.
+    command: bash scripts/verify_factory_bmad_live_pilot.sh
+    expected: Every denial family denies before its sentinel through both hook paths.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-005.txt
+
+  - id: VM-006
+    tier: V4
+    type: manual
+    constraint_ids:
+      - C-004
+    description: Promotion review - the human reviews the concrete snapshot during the activation window and exactly one immutable hash-pinned promotion with explicit claim dispositions is recorded; a missing review halts.
+    expected: One human-reviewed, hash-pinned, immutable promotion with recorded claim dispositions.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-006.txt
+
+  - id: VM-007
+    tier: V3
+    type: manual
+    constraint_ids:
+      - C-005
+      - C-007
+    description: Evidence export - promotion evidence and complete live logs are exported to the external evidence root with digests strictly before teardown; teardown of unexported evidence halts.
+    expected: Digest-pinned exports exist externally before any teardown action.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-007.txt
+
+  - id: VM-008
+    tier: V4
+    type: manual
+    constraint_ids:
+      - C-002
+      - C-005
+    description: Teardown and residue - the disposable repository is removed with evidence, and protected paths, harness plugin caches, and worktree registrations are preimage-equal.
+    expected: Disposable repository absent; every residue inventory entry preimage-equal.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-008.txt
+
+  - id: VM-009
+    tier: V3
+    type: manual
+    constraint_ids:
+      - C-007
+    description: Evidence bounds - external evidence stays within its ceiling, harness output stays bounded, and live logs pass the secret scan before retention.
+    expected: Evidence counts, sizes, and scans all within contract.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-009.txt
+
+  - id: VM-010
+    tier: V3
+    type: command
+    constraint_ids:
+      - C-001
+      - C-007
+    description: Governance audit - knowledge lint passes, with stage F-I2 lints, pack-lint, the partial-success rule, the status ceiling, and the AuditEdge/candidate-mutation/delivery exclusions recorded in the same evidence set.
+    command: bash scripts/knowledge_lint.sh
+    expected: knowledge_lint reports PASS and the companion governance checks all pass.
+    halt_on_failure: true
+    evidence_path: artifacts/verification/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/VM-010.txt

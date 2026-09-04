@@ -1,0 +1,35 @@
+{
+  "check": "VM-002",
+  "claude_invocations": 0,
+  "cleanup_performed": false,
+  "preflight_file_sha256": "405741fb2166b49d534180c81f7f7ea54fae949da4639046bfd95a3959f48c35",
+  "preflight_path": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01/live_preflight_20260903T1927WEST/preflight.json",
+  "preflight_verdict_sha256": "0aa3870ed37224b930851a59df83905f635dd1e3a6fab47ed09f51fa637361c0",
+  "protected_preimage_roles": [
+    "failed_0_2_2_candidate",
+    "failed_0_2_2_config",
+    "failed_0_2_2_test_root",
+    "normal_claude_profile",
+    "normal_claude_runtime",
+    "odyssey",
+    "unrelated_state"
+  ],
+  "reason_codes": [],
+  "roots": {
+    "candidate": "/Users/eduardodosremedios/factory-bmad-0.2.5-solution-context",
+    "config": "/Users/eduardodosremedios/factory-bmad-025-ms06-disposable/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01/config",
+    "evidence": "/Users/eduardodosremedios/factory-bmad-025-solution-context-evidence/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01/live_preflight_20260903T1927WEST",
+    "journey:brownfield-bmad": "/Users/eduardodosremedios/factory-bmad-025-ms06-disposable/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01/brownfield-bmad",
+    "journey:brownfield-neither": "/Users/eduardodosremedios/factory-bmad-025-ms06-disposable/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01/brownfield-neither",
+    "journey:greenfield": "/Users/eduardodosremedios/factory-bmad-025-ms06-disposable/RUN_20260903_1750_factory_bmad_025_ms06_disposable_live_qualification/MS-01/greenfield",
+    "protected:failed_0_2_2_candidate": "/Users/eduardodosremedios/factory-pilot-candidates/factory-bmad-0.2.2",
+    "protected:failed_0_2_2_config": "/Users/eduardodosremedios/.factory-pilots/factory-bmad-0.2.2-ms06-claude-config",
+    "protected:failed_0_2_2_test_root": "/Users/eduardodosremedios/factory-pilot-runs/factory-bmad-0.2.2-ms06",
+    "protected:normal_claude_profile": "/Users/eduardodosremedios/.claude.json",
+    "protected:normal_claude_runtime": "/Users/eduardodosremedios/.claude",
+    "protected:odyssey": "/Users/eduardodosremedios/odyssey_v2",
+    "protected:unrelated_state": "/Users/eduardodosremedios/factory-starter-kit"
+  },
+  "schema_version": 1,
+  "state": "PASS"
+}

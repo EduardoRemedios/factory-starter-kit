@@ -1,0 +1,69 @@
+{
+  "comparisons": [
+    {
+      "actual_aggregate_sha256": "ccadc89f1634fb2215de787b1b2a05bd96220f7416b4defa2726dec6c4d80df5",
+      "actual_entry_count": 637,
+      "expected_aggregate_sha256": "ccadc89f1634fb2215de787b1b2a05bd96220f7416b4defa2726dec6c4d80df5",
+      "expected_entry_count": 637,
+      "pass": true,
+      "role": "failed_0_2_2_candidate",
+      "root": "/Users/eduardodosremedios/factory-pilot-candidates/factory-bmad-0.2.2"
+    },
+    {
+      "actual_aggregate_sha256": "e8edbb3f1d9ddf04405ef12d6af6e488255795c0a00cc5b19e6b6701d89ff4ca",
+      "actual_entry_count": 180,
+      "expected_aggregate_sha256": "e8edbb3f1d9ddf04405ef12d6af6e488255795c0a00cc5b19e6b6701d89ff4ca",
+      "expected_entry_count": 180,
+      "pass": true,
+      "role": "failed_0_2_2_config",
+      "root": "/Users/eduardodosremedios/.factory-pilots/factory-bmad-0.2.2-ms06-claude-config"
+    },
+    {
+      "actual_aggregate_sha256": "1960e8239be8062c410b57262c234b0334083df360dd3f2a5ce2c243abfe20be",
+      "actual_entry_count": 75,
+      "expected_aggregate_sha256": "1960e8239be8062c410b57262c234b0334083df360dd3f2a5ce2c243abfe20be",
+      "expected_entry_count": 75,
+      "pass": true,
+      "role": "failed_0_2_2_test_root",
+      "root": "/Users/eduardodosremedios/factory-pilot-runs/factory-bmad-0.2.2-ms06"
+    },
+    {
+      "actual_aggregate_sha256": "55ce63a12d6261e00ec8263513f7d4009737d199cdead5b46d9570d57c669ce1",
+      "actual_entry_count": 1,
+      "expected_aggregate_sha256": "55ce63a12d6261e00ec8263513f7d4009737d199cdead5b46d9570d57c669ce1",
+      "expected_entry_count": 1,
+      "pass": true,
+      "role": "normal_claude_profile",
+      "root": "/Users/eduardodosremedios/.claude.json"
+    },
+    {
+      "actual_aggregate_sha256": "f82ecfdf2d0e295fbc46562b4692c686f41107906079dda20832f110a3ffe708",
+      "actual_entry_count": 13088,
+      "expected_aggregate_sha256": "f82ecfdf2d0e295fbc46562b4692c686f41107906079dda20832f110a3ffe708",
+      "expected_entry_count": 13088,
+      "pass": true,
+      "role": "normal_claude_runtime",
+      "root": "/Users/eduardodosremedios/.claude"
+    },
+    {
+      "actual_aggregate_sha256": "db9a20124269d66cd54022e68942f1da4ee1ca56e65ec13776a2f7de3444f5e9",
+      "actual_entry_count": 1234,
+      "expected_aggregate_sha256": "db9a20124269d66cd54022e68942f1da4ee1ca56e65ec13776a2f7de3444f5e9",
+      "expected_entry_count": 1234,
+      "pass": true,
+      "role": "odyssey",
+      "root": "/Users/eduardodosremedios/odyssey_v2"
+    },
+    {
+      "actual_aggregate_sha256": "73090a0004b63210df0c54b9e75e73f394f9287dd0cd680d303fca6ed63af73b",
+      "actual_entry_count": 245,
+      "expected_aggregate_sha256": "73090a0004b63210df0c54b9e75e73f394f9287dd0cd680d303fca6ed63af73b",
+      "expected_entry_count": 245,
+      "pass": true,
+      "role": "unrelated_state",
+      "root": "/Users/eduardodosremedios/factory-starter-kit/docs"
+    }
+  ],
+  "schema_version": 1,
+  "state": "PASS"
+}
