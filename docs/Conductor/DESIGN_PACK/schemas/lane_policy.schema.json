@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conductor.dev/schemas/lane_policy.schema.json",
+  "title": "Conductor BMAD Lane Policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "policy_version", "bmad_version", "lanes", "helpers", "evidence_only", "unknown_default", "unsafe_layout_blocks", "profiles"],
+  "$defs": {
+    "skill": { "type": "string", "pattern": "^bmad-[a-z0-9][a-z0-9-]*$" },
+    "skillset": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/skill" } },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "properties": {
+    "schema_version": { "const": 1 },
+    "policy_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "bmad_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "lanes": {
+      "type": "object", "additionalProperties": false,
+      "required": ["product_context", "delivery"],
+      "properties": {
+        "product_context": {
+          "type": "object", "additionalProperties": false,
+          "required": ["workflows", "write_roots"],
+          "properties": {
+            "workflows": { "$ref": "#/$defs/skillset" },
+            "write_roots": { "type": "array", "minItems": 1, "items": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[^\\s]+$" } }
+          }
+        },
+        "delivery": {
+          "type": "object", "additionalProperties": false,
+          "required": ["workflows"],
+          "properties": { "workflows": { "$ref": "#/$defs/skillset" } }
+        }
+      }
+    },
+    "helpers": { "$ref": "#/$defs/skillset", "description": "Same-lane nesting permitted; write roots inherited from product_context." },
+    "evidence_only": { "$ref": "#/$defs/skillset", "description": "TEA design-level workflows; promotable as EVIDENCE_ONLY." },
+    "unknown_default": { "const": "deny" },
+    "unsafe_layout_blocks": {
+      "type": "array", "uniqueItems": true, "minItems": 1,
+      "items": { "enum": ["intake", "promote", "solution_context_authoring"] },
+      "description": "Discovery is intentionally not an allowed value."
+    },
+    "profiles": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/skill" },
+      "additionalProperties": {
+        "type": "object", "additionalProperties": false,
+        "required": ["logical_path", "skill_sha256", "customize_sha256"],
+        "properties": {
+          "logical_path": { "type": "string", "minLength": 1 },
+          "skill_sha256": { "$ref": "#/$defs/sha256" },
+          "customize_sha256": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    }
+  }
+}

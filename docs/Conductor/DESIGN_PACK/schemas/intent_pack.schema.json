@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conductor.dev/schemas/intent_pack.schema.json",
+  "title": "Conductor Intent Pack",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "goal", "requirements", "constraints", "scope_in", "scope_out", "sources", "verification_requirements", "budget", "execution_mode", "done_definition"],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "nonempty": { "type": "string", "minLength": 1, "pattern": "^(?!\\s*(TBD|TODO|N/A|<[^>]*>)\\s*$).+" }
+  },
+  "properties": {
+    "schema_version": { "const": 1 },
+    "run_id": { "$ref": "#/$defs/id" },
+    "goal": { "$ref": "#/$defs/nonempty", "maxLength": 1200 },
+    "requirements": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "statement", "acceptance", "severity"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "statement": { "$ref": "#/$defs/nonempty" },
+          "acceptance": { "$ref": "#/$defs/nonempty" },
+          "severity": { "enum": ["blocking", "high", "normal"] }
+        }
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "statement", "source"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "statement": { "$ref": "#/$defs/nonempty" },
+          "source": { "$ref": "#/$defs/nonempty" }
+        }
+      }
+    },
+    "scope_in": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonempty" } },
+    "scope_out": { "type": "array", "items": { "$ref": "#/$defs/nonempty" } },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["kind", "ref", "sha256"],
+        "properties": {
+          "kind": { "enum": ["human_brief", "bmad_snapshot", "spec", "prior_run"] },
+          "ref": { "$ref": "#/$defs/nonempty" },
+          "sha256": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    },
+    "verification_requirements": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "requirement_ids", "tier", "description"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "requirement_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" } },
+          "tier": { "enum": ["V0", "V1", "V2", "V3", "V4"] },
+          "description": { "$ref": "#/$defs/nonempty" }
+        }
+      }
+    },
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["model", "effort_g2", "effort_g3"],
+      "properties": {
+        "model": { "$ref": "#/$defs/nonempty" },
+        "effort_g2": { "enum": ["low", "medium", "high", "xhigh", "max"] },
+        "effort_g3": { "enum": ["low", "medium", "high", "xhigh", "max"] },
+        "max_wall_minutes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["statement", "mitigation"],
+        "properties": { "statement": { "$ref": "#/$defs/nonempty" }, "mitigation": { "$ref": "#/$defs/nonempty" } }
+      }
+    },
+    "execution_mode": { "enum": ["PLANNING_ONLY", "EXECUTION_ENABLED"] },
+    "done_definition": { "$ref": "#/$defs/nonempty" }
+  }
+}

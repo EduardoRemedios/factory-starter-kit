@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conductor.dev/schemas/verification_manifest_v2.schema.json",
+  "title": "Conductor Verification Manifest v2",
+  "description": "Superset of the Factory v1 manifest. checks[].result is written only by the receipts runner.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "execution_mode", "checks"],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$" },
+    "relpath": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[^\\s]+$" }
+  },
+  "properties": {
+    "schema_version": { "const": 2 },
+    "run_id": { "$ref": "#/$defs/id" },
+    "sprint_id": { "$ref": "#/$defs/id", "description": "Optional in v2; retained for golden-pack compatibility." },
+    "execution_mode": { "enum": ["PLANNING_ONLY", "EXECUTION_ENABLED"] },
+    "checks": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "tier", "type", "description", "halt_on_failure", "evidence_path"],
+        "anyOf": [ { "required": ["requirement_ids"] }, { "required": ["constraint_ids"] } ],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "tier": { "enum": ["V0", "V1", "V2", "V3", "V4"] },
+          "type": { "enum": ["artifact", "static", "command", "test", "fixture", "no_touch", "source_revalidation"] },
+          "requirement_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" } },
+          "constraint_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "description": { "type": "string", "minLength": 1 },
+          "command": { "type": "array", "items": { "type": "string" } },
+          "expected": { "type": "string" },
+          "expected_exit": { "type": "integer" },
+          "target": { "$ref": "#/$defs/relpath" },
+          "halt_on_failure": { "type": "boolean" },
+          "evidence_path": { "$ref": "#/$defs/relpath" },
+          "result": {
+            "type": "object", "additionalProperties": false,
+            "required": ["status", "receipt_path"],
+            "properties": {
+              "status": { "enum": ["PASS", "FAIL", "SKIPPED", "NOT_RUN"] },
+              "receipt_path": { "$ref": "#/$defs/relpath" },
+              "exit_code": { "type": "integer" },
+              "utc": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "allOf": [
+          { "if": { "properties": { "type": { "enum": ["static", "command", "test", "no_touch"] } } }, "then": { "required": ["command"] } },
+          { "if": { "properties": { "type": { "enum": ["artifact", "fixture", "source_revalidation"] } } }, "then": { "required": ["target"] } }
+        ]
+      }
+    }
+  }
+}
