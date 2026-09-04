@@ -38,3 +38,21 @@ Findings 2, 4, 5, 8 are correct behaviour or environment facts, not defects. The
 ## Handover readiness
 
 F-1 and F-6 landed in 0.3.1 (re-test recorded below). Ready to hand to the pilot team, because both hit any real repository on day one. F-3 needs a decision from the pilot team about where their BMAD IDE skills live. F-7 and F-9 can follow in 0.3.1 without blocking the handover.
+
+## Re-test after 0.3.1 (same evening)
+
+Plugins updated 0.3.0 → 0.3.1 through the GitHub marketplace; every command ran from the installed cache. Spike-1 reset to the pilot team's commit with its real `CLAUDE.md` in place.
+
+| Step | Result |
+|---|---|
+| Brownfield preview | PLAN_READY, no conflicts: `AGENTS.md` compose + `CLAUDE.md` migrate_bridge (F-1 fixed) |
+| Apply | APPLIED with receipt; project guide preserved under the managed block; bridge written; only `CLAUDE.md` modified among tracked files |
+| Doctor / progress | COMPATIBLE / READY_TO_INITIALIZE |
+| Declared root `bmad/_bmad` | BMAD doctor BOTH_PRESENT |
+| `seed-contracts` | 4 creates previewed, APPLIED with receipt, second preview CURRENT (F-6 fixed) |
+| G1 lint with declared adapter | PASS INTENT_DRAFT with no hand-copied files |
+| Hook decisions from the installed companion | lanes as designed |
+
+Manual steps required by a pilot user on a repository like this one: none. Log: `rehearsal/FRICTION_LOG_retest_0.3.1.md`. Re-test committed on spike-1 (local; pass-one evidence kept on branch `spike-1-rehearsal-pass-one-20260904`).
+
+**Handover status:** ready for the Claude Code CLI pilot. Codex desktop app and Cursor are explicitly out of the pilot's first phase. Precondition on the pilot side: restore repository access so the sandbox branch can be pushed, or have the pilot lead run the adoption themselves following `docs/Conductor/onboarding/INSTALL.md` and `docs/adapters/bmad/FIRST_EXERCISE_WITH_BMAD.md`.
