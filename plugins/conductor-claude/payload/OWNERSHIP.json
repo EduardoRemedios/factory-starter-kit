@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "conductor",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "files": [
     {
       "path": ".agents/skills/conductor-execution-closeout/SKILL.md",
@@ -371,7 +371,7 @@
     {
       "path": "docs/onboarding/CONDUCTOR_FIRST_TESTER_HANDOFF.md",
       "classification": "release-owned",
-      "sha256": "c23dca5ddae3c264e03a793d3ac8a07391a23ba2d73213271df7531d5e673324"
+      "sha256": "58f37fa9a1c293b0506a9c62f4b1addcc76fbd0c5c819571690c68d20ad56f5b"
     },
     {
       "path": "docs/onboarding/CONDUCTOR_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md",
@@ -381,7 +381,7 @@
     {
       "path": "docs/onboarding/CONDUCTOR_PLUGIN_PILOT_RUNBOOK.md",
       "classification": "release-owned",
-      "sha256": "c4378d6b08fc5744c50df7e101aac7cc6623a6723c29064b773a8b076a3f73c9"
+      "sha256": "df2d800a8601ef17a17e740b2cc7833f877156b7e0d0204e999bbf671bebc400"
     },
     {
       "path": "docs/onboarding/CONDUCTOR_PLUGIN_QUICK_START.md",
@@ -401,7 +401,7 @@
     {
       "path": "docs/onboarding/CONDUCTOR_PLUGIN_TROUBLESHOOTING.md",
       "classification": "release-owned",
-      "sha256": "a068d3aa4335da0918e3345f825b51158b0e2e8bd8b63ba07d3249f05146ff05"
+      "sha256": "8ba8474a3381b4c81bc11e4de510da05f2f2d3ba90904410e5d787a34410aa92"
     },
     {
       "path": "docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md",

@@ -133,7 +133,7 @@ def write_verdict(output: Path, value: dict[str, Any]) -> None:
 def check(args: argparse.Namespace) -> int:
     contract = json.loads(args.contract.read_text(encoding="utf-8"))
     reasons: list[str] = []
-    if args.release_version != "0.3.1" or args.bmad_version != contract.get("bmad_version"):
+    if args.release_version != "0.3.2" or args.bmad_version != contract.get("bmad_version"):
         reasons.append("CONDUCTOR_BMAD_VERSION_CONTRACT_INVALID")
     binary = args.claude_bin.resolve(strict=False)
     if not binary.is_file() or not os.access(binary, os.X_OK):

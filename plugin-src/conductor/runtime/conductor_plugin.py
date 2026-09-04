@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.1"
+PLUGIN_VERSION = "0.3.2"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"
@@ -34,6 +34,8 @@ CODEX_PLUGIN_SKILLS = {
     "conductor-validate",
 }
 INSTALLATION_STATE_PATH = "docs/Conductor/installation/INSTALLATION_STATE.json"
+# Factory-lineage installs (<= 0.2.5) recorded their state here; update migrates them.
+LEGACY_INSTALLATION_STATE_PATH = "docs/Factory/installation/INSTALLATION_STATE.json"
 TRANSACTION_RECEIPTS_DIR = "docs/Conductor/installation/receipts"
 EXECUTION_CLOSEOUT_NAME = "EXECUTION_CLOSEOUT.json"
 
@@ -870,10 +872,20 @@ def attach_change_plan(
     }
 
 
+def installation_state_path(root: Path) -> str | None:
+    """Relative path of the installation state that governs this repository: current, else legacy, else None."""
+    if (root / INSTALLATION_STATE_PATH).is_file():
+        return INSTALLATION_STATE_PATH
+    if (root / LEGACY_INSTALLATION_STATE_PATH).is_file():
+        return LEGACY_INSTALLATION_STATE_PATH
+    return None
+
+
 def load_installation_state(root: Path) -> dict[str, Any] | None:
-    state_path = root / INSTALLATION_STATE_PATH
-    if not state_path.is_file():
+    relative = installation_state_path(root)
+    if relative is None:
         return None
+    state_path = root / relative
     try:
         state = json.loads(state_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as error:
@@ -1494,6 +1506,13 @@ def validate_plan_preconditions(
             raise ValueError("CONDUCTOR_PLAN_STALE")
         if action == "preserve" and not target.is_file():
             raise ValueError("CONDUCTOR_PLAN_STALE")
+        if action == "compose":
+            # Composed from an existing AGENTS.md, or from a project CLAUDE.md being migrated.
+            source_present = target.is_file() or (
+                item.get("migrated_from_sha256") and safe_target(root, "CLAUDE.md").is_file()
+            )
+            if not source_present:
+                raise ValueError("CONDUCTOR_PLAN_STALE")
         if action in {"modify", "delete"}:
             prior = installed.get(item["path"])
             if (
@@ -1808,8 +1827,27 @@ def evaluate_update_plan(
         for path, entry in sorted(target.items()):
             target_path = safe_target(root, path)
             prior = installed.get(path)
+            composed_sha256: str | None = None
             if entry["classification"] == "project-owned":
-                action = "create" if not target_path.exists() else "preserve"
+                if not target_path.exists():
+                    action = "create"
+                elif not target_path.is_file():
+                    action = "conflict"
+                elif file_sha256(target_path) == entry["sha256"]:
+                    action = "no_change"
+                elif prior and file_sha256(target_path) == prior.get("expected_digest"):
+                    # Seeded by a previous release and never customised: refresh to the new seed.
+                    action = "modify"
+                elif path == "AGENTS.md" and managed_block_span(payload_bytes(payload_root, path, harness=harness)) is not None:
+                    # Customised by the project: keep every byte, insert or refresh the managed block.
+                    composed = compose_agents_md(target_path.read_bytes(), payload_bytes(payload_root, path, harness=harness))
+                    if composed == target_path.read_bytes():
+                        action = "no_change"
+                    else:
+                        action = "compose"
+                        composed_sha256 = hashlib.sha256(composed).hexdigest()
+                else:
+                    action = "preserve"
             elif not target_path.exists():
                 action = "conflict" if prior else "create"
             elif not target_path.is_file():
@@ -1822,14 +1860,15 @@ def evaluate_update_plan(
                 action = "modify"
             if action == "conflict":
                 conflicts.append(path)
-            planned_files.append(
-                {
-                    "path": path,
-                    "classification": entry["classification"],
-                    "action": action,
-                    "source_sha256": entry["sha256"],
-                }
-            )
+            planned = {
+                "path": path,
+                "classification": entry["classification"],
+                "action": action,
+                "source_sha256": entry["sha256"],
+            }
+            if composed_sha256:
+                planned["composed_sha256"] = composed_sha256
+            planned_files.append(planned)
         for path, prior in sorted(installed.items()):
             if path in target:
                 continue
@@ -1866,6 +1905,7 @@ def evaluate_update_plan(
             **common,
         )
 
+    legacy_state = installation_state_path(root) == LEGACY_INSTALLATION_STATE_PATH
     details = {
         **common,
         "installed_version": installed_version,
@@ -1874,8 +1914,13 @@ def evaluate_update_plan(
         "conflicts": conflicts,
         "allowed_paths": sorted(target)
         + sorted(path for path in installed if path not in target)
-        + [INSTALLATION_STATE_PATH],
+        + [INSTALLATION_STATE_PATH]
+        + ([LEGACY_INSTALLATION_STATE_PATH] if legacy_state else []),
     }
+    if legacy_state:
+        # Factory-lineage install: the state file moves to the Conductor path and the old one is removed.
+        details["legacy_state_path"] = LEGACY_INSTALLATION_STATE_PATH
+        details["migration"] = "factory_lineage_to_conductor"
     details["plan_id"] = stable_plan_id(details)
     attach_change_plan(details, root=root, source_version=installed_version)
     if conflicts:
@@ -1946,8 +1991,23 @@ def apply_update_plan(
                     ),
                 }
             )
+        elif item["action"] == "compose":
+            target = safe_target(root, item["path"])
+            composed = compose_agents_md(target.read_bytes(), payload_bytes(payload_root, item["path"], harness=plan["harness"]))
+            if hashlib.sha256(composed).hexdigest() != item.get("composed_sha256"):
+                return result(
+                    state="ROLLED_BACK",
+                    reason_code="CONDUCTOR_PLAN_STALE",
+                    next_legal_action="preview_and_approve_a_fresh_update_plan",
+                    final_version=plan["installed_version"],
+                    mutations=[],
+                )
+            file_changes.append({"path": item["path"], "action": "write", "data": composed, "mode": 0o644})
         elif item["action"] == "delete":
             file_changes.append({"path": item["path"], "action": "delete"})
+    legacy_state_path = plan.get("legacy_state_path")
+    if legacy_state_path:
+        file_changes.append({"path": legacy_state_path, "action": "delete"})
 
     if interrupt_after_staging:
         return result(

@@ -11,6 +11,14 @@
   migration, qualification, decided open questions).
 - Migration step 1: golden-pack regression fixtures under `tests/golden_packs/`
   with `tests/test_golden_packs.py`.
+- 0.3.2: `update` migrates Factory-era (<= 0.2.5) installs (rehearsal
+  finding F-7): the legacy installation-state path is discovered, release-owned
+  files under the old paths are deleted when unmodified, new paths are created,
+  never-customised project-owned seeds are refreshed, a customised `AGENTS.md`
+  is composed with the managed block, the legacy state file is removed, and the
+  rollback receipt restores the legacy install byte for byte. README rewritten
+  for the 0.3 line under the Factory name (Conductor is the working name that
+  survives as the plugin id and command namespace).
 - Conductor 0.3.1: Brownfield adoption migrates an existing project `CLAUDE.md`
   into the project-owned body of `AGENTS.md` and writes the `@AGENTS.md` bridge
   as one previewed `migrate_bridge` action (rehearsal finding F-1). The BMAD

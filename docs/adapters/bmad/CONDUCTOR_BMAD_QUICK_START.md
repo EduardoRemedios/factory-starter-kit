@@ -137,7 +137,7 @@ Use the durable checkout path above; do not register a temporary or scratchpad
 path as the marketplace source.
 
 This is one explicit user installation. The companion declares Factory
-`~0.3.1` as an automatic dependency, so users do not separately install or
+`~0.3.2` as an automatic dependency, so users do not separately install or
 manage Factory. Missing, disabled, or incompatible dependency state halts
 instead of duplicating Factory Core.
 

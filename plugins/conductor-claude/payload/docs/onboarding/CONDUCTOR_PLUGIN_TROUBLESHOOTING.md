@@ -73,7 +73,7 @@ The transaction reports a blocker and restores its captured prior state. Preserv
 
 ## Greenfield Reports Git Root Required
 
-1. Confirm the installed plugin contains the current `0.3.1` pilot candidate.
+1. Confirm the installed plugin contains the current `0.3.2` pilot candidate.
 2. Start Claude Code from the intended empty directory and invoke
    `/conductor:greenfield`; Doctor is a post-setup check for new projects.
 3. For an absent or different target, provide the exact absolute path and require

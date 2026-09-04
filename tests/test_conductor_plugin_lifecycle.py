@@ -121,7 +121,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
                  + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
                  + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
         payload = make_payload(
-            self.base, "0.3.1",
+            self.base, "0.3.2",
             {
                 "AGENTS.md": ("# Starter\n\n" + block + "\n## Kit section\n", "project-owned"),
                 "docs/Conductor/core.md": ("factory v3\n", "release-owned"),
@@ -155,7 +155,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
                  + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
                  + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
         payload = make_payload(
-            self.base, "0.3.1",
+            self.base, "0.3.2",
             {
                 "AGENTS.md": ("# Starter\n\n" + block + "\n## Kit section\n", "project-owned"),
                 "docs/Conductor/core.md": ("factory v3\n", "release-owned"),
@@ -189,7 +189,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         block = ("<!-- conductor:managed:start v=0.3.1-test sha256="
                  + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
                  + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
-        payload = make_payload(self.base, "0.3.1", {
+        payload = make_payload(self.base, "0.3.2", {
             "AGENTS.md": ("# Starter\n\n" + block, "project-owned"),
             "docs/Conductor/core.md": ("v\n", "release-owned"),
             "scripts/conductorctl": ("#!/bin/sh\n", "release-owned"),
@@ -205,6 +205,89 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         self.assertIn("## Rules\n- a\n", agents)
         self.assertIn("## Migrated from CLAUDE.md\n\n# Claude notes\n\nUse pnpm.\n", agents)
         self.assertEqual("@AGENTS.md\n", (self.root / "CLAUDE.md").read_text(encoding="utf-8"))
+
+    def legacy_install(self, agents_body: str = "# Starter\n\nold factory instructions\n") -> Path:
+        """Simulate a Factory <= 0.2.5 install: legacy paths, legacy state location and key."""
+        legacy = make_payload(self.base, "0.2.5", {
+            "AGENTS.md": (agents_body, "project-owned"),
+            "docs/Factory/ARCHITECTURE.md": ("factory arch\n", "release-owned"),
+            "docs/Factory/SCRATCHPAD.md": ("# pitfalls\n", "project-owned"),
+            "scripts/factoryctl": ("#!/bin/sh\nfactory\n", "release-owned"),
+        })
+        plan = setup_plan(self.root, legacy)
+        output = RUNTIME.apply_setup_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=legacy)
+        self.assertEqual("CONDUCTOR_SETUP_APPLIED", output["reason_code"])
+        new_state = self.root / RUNTIME.INSTALLATION_STATE_PATH
+        legacy_state = self.root / RUNTIME.LEGACY_INSTALLATION_STATE_PATH
+        state = json.loads(new_state.read_text())
+        state["factory_version"] = state.pop("conductor_version")
+        state["source_revision"] = "factory-plugin@0.2.5"
+        legacy_state.parent.mkdir(parents=True)
+        legacy_state.write_text(json.dumps(state, indent=2) + "\n", encoding="utf-8")
+        new_state.unlink()
+        for path in (self.root / "docs/Conductor/installation").rglob("*"):
+            pass
+        return legacy
+
+    def conductor_payload(self) -> Path:
+        block = ("<!-- conductor:managed:start v=0.3.2-test sha256="
+                 + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
+                 + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
+        return make_payload(self.base, "0.3.2", {
+            "AGENTS.md": ("# Starter\n\n" + block + "\nnew conductor instructions\n", "project-owned"),
+            "docs/Conductor/INVARIANTS.md": ("# invariants\n", "release-owned"),
+            "scripts/conductorctl": ("#!/bin/sh\nconductor\n", "release-owned"),
+        })
+
+    def test_f7_update_migrates_a_factory_lineage_install_and_rolls_back(self):
+        self.legacy_install()
+        self.assertEqual(RUNTIME.LEGACY_INSTALLATION_STATE_PATH, RUNTIME.installation_state_path(self.root))
+        before = inventory(self.root)
+        target = self.conductor_payload()
+        plan = update_plan(self.root, target)
+        self.assertEqual("PLAN_READY", plan["state"], plan)
+        self.assertEqual("factory_lineage_to_conductor", plan["migration"])
+        self.assertEqual(("0.2.5", "0.3.2"), (plan["installed_version"], plan["plugin_version"]))
+        actions = {item["path"]: item["action"] for item in plan["planned_files"]}
+        self.assertEqual("delete", actions["docs/Factory/ARCHITECTURE.md"])
+        self.assertEqual("delete", actions["scripts/factoryctl"])
+        self.assertEqual("create", actions["docs/Conductor/INVARIANTS.md"])
+        self.assertEqual("create", actions["scripts/conductorctl"])
+        self.assertEqual("modify", actions["AGENTS.md"], "unmodified seed is refreshed to the new seed")
+        self.assertEqual("preserve", actions["docs/Factory/SCRATCHPAD.md"], "project-owned legacy file stays in place")
+        self.assertEqual(before, inventory(self.root), "preview writes nothing")
+        output = RUNTIME.apply_update_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=target)
+        self.assertEqual("CONDUCTOR_UPDATE_APPLIED", output["reason_code"], output)
+        self.assertFalse((self.root / "docs/Factory/ARCHITECTURE.md").exists())
+        self.assertFalse((self.root / "scripts/factoryctl").exists())
+        self.assertFalse((self.root / RUNTIME.LEGACY_INSTALLATION_STATE_PATH).exists(), "legacy state removed")
+        self.assertTrue((self.root / "docs/Conductor/INVARIANTS.md").is_file())
+        self.assertIn("conductor:managed:start", (self.root / "AGENTS.md").read_text())
+        state = json.loads((self.root / RUNTIME.INSTALLATION_STATE_PATH).read_text())
+        self.assertEqual("0.3.2", state["conductor_version"])
+        self.assertEqual(RUNTIME.INSTALLATION_STATE_PATH, RUNTIME.installation_state_path(self.root))
+        rollback = RUNTIME.apply_rollback(self.root, approved=True)
+        self.assertEqual("CONDUCTOR_ROLLBACK_APPLIED", rollback["reason_code"], rollback)
+        self.assertEqual("0.2.5", rollback["final_version"])
+        after = {p: d for p, d in inventory(self.root).items() if "/installation/receipts/" not in p}
+        expected = {p: d for p, d in before.items() if "/installation/receipts/" not in p}
+        self.assertEqual(expected, after, "rollback restores the legacy install byte for byte")
+        self.assertEqual(RUNTIME.LEGACY_INSTALLATION_STATE_PATH, RUNTIME.installation_state_path(self.root))
+
+    def test_f7_customised_agents_md_is_composed_not_replaced_on_migration(self):
+        self.legacy_install()
+        write(self.root / "AGENTS.md", "# Team map\n\nour own rules\n")
+        target = self.conductor_payload()
+        plan = update_plan(self.root, target)
+        self.assertEqual("PLAN_READY", plan["state"], plan)
+        actions = {item["path"]: item["action"] for item in plan["planned_files"]}
+        self.assertEqual("compose", actions["AGENTS.md"])
+        output = RUNTIME.apply_update_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=target)
+        self.assertEqual("CONDUCTOR_UPDATE_APPLIED", output["reason_code"], output)
+        agents = (self.root / "AGENTS.md").read_text()
+        self.assertTrue(agents.startswith("# Team map\n\n<!-- conductor:managed:start"))
+        self.assertIn("our own rules", agents)
+        self.assertNotIn("new conductor instructions", agents)
 
     def test_setup_requires_exact_plan_approval(self):
         plan = setup_plan(self.root, self.v1)
@@ -668,7 +751,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         new_payload = make_payload(
             self.base,
-            "0.3.1",
+            "0.3.2",
             {
                 "docs/Conductor/SCRATCHPAD.md": (
                     "neutral scratchpad seed\n",
@@ -721,7 +804,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         self.assertEqual("project-owned", managed["ownership_class"])
         self.assertEqual(expected_digest, managed["expected_digest"])
-        self.assertEqual("0.3.1", managed["source_version"])
+        self.assertEqual("0.3.2", managed["source_version"])
 
         rollback = RUNTIME.apply_rollback(self.root, approved=True)
         self.assertEqual("CONDUCTOR_ROLLBACK_APPLIED", rollback["reason_code"])
