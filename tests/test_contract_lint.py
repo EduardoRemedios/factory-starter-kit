@@ -59,6 +59,8 @@ class Fixture:
         (self.root / "docs" / "Conductor" / "INVARIANTS.md").write_text("# invariants\n", encoding="utf-8")
         (self.root / "scripts").mkdir()
         (self.root / "scripts" / "protected.py").write_text("print('protected')\n", encoding="utf-8")
+        # Project Config declares managed_block mode, so the fixture carries the kit's real managed block.
+        shutil.copy(REPO_ROOT / "AGENTS.md", self.root / "AGENTS.md")
         self.run_root = self.root / "docs" / "Conductor" / "runs" / RUN_ID
         (self.run_root / "notes").mkdir(parents=True)
         (self.run_root / "notes" / "brief.md").write_text("Build the thing.\n", encoding="utf-8")

@@ -160,7 +160,7 @@ class FactoryPluginSetupPlanTests(unittest.TestCase):
             self.assertEqual(output["plan_id"], change_plan["transaction_id"])
             self.assertEqual("greenfield", change_plan["operation"])
             self.assertIsNone(change_plan["source_version"])
-            self.assertEqual("0.2.5", change_plan["target_version"])
+            self.assertEqual("0.3.0", change_plan["target_version"])
             self.assertEqual("REVIEW_REQUIRED", change_plan["approval_state"])
             self.assertEqual(
                 ["root", "git"],
@@ -251,7 +251,10 @@ class FactoryPluginSetupPlanTests(unittest.TestCase):
             output = preview(root, "brownfield")
             self.assertEqual("BLOCKED", output["state"])
             self.assertEqual("CONDUCTOR_CONFLICT_USER_OWNED", output["reason_code"])
-            self.assertIn("AGENTS.md", output["conflicts"])
+            # An existing project AGENTS.md is composed (managed block inserted), never a conflict.
+            self.assertNotIn("AGENTS.md", output["conflicts"])
+            actions = {item["path"]: item["action"] for item in output["planned_files"]}
+            self.assertEqual("compose", actions["AGENTS.md"])
             self.assertIn("docs/Conductor/ORCHESTRATION.md", output["conflicts"])
             self.assertEqual(before, inventory(root))
 
@@ -290,7 +293,7 @@ class FactoryPluginSetupPlanTests(unittest.TestCase):
         claude_version, claude_entries = RUNTIME.load_payload(
             REPO_ROOT / "plugins/conductor-claude/payload"
         )
-        self.assertEqual("0.2.5", codex_version)
+        self.assertEqual("0.3.0", codex_version)
         self.assertEqual(codex_entries, claude_entries)
         self.assertTrue(codex_entries)
         self.assertTrue(

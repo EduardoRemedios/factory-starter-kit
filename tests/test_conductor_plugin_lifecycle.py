@@ -116,6 +116,39 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         self.assertEqual("CONDUCTOR_SETUP_APPLIED", output["reason_code"])
 
+    def test_brownfield_composes_existing_agents_md_and_preserves_project_content(self):
+        block = ("<!-- conductor:managed:start v=0.3.0-test sha256="
+                 + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
+                 + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
+        payload = make_payload(
+            self.base, "0.3.0",
+            {
+                "AGENTS.md": ("# Starter\n\n" + block + "\n## Kit section\n", "project-owned"),
+                "docs/Conductor/core.md": ("factory v3\n", "release-owned"),
+                "scripts/conductorctl": ("#!/bin/sh\n", "release-owned"),
+            },
+        )
+        project_agents = "# AuditTeam repo map\n\n## Our rules\n- keep tests green\n"
+        write(self.root / "AGENTS.md", project_agents)
+        plan = setup_plan(self.root, payload)
+        actions = {item["path"]: item["action"] for item in plan["planned_files"]}
+        self.assertEqual("PLAN_READY", plan["state"], plan)
+        self.assertEqual("compose", actions["AGENTS.md"])
+        self.assertEqual([], plan["conflicts"])
+        output = RUNTIME.apply_setup_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=payload)
+        self.assertEqual("CONDUCTOR_SETUP_APPLIED", output["reason_code"])
+        composed = (self.root / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertTrue(composed.startswith("# AuditTeam repo map\n\n<!-- conductor:managed:start"))
+        self.assertIn("## Our rules\n- keep tests green\n", composed)
+        self.assertNotIn("## Kit section", composed, "only the managed block is taken from the payload")
+        state = json.loads((self.root / "docs/Conductor/installation/INSTALLATION_STATE.json").read_text())
+        agents_entry = next(e for e in state["managed_files"] if e["path"] == "AGENTS.md")
+        self.assertEqual(agents_entry["expected_digest"], hashlib.sha256(composed.encode()).hexdigest())
+        self.assertEqual(agents_entry["ownership_class"], "project-owned")
+        # second preview is a no-op: the block is already present and current
+        again = setup_plan(self.root, payload)
+        self.assertEqual("NO_CHANGE", again["state"], again)
+
     def test_setup_requires_exact_plan_approval(self):
         plan = setup_plan(self.root, self.v1)
         before = inventory(self.root)
@@ -578,7 +611,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         new_payload = make_payload(
             self.base,
-            "0.2.5",
+            "0.3.0",
             {
                 "docs/Conductor/SCRATCHPAD.md": (
                     "neutral scratchpad seed\n",
@@ -631,7 +664,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         self.assertEqual("project-owned", managed["ownership_class"])
         self.assertEqual(expected_digest, managed["expected_digest"])
-        self.assertEqual("0.2.5", managed["source_version"])
+        self.assertEqual("0.3.0", managed["source_version"])
 
         rollback = RUNTIME.apply_rollback(self.root, approved=True)
         self.assertEqual("CONDUCTOR_ROLLBACK_APPLIED", rollback["reason_code"])

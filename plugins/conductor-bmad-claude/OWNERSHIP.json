@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "package": "conductor-bmad",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "generated_from": "plugin-src/conductor-bmad",
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "3c23e4d14da275305b55af4d27d9b74a4694917bdd27a6f377f7667c05e6e5d4",
+      "sha256": "2c8606cd190be884b4c9bab0beb9d4910b887f1eb573f71bf261612183fe3c50",
       "classification": "release-owned"
     },
     {
@@ -46,7 +46,7 @@
     },
     {
       "path": "scripts/conductor_bmad.py",
-      "sha256": "4a7552cc5016740d32296566eb8fb4875541b8d3f0ff3ff796963a5a41c6a8b6",
+      "sha256": "efb3b0ca2c4902d5e1ab2cfdbae290bd1b5c9d7f784a0b5d621f4166a53a20ff",
       "classification": "release-owned"
     },
     {

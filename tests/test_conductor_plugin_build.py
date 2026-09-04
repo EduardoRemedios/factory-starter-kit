@@ -57,7 +57,7 @@ class FactoryPluginBuildTests(unittest.TestCase):
 
     def test_release_version_is_aligned_everywhere(self):
         version = self.manifest["version"]
-        self.assertEqual("0.2.5", version)
+        self.assertEqual("0.3.0", version)
         marketplace = json.loads(
             (REPO_ROOT / ".claude-plugin/marketplace.json").read_text(
                 encoding="utf-8"
@@ -209,6 +209,9 @@ class FactoryPluginBuildTests(unittest.TestCase):
             ),
             Path("docs/Conductor/SCRATCHPAD.md"): Path(
                 "plugin-src/conductor/project-seeds/docs/Conductor/SCRATCHPAD.md"
+            ),
+            Path("docs/Conductor/PROJECT_CONFIG.json"): Path(
+                "plugin-src/conductor/project-seeds/docs/Conductor/PROJECT_CONFIG.json"
             ),
         }
         self.assertEqual(expected, build_conductor_plugins.PROJECT_OWNED_SEEDS)

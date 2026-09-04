@@ -41,6 +41,9 @@ PROJECT_OWNED_SEEDS = {
     Path("docs/Conductor/SCRATCHPAD.md"): Path(
         "plugin-src/conductor/project-seeds/docs/Conductor/SCRATCHPAD.md"
     ),
+    Path("docs/Conductor/PROJECT_CONFIG.json"): Path(
+        "plugin-src/conductor/project-seeds/docs/Conductor/PROJECT_CONFIG.json"
+    ),
 }
 
 

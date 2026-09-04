@@ -6,6 +6,8 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT / "scripts") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "scripts"))
 sys.dont_write_bytecode = True
 RUNTIME_PATH = REPO_ROOT / "plugin-src/conductor/runtime/conductor_plugin.py"
 SPEC = importlib.util.spec_from_file_location("conductor_plugin_runtime", RUNTIME_PATH)
@@ -262,3 +264,71 @@ class FactoryPluginStatusTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ConductorLayoutProgressTests(unittest.TestCase):
+    """Runs with intent_pack.json are reported through the three gates via contract-lint."""
+
+    def setUp(self):
+        import shutil
+        from tests.test_contract_lint import RUN_ID, Fixture, countersign  # noqa: PLC0415
+        self.fx = Fixture()
+        self.addCleanup(self.fx.cleanup)
+        self.run_id = RUN_ID
+        self.countersign = countersign
+        shutil.copytree(REPO_ROOT / "scripts", self.fx.root / "scripts", dirs_exist_ok=True)
+
+    def progress(self):
+        return RUNTIME.evaluate_progress(self.fx.root, run_id=self.run_id)
+
+    def test_gate_states_progress_from_lock_to_review_ready(self):
+        import conductor_postimage as pi  # noqa: PLC0415
+        import conductor_receipts as rc  # noqa: PLC0415
+        first = self.progress()
+        self.assertEqual(("WAITING_HUMAN_LOCK", "CONDUCTOR_INTENT_LOCK_REQUIRED", "conductor"), (first["state"], first["reason_code"], first["layout"]))
+        self.countersign(self.fx.run_root, "INTENT_LOCK", "intent_pack.json")
+        self.fx.write_manifest()
+        pi.capture(self.fx.root, self.run_id)
+        second = self.progress()
+        self.assertEqual("EXECUTION_IN_PROGRESS", second["state"], second)
+        self.assertEqual({"VM-001": "NOT_RUN", "VM-002": "NOT_RUN", "VM-003": "NOT_RUN"}, second["gates"]["G2"]["checks"])
+        rc.run_receipts(self.fx.root, self.run_id)
+        rc.attest(self.fx.root, self.run_id, "VM-003", "Test Human")
+        pi.compare(self.fx.root, self.run_id)
+        third = self.progress()
+        self.assertEqual("EXECUTION_COMPLETE_WAITING_STATEMENT", third["state"], third)
+        self.fx.write_statement([
+            {"requirement_id": "R-001", "status": "verified", "evidence": [self.fx.receipt_ref("VM-001")]},
+            {"requirement_id": "R-002", "status": "verified", "evidence": [self.fx.receipt_ref("VM-002")]},
+            {"requirement_id": "R-003", "status": "verified", "evidence": [self.fx.receipt_ref("VM-003")]},
+        ], "READY")
+        fourth = self.progress()
+        self.assertEqual("WAITING_HUMAN_COUNTERSIGN", fourth["state"], fourth)
+        self.countersign(self.fx.run_root, "COMPLETION", "statement_of_completion.json")
+        fifth = self.progress()
+        self.assertEqual(("REVIEW_READY", "CONDUCTOR_COMPLETION_COUNTERSIGNED"), (fifth["state"], fifth["reason_code"]))
+        self.assertEqual(fifth["gates"]["G3"]["derived_state"], "READY")
+
+    def test_tampered_receipt_blocks_progress(self):
+        import json as _json  # noqa: PLC0415
+        import conductor_postimage as pi  # noqa: PLC0415
+        import conductor_receipts as rc  # noqa: PLC0415
+        self.countersign(self.fx.run_root, "INTENT_LOCK", "intent_pack.json")
+        self.fx.write_manifest()
+        pi.capture(self.fx.root, self.run_id)
+        rc.run_receipts(self.fx.root, self.run_id, check_ids=["VM-001"])
+        receipt = self.fx.run_root / "receipts" / "VM-001.json"
+        doc = _json.loads(receipt.read_text())
+        doc["exit_code"] = 0
+        doc["stdout_bytes"] = 1
+        receipt.write_text(_json.dumps(doc))
+        blocked = self.progress()
+        self.assertEqual(("BLOCKED", "CONDUCTOR_EXECUTION_INVALID"), (blocked["state"], blocked["reason_code"]))
+        self.assertTrue(any("RECEIPT_TAMPERED" in e for e in blocked["gates"]["G2"]["errors"]))
+
+    def test_missing_conductorctl_is_reported_not_guessed(self):
+        import shutil
+        shutil.rmtree(self.fx.root / "scripts")
+        blocked = self.progress()
+        self.assertEqual("BLOCKED", blocked["state"])
+        self.assertIn("CONDUCTOR_CONTRACT_LINT_MISSING", " ".join(blocked["gates"]["G1"]["errors"]))

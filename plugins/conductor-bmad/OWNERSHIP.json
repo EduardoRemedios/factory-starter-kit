@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "package": "conductor-bmad",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "generated_from": "plugin-src/conductor-bmad",
   "files": [
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "ad2c1ce605c6086675caa6ef4ec131808ca29230819820302495fc52f794fee5",
+      "sha256": "8f56b8971e8754f14bc92f4c1707dd823de81965c3712e11c3f396ba4c155108",
       "classification": "release-owned"
     },
     {
@@ -41,7 +41,7 @@
     },
     {
       "path": "scripts/conductor_bmad.py",
-      "sha256": "4a7552cc5016740d32296566eb8fb4875541b8d3f0ff3ff796963a5a41c6a8b6",
+      "sha256": "efb3b0ca2c4902d5e1ab2cfdbae290bd1b5c9d7f784a0b5d621f4166a53a20ff",
       "classification": "release-owned"
     },
     {

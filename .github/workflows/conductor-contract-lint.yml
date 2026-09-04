@@ -1,0 +1,49 @@
+name: conductor-contract-lint
+
+# G3 enforcement at the merge boundary. Harness-neutral: it does not matter which
+# agent or editor produced the run; a pull request that touches a Conductor run
+# must carry evidence that contract-lint accepts.
+on:
+  pull_request:
+    paths:
+      - "docs/Conductor/runs/**"
+      - "docs/Conductor/contracts/**"
+      - "scripts/conductor_*.py"
+      - "scripts/conductorctl"
+  push:
+    branches: [main]
+
+jobs:
+  contract-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install requirements
+        run: python3 -m pip install -r requirements.txt
+      - name: Contract schemas, golden packs, and contract core
+        run: python3 -m unittest tests.test_schemas tests.test_golden_packs tests.test_contract_lint -v
+      - name: Lint every run present in the repository
+        run: |
+          set -eu
+          status=0
+          for run in docs/Conductor/runs/*/; do
+            [ -d "$run" ] || continue
+            id="$(basename "$run")"
+            if [ -f "$run/intent_pack.json" ]; then
+              echo "== $id (Conductor layout)"
+              ./scripts/conductorctl contract-lint intent --run "$id" || status=1
+              ./scripts/conductorctl contract-lint execution --run "$id" || status=1
+              if [ -f "$run/statement_of_completion.json" ]; then
+                ./scripts/conductorctl contract-lint completion --run "$id" || status=1
+              fi
+            else
+              echo "== $id (Factory-lineage layout, pack-lint)"
+              ./scripts/conductorctl pack-lint --run "$id" || status=1
+            fi
+          done
+          exit "$status"

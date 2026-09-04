@@ -242,7 +242,33 @@ def check_project_config(root: Path, errors: list[str], warnings: list[str]) -> 
         target = safe_relative(root, doc, "required_docs", errors)
         if target is not None and not target.is_file():
             errors.append(f"CONDUCTOR_CONTRACT_REQUIRED_DOC_MISSING: {doc}")
+    if config.get("agents_md", {}).get("mode") == "managed_block":
+        check_managed_block(root, errors)
     return config
+
+
+MANAGED_START_RE = re.compile(r"<!-- conductor:managed:start v=[^ \n]+ sha256=(?P<d>[a-f0-9]{64}) -->\n")
+MANAGED_END = "<!-- conductor:managed:end -->\n"
+
+
+def check_managed_block(root: Path, errors: list[str]) -> None:
+    """AGENTS.md must carry exactly one managed block whose recorded digest matches its body."""
+    agents = root / "AGENTS.md"
+    if not agents.is_file():
+        errors.append("CONDUCTOR_CONTRACT_AGENTS_MD_MISSING")
+        return
+    text = agents.read_text(encoding="utf-8")
+    starts = list(MANAGED_START_RE.finditer(text))
+    if len(starts) != 1 or text.count(MANAGED_END) != 1:
+        errors.append(f"CONDUCTOR_CONTRACT_MANAGED_BLOCK_COUNT: found {len(starts)} start and {text.count(MANAGED_END)} end markers")
+        return
+    end = text.find(MANAGED_END, starts[0].end())
+    if end == -1:
+        errors.append("CONDUCTOR_CONTRACT_MANAGED_BLOCK_UNTERMINATED")
+        return
+    body = text[starts[0].end() : end]
+    if sha256_bytes(body.encode("utf-8")) != starts[0].group("d"):
+        errors.append("CONDUCTOR_CONTRACT_MANAGED_BLOCK_DIGEST_MISMATCH: the block body was edited")
 
 
 def lint_intent(root: Path, run_id: str) -> dict[str, Any]:

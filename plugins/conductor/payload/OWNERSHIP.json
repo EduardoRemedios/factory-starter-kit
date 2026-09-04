@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "conductor",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "files": [
     {
       "path": ".agents/skills/conductor-execution-closeout/SKILL.md",
@@ -87,6 +87,11 @@
       "path": "docs/Conductor/ORCHESTRATION.md",
       "classification": "release-owned",
       "sha256": "b400aa81160d25e7f91734f22fe3af5b5bbfd3d1ceab74a070e993b8a556a734"
+    },
+    {
+      "path": "docs/Conductor/PROJECT_CONFIG.json",
+      "classification": "project-owned",
+      "sha256": "b418594364df660241f03a55c8055c47af3c0c6f1ebb35075b9777a5dd639de1"
     },
     {
       "path": "docs/Conductor/ProductOwner/BRIEF_REVIEW_CHECKLIST.md",
@@ -346,7 +351,7 @@
     {
       "path": "docs/onboarding/CONDUCTOR_FIRST_TESTER_HANDOFF.md",
       "classification": "release-owned",
-      "sha256": "f2c9bc8387f4175fa47cad60aebc2b74dfc0bcb1d5a90cd295338c3f9b6fc3fc"
+      "sha256": "20a5f9b4b735e7dd5d64243d0531c984e5b17c2e9b533d8d11a90f98efe20b4f"
     },
     {
       "path": "docs/onboarding/CONDUCTOR_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md",
@@ -356,7 +361,7 @@
     {
       "path": "docs/onboarding/CONDUCTOR_PLUGIN_PILOT_RUNBOOK.md",
       "classification": "release-owned",
-      "sha256": "2bb2834111afdc46a51ed711c79708572195c5a76b9152eb1f56e2aeb28c1bb5"
+      "sha256": "85810a83e0e5f35b51c43cebb5b3364fe07c2c317133e19f211ef1b8420d3a81"
     },
     {
       "path": "docs/onboarding/CONDUCTOR_PLUGIN_QUICK_START.md",
@@ -376,7 +381,7 @@
     {
       "path": "docs/onboarding/CONDUCTOR_PLUGIN_TROUBLESHOOTING.md",
       "classification": "release-owned",
-      "sha256": "ffacf6505e56f6152f432bc4be20c4a816109695a28303b405d1f9419af72110"
+      "sha256": "fbe647d1e0bb4848e1b95aae13b3354d4aa456c4e5732c03397a0c2d3cb1719d"
     },
     {
       "path": "docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md",
@@ -416,7 +421,7 @@
     {
       "path": "scripts/conductor_contract_lint.py",
       "classification": "release-owned",
-      "sha256": "ae6b96d77ddde8072716dcf3d50b12a9da754d4357dc161f3005212d1e3d9552"
+      "sha256": "8ae410b0202f464e12d883bab8df5762f6e47f7fd09170ccfa8f0c5ee55674a4"
     },
     {
       "path": "scripts/conductor_execution_closeout.py",

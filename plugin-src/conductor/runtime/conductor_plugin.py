@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.2.5"
+PLUGIN_VERSION = "0.3.0"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"
@@ -254,6 +254,40 @@ def evaluate_doctor(
         next_legal_action="inspect_factory_progress",
         **details,
     )
+
+
+MANAGED_START_RE = re.compile(rb"<!-- conductor:managed:start v=[^ \n]+ sha256=[a-f0-9]{64} -->\n")
+MANAGED_END = b"<!-- conductor:managed:end -->\n"
+
+
+def managed_block_span(text: bytes) -> tuple[int, int] | None:
+    """Return (start, end) byte offsets of the Conductor managed block, or None if absent."""
+    match = MANAGED_START_RE.search(text)
+    if not match:
+        return None
+    end = text.find(MANAGED_END, match.end())
+    if end == -1:
+        return None
+    return match.start(), end + len(MANAGED_END)
+
+
+def compose_agents_md(existing: bytes, payload_agents: bytes) -> bytes:
+    """Insert or refresh the managed block in an existing AGENTS.md, preserving everything else byte for byte."""
+    payload_span = managed_block_span(payload_agents)
+    if payload_span is None:
+        raise ValueError("CONDUCTOR_PAYLOAD_MANAGED_BLOCK_MISSING")
+    block = payload_agents[payload_span[0] : payload_span[1]]
+    existing_span = managed_block_span(existing)
+    if existing_span is not None:
+        return existing[: existing_span[0]] + block + existing[existing_span[1] :]
+    if existing.startswith(b"# "):
+        first_newline = existing.find(b"\n")
+        if first_newline != -1:
+            head = existing[: first_newline + 1]
+            rest = existing[first_newline + 1 :]
+            separator = b"" if rest.startswith(b"\n") else b"\n"
+            return head + b"\n" + block + separator + rest
+    return block + b"\n" + existing
 
 
 def select_run(root: Path, run_id: str | None) -> Path | None:
@@ -508,6 +542,67 @@ def evaluate_execution_closeout(root: Path, run_root: Path) -> dict[str, Any] | 
     return payload
 
 
+def contract_lint(root: Path, run_root: Path, gate: str, *extra: str) -> dict[str, Any]:
+    """Run the repository's conductorctl contract-lint for one gate and return its JSON payload."""
+    cli = root / "scripts" / "conductorctl"
+    if not cli.is_file():
+        return {"gate": gate, "status": "FAIL", "state": "LINT_UNAVAILABLE",
+                "errors": ["CONDUCTOR_CONTRACT_LINT_MISSING: scripts/conductorctl"], "warnings": []}
+    try:
+        completed = subprocess.run(
+            [sys.executable, str(cli), "contract-lint", gate, "--run", run_root.name, "--json", *extra],
+            check=False, capture_output=True, text=True, timeout=120, cwd=root,
+            env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1"},
+        )
+        payload = json.loads(completed.stdout)
+    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
+        return {"gate": gate, "status": "FAIL", "state": "LINT_UNAVAILABLE",
+                "errors": ["CONDUCTOR_CONTRACT_LINT_ERROR: contract-lint did not return JSON (is jsonschema installed?)"], "warnings": []}
+    if not isinstance(payload, dict):
+        return {"gate": gate, "status": "FAIL", "state": "LINT_UNAVAILABLE",
+                "errors": ["CONDUCTOR_CONTRACT_LINT_ERROR: unexpected payload"], "warnings": []}
+    return payload
+
+
+def evaluate_gates(root: Path, run_root: Path, common: dict[str, Any]) -> dict[str, Any]:
+    """Progress for a Conductor-layout run (intent_pack.json present): G1 -> G2 -> G3 via contract-lint."""
+    gates: dict[str, Any] = {}
+    g1 = contract_lint(root, run_root, "intent")
+    gates["G1"] = {"status": g1["status"], "state": g1.get("state"), "errors": g1.get("errors", [])}
+    if g1["status"] != "PASS":
+        return result(state="BLOCKED", reason_code="CONDUCTOR_INTENT_INVALID",
+                      next_legal_action="repair_intent_pack_and_rerun_contract_lint_intent", gates=gates, **common)
+    if g1.get("state") == "INTENT_DRAFT":
+        return result(state="WAITING_HUMAN_LOCK", reason_code="CONDUCTOR_INTENT_LOCK_REQUIRED",
+                      next_legal_action="human_countersigns_intent_lock", gates=gates, **common)
+    g2 = contract_lint(root, run_root, "execution")
+    gates["G2"] = {"status": g2["status"], "state": g2.get("state"), "checks": g2.get("checks", {}), "postimage": g2.get("postimage"), "errors": g2.get("errors", [])}
+    if g2.get("state") == "EXECUTION_NOT_AUTHORIZED":
+        return result(state="WAITING_HUMAN_GO", reason_code="CONDUCTOR_HUMAN_GO_REQUIRED",
+                      next_legal_action="human_countersigns_execution_go", gates=gates, **common)
+    if g2["status"] != "PASS":
+        return result(state="BLOCKED", reason_code="CONDUCTOR_EXECUTION_INVALID",
+                      next_legal_action="repair_execution_evidence_and_rerun_contract_lint_execution", gates=gates, **common)
+    if g2.get("state") != "EXECUTION_COMPLETE":
+        return result(state="EXECUTION_IN_PROGRESS", reason_code="CONDUCTOR_G2_IN_PROGRESS",
+                      next_legal_action="continue_governed_execution_until_every_check_has_a_receipt", gates=gates, **common)
+    if not (run_root / "statement_of_completion.json").is_file():
+        return result(state="EXECUTION_COMPLETE_WAITING_STATEMENT", reason_code="CONDUCTOR_STATEMENT_REQUIRED",
+                      next_legal_action="run_fresh_context_verifier_and_draft_statement_of_completion", gates=gates, **common)
+    g3 = contract_lint(root, run_root, "completion")
+    gates["G3"] = {"status": g3["status"], "state": g3.get("state"), "derived_state": g3.get("derived_state"),
+                   "handoff_state": g3.get("handoff_state"), "errors": g3.get("errors", [])}
+    if g3["status"] != "PASS":
+        return result(state="BLOCKED", reason_code="CONDUCTOR_COMPLETION_INVALID",
+                      next_legal_action="repair_statement_of_completion_and_rerun_contract_lint_completion", gates=gates, **common)
+    if g3.get("state") != "COMPLETION_COUNTERSIGNED":
+        return result(state="WAITING_HUMAN_COUNTERSIGN", reason_code="CONDUCTOR_COMPLETION_COUNTERSIGN_REQUIRED",
+                      next_legal_action="human_reviews_verifier_report_and_countersigns_completion", gates=gates, **common)
+    return result(state=str(g3.get("handoff_state")), reason_code="CONDUCTOR_COMPLETION_COUNTERSIGNED",
+                  next_legal_action="follow_merge_protocol" if g3.get("handoff_state") == "REVIEW_READY" else "merge_after_final_sync_window",
+                  gates=gates, **common)
+
+
 def evaluate_progress(root: Path, *, run_id: str | None = None) -> dict[str, Any]:
     root = root.resolve()
     run_root = select_run(root, run_id)
@@ -522,6 +617,19 @@ def evaluate_progress(root: Path, *, run_id: str | None = None) -> dict[str, Any
             completed_validators=[],
             mutations=[],
         )
+
+    if (run_root / "intent_pack.json").is_file():
+        return evaluate_gates(root, run_root, {
+            "repository_root": str(root),
+            "run_id": run_root.name,
+            "layout": "conductor",
+            "execution_mode": (
+                (run_root / "EXECUTION_MODE.txt").read_text(encoding="utf-8").strip()
+                if (run_root / "EXECUTION_MODE.txt").is_file()
+                else None
+            ),
+            "mutations": [],
+        })
 
     stages = passed_stages(run_root)
     common = {
@@ -1101,6 +1209,7 @@ def evaluate_setup_plan(
         conflicts: list[str] = []
         for entry in entries:
             target = safe_target(root, entry["path"])
+            composed_sha256: str | None = None
             if not target.exists():
                 action = "create"
             elif not target.is_file():
@@ -1113,17 +1222,30 @@ def evaluate_setup_plan(
                 and entry["path"] in installed_files
             ):
                 action = "preserve"
+            elif entry["path"] == "AGENTS.md" and entry["classification"] == "project-owned":
+                # An existing project AGENTS.md is composed, not conflicted: the Conductor
+                # managed block is inserted (or refreshed) and every other byte is preserved.
+                composed = compose_agents_md(
+                    target.read_bytes(),
+                    payload_bytes(payload_root, entry["path"], harness=harness),
+                )
+                if composed == target.read_bytes():
+                    action = "no_change"
+                else:
+                    action = "compose"
+                    composed_sha256 = hashlib.sha256(composed).hexdigest()
             else:
                 action = "conflict"
                 conflicts.append(entry["path"])
-            planned_files.append(
-                {
-                    "path": entry["path"],
-                    "classification": entry["classification"],
-                    "action": action,
-                    "source_sha256": entry["sha256"],
-                }
-            )
+            planned = {
+                "path": entry["path"],
+                "classification": entry["classification"],
+                "action": action,
+                "source_sha256": entry["sha256"],
+            }
+            if composed_sha256:
+                planned["composed_sha256"] = composed_sha256
+            planned_files.append(planned)
     except (OSError, json.JSONDecodeError, ValueError) as error:
         reason_code = (
             str(error)
@@ -1286,11 +1408,12 @@ def managed_files_from_plan(
                 )
             continue
         target = root / item["path"]
-        digest = (
-            item["source_sha256"]
-            if item["action"] in {"create", "modify"}
-            else file_sha256(target)
-        )
+        if item["action"] == "compose":
+            digest = item["composed_sha256"]
+        elif item["action"] in {"create", "modify"}:
+            digest = item["source_sha256"]
+        else:
+            digest = file_sha256(target)
         files.append(
             {
                 "path": item["path"],
@@ -1417,6 +1540,22 @@ def apply_setup_plan(
             mutations=[],
         )
     for item in plan["planned_files"]:
+        if item["action"] == "compose":
+            target = safe_target(root, item["path"])
+            composed = compose_agents_md(
+                target.read_bytes(),
+                payload_bytes(payload_root, item["path"], harness=plan["harness"]),
+            )
+            if hashlib.sha256(composed).hexdigest() != item.get("composed_sha256"):
+                return result(
+                    state="BLOCKED",
+                    reason_code="CONDUCTOR_PLAN_STALE",
+                    next_legal_action="preview_and_approve_a_fresh_plan",
+                    plan_id=plan["plan_id"],
+                    mutations=[],
+                )
+            changes.append({"path": item["path"], "action": "write", "data": composed, "mode": 0o644})
+            continue
         if item["action"] != "create":
             continue
         changes.append(

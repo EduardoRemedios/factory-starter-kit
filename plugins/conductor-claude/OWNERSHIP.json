@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "conductor",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "classification": "release-owned",
   "generated_from": "plugin-src/conductor"
 }

@@ -11,6 +11,18 @@
   migration, qualification, decided open questions).
 - Migration step 1: golden-pack regression fixtures under `tests/golden_packs/`
   with `tests/test_golden_packs.py`.
+- Migration steps 9-11: the plugin runtime reports Conductor-layout runs
+  (`intent_pack.json` present) through G1/G2/G3 via `conductorctl contract-lint`
+  (`WAITING_HUMAN_LOCK`, `WAITING_HUMAN_GO`, `EXECUTION_IN_PROGRESS`,
+  `EXECUTION_COMPLETE_WAITING_STATEMENT`, `WAITING_HUMAN_COUNTERSIGN`,
+  `REVIEW_READY`/`MERGE_READY`, or `BLOCKED` with lint errors); Factory-lineage
+  runs keep the legacy stage evaluation. Brownfield adoption composes an existing
+  project `AGENTS.md` with the Conductor managed block instead of conflicting;
+  contract-lint intent verifies the managed block digest when Project Config
+  declares `managed_block`. `docs/Conductor/PROJECT_CONFIG.json` is seeded on
+  adoption. Added `.github/workflows/conductor-contract-lint.yml` (G3 at the
+  merge boundary, harness-neutral). Versions bumped to 0.3.0; `run`,
+  `progress`, and `doctor` skills rewritten for the three gates.
 - Migration steps 6-8 (BMAD lane adapter, policy 2.0.0): policy is now
   expressed by lane. Product-context lane (discovery, architecture/spec/UX with
   pinned profiles, persona agents), helpers (review, editorial review, advanced

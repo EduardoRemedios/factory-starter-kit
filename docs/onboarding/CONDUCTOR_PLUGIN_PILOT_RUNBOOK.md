@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Decide whether Factory plugin 0.2.5 is ready for a team rollout using named
+Decide whether the Conductor plugin 0.3.0 is ready for a team rollout using named
 journeys, recovery evidence, and Product Owner sign-off.
 
 ## Entry Gates
