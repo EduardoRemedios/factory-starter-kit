@@ -384,6 +384,11 @@
       "sha256": "40ad5164a5930c5796e329985093e3d4e30f9dc373b44f3b469e1fbda6888081"
     },
     {
+      "path": "scripts/merge_preflight.sh",
+      "classification": "release-owned",
+      "sha256": "a6b590eedc3958fdb5fca00c3a461c2f00d8b02734731ced0481fe50ec77d34a"
+    },
+    {
       "path": "scripts/mission_cursor_lint.sh",
       "classification": "release-owned",
       "sha256": "044b13ce9ca2c40529f1390fdd20af1610f64e47212925c24dec4bc35fcad64f"
