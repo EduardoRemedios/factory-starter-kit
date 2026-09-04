@@ -424,6 +424,11 @@
       "sha256": "27e7eda46786ded7dbac1d4d9ae4a1b76408fd8aefbfbe37e64769d25301cb3c"
     },
     {
+      "path": "scripts/conductor_gap.py",
+      "classification": "release-owned",
+      "sha256": "7f32686a510032a32e8ba4d46f007d8b5bb18d4f032a866052410ec4cfff490d"
+    },
+    {
       "path": "scripts/conductor_host_capability.py",
       "classification": "release-owned",
       "sha256": "d1eb15eaddc312dafe2a8c2d75fda31977e17f93018634fc0a2fff86a7713fe4"
@@ -471,7 +476,7 @@
     {
       "path": "scripts/conductorctl",
       "classification": "release-owned",
-      "sha256": "8de6e779de64bd64d856a1e81f9f50481e2880e3a36dfc1462305e2dbc88b99f"
+      "sha256": "13ee8a40b33380431e3b90bc44902431d648645b4cc43662a2e620f8d7eedd4e"
     },
     {
       "path": "scripts/knowledge_lint.sh",

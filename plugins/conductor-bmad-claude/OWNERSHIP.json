@@ -11,7 +11,7 @@
     },
     {
       "path": "assets/project-adapter/BMAD_POLICY.md",
-      "sha256": "4a434528574ec6974270f486f936cd3a3d1099fdeaed011efc796b9d1b5c926a",
+      "sha256": "beb7ece946805b78a4280ceb3cd7083019db9542b19ca158df105433e6e2e494",
       "classification": "release-owned"
     },
     {
@@ -26,7 +26,7 @@
     },
     {
       "path": "assets/project-adapter/conductor_bmad_policy.py",
-      "sha256": "0558732e7173b915444f0e9efcd8d6db638e21dd5bb14a33cd4c2590f672b32e",
+      "sha256": "b6a21dcf5b713f2169c9f61e6e29c8bd8e2c554845c35cfe0a82d7610d595436",
       "classification": "release-owned"
     },
     {
@@ -51,7 +51,7 @@
     },
     {
       "path": "scripts/conductor_bmad_policy.py",
-      "sha256": "0558732e7173b915444f0e9efcd8d6db638e21dd5bb14a33cd4c2590f672b32e",
+      "sha256": "b6a21dcf5b713f2169c9f61e6e29c8bd8e2c554845c35cfe0a82d7610d595436",
       "classification": "release-owned"
     },
     {

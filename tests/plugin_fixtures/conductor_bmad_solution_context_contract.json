@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "contract": "CONDUCTOR_BMAD_SOLUTION_CONTEXT",
-  "policy_version": "1.1.0",
+  "policy_version": "2.0.0",
   "snapshot_schema_version": 2,
   "evidence_type": "SOLUTION_CONTEXT",
   "authority": "EVIDENCE_ONLY",

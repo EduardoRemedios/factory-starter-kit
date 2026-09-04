@@ -156,7 +156,7 @@ class FactoryBmadPromotionTests(unittest.TestCase):
         self.assertEqual(2, preview["plan"]["schema_version"])
         self.assertEqual("SOLUTION_CONTEXT", preview["plan"]["evidence_type"])
         self.assertEqual("EVIDENCE_ONLY", preview["plan"]["authority"])
-        self.assertEqual("1.1.0", preview["plan"]["policy_version"])
+        self.assertEqual("2.0.0", preview["plan"]["policy_version"])
         applied = runtime.promote(self.root, self.solution_args(approve_plan=preview["plan"]["plan_id"]))
         self.assertEqual("APPLIED", applied["state"])
         snapshot = self.root / "docs/upstream/bmad/solution-v1"

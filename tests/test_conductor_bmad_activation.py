@@ -55,16 +55,23 @@ class FactoryBmadActivationTests(unittest.TestCase):
         activation = runtime.enforcement_activation(root)
         self.assertTrue(activation["active"])
         self.assertEqual("CONDUCTOR_BMAD_ENFORCEMENT_ACTIVE_UNSAFE_LAYOUT", activation["reason_code"])
-        decision = runtime.hook_decision(root, {
+        # Unsafe layouts block authority actions only: discovery proceeds with a layout warning,
+        # solution-context authoring and delivery stay denied.
+        discovery = runtime.hook_decision(root, {
             "hook_event_name": "PreToolUse",
             "tool_name": "Skill",
             "tool_input": {"skill": "bmad-product-brief"},
         })
-        self.assertEqual("deny", decision["hookSpecificOutput"]["permissionDecision"])
-        self.assertIn(
-            "CONDUCTOR_BMAD_ENFORCEMENT_STATE_INVALID",
-            decision["hookSpecificOutput"]["permissionDecisionReason"],
-        )
+        self.assertNotIn("permissionDecision", discovery["hookSpecificOutput"])
+        self.assertIn("LAYOUT WARNING (CONDUCTOR_BMAD_PARTIAL_STATE)", discovery["hookSpecificOutput"]["additionalContext"])
+        authority = runtime.hook_decision(root, {
+            "hook_event_name": "PreToolUse",
+            "tool_name": "Skill",
+            "tool_input": {"skill": "bmad-spec"},
+        })
+        self.assertEqual("deny", authority["hookSpecificOutput"]["permissionDecision"])
+        self.assertIn("CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID", authority["hookSpecificOutput"]["permissionDecisionReason"])
+        self.assertIn("Layout: partial (CONDUCTOR_BMAD_PARTIAL_STATE)", authority["hookSpecificOutput"]["permissionDecisionReason"])
 
     def test_nested_bmad_beside_factory_activates_fail_closed(self):
         root = self.root(); seed_git(root); seed_factory(root); seed_nested_bmad(root)

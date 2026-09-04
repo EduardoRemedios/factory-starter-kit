@@ -64,7 +64,9 @@ class FactoryBmadCapabilityTests(unittest.TestCase):
         self.assertEqual("OPTIONAL_STAGE_F_EVIDENCE_ONLY", payload["module_classifications"]["tea"])
         tea_capabilities = [item for item in payload["capabilities"]["skills"] if item["name"] in runtime.SUPPORTED_TEA_SKILLS]
         self.assertEqual(len(runtime.SUPPORTED_TEA_SKILLS), len(tea_capabilities))
-        self.assertTrue(all(item["classification"] == "OPTIONAL_STAGE_F_EVIDENCE_ONLY" for item in tea_capabilities))
+        by_name = {item["name"]: item["classification"] for item in tea_capabilities}
+        self.assertEqual({by_name[n] for n in runtime.policy.EVIDENCE_ONLY_WORKFLOWS}, {"ALLOWED_EVIDENCE_ONLY"})
+        self.assertEqual({by_name[n] for n in set(runtime.SUPPORTED_TEA_SKILLS) - runtime.policy.EVIDENCE_ONLY_WORKFLOWS}, {"PROHIBITED_DELIVERY"})
 
     def test_nested_bmad_audit_reports_loop_before_activation(self):
         root = self.root()

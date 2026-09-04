@@ -164,17 +164,22 @@ Run `/conductor-bmad:doctor` and follow its single next action:
 - Factory present without BMAD: `/conductor-bmad:bootstrap`
 - Both present: `/conductor-bmad:audit`
 
-If Doctor reports `CONDUCTOR_BMAD_NON_CANONICAL_LAYOUT`, stop. Do not run
-`/conductor-bmad:bootstrap`, because that can create a second root-level BMAD
-install beside an existing nested install such as `bmad/_bmad`. Preserve the
-reported paths and review whether the nested BMAD tree should be migrated,
-isolated as historical evidence, or handled by a separately approved
-configured-path flow.
+If Doctor reports `CONDUCTOR_BMAD_NON_CANONICAL_LAYOUT`, do not run
+`/conductor-bmad:bootstrap`, because that can create a second BMAD install beside
+an existing nested one such as `bmad/_bmad`. Two options, both human decisions:
 
-If the nested BMAD tree has its own `AGENTS.md`, do not overwrite it. Root
-`AGENTS.md` may define the repository and Factory contract, but BMAD-scoped work
-must preserve and explicitly defer to the nested BMAD contract until a migration
-or configured-path flow is approved.
+- Declare the existing tree as the active root in
+  `docs/Conductor/PROJECT_CONFIG.json` under `adapters.bmad.declared_root`
+  (repo-relative, directory named `_bmad`, not under `docs/`). Every version and
+  digest check then applies at that root and Doctor reports a canonical layout.
+- Or preserve the tree as inert history under
+  `docs/adapters/bmad/legacy-evidence/` using the zero-write preview from
+  `/conductor-bmad:audit`, then bootstrap a fresh canonical install.
+
+While the layout is unresolved, discovery workflows and helpers still run and
+carry a `LAYOUT WARNING` in their context; intake, promotion, and
+architecture/spec/UX authoring are blocked. If the nested BMAD tree has its own
+`AGENTS.md`, do not overwrite it.
 
 For a brownfield repository whose starting state is BMAD present and Factory
 absent, Factory Brownfield apply is the first mutation. The desired target state
@@ -224,13 +229,17 @@ snapshot ID and aggregate hash; never cite `_bmad-output/` directly.
   non-binding evidence throughout.
 
 Claude Code autocomplete is discovery UI: an autocomplete suggestion is not an
-invocation. A hook denial means the requested command was blocked; Doctor was
-not run. `/conductor-bmad:doctor` is an optional suggested recovery action unless
-you explicitly invoke it.
+invocation. A hook denial names its cause in one line: the reason code, the lane
+of the skill you invoked (`product_context`, `helper`, `evidence_only`,
+`delivery`, or `unknown`), the layout state, an `Allowed here:` list of what
+still works, and a `Next:` command. `/conductor-bmad:doctor` is an optional
+suggested recovery action unless you explicitly invoke it.
 
-The Claude plugin automatically denies any non-allowlisted `bmad-*` direct
-command or model-initiated skill in an enforcement-active repository. The exact
-allowlist is in `docs/adapters/bmad/BMAD_POLICY.md`. Run the same authored
+The Claude plugin denies delivery-lane and unknown `bmad-*` direct commands or
+model-initiated skills in an enforcement-active repository. Party mode, review,
+editorial review, and elicitation are helpers in the product-context lane and
+are allowed. The lane definitions are in `docs/adapters/bmad/BMAD_POLICY.md` and
+`docs/adapters/bmad/lane_policy.json`. Run the same authored
 classifier in CI from the repository root with:
 
 ```bash

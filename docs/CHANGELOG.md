@@ -11,6 +11,18 @@
   migration, qualification, decided open questions).
 - Migration step 1: golden-pack regression fixtures under `tests/golden_packs/`
   with `tests/test_golden_packs.py`.
+- Migration steps 6-8 (BMAD lane adapter, policy 2.0.0): policy is now
+  expressed by lane. Product-context lane (discovery, architecture/spec/UX with
+  pinned profiles, persona agents), helpers (review, editorial review, advanced
+  elicitation, party mode, sharding, indexing; same-lane nesting permitted),
+  evidence-only TEA design work, neutral tooling, and a prohibited delivery lane;
+  unknown names are denied. The hook classifies the invoked skill, never its
+  parent. Unsafe layouts block only intake, promotion, and solution-context
+  authoring; discovery continues with a layout warning. Denials name reason
+  code, lane, layout state, what is allowed, and the next command. A project may
+  declare a non-root BMAD installation via `PROJECT_CONFIG.json`
+  `adapters.bmad.declared_root`. Added `conductorctl gap open|resolve` for Gap
+  Requests. Lane contract published at `docs/adapters/bmad/lane_policy.json`.
 - Migration steps 3-5: added `docs/Conductor/INVARIANTS.md` and the AGENTS.md
   managed block; added `conductorctl contract-lint {intent,execution,completion}`
   (G1/G2/G3 deterministic validation over the contract schemas, countersign

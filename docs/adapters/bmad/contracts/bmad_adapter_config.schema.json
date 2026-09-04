@@ -9,7 +9,7 @@
   "properties": {
     "declared_root": {
       "type": "string",
-      "pattern": "^(?!/)(?!docs/)(?!.*(^|/)\\.\\.(/|$))[^\\s]+$",
+      "pattern": "^(?!/)(?!docs/)(?!.*(^|/)\\.\\.(/|$))([^\\s/]+/)*_bmad$",
       "default": "_bmad",
       "description": "Repo-relative directory containing _config/manifest.yaml. No symlink components (checked at runtime). Must not be under docs/. A canonical _bmad plus a differing declared root is an unsafe multiple-roots layout."
     },

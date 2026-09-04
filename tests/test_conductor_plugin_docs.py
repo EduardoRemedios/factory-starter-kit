@@ -336,7 +336,7 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
         normalized_quick_start = " ".join(quick_start.split())
         for phrase in (
             "autocomplete suggestion is not an invocation",
-            "Doctor was not run",
+            "Allowed here:",
             "/conductor-bmad:doctor",
         ):
             self.assertIn(phrase, normalized_quick_start)

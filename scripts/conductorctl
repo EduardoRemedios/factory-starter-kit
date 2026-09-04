@@ -20,6 +20,7 @@ from conductor_contract_lint import (  # noqa: E402
     lint_execution,
     lint_intent,
 )
+from conductor_gap import open_gap, resolve_gap  # noqa: E402
 from conductor_postimage import capture as postimage_capture, compare as postimage_compare  # noqa: E402
 from conductor_receipts import attest as receipts_attest, run_receipts  # noqa: E402
 from conductor_context_index import (  # noqa: E402
@@ -312,6 +313,26 @@ def build_parser() -> argparse.ArgumentParser:
     postimage_parser.add_argument("--root", action="append", default=None, help="capture only: protected root (repeatable); defaults to PROJECT_CONFIG.json protected_roots.")
     postimage_parser.add_argument("--json", action="store_true", help="Print JSON output.")
 
+    gap_parser = subparsers.add_parser(
+        "gap",
+        help="Open a Gap Request (agent) or record its human resolution.",
+    )
+    gap_parser.add_argument("action", choices=["open", "resolve"])
+    gap_parser.add_argument("--run", required=True, help="Run ID under docs/Conductor/runs/.")
+    gap_parser.add_argument("--requirement", help="open: Intent Pack requirement id the gap belongs to.")
+    gap_parser.add_argument("--type", choices=["requirement", "architecture", "ux", "product_context", "constraint"], help="open: gap type.")
+    gap_parser.add_argument("--question", help="open: the question for the upstream lane.")
+    gap_parser.add_argument("--impact", choices=["active_scope", "future_only", "unknown"], default="unknown", help="open: supersession impact assessment.")
+    gap_parser.add_argument("--snapshot-id", help="open: originating upstream snapshot id.")
+    gap_parser.add_argument("--snapshot-sha256", help="open: originating snapshot aggregate digest.")
+    gap_parser.add_argument("--proposal", help="open: optional proposed resolution (decides nothing).")
+    gap_parser.add_argument("--gap", help="resolve: gap id.")
+    gap_parser.add_argument("--decided-by", default="", help="resolve: human decider.")
+    gap_parser.add_argument("--decision", help="resolve: decision text.")
+    gap_parser.add_argument("--new-snapshot-id", help="resolve: superseding snapshot id, if any.")
+    gap_parser.add_argument("--new-snapshot-sha256", help="resolve: superseding snapshot digest.")
+    gap_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
     return parser
 
 
@@ -593,6 +614,24 @@ def main() -> int:
                     print(f"receipts: attested {payload['check_id']} by {payload['signer']} -> {payload['receipt']}")
             failed = any(v == "FAIL" for v in payload.get("outcomes", {}).values())
             return 1 if failed else 0
+
+        if args.command == "gap":
+            if args.action == "open":
+                if not (args.requirement and args.type and args.question):
+                    raise ContractLintError("CONDUCTOR_GAP_ARGUMENTS", "open needs --requirement, --type, and --question")
+                payload = open_gap(root, args.run, requirement_id=args.requirement, gap_type=args.type, question=args.question,
+                                   supersession_impact=args.impact, snapshot_id=args.snapshot_id, snapshot_sha256=args.snapshot_sha256,
+                                   proposed_resolution=args.proposal)
+            else:
+                if not (args.gap and args.decision):
+                    raise ContractLintError("CONDUCTOR_GAP_ARGUMENTS", "resolve needs --gap and --decision")
+                payload = resolve_gap(root, args.run, args.gap, decided_by=args.decided_by, decision=args.decision,
+                                      new_snapshot_id=args.new_snapshot_id, new_snapshot_sha256=args.new_snapshot_sha256)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"gap {args.action}: {payload['gap_id']} -> {payload['path']}" + (" (G1 re-lock required)" if payload.get("g1_reopen_required") else ""))
+            return 0
 
         if args.command == "postimage":
             payload = postimage_capture(root, args.run, args.root) if args.action == "capture" else postimage_compare(root, args.run)

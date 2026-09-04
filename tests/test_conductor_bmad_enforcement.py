@@ -17,11 +17,13 @@ PRETOOLUSE_CASES = [
     ("PT-01", "conductor_bmad_active", "bmad-architecture", "deny", "CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID", "absent"),
     ("PT-02", "conductor_bmad_active", "bmad-future-autonomous", "deny", "CONDUCTOR_BMAD_WORKFLOW_PROHIBITED", "absent"),
     ("PT-03", "conductor_bmad_active", "bmad-architecture", "deny", "CONDUCTOR_BMAD_HOOK_INPUT_INVALID", "absent"),
-    ("PT-04", "conductor_partial_bmad", "bmad-product-brief", "deny", "CONDUCTOR_BMAD_ENFORCEMENT_STATE_INVALID", "absent"),
+    ("PT-04", "conductor_partial_bmad", "bmad-product-brief", "none", None, "present"),
     ("PT-05", "conductor_bmad_active", "bmad-product-brief", "none", None, "present"),
     ("PT-06", "bmad_only_inactive", "bmad-architecture", "none", None, "present"),
     ("PT-07", "conductor_bmad_active", None, "not_matched", None, "not_applicable"),
     ("PT-08", "corrupted_disposable_package_copy", "bmad-architecture", "verification_blocked", "CONDUCTOR_BMAD_PACKAGED_HOOK_FAILURE", "absent"),
+    ("PT-09", "conductor_bmad_active", "bmad-party-mode", "none", None, "present"),
+    ("PT-10", "conductor_bmad_active", "bmad-dev-story", "deny", "CONDUCTOR_BMAD_WORKFLOW_PROHIBITED", "absent"),
 ]
 
 
@@ -111,15 +113,22 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
 
     def test_prohibited_and_unknown_default_deny(self):
         prohibited = runtime.policy_classify("bmad-create-architecture")
-        self.assertEqual("PROHIBITED_DOWNSTREAM", prohibited["classification"])
+        self.assertEqual("PROHIBITED_DELIVERY", prohibited["classification"])
+        self.assertEqual("delivery", prohibited["lane"])
         self.assertEqual("CONDUCTOR_BMAD_WORKFLOW_PROHIBITED", prohibited["reason_code"])
-        self.assertEqual("PROHIBITED_DOWNSTREAM", runtime.policy_classify("bmad-generate-project-context")["classification"])
+        self.assertEqual("PROHIBITED_DELIVERY", runtime.policy_classify("bmad-generate-project-context")["classification"])
         unknown = runtime.policy_classify("bmad-future-autonomous-build")
         self.assertEqual("UNRECOGNIZED_BLOCKING", unknown["classification"])
         self.assertEqual("CONDUCTOR_BMAD_WORKFLOW_PROHIBITED", unknown["reason_code"])
-        tea = runtime.policy_classify("bmad-testarch-automate")
-        self.assertEqual("OPTIONAL_STAGE_F_EVIDENCE_ONLY", tea["classification"])
-        self.assertFalse(tea["allowed"])
+        tea_automate = runtime.policy_classify("bmad-testarch-automate")
+        self.assertEqual("PROHIBITED_DELIVERY", tea_automate["classification"])
+        self.assertFalse(tea_automate["allowed"])
+        tea_design = runtime.policy_classify("bmad-testarch-test-design")
+        self.assertEqual("ALLOWED_EVIDENCE_ONLY", tea_design["classification"])
+        self.assertTrue(tea_design["allowed"])
+        for helper in ("bmad-party-mode", "bmad-advanced-elicitation", "bmad-review-adversarial-general", "bmad-editorial-review-prose"):
+            verdict = runtime.policy_classify(helper)
+            self.assertEqual(("ALLOWED_HELPER", True), (verdict["classification"], verdict["allowed"]), helper)
 
     def test_unqualified_solution_context_is_blocked_before_expansion(self):
         payload = {
@@ -237,18 +246,29 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
         )
         self.assertIsNone(runtime.hook_decision(root, unrelated))
 
-    def test_nested_bmad_layout_blocks_even_allowed_upstream_invocation(self):
+    def test_nested_bmad_layout_blocks_authority_actions_but_not_discovery(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         root = Path(temporary.name)
         seed_git(root); seed_factory(root); seed_nested_bmad(root)
-        payload = {
+        discovery = runtime.hook_decision(root, {
             "hook_event_name": "UserPromptExpansion", "cwd": str(root),
             "expansion_type": "slash_command", "command_name": "bmad-product-brief",
-        }
-        decision = runtime.hook_decision(root, payload)
-        self.assertEqual("block", decision["decision"])
-        self.assertIn("CONDUCTOR_BMAD_ENFORCEMENT_STATE_INVALID", decision["reason"])
+        })
+        context = discovery["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("LAYOUT WARNING", context)
+        self.assertIn("CONDUCTOR_BMAD_NESTED_LAYOUT", context)
+        helper = runtime.hook_decision(root, {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": "bmad-party-mode"}})
+        self.assertNotIn("permissionDecision", helper["hookSpecificOutput"])
+        authority = runtime.hook_decision(root, {
+            "hook_event_name": "UserPromptExpansion", "cwd": str(root),
+            "expansion_type": "slash_command", "command_name": "bmad-architecture",
+        })
+        self.assertEqual("block", authority["decision"])
+        self.assertIn("CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID", authority["reason"])
+        self.assertIn("Layout: nested_active (CONDUCTOR_BMAD_NESTED_LAYOUT)", authority["reason"])
+        delivery = runtime.hook_decision(root, {"hook_event_name": "PreToolUse", "tool_name": "Skill", "tool_input": {"skill": "bmad-dev-story"}})
+        self.assertEqual("deny", delivery["hookSpecificOutput"]["permissionDecision"])
 
     def test_normal_namespaced_companion_promote_is_unrelated_to_bmad_guard(self):
         root = self.root()
@@ -280,7 +300,7 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
         }
         self.assertIsNone(runtime.hook_decision(root, payload))
 
-    def test_denial_says_doctor_was_not_run(self):
+    def test_denial_carries_reason_lane_layout_and_next_step(self):
         payload = {
             "hook_event_name": "UserPromptExpansion",
             "cwd": str(self.root()),
@@ -288,7 +308,12 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
             "command_name": "bmad-architecture",
         }
         decision = runtime.hook_decision(self.root(), payload)
-        self.assertIn("Doctor was not run", decision["reason"])
+        reason = decision["reason"]
+        self.assertNotIn("Doctor was not run", reason)
+        self.assertRegex(reason, r"^CONDUCTOR_BMAD_[A-Z_]+: bmad-architecture is product_context for Conductor-bound work\. Layout: [a-z_]+ \(CONDUCTOR_BMAD_[A-Z_]+\)\. Allowed here: .+\. Next: .+")
+        delivery = runtime.hook_decision(self.root(), {**payload, "command_name": "bmad-dev-story"})
+        self.assertIn("bmad-dev-story is delivery for Conductor-bound work", delivery["reason"])
+        self.assertIn("/conductor:run", delivery["reason"])
 
     def test_malformed_active_bmad_skill_fails_closed(self):
         payload = {
@@ -379,7 +404,7 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
         return "none", None, sentinel
 
     def test_generated_package_pretooluse_sentinel_matrix(self):
-        self.assertEqual([f"PT-{number:02d}" for number in range(1, 9)], [case[0] for case in PRETOOLUSE_CASES])
+        self.assertEqual([f"PT-{number:02d}" for number in range(1, 11)], [case[0] for case in PRETOOLUSE_CASES])
         for case_id, state, skill, expected_decision, expected_reason, expected_sentinel in PRETOOLUSE_CASES:
             with self.subTest(case=case_id):
                 tool_input = {"skill": skill} if skill is not None else {"command": "true"}

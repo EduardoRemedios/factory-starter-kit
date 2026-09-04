@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any
 
 
-POLICY_VERSION = "1.1.0"
+POLICY_VERSION = "2.0.0"
 SUPPORTED_BMAD_VERSION = "6.10.0"
 SUPPORTED_TEA_VERSION = "v1.21.1"
 
@@ -101,7 +101,97 @@ SOLUTION_CONTEXT_AUTHORING_WORKFLOWS = frozenset({
     "bmad-ux",
 })
 
-ALLOWED_UPSTREAM_WORKFLOWS = DISCOVERY_AUTHORING_WORKFLOWS | SOLUTION_CONTEXT_AUTHORING_WORKFLOWS
+# Lane model (policy 2.0.0). Policy is expressed by responsibility, not per workflow.
+# The authoritative contract is docs/adapters/bmad/templates/lane_policy.template.json;
+# tests assert these sets equal it. Every known 6.10.0 skill has exactly one lane.
+PERSONA_AGENT_WORKFLOWS = frozenset({
+    "bmad-agent-analyst",
+    "bmad-agent-pm",
+    "bmad-agent-ux-designer",
+    "bmad-agent-architect",
+    "bmad-agent-tech-writer",
+})
+
+HELPER_WORKFLOWS = frozenset({
+    "bmad-review-adversarial-general",
+    "bmad-review-edge-case-hunter",
+    "bmad-editorial-review-prose",
+    "bmad-editorial-review-structure",
+    "bmad-advanced-elicitation",
+    "bmad-party-mode",
+    "bmad-shard-doc",
+    "bmad-index-docs",
+})
+
+EVIDENCE_ONLY_WORKFLOWS = frozenset({
+    "bmad-testarch-test-design",
+    "bmad-testarch-nfr",
+    "bmad-testarch-trace",
+    "bmad-testarch-test-review",
+    "bmad-teach-me-testing",
+})
+
+NEUTRAL_TOOLING_WORKFLOWS = frozenset({
+    "bmad-customize",
+    "bmad-checkpoint-preview",
+    "bmad-project-settings",
+    "bmad-manifest",
+})
+
+DELIVERY_WORKFLOWS = frozenset({
+    "bmad-create-epics-and-stories",
+    "bmad-create-story",
+    "bmad-dev-story",
+    "bmad-dev-auto",
+    "bmad-quick-dev",
+    "bmad-sprint-planning",
+    "bmad-sprint-status",
+    "bmad-code-review",
+    "bmad-correct-course",
+    "bmad-check-implementation-readiness",
+    "bmad-retrospective",
+    "bmad-qa-generate-e2e-tests",
+    "bmad-testarch-automate",
+    "bmad-testarch-ci",
+    "bmad-testarch-atdd",
+    "bmad-testarch-framework",
+    "bmad-generate-project-context",
+    "bmad-create-architecture",
+    "bmad-agent-dev",
+    "bmad-tea",
+    "bmad-loop",
+})
+
+PRODUCT_CONTEXT_WORKFLOWS = DISCOVERY_AUTHORING_WORKFLOWS | SOLUTION_CONTEXT_AUTHORING_WORKFLOWS | PERSONA_AGENT_WORKFLOWS
+PRODUCT_CONTEXT_WRITE_ROOTS = ("_bmad-output",)
+UNSAFE_LAYOUT_BLOCKS = frozenset({"intake", "promote", "solution_context_authoring"})
+# Workflows whose output may be promoted to an immutable snapshot.
+ALLOWED_UPSTREAM_WORKFLOWS = DISCOVERY_AUTHORING_WORKFLOWS | SOLUTION_CONTEXT_AUTHORING_WORKFLOWS | EVIDENCE_ONLY_WORKFLOWS
+
+PROJECT_CONFIG_PATH = Path("docs/Conductor/PROJECT_CONFIG.json")
+DEFAULT_BMAD_ROOT = Path("_bmad")
+
+
+def active_bmad_root(root: Path) -> Path:
+    """Repo-relative active BMAD root: PROJECT_CONFIG.json adapters.bmad.declared_root, else `_bmad`.
+
+    Invalid declarations (absolute, traversal, under docs/, not ending in _bmad) fall back to the
+    default so the layout assessment reports the resulting mismatch rather than crashing.
+    """
+    config_path = root / PROJECT_CONFIG_PATH
+    if not config_path.is_file() or config_path.is_symlink():
+        return DEFAULT_BMAD_ROOT
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        declared = config.get("adapters", {}).get("bmad", {}).get("declared_root")
+    except (OSError, UnicodeError, json.JSONDecodeError, AttributeError):
+        return DEFAULT_BMAD_ROOT
+    if not isinstance(declared, str) or not declared:
+        return DEFAULT_BMAD_ROOT
+    candidate = Path(declared)
+    if candidate.is_absolute() or ".." in candidate.parts or candidate.parts[0] == "docs" or candidate.name != "_bmad":
+        return DEFAULT_BMAD_ROOT
+    return candidate
 
 # These receipts pin only the BMAD 6.10.0 capability bytes reviewed in MS-01.
 # Future versions or changed customization must fail closed and be requalified.
@@ -147,21 +237,27 @@ LINK_SCAN_SUFFIXES = frozenset({
 MAX_LINK_SCAN_BYTES = 1024 * 1024
 
 CONDUCTOR_BOUND_UPSTREAM_CONTEXT = (
-    "Factory-bound BMAD session: remain at product-discovery level. "
-    "Do not invoke or recommend prohibited BMAD workflows, including party mode, "
-    "advanced elicitation, architecture, specs, epics or stories, sprint planning, "
-    "implementation, QA automation, or code review. Treat all BMAD output as draft "
-    "evidence; Factory remains the sole downstream SDLC authority."
+    "Conductor-bound BMAD session, product-context lane: research, brief, PRD, and their helpers "
+    "(review, editorial review, advanced elicitation, party mode, sharding, indexing) are permitted and "
+    "may nest freely. Write only beneath _bmad-output. Do not invoke or recommend prohibited BMAD workflows: "
+    "the delivery lane (epics or stories, sprint planning or status, implementation, quick-dev, loop, "
+    "code review, QA automation, CI) is closed for Conductor-bound work. Treat all BMAD output as draft "
+    "evidence; Conductor remains the sole downstream SDLC authority."
 )
 
 CONDUCTOR_BOUND_SOLUTION_CONTEXT = (
-    "Factory-bound BMAD solution-context session: produce mutable candidate authoring only beneath "
-    "_bmad-output. Do not use external or design handoffs, activation/completion callbacks, or invoke "
-    "nested BMAD skills. Architecture, UX, and specs remain proposed SOLUTION_CONTEXT / EVIDENCE_ONLY; "
-    "BMAD labels such as canonical, binding, final, implementation-ready, or release approved have no "
-    "Factory authority. Factory independently hardens intent and scope, plans implementation and "
-    "verification, and requires exact-pack human Go before execution. This invocation gate is not a "
-    "filesystem sandbox; stop on any write outside the BMAD draft workspace."
+    "Conductor-bound BMAD solution-context session: produce mutable candidate authoring only beneath "
+    "_bmad-output. Do not use external or design handoffs or activation/completion callbacks; product-context "
+    "helpers may nest, delivery-lane skills may not. Architecture, UX, and specs remain proposed "
+    "SOLUTION_CONTEXT / EVIDENCE_ONLY; BMAD labels such as canonical, binding, final, implementation-ready, "
+    "or release approved have no Conductor authority. Conductor independently hardens intent and scope, plans "
+    "implementation and verification, and requires exact-pack human Go before execution. This invocation gate "
+    "is not a filesystem sandbox; stop on any write outside the BMAD draft workspace."
+)
+
+CONDUCTOR_LAYOUT_WARNING = (
+    " LAYOUT WARNING ({layout_reason}): the BMAD installation layout is not canonical, so intake, promotion, "
+    "and solution-context authoring are blocked until a human resolves it; discovery and helpers continue."
 )
 
 
@@ -214,29 +310,28 @@ def policy_classify(value: object) -> dict[str, Any]:
             "reason_code": "CONDUCTOR_BMAD_HOOK_INPUT_INVALID",
             "policy_version": POLICY_VERSION,
         }
+    allowed = True
+    code = "CONDUCTOR_BMAD_WORKFLOW_ALLOWED"
     if name in DISCOVERY_AUTHORING_WORKFLOWS:
-        classification = "ALLOWED_DISCOVERY_AUTHORING"
-        allowed = True
-        code = "CONDUCTOR_BMAD_WORKFLOW_ALLOWED"
+        classification, lane = "ALLOWED_DISCOVERY_AUTHORING", "product_context"
     elif name in SOLUTION_CONTEXT_AUTHORING_WORKFLOWS:
-        classification = "ALLOWED_SOLUTION_CONTEXT_AUTHORING"
-        allowed = True
-        code = "CONDUCTOR_BMAD_WORKFLOW_ALLOWED"
-    elif name in SUPPORTED_TEA_SKILLS:
-        classification = "OPTIONAL_STAGE_F_EVIDENCE_ONLY"
-        allowed = False
-        code = "CONDUCTOR_BMAD_WORKFLOW_PROHIBITED"
-    elif name in SUPPORTED_BMAD_SKILLS:
-        classification = "PROHIBITED_DOWNSTREAM"
-        allowed = False
-        code = "CONDUCTOR_BMAD_WORKFLOW_PROHIBITED"
+        classification, lane = "ALLOWED_SOLUTION_CONTEXT_AUTHORING", "product_context"
+    elif name in PERSONA_AGENT_WORKFLOWS:
+        classification, lane = "ALLOWED_PRODUCT_CONTEXT_AGENT", "product_context"
+    elif name in HELPER_WORKFLOWS:
+        classification, lane = "ALLOWED_HELPER", "helper"
+    elif name in EVIDENCE_ONLY_WORKFLOWS:
+        classification, lane = "ALLOWED_EVIDENCE_ONLY", "evidence_only"
+    elif name in NEUTRAL_TOOLING_WORKFLOWS:
+        classification, lane = "NEUTRAL_TOOLING", "neutral"
+    elif name in DELIVERY_WORKFLOWS:
+        classification, lane, allowed, code = "PROHIBITED_DELIVERY", "delivery", False, "CONDUCTOR_BMAD_WORKFLOW_PROHIBITED"
     else:
-        classification = "UNRECOGNIZED_BLOCKING"
-        allowed = False
-        code = "CONDUCTOR_BMAD_WORKFLOW_PROHIBITED"
+        classification, lane, allowed, code = "UNRECOGNIZED_BLOCKING", "unknown", False, "CONDUCTOR_BMAD_WORKFLOW_PROHIBITED"
     return {
         "name": name,
         "classification": classification,
+        "lane": lane,
         "allowed": allowed,
         "reason_code": code,
         "policy_version": POLICY_VERSION,
@@ -268,7 +363,7 @@ def _manifest_candidates(installation_root: Path) -> list[Path]:
     ]
 
 
-def _nested_bmad_roots(root: Path) -> list[dict[str, Any]]:
+def _nested_bmad_roots(root: Path, active: Path = DEFAULT_BMAD_ROOT) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     for current_value, directory_names, _ in os.walk(root, topdown=True, followlinks=False):
         current = Path(current_value)
@@ -281,7 +376,7 @@ def _nested_bmad_roots(root: Path) -> list[dict[str, Any]]:
             if name != "_bmad":
                 kept.append(name)
                 continue
-            if relative == Path("_bmad"):
+            if relative == active:
                 continue
             installation_root = child.parent
             manifests = _manifest_candidates(installation_root)
@@ -297,12 +392,17 @@ def _nested_bmad_roots(root: Path) -> list[dict[str, Any]]:
 
 def assess_bmad_layout(root: Path) -> dict[str, Any]:
     root = root.resolve()
-    canonical_root = root / "_bmad"
+    active = active_bmad_root(root)
+    canonical_root = root / active
+    installation_root = canonical_root.parent
     canonical_marker = canonical_root.exists() or canonical_root.is_symlink()
-    canonical_manifests = _manifest_candidates(root)
+    canonical_manifests = _manifest_candidates(installation_root)
     canonical_symlink = canonical_root.is_symlink() or any(path.is_symlink() for path in canonical_manifests)
-    nested = _nested_bmad_roots(root)
-    nested_markers = non_canonical_bmad_layouts(root)
+    nested = _nested_bmad_roots(root, active)
+    nested_markers = [
+        record for record in non_canonical_bmad_layouts(root)
+        if active == DEFAULT_BMAD_ROOT or not _path_is_within(active, Path(record["path"]))
+    ]
     nested_installation_roots = {record["installation_root"] for record in nested}
     supplemental_markers = [record for record in nested_markers if record["path"] not in nested_installation_roots]
     archive = root / LEGACY_EVIDENCE_ROOT
@@ -357,7 +457,8 @@ def assess_bmad_layout(root: Path) -> dict[str, Any]:
         "state": state,
         "reason_code": reason,
         "safe": safe,
-        "canonical_active_root": "_bmad",
+        "canonical_active_root": active.as_posix(),
+        "declared_root": active.as_posix() if active != DEFAULT_BMAD_ROOT else None,
         "canonical_manifest": canonical_manifests[0].relative_to(root).as_posix() if len(canonical_manifests) == 1 else None,
         "canonical_manifest_paths": [path.relative_to(root).as_posix() for path in canonical_manifests],
         "nested_installations": nested,
@@ -378,7 +479,8 @@ def _bmad_marker_present(root: Path) -> bool:
 
 
 def _manifest_path(root: Path) -> tuple[Path | None, bool]:
-    found = [root / relative for relative in BMAD_MANIFESTS if (root / relative).is_file()]
+    installation_root = (root / active_bmad_root(root)).parent
+    found = [installation_root / relative for relative in BMAD_MANIFESTS if (installation_root / relative).is_file()]
     return (found[0] if len(found) == 1 else None, len(found) > 1)
 
 
@@ -430,11 +532,25 @@ def enforcement_activation(root: Path) -> dict[str, Any]:
     return {"active": True, "reason_code": "CONDUCTOR_BMAD_ENFORCEMENT_ACTIVE"}
 
 
-def _deny_message(code: str, name: str | None) -> str:
+def _deny_message(code: str, name: str | None, lane: str = "unknown", layout: dict[str, Any] | None = None) -> str:
+    """Denial text carries the real cause: reason code, lane, layout finding, what is allowed, next step."""
     subject = name or "malformed BMAD invocation"
+    layout_state = layout["state"] if layout else "unknown"
+    layout_reason = layout["reason_code"] if layout else "CONDUCTOR_BMAD_LAYOUT_UNKNOWN"
+    if code == "CONDUCTOR_BMAD_HOOK_INPUT_INVALID":
+        allowed_here, next_step = "none", "repeat the invocation with exactly one BMAD skill name."
+    elif lane == "delivery":
+        allowed_here, next_step = "product-context lane and helpers", "route delivery work through Conductor (/conductor:run)."
+    elif lane == "unknown":
+        allowed_here, next_step = "product-context lane and helpers", "check the skill name; unknown BMAD workflows are denied by default."
+    elif layout and not layout.get("safe", True):
+        allowed_here, next_step = "discovery and helpers", "run /conductor-bmad:audit for the zero-write layout remediation preview."
+    else:
+        allowed_here, next_step = "discovery and helpers", "run /conductor-bmad:doctor to see the exact profile state."
     return (
-        f"{code}: {subject} is not permitted for Factory-bound work. "
-        "Doctor was not run; /conductor-bmad:doctor is only the suggested next action."
+        f"{code}: {subject} is {lane} for Conductor-bound work. "
+        f"Layout: {layout_state} ({layout_reason}). "
+        f"Allowed here: {allowed_here}. Next: {next_step}"
     )
 
 
@@ -493,12 +609,13 @@ def solution_context_authorization(root: Path, name: str) -> dict[str, Any]:
     if installation_version != SUPPORTED_BMAD_VERSION or any(modules.get(module) != SUPPORTED_BMAD_VERSION for module in ("core", "bmm")):
         return {"allowed": False, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_VERSION_MISMATCH", "name": name}
 
+    active = active_bmad_root(root)
     skill_root = Path(".claude/skills") / name
     skill = _regular_file(root, skill_root / "SKILL.md")
     customize = _regular_file(root, skill_root / "customize.toml")
-    files_manifest = _regular_file(root, Path("_bmad/_config/files-manifest.csv"))
-    team_override = _regular_file(root, Path("_bmad/custom/config.toml"))
-    user_override = _regular_file(root, Path("_bmad/custom/config.user.toml"))
+    files_manifest = _regular_file(root, active / "_config/files-manifest.csv")
+    team_override = _regular_file(root, active / "custom/config.toml")
+    user_override = _regular_file(root, active / "custom/config.user.toml")
     if None in {skill, customize, files_manifest, team_override, user_override}:
         return {"allowed": False, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID", "name": name}
     if digest_file(skill) != profile["skill_sha256"] or digest_file(customize) != profile["customize_sha256"]:
@@ -553,26 +670,36 @@ def hook_decision(root: Path, payload: dict[str, Any]) -> dict[str, Any] | None:
     activation = enforcement_activation(root)
     if not activation["active"]:
         return None
-    if malformed:
-        code = "CONDUCTOR_BMAD_HOOK_INPUT_INVALID"
-    elif activation["reason_code"] in {
+    repository = git_root(root) or root
+    layout = assess_bmad_layout(repository)
+    unsafe = activation["reason_code"] in {
         "CONDUCTOR_BMAD_ENFORCEMENT_ACTIVE_PARTIAL",
         "CONDUCTOR_BMAD_ENFORCEMENT_ACTIVE_UNSAFE_LAYOUT",
-    }:
-        code = "CONDUCTOR_BMAD_ENFORCEMENT_STATE_INVALID"
+    }
+    lane = "unknown"
+    if malformed:
+        code = "CONDUCTOR_BMAD_HOOK_INPUT_INVALID"
     else:
+        # The invoked skill decides, never its parent: same-lane nesting is permitted by construction.
         verdict = policy_classify(name)
+        lane = verdict["lane"]
         if verdict["allowed"]:
+            if verdict["classification"] == "NEUTRAL_TOOLING":
+                return None
             if name in SOLUTION_CONTEXT_AUTHORING_WORKFLOWS:
+                # Authority-bearing action: unsafe layouts and profile drift fail closed here.
                 authorization = solution_context_authorization(root, name)
                 if authorization["allowed"]:
                     return _upstream_context(event, CONDUCTOR_BOUND_SOLUTION_CONTEXT)
                 code = authorization["reason_code"]
             else:
-                return _upstream_context(event)
+                context = CONDUCTOR_BOUND_UPSTREAM_CONTEXT
+                if unsafe:
+                    context += CONDUCTOR_LAYOUT_WARNING.format(layout_reason=layout["reason_code"])
+                return _upstream_context(event, context)
         else:
             code = verdict["reason_code"]
-    reason = _deny_message(code, name)
+    reason = _deny_message(code, name, lane, layout)
     if event == "UserPromptExpansion":
         return {"decision": "block", "reason": reason}
     return {
@@ -661,8 +788,6 @@ def _named_capabilities(root: Path, directory: Path, kind: str) -> list[dict[str
         if name is None:
             classification = "UNRECOGNIZED_BLOCKING"
             name = source_name.lower()
-        elif name in SUPPORTED_TEA_SKILLS:
-            classification = "OPTIONAL_STAGE_F_EVIDENCE_ONLY"
         else:
             classification = policy_classify(name)["classification"]
         evidence_path = path / "SKILL.md" if kind == "skills" and path.is_dir() else path
