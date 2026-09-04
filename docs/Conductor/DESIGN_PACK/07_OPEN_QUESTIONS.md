@@ -1,20 +1,20 @@
-# Conductor Design Pack — 07 Open Questions (human decision required)
+# Conductor Design Pack — 07 Open Questions → Decisions
 
-Not resolved by assumption. Each names the default the pack was written against so the build can start; a different answer changes the marked steps in 06 §1.
+All ten questions were decided by Eduardo dos Remedios on 2026-09-04. Defaults that were accepted are marked as such; one default was overridden.
 
-| # | Question | Default assumed in this pack | Affects |
+| # | Question | Decision | Effect on 06 §1 |
 |---|---|---|---|
-| 1 | Rename internal identifiers (`docs/Factory` → `docs/Conductor`, `factoryctl` → `conductorctl`, plugin ids `factory` → `conductor`, reason codes `FACTORY_*` → `CONDUCTOR_*`) in 0.3.0, or user-facing names only in 0.3.0 and internals in 0.3.x? | User-facing in 0.3.0 (step 11); internals deferred. Only Eduardo's clone has a Factory install, so the cost is lowest now, but a full rename touches ~200 files and every test string. | Steps 4, 9, 11, 12 |
-| 2 | Does adopting the Statement of Completion make the verification manifest mandatory on all execution runs? | Yes, at step 13 (post-pilot). Warning level during the pilot. | Steps 4, 13 |
-| 3 | Public GitHub marketplace, or private for the pilot? | Public (repo is public today; onboarding docs are customer-neutral by test). Private adds a credential step per developer. | Step 14, INSTALL.md |
-| 4 | Cursor: accept CLI-only operation for the pilot, or add a Cursor skill wrapping doctor/progress? | CLI-only; add a skill only if the friction log asks. | Q4 |
-| 5 | Which TEA design-level workflows are in `evidence_only` on day one? | `test-design`, `nfr`, `trace`, `test-review`, `teach-me-testing`. `framework` stays delivery. | Step 7, AC-L5 |
-| 6 | May the agent author Gap Requests, or must a human? | Agent authors; human resolves. `resolution` is the only human-written block. | Step 8, AC-L6 |
-| 7 | `bmad-retrospective` and `bmad-check-implementation-readiness`: delivery lane (default) or product-context? | Delivery. Both read sprint/story state. | Step 7 |
-| 8 | Recall trigger default: `when_index_nonempty` or `always`? | `when_index_nonempty`. | Step 6, Project Config |
-| 9 | Do the archived Factory V2 docs (`ORCHESTRATION.md`, `STAGE_CONTRACTS.md`) stay in the repo under `docs/Conductor/archive/` after step 12, or move to a tag only? | Tag only (`factory-lineage-v0.2.5`), plus golden packs in tests. | Step 12 |
-| 10 | Any Factory_V3 concept required? | None identified. The pack imports nothing from the private V3 repository. | — |
+| 1 | Rename internal identifiers now or later? | **Rename now, in 0.3.0** (overrides default). `docs/Factory` → `docs/Conductor`, `factoryctl` → `conductorctl`, `factory_*.py` → `conductor_*.py`, plugin ids `factory`/`factory-bmad` → `conductor`/`conductor-bmad`, slash namespace `/conductor:`, reason codes `FACTORY_*` → `CONDUCTOR_*`, skills `.agents/skills/factory-*` → `conductor-*`. | Rename becomes **step 2**, immediately after golden packs, so every later step is built on the new names. Golden packs keep their historical `FACTORY_*` content; pack-lint gains a compatibility path resolution for them. |
+| 2 | Manifest mandatory on all execution runs once the Statement of Completion exists? | Yes, **after the pilot** (default accepted). Warning level during the pilot. | Step 13 stays post-pilot |
+| 3 | Public or private marketplace? | **Public** (default accepted) | INSTALL.md uses the public GitHub marketplace |
+| 4 | Cursor skill? | **Skip Cursor for now**; revisit after the pilot. Cursor still works via AGENTS.md + CLI with no dedicated work. | Q4 becomes an optional smoke check, not a qualification gate; `adapters/cursor.md` is a one-paragraph note |
+| 5 | TEA evidence-only set | Default accepted: test-design, nfr, trace, test-review, teach-me-testing; framework stays delivery | Step 7 |
+| 6 | Gap Request authorship | Default accepted: agent authors, human resolves | Step 8 |
+| 7 | Retrospective and check-implementation-readiness lane | Default accepted: delivery | Step 7 |
+| 8 | Recall trigger | Default accepted: `when_index_nonempty` | Step 6 |
+| 9 | Archived V2 docs after step 12 | Default accepted: tag `factory-lineage-v0.2.5` only, plus golden packs | Step 12 |
+| 10 | Any Factory_V3 concept required? | Confirmed: none | — |
 
-## Decisions already closed (brief §0), restated for the build run
+## Decisions already closed (brief §0), restated for the build
 
-Conductor naming on user-facing surfaces · 0.2.5 candidate merged as last Factory-lineage release · MS-06 not executed, archived · party mode allowed in the product-context lane · no workshop; self-serve onboarding · rehearsal on the local AuditEdge clone before handover · brief and pack internal until after the pilot.
+Conductor naming on user-facing surfaces · 0.2.5 candidate merged as last Factory-lineage release (`7d0d20e`, tag `factory-lineage-v0.2.5`) · MS-06 not executed, archived · party mode allowed in the product-context lane · no workshop; self-serve onboarding · rehearsal on the local AuditEdge clone before handover · brief and pack internal until after the pilot.
