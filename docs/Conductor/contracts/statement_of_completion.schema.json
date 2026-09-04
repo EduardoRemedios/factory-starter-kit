@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "run_id", "intent_pack_sha256", "rows", "verifier", "derived_state", "handoff_state"],
   "$defs": {
-    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$" },
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
     "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "relpath": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[^\\s]+$" }
   },

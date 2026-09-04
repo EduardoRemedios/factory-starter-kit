@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conductor.dev/schemas/countersign.schema.json",
+  "title": "Conductor Countersign",
+  "description": "Human-written. contract-lint rejects a countersign whose subject_sha256 no longer matches the subject file (stale authority).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "kind", "subject_path", "subject_sha256", "decision", "signer", "utc"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "kind": { "enum": ["INTENT_LOCK", "EXECUTION_GO", "COMPLETION"] },
+    "subject_path": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[^\\s]+$" },
+    "subject_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "decision": { "enum": ["GO", "NO_GO"] },
+    "signer": { "type": "string", "minLength": 1 },
+    "utc": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$" },
+    "note": { "type": "string" }
+  }
+}

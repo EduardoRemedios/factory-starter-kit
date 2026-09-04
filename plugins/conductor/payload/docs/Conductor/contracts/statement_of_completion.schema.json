@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conductor.dev/schemas/statement_of_completion.schema.json",
+  "title": "Conductor Statement of Completion",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "intent_pack_sha256", "rows", "verifier", "derived_state", "handoff_state"],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "relpath": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[^\\s]+$" }
+  },
+  "properties": {
+    "schema_version": { "const": 1 },
+    "run_id": { "$ref": "#/$defs/id" },
+    "intent_pack_sha256": { "$ref": "#/$defs/sha256" },
+    "rows": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["requirement_id", "status", "evidence"],
+        "properties": {
+          "requirement_id": { "$ref": "#/$defs/id" },
+          "status": { "enum": ["verified", "partial", "not_done", "out_of_scope"] },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object", "additionalProperties": false,
+              "required": ["check_id", "receipt_path", "receipt_sha256"],
+              "properties": {
+                "check_id": { "$ref": "#/$defs/id" },
+                "receipt_path": { "$ref": "#/$defs/relpath" },
+                "receipt_sha256": { "$ref": "#/$defs/sha256" }
+              }
+            }
+          },
+          "limitation": { "type": "string" },
+          "residual_gap": { "type": "string" },
+          "decision_ref": { "$ref": "#/$defs/relpath" }
+        },
+        "allOf": [
+          { "if": { "properties": { "status": { "const": "verified" } } }, "then": { "properties": { "evidence": { "minItems": 1 } } } },
+          { "if": { "properties": { "status": { "const": "out_of_scope" } } }, "then": { "required": ["decision_ref"] } }
+        ]
+      }
+    },
+    "verifier": {
+      "type": "object", "additionalProperties": false,
+      "required": ["report_path", "report_sha256", "fresh_context"],
+      "properties": {
+        "report_path": { "$ref": "#/$defs/relpath" },
+        "report_sha256": { "$ref": "#/$defs/sha256" },
+        "fresh_context": { "const": true }
+      }
+    },
+    "derived_state": { "enum": ["READY", "BLOCKED", "NEEDS_HUMAN_DECISION"] },
+    "handoff_state": { "enum": ["REVIEW_READY", "MERGE_READY"] },
+    "merge_preflight_summary": { "$ref": "#/$defs/relpath" }
+  },
+  "allOf": [
+    { "if": { "properties": { "handoff_state": { "const": "MERGE_READY" } } }, "then": { "required": ["merge_preflight_summary"] } }
+  ]
+}

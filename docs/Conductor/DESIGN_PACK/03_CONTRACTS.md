@@ -147,3 +147,12 @@ AGENTS.md composition (Project Config `agents_md.mode = managed_block`):
 ```
 
 Update rewrites only the managed block. Brownfield adoption never deletes existing content; it inserts the block at the top and records the project-owned digest. Verified in Claude Code, Codex, and Cursor as part of qualification (06 §4).
+
+## Addendum (2026-09-04, step 2b)
+
+Implementation moved two things relative to the sketches above, both forced by the existing rule that the core plugin payload is customer- and domain-neutral:
+
+- **Project Config §5** no longer has a `bmad` block. It has a generic `adapters.<name>` object whose values are validated by each adapter's own schema. The BMAD block (declared root, legacy evidence root) is `docs/adapters/bmad/contracts/bmad_adapter_config.schema.json`.
+- **Lane Policy §6** lives at `docs/adapters/bmad/contracts/lane_policy.schema.json` and ships with the `conductor-bmad` plugin only.
+
+Two schema corrections from the v1 compatibility test: ids allow up to 127 characters (real run ids are ~70), and the manifest check type set includes `manual`, which pack-lint already accepted.

@@ -2,26 +2,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://conductor.dev/schemas/project_config.schema.json",
   "title": "Conductor Project Config",
+  "description": "Single schema-locked per-repository configuration. Adapter-specific settings live under adapters.<name> and are validated by that adapter's own schema (docs/adapters/<name>/contracts/); the core schema only fixes their shape.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "product_name", "bmad", "protected_roots", "allowed_harnesses", "default_budget", "agents_md", "required_docs", "recall"],
+  "required": ["schema_version", "product_name", "protected_roots", "allowed_harnesses", "default_budget", "agents_md", "required_docs", "recall"],
   "$defs": {
-    "relpath": { "type": "string", "pattern": "^(?!/)(?!docs/)(?!.*(^|/)\\.\\.(/|$))[^\\s]+$" },
     "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "effort": { "enum": ["low", "medium", "high", "xhigh", "max"] }
   },
   "properties": {
     "schema_version": { "const": 1 },
     "product_name": { "type": "string", "minLength": 1 },
-    "bmad": {
-      "type": "object", "additionalProperties": false,
-      "required": ["legacy_evidence_root"],
-      "properties": {
-        "declared_root": { "$ref": "#/$defs/relpath", "default": "_bmad",
-          "description": "Exactly one active BMAD root. Must contain _config/manifest.yaml, contain no symlink components, and must not be under docs/." },
-        "legacy_evidence_root": { "type": "string", "const": "docs/adapters/bmad/legacy-evidence" }
-      }
-    },
     "protected_roots": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
     "allowed_harnesses": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["claude-code", "codex", "cursor"] } },
     "default_budget": {
@@ -47,6 +38,12 @@
       "type": "object", "additionalProperties": false,
       "required": ["trigger"],
       "properties": { "trigger": { "enum": ["always", "when_index_nonempty", "never"] } }
+    },
+    "adapters": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9-]{0,31}$" },
+      "additionalProperties": { "type": "object" },
+      "description": "One entry per installed adapter, keyed by adapter name. Each value is validated by docs/adapters/<name>/contracts/<name>_adapter_config.schema.json."
     }
   }
 }

@@ -11,6 +11,13 @@
   migration, qualification, decided open questions).
 - Migration step 1: golden-pack regression fixtures under `tests/golden_packs/`
   with `tests/test_golden_packs.py`.
+- Migration step 2b: landed the Conductor contract schemas (JSON Schema
+  2020-12) under `docs/Conductor/contracts/` with templates, and the BMAD
+  adapter contracts (lane policy, adapter config) under
+  `docs/adapters/bmad/contracts/` so the core plugin payload stays
+  domain-neutral. Added `jsonschema` to requirements and `tests/test_schemas.py`
+  (metaschema, template, negative-fixture, and v1->v2 manifest compatibility
+  checks).
 - Migration step 2: renamed internal identifiers from Factory to Conductor
   (`docs/Factory` -> `docs/Conductor`, `factoryctl` -> `conductorctl`,
   `factory_*` scripts and modules -> `conductor_*`, `FACTORY_*` reason codes

@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "run_id": "RUN_YYYYMMDD_HHMM_TAG",
+  "goal": "One paragraph: what is being delivered and why it matters to the people who asked for it.",
+  "requirements": [
+    {
+      "id": "R-001",
+      "statement": "State one requirement in a single sentence.",
+      "acceptance": "State how a reviewer can tell this requirement is met.",
+      "severity": "blocking"
+    }
+  ],
+  "constraints": [
+    {
+      "id": "C-001",
+      "statement": "SIMPLE-CODE-GATE v2 applies to all code-changing work in this run.",
+      "source": "docs/Conductor/INVARIANTS.md"
+    }
+  ],
+  "scope_in": ["Name each area, file group, or behaviour that is in scope."],
+  "scope_out": ["Name each adjacent area that is explicitly out of scope."],
+  "sources": [
+    {
+      "kind": "human_brief",
+      "ref": "docs/Conductor/runs/RUN_YYYYMMDD_HHMM_TAG/notes/brief.md",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "verification_requirements": [
+    {
+      "id": "VM-001",
+      "requirement_ids": ["R-001"],
+      "tier": "V2",
+      "description": "Name the check that proves R-001; its id must match the verification manifest."
+    }
+  ],
+  "budget": {
+    "model": "claude-fable-5-1",
+    "effort_g2": "high",
+    "effort_g3": "high"
+  },
+  "risks": [
+    { "statement": "Name a way this run could fail.", "mitigation": "Name what prevents or detects it." }
+  ],
+  "execution_mode": "PLANNING_ONLY",
+  "done_definition": "Every requirement row in the Statement of Completion is verified or carries a human decision."
+}

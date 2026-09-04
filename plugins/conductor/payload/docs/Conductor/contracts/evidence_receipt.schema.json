@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conductor.dev/schemas/evidence_receipt.schema.json",
+  "title": "Conductor Evidence Receipt",
+  "description": "Written only by the receipts runner. payload_sha256 is recomputed by contract-lint over every other field; a mismatch marks the receipt as agent-authored and invalid.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "check_id", "command", "cwd", "exit_code", "stdout_sha256", "stderr_sha256", "stdout_bytes", "stderr_bytes", "stdout_path", "stderr_path", "started_utc", "finished_utc", "status", "payload_sha256"],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "relpath": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[^\\s]+$" }
+  },
+  "properties": {
+    "schema_version": { "const": 1 },
+    "run_id": { "$ref": "#/$defs/id" },
+    "check_id": { "$ref": "#/$defs/id" },
+    "command": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "cwd": { "type": "string" },
+    "exit_code": { "type": "integer" },
+    "expected_exit": { "type": "integer", "default": 0 },
+    "stdout_sha256": { "$ref": "#/$defs/sha256" },
+    "stderr_sha256": { "$ref": "#/$defs/sha256" },
+    "stdout_bytes": { "type": "integer", "minimum": 0, "maximum": 65536 },
+    "stderr_bytes": { "type": "integer", "minimum": 0, "maximum": 65536 },
+    "stdout_path": { "$ref": "#/$defs/relpath" },
+    "stderr_path": { "$ref": "#/$defs/relpath" },
+    "started_utc": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$" },
+    "finished_utc": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$" },
+    "status": { "enum": ["PASS", "FAIL"] },
+    "payload_sha256": { "$ref": "#/$defs/sha256" }
+  }
+}

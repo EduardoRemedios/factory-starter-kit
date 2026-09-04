@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "kind": "INTENT_LOCK",
+  "subject_path": "intent_pack.json",
+  "subject_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "decision": "GO",
+  "signer": "Full name of the human signing",
+  "utc": "2026-01-01T00:00:00Z",
+  "note": "Optional: conditions or context for the decision."
+}

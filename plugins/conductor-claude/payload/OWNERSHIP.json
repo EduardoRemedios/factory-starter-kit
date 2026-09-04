@@ -154,6 +154,46 @@
       "sha256": "41669f478efa40b258dd7fe4b8a0155ebfb38d6289f6046f156a5130040d4f59"
     },
     {
+      "path": "docs/Conductor/contracts/README.md",
+      "classification": "release-owned",
+      "sha256": "b3799234c250b712ad99622135b2f4e817ade638c0207c1bca0ccd7a53237eb8"
+    },
+    {
+      "path": "docs/Conductor/contracts/countersign.schema.json",
+      "classification": "release-owned",
+      "sha256": "27281b453492c169f243abfb38b973fb4006ebe342827bd895c8e12083c172b6"
+    },
+    {
+      "path": "docs/Conductor/contracts/evidence_receipt.schema.json",
+      "classification": "release-owned",
+      "sha256": "12b79228d2ffd739e6805dbb1f5b3a98ca4fb967e94e0d6376d2be0a4a9dde54"
+    },
+    {
+      "path": "docs/Conductor/contracts/gap_request.schema.json",
+      "classification": "release-owned",
+      "sha256": "6b770b3395582783785499c483917bb345c0470a66216e60494c23735979384f"
+    },
+    {
+      "path": "docs/Conductor/contracts/intent_pack.schema.json",
+      "classification": "release-owned",
+      "sha256": "1e8b12a4095cb596c4966cb3e6fd1ff82b5e0cb19ed44f29a8ec2938e25dd2c6"
+    },
+    {
+      "path": "docs/Conductor/contracts/project_config.schema.json",
+      "classification": "release-owned",
+      "sha256": "b7c9f0561093268531b391dac6643284947746d8b156c30ad09a588a30c90202"
+    },
+    {
+      "path": "docs/Conductor/contracts/statement_of_completion.schema.json",
+      "classification": "release-owned",
+      "sha256": "e1113fa1224463b2fc3ccbae25e6fef21173b2589f38ef425fdd15a704f7554c"
+    },
+    {
+      "path": "docs/Conductor/contracts/verification_manifest_v2.schema.json",
+      "classification": "release-owned",
+      "sha256": "d995ce3c5909997073812d066599187d0d67b1eedc0ac26f873b990ac18d1566"
+    },
+    {
       "path": "docs/Conductor/templates/CONTEXT_RECALL_REPORT_TEMPLATE.md",
       "classification": "release-owned",
       "sha256": "e62775b86de7c038323389d58cc057fae458bbfccde796d968546a1c33269f84"
@@ -254,6 +294,41 @@
       "sha256": "79cc6b890a767398a81cc99705c4fbfd5f9469b30e1382f51b7ab7ef35a84926"
     },
     {
+      "path": "docs/Conductor/templates/VERIFICATION_MANIFEST_TEMPLATE_V2.yaml",
+      "classification": "release-owned",
+      "sha256": "5c37337d3ed2a22920aa9bca81c0049cb83002e6ac1d9f28eeead63c90d8dd6f"
+    },
+    {
+      "path": "docs/Conductor/templates/countersign.template.json",
+      "classification": "release-owned",
+      "sha256": "534c65fed7747ab2e680f7aa930c3cec0c27c6ec643317eae90316296ff5dea0"
+    },
+    {
+      "path": "docs/Conductor/templates/evidence_receipt.example.json",
+      "classification": "release-owned",
+      "sha256": "d34eb8fe97adf015a563d725acc49a09df3cfac530d413acca8b26c9da43a332"
+    },
+    {
+      "path": "docs/Conductor/templates/gap_request.template.json",
+      "classification": "release-owned",
+      "sha256": "f41f88b5883ad2328f956d5c8bff5a11f122ed2b28e02fd9bd3e2eafaf7fb0c4"
+    },
+    {
+      "path": "docs/Conductor/templates/intent_pack.template.json",
+      "classification": "release-owned",
+      "sha256": "b06936f5a31ab08bfd531bb642e3c1570b588a08ccb38e157eb3599128a7e868"
+    },
+    {
+      "path": "docs/Conductor/templates/project_config.template.json",
+      "classification": "release-owned",
+      "sha256": "b418594364df660241f03a55c8055c47af3c0c6f1ebb35075b9777a5dd639de1"
+    },
+    {
+      "path": "docs/Conductor/templates/statement_of_completion.template.json",
+      "classification": "release-owned",
+      "sha256": "30b11830934015550e15a20ac1914770370208f42236a1afa1338c8f127ff7c7"
+    },
+    {
       "path": "docs/PROJECT_STATE.md",
       "classification": "project-owned",
       "sha256": "e76b759465b19a7a4d831a332c4bd49f219d9903155245381c1e35c3f71f5933"
@@ -311,7 +386,7 @@
     {
       "path": "requirements.txt",
       "classification": "release-owned",
-      "sha256": "8cfc3197b86bf23f2454918d3a0e212585c9cc70f8eee9ee36518311a93c7eb9"
+      "sha256": "414ac2791ab5b1e6b3e90484fa384f4eb1ac3fa2bb163bdb0ea4a32914b91120"
     },
     {
       "path": "scripts/agent_loop_bridge_validate.py",

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "product_name": "Conductor",
+  "protected_roots": ["docs/Conductor", "scripts", ".agents/skills", "AGENTS.md"],
+  "allowed_harnesses": ["claude-code", "codex"],
+  "default_budget": {
+    "model": "claude-fable-5-1",
+    "effort_g2": "high",
+    "effort_g3": "high"
+  },
+  "agents_md": {
+    "mode": "managed_block"
+  },
+  "required_docs": ["docs/PROJECT_STATE.md", "docs/Conductor/INVARIANTS.md"],
+  "project_preflight": {
+    "enabled": false
+  },
+  "recall": {
+    "trigger": "when_index_nonempty"
+  },
+  "adapters": {}
+}

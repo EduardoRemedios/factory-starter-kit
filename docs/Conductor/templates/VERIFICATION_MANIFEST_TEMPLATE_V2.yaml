@@ -1,0 +1,43 @@
+# docs/Conductor/templates/VERIFICATION_MANIFEST_TEMPLATE_V2.yaml
+#
+# Create at: docs/Conductor/runs/<RUN_ID>/verification_manifest.yaml
+# Schema:    docs/Conductor/contracts/verification_manifest_v2.schema.json
+#
+# v2 is a superset of the Factory v1 manifest. New in v2:
+#   - checks[].requirement_ids  links each check to Intent Pack requirement ids
+#                               (constraint_ids is still accepted for v1 packs)
+#   - checks[].result           written ONLY by `conductorctl receipts run`;
+#                               contract-lint recomputes the receipt digest and
+#                               rejects agent-authored results
+#   - checks[].command          may be an argv list (preferred, shell=False)
+#                               or a v1-style string
+# A run whose Intent Pack declares verification_requirements MUST have this file.
+
+schema_version: 2
+run_id: RUN_YYYYMMDD_HHMM_TAG
+execution_mode: PLANNING_ONLY
+execution_order: [VM-001, VM-002]
+
+checks:
+  - id: VM-001
+    tier: V2
+    type: test
+    requirement_ids: [R-001]
+    description: Replace with the requirement this check proves.
+    command: [python3, -m, unittest, tests.test_example, -v]
+    expected: Command exits 0 and covers the named requirement directly.
+    expected_exit: 0
+    halt_on_failure: true
+    evidence_path: receipts/VM-001.json
+
+  - id: VM-002
+    tier: V1
+    type: no_touch
+    requirement_ids: [R-001]
+    description: Prove protected paths were not changed.
+    command: [git, diff, --name-only, --, protected/path]
+    expected: Command prints no changed files.
+    halt_on_failure: true
+    preimage_manifest: postimage/no_touch_preimages.json
+    preimage_manifest_sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+    evidence_path: receipts/VM-002.json

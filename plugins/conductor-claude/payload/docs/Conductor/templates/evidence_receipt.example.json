@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "run_id": "RUN_YYYYMMDD_HHMM_TAG",
+  "check_id": "VM-001",
+  "command": ["python3", "-m", "unittest", "tests.test_example", "-v"],
+  "cwd": ".",
+  "exit_code": 0,
+  "expected_exit": 0,
+  "stdout_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "stderr_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "stdout_bytes": 1024,
+  "stderr_bytes": 0,
+  "stdout_path": "receipts/logs/VM-001.stdout.txt",
+  "stderr_path": "receipts/logs/VM-001.stderr.txt",
+  "started_utc": "2026-01-01T00:00:00Z",
+  "finished_utc": "2026-01-01T00:00:03Z",
+  "status": "PASS",
+  "payload_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+}

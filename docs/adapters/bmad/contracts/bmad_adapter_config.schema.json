@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conductor.dev/schemas/adapters/bmad_adapter_config.schema.json",
+  "title": "Conductor BMAD Adapter Config",
+  "description": "Validates PROJECT_CONFIG.json -> adapters.bmad. Exactly one active BMAD root; legacy trees only under the fixed inert namespace.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["legacy_evidence_root"],
+  "properties": {
+    "declared_root": {
+      "type": "string",
+      "pattern": "^(?!/)(?!docs/)(?!.*(^|/)\\.\\.(/|$))[^\\s]+$",
+      "default": "_bmad",
+      "description": "Repo-relative directory containing _config/manifest.yaml. No symlink components (checked at runtime). Must not be under docs/. A canonical _bmad plus a differing declared root is an unsafe multiple-roots layout."
+    },
+    "legacy_evidence_root": {
+      "type": "string",
+      "const": "docs/adapters/bmad/legacy-evidence"
+    }
+  }
+}

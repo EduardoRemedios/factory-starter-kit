@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "gap_id": "GAP-001",
+  "run_id": "RUN_YYYYMMDD_HHMM_TAG",
+  "intent_pack_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "origin_snapshot_id": "SNAPSHOT_ID",
+  "origin_snapshot_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "requirement_id": "R-002",
+  "gap_type": "product_context",
+  "question": "State the question the product-context lane must answer before this requirement can proceed.",
+  "proposed_resolution": "Optional: the agent's proposal. It decides nothing.",
+  "supersession_impact": "unknown"
+}

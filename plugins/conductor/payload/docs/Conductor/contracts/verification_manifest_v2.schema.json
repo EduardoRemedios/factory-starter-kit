@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://conductor.dev/schemas/verification_manifest_v2.schema.json",
+  "title": "Conductor Verification Manifest v2",
+  "description": "Superset of the Factory v1 manifest (schema_version 1 fields all accepted). checks[].result is written only by the receipts runner; contract-lint recomputes the receipt payload digest and rejects agent-authored results.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "execution_mode", "checks"],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
+    "relpath": { "type": "string", "pattern": "^(?!/)(?!.*\\.\\.)[^\\s]+$" },
+    "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "properties": {
+    "schema_version": { "const": 2 },
+    "run_id": { "$ref": "#/$defs/id" },
+    "sprint_id": { "$ref": "#/$defs/id", "description": "Optional in v2; retained for Factory-lineage compatibility." },
+    "execution_mode": { "enum": ["PLANNING_ONLY", "EXECUTION_ENABLED"] },
+    "execution_order": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 },
+      "description": "Optional. When present it is authoritative and must contain every check id exactly once; named non-check operations may be interposed."
+    },
+    "checks": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "tier", "type", "description", "halt_on_failure", "evidence_path"],
+        "anyOf": [ { "required": ["requirement_ids"] }, { "required": ["constraint_ids"] } ],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "tier": { "enum": ["V0", "V1", "V2", "V3", "V4"] },
+          "type": { "enum": ["artifact", "static", "command", "test", "fixture", "no_touch", "source_revalidation", "manual"] },
+          "requirement_ids": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/id" } },
+          "constraint_ids": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+          "description": { "type": "string", "minLength": 1 },
+          "command": {
+            "oneOf": [
+              { "type": "string", "minLength": 1 },
+              { "type": "array", "minItems": 1, "items": { "type": "string" } }
+            ],
+            "description": "String form is Factory-lineage compatible; argv array form is preferred for the receipts runner (shell=False)."
+          },
+          "expected": { "type": "string" },
+          "expected_exit": { "type": "integer" },
+          "target": { "$ref": "#/$defs/relpath" },
+          "preimage_manifest": { "$ref": "#/$defs/relpath" },
+          "preimage_manifest_sha256": { "$ref": "#/$defs/sha256" },
+          "halt_on_failure": { "type": "boolean" },
+          "evidence_path": { "$ref": "#/$defs/relpath" },
+          "result": {
+            "type": "object", "additionalProperties": false,
+            "required": ["status", "receipt_path"],
+            "properties": {
+              "status": { "enum": ["PASS", "FAIL", "SKIPPED", "NOT_RUN"] },
+              "receipt_path": { "$ref": "#/$defs/relpath" },
+              "exit_code": { "type": "integer" },
+              "utc": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]+)?Z$" }
+            }
+          }
+        },
+        "allOf": [
+          { "if": { "properties": { "type": { "enum": ["static", "command", "test", "no_touch"] } } }, "then": { "required": ["command"] } },
+          { "if": { "properties": { "type": { "enum": ["artifact", "fixture", "source_revalidation"] } } }, "then": { "required": ["target"] } },
+          { "if": { "properties": { "type": { "const": "no_touch" } } }, "then": { "required": ["preimage_manifest", "preimage_manifest_sha256"] } }
+        ]
+      }
+    }
+  }
+}

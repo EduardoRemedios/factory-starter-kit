@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "required": ["schema_version", "run_id", "goal", "requirements", "constraints", "scope_in", "scope_out", "sources", "verification_requirements", "budget", "execution_mode", "done_definition"],
   "$defs": {
-    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$" },
+    "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,127}$" },
     "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
     "nonempty": { "type": "string", "minLength": 1, "pattern": "^(?!\\s*(TBD|TODO|N/A|<[^>]*>)\\s*$).+" }
   },
@@ -47,7 +47,8 @@
         "type": "object", "additionalProperties": false,
         "required": ["kind", "ref", "sha256"],
         "properties": {
-          "kind": { "enum": ["human_brief", "bmad_snapshot", "spec", "prior_run"] },
+          "kind": { "enum": ["human_brief", "upstream_snapshot", "spec", "prior_run"],
+            "description": "upstream_snapshot: an immutable, hash-pinned snapshot promoted from an upstream product-context adapter; ref is the snapshot manifest path." },
           "ref": { "$ref": "#/$defs/nonempty" },
           "sha256": { "$ref": "#/$defs/sha256" }
         }

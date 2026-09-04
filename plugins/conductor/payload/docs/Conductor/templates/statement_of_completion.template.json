@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "run_id": "RUN_YYYYMMDD_HHMM_TAG",
+  "intent_pack_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "rows": [
+    {
+      "requirement_id": "R-001",
+      "status": "verified",
+      "evidence": [
+        {
+          "check_id": "VM-001",
+          "receipt_path": "receipts/VM-001.json",
+          "receipt_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      ],
+      "limitation": "Optional: what this evidence does not cover."
+    },
+    {
+      "requirement_id": "R-002",
+      "status": "out_of_scope",
+      "evidence": [],
+      "decision_ref": "countersign/INTENT_LOCK.json",
+      "residual_gap": "Optional: what remains open and where it is tracked (gap request id)."
+    }
+  ],
+  "verifier": {
+    "report_path": "notes/verifier_report.md",
+    "report_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "fresh_context": true
+  },
+  "derived_state": "NEEDS_HUMAN_DECISION",
+  "handoff_state": "REVIEW_READY"
+}
