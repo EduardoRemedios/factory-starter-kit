@@ -11,6 +11,11 @@
   migration, qualification, decided open questions).
 - Migration step 1: golden-pack regression fixtures under `tests/golden_packs/`
   with `tests/test_golden_packs.py`.
+- Migration step 14: self-serve onboarding replaces the workshop.
+  `docs/Conductor/onboarding/` carries INSTALL (one command per harness),
+  GUIDE (one page), FIRST_EXERCISE (45-minute run through all three gates with
+  expected outputs), and FRICTION_LOG_TEMPLATE; the BMAD adapter adds
+  `FIRST_EXERCISE_WITH_BMAD.md` (promotion, freeze, gap request, supersession).
 - Migration steps 9-11: the plugin runtime reports Conductor-layout runs
   (`intent_pack.json` present) through G1/G2/G3 via `conductorctl contract-lint`
   (`WAITING_HUMAN_LOCK`, `WAITING_HUMAN_GO`, `EXECUTION_IN_PROGRESS`,

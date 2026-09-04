@@ -204,6 +204,26 @@
       "sha256": "d995ce3c5909997073812d066599187d0d67b1eedc0ac26f873b990ac18d1566"
     },
     {
+      "path": "docs/Conductor/onboarding/FIRST_EXERCISE.md",
+      "classification": "release-owned",
+      "sha256": "f36ba7802ba2551398812e5074ee09c011cefdf9363c8291394ed55baae407f7"
+    },
+    {
+      "path": "docs/Conductor/onboarding/FRICTION_LOG_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "4f46a32423f312706aae88c7be9b3897999e7d54c47b5bbdd55596213958f544"
+    },
+    {
+      "path": "docs/Conductor/onboarding/GUIDE.md",
+      "classification": "release-owned",
+      "sha256": "8016594d6db1d83351eaf57097baf83236332c96af3a480520eb97c33370eabc"
+    },
+    {
+      "path": "docs/Conductor/onboarding/INSTALL.md",
+      "classification": "release-owned",
+      "sha256": "53f71dca7926e78a93d75c605739b5b76efaea1198d9027a369e2829e40f3021"
+    },
+    {
       "path": "docs/Conductor/templates/CONTEXT_RECALL_REPORT_TEMPLATE.md",
       "classification": "release-owned",
       "sha256": "e62775b86de7c038323389d58cc057fae458bbfccde796d968546a1c33269f84"
@@ -391,7 +411,7 @@
     {
       "path": "docs/onboarding/ONBOARDING_GUIDE.md",
       "classification": "release-owned",
-      "sha256": "9879e6f4aeb87ae95508e23e81b2d08f07efe471fce6bad9768d3addeaf27469"
+      "sha256": "109ea8fa309c721e13eda41d58fd9248ca1ebf56a59ca951cef526ab9abe1746"
     },
     {
       "path": "requirements.txt",

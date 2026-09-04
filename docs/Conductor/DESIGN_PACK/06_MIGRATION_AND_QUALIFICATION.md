@@ -20,7 +20,7 @@ Each step is one PR that leaves `main` green (344 tests + knowledge lint today).
 | 11 | **Release surfaces.** **Done 2026-09-04** (0.3.0; README; onboarding titles pending step 14). README, onboarding titles, marketplace descriptions, versions → 0.3.0. (Identifier rename already done in step 2.) | docs, marketplaces | Docs tests updated; marketplace versions 0.3.0 |
 | 12 | **Demote modules.** Move Mission Mode, Kilo, PO lane, task memory, bridge, cartographer under `modules/`; AGENTS.md read order → 2 files; delete stage-lint, handoff/pack templates, STAGE_CONTRACTS, ORCHESTRATION (hard rules relocated to GATES.md first). | broad | Golden packs still lint under compatibility mode; ablation note recorded (§3) |
 | 13 | **Statement of Completion → error level.** Manifest required on execution runs. | `scripts/` | Open Question 2 decided |
-| 14 | **Onboarding deliverable.** INSTALL, GUIDE, FIRST_EXERCISE, FRICTION_LOG_TEMPLATE. | `docs/Conductor/onboarding/` | Walkthrough executed by Eduardo on spike-1 (§4) |
+| 14 | **Onboarding deliverable.** **Done 2026-09-04** (docs/Conductor/onboarding: INSTALL, GUIDE, FIRST_EXERCISE, FRICTION_LOG_TEMPLATE; adapter variant docs/adapters/bmad/FIRST_EXERCISE_WITH_BMAD.md). Walkthrough on spike-1 still to run. INSTALL, GUIDE, FIRST_EXERCISE, FRICTION_LOG_TEMPLATE. | `docs/Conductor/onboarding/` | Walkthrough executed by Eduardo on spike-1 (§4) |
 
 Steps 1–5 can proceed in parallel branches after step 1 lands. Steps 6–8 are the BMAD track and depend on 2. Step 12 waits for 4–9.
 

@@ -2,10 +2,26 @@
 
 > **Purpose:** Single source of truth for the current starter-kit state.
 >
-> **Last updated:** 2026-08-24
+> **Last updated:** 2026-09-04
 
 ## What Exists
 
+- **Conductor 0.3.0 (pilot candidate, branch `conductor/design-pack`).** The
+  Factory lineage closed at tag `factory-lineage-v0.2.5` (main `7d0d20e`).
+  Conductor governs authority, outcomes, and write boundaries through three
+  gates (G1 Intent Lock, G2 Governed Execution, G3 Adversarial Review and
+  Completion) enforced by `conductorctl contract-lint`, signed evidence
+  receipts (`conductorctl receipts`), protected-postimage compare, Gap Requests,
+  and human countersign files. Contracts are JSON Schemas under
+  `docs/Conductor/contracts/`; the BMAD adapter's lane policy (2.0.0) and
+  adapter config live under `docs/adapters/bmad/contracts/`. The plugin
+  runtime reports Conductor-layout runs by gate and composes an existing
+  `AGENTS.md` with the managed block on adoption. CI runs contract-lint on
+  pull requests. Self-serve onboarding is under `docs/Conductor/onboarding/`.
+  Migration steps 1-11 and 14 of the design pack are done; steps 12-13
+  (module demotion, read-order trim, manifest mandatory) are post-pilot.
+  Pilot qualification (Q2-Q8 in the design pack) and the spike-1 rehearsal
+  have not run yet.
 - Factory V2 remains the canonical planning process in this repository.
 - Mission Mode exists as an additive wrapper for ordered multi-sprint chains.
 - Context recall, stage-lint, pack-lint, verification manifest, mission lint, mission cursor lint, task memory, Repo Cartographer, and Agent Loop Bridge helpers remain available.

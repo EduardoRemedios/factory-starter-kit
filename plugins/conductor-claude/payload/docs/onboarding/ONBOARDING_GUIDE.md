@@ -2,6 +2,8 @@
 
 > Audience: a contributor adopting the Factory pipeline in a repo that does not already have a governed planning framework.
 
+**Conductor 0.3.0 pilot path (self-serve, no workshop):** `docs/Conductor/onboarding/INSTALL.md`, then `docs/Conductor/onboarding/GUIDE.md` (one page), then `docs/Conductor/onboarding/FIRST_EXERCISE.md` with `docs/Conductor/onboarding/FRICTION_LOG_TEMPLATE.md` open. The sections below describe the Factory-lineage stage process and remain valid for legacy runs.
+
 For the installable Codex/Claude pilot path, start with `docs/onboarding/CONDUCTOR_PLUGIN_QUICK_START.md`.
 
 For a non-technical, step-by-step setup path, start with `docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md`.
