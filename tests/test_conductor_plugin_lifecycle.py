@@ -121,7 +121,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
                  + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
                  + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
         payload = make_payload(
-            self.base, "0.3.0",
+            self.base, "0.3.1",
             {
                 "AGENTS.md": ("# Starter\n\n" + block + "\n## Kit section\n", "project-owned"),
                 "docs/Conductor/core.md": ("factory v3\n", "release-owned"),
@@ -148,6 +148,63 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         # second preview is a no-op: the block is already present and current
         again = setup_plan(self.root, payload)
         self.assertEqual("NO_CHANGE", again["state"], again)
+
+    def test_brownfield_migrates_project_claude_md_into_agents_md_and_writes_bridge(self):
+        """F-1: a repo with only a project CLAUDE.md adopts without manual conversion."""
+        block = ("<!-- conductor:managed:start v=0.3.1-test sha256="
+                 + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
+                 + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
+        payload = make_payload(
+            self.base, "0.3.1",
+            {
+                "AGENTS.md": ("# Starter\n\n" + block + "\n## Kit section\n", "project-owned"),
+                "docs/Conductor/core.md": ("factory v3\n", "release-owned"),
+                "scripts/conductorctl": ("#!/bin/sh\n", "release-owned"),
+            },
+        )
+        guide = "# Widget repo guide\n\nRun `npm test` before pushing.\n"
+        write(self.root / "CLAUDE.md", guide)
+        plan = RUNTIME.evaluate_setup_plan(self.root, mode="brownfield", harness="claude", payload_root=payload,
+                                           platform_name="darwin", python_version=(3, 11, 0))
+        self.assertEqual("PLAN_READY", plan["state"], plan)
+        actions = {item["path"]: item["action"] for item in plan["planned_files"]}
+        self.assertEqual(("compose", "migrate_bridge"), (actions["AGENTS.md"], actions["CLAUDE.md"]))
+        self.assertEqual([], plan["conflicts"])
+        output = RUNTIME.apply_setup_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=payload)
+        self.assertEqual("CONDUCTOR_SETUP_APPLIED", output["reason_code"], output)
+        self.assertEqual("@AGENTS.md\n", (self.root / "CLAUDE.md").read_text(encoding="utf-8"))
+        agents = (self.root / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertTrue(agents.startswith("# Widget repo guide\n\n<!-- conductor:managed:start"), agents[:120])
+        self.assertIn("Run `npm test` before pushing.", agents)
+        self.assertNotIn("## Kit section", agents)
+        state = json.loads((self.root / "docs/Conductor/installation/INSTALLATION_STATE.json").read_text())
+        digests = {e["path"]: e["expected_digest"] for e in state["managed_files"]}
+        self.assertEqual(digests["CLAUDE.md"], hashlib.sha256(b"@AGENTS.md\n").hexdigest())
+        self.assertEqual(digests["AGENTS.md"], hashlib.sha256(agents.encode()).hexdigest())
+        again = RUNTIME.evaluate_setup_plan(self.root, mode="brownfield", harness="claude", payload_root=payload,
+                                            platform_name="darwin", python_version=(3, 11, 0))
+        self.assertEqual("NO_CHANGE", again["state"], again)
+
+    def test_brownfield_migration_appends_when_both_claude_md_and_agents_md_exist(self):
+        block = ("<!-- conductor:managed:start v=0.3.1-test sha256="
+                 + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
+                 + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
+        payload = make_payload(self.base, "0.3.1", {
+            "AGENTS.md": ("# Starter\n\n" + block, "project-owned"),
+            "docs/Conductor/core.md": ("v\n", "release-owned"),
+            "scripts/conductorctl": ("#!/bin/sh\n", "release-owned"),
+        })
+        write(self.root / "AGENTS.md", "# Team map\n\n## Rules\n- a\n")
+        write(self.root / "CLAUDE.md", "# Claude notes\n\nUse pnpm.\n")
+        plan = RUNTIME.evaluate_setup_plan(self.root, mode="brownfield", harness="claude", payload_root=payload,
+                                           platform_name="darwin", python_version=(3, 11, 0))
+        self.assertEqual("PLAN_READY", plan["state"], plan)
+        RUNTIME.apply_setup_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=payload)
+        agents = (self.root / "AGENTS.md").read_text(encoding="utf-8")
+        self.assertTrue(agents.startswith("# Team map\n\n<!-- conductor:managed:start"))
+        self.assertIn("## Rules\n- a\n", agents)
+        self.assertIn("## Migrated from CLAUDE.md\n\n# Claude notes\n\nUse pnpm.\n", agents)
+        self.assertEqual("@AGENTS.md\n", (self.root / "CLAUDE.md").read_text(encoding="utf-8"))
 
     def test_setup_requires_exact_plan_approval(self):
         plan = setup_plan(self.root, self.v1)
@@ -611,7 +668,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         new_payload = make_payload(
             self.base,
-            "0.3.0",
+            "0.3.1",
             {
                 "docs/Conductor/SCRATCHPAD.md": (
                     "neutral scratchpad seed\n",
@@ -664,7 +721,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         self.assertEqual("project-owned", managed["ownership_class"])
         self.assertEqual(expected_digest, managed["expected_digest"])
-        self.assertEqual("0.3.0", managed["source_version"])
+        self.assertEqual("0.3.1", managed["source_version"])
 
         rollback = RUNTIME.apply_rollback(self.root, approved=True)
         self.assertEqual("CONDUCTOR_ROLLBACK_APPLIED", rollback["reason_code"])

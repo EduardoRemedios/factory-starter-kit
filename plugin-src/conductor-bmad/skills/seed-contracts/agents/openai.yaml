@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory BMAD Seed Contracts"
+  short_description: "Seed inert Conductor BMAD adapter contracts"
+  default_prompt: "Use $seed-contracts to preview the adapter contract seed."

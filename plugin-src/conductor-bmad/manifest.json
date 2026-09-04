@@ -1,9 +1,9 @@
 {
   "name": "conductor-bmad",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Adopt Factory and BMAD in one repository with upstream-only BMAD enforcement and immutable Factory intake.",
   "author": {"name": "Eduardo dos Remedios"},
-  "conductor_dependency": "~0.3.0",
+  "conductor_dependency": "~0.3.1",
   "interface": {
     "displayName": "Factory BMAD Companion",
     "shortDescription": "Route BMAD evidence into Factory safely.",
@@ -17,6 +17,7 @@
     {"id": "bootstrap", "description": "Preview or apply a pinned BMAD 6.10.0 Core+BMM Claude Code bootstrap with exact approval, audit, and receipts."},
     {"id": "audit", "description": "Audit installed BMAD modules, commands, skills, agents, hooks, configuration, versions, policy coverage, and brownfield evidence without mutation."},
     {"id": "promote", "description": "Preview, create, reuse, or safely roll back an immutable reviewed BMAD evidence snapshot for Factory intake."},
-    {"id": "intake", "description": "Preview or seed the Factory BMAD policy, embedded-checklist brief template, and fail-closed project preflight adapter."}
+    {"id": "intake", "description": "Preview or seed the Factory BMAD policy, embedded-checklist brief template, and fail-closed project preflight adapter."},
+    {"id": "seed-contracts", "description": "Preview or seed the inert adapter contracts (adapter config schema, lane policy schema and JSON, authority policy) so contract-lint can validate a declared BMAD adapter before intake."}
   ]
 }

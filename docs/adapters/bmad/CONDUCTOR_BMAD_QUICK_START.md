@@ -137,7 +137,7 @@ Use the durable checkout path above; do not register a temporary or scratchpad
 path as the marketplace source.
 
 This is one explicit user installation. The companion declares Factory
-`~0.3.0` as an automatic dependency, so users do not separately install or
+`~0.3.1` as an automatic dependency, so users do not separately install or
 manage Factory. Missing, disabled, or incompatible dependency state halts
 instead of duplicating Factory Core.
 
@@ -172,6 +172,9 @@ an existing nested one such as `bmad/_bmad`. Two options, both human decisions:
   `docs/Conductor/PROJECT_CONFIG.json` under `adapters.bmad.declared_root`
   (repo-relative, directory named `_bmad`, not under `docs/`). Every version and
   digest check then applies at that root and Doctor reports a canonical layout.
+  Then run `/conductor-bmad:seed-contracts` (preview, then apply by exact plan
+  ID) so `contract-lint intent` can validate the declared adapter; it writes
+  only inert schema and policy files and does not need the audit to be READY.
 - Or preserve the tree as inert history under
   `docs/adapters/bmad/legacy-evidence/` using the zero-write preview from
   `/conductor-bmad:audit`, then bootstrap a fresh canonical install.
@@ -189,10 +192,12 @@ that Git worktree. Until then, the repository is treated only as an adoption
 candidate, not as an approved BMAD-without-Factory operating mode.
 
 Every setup command previews first. Apply only by quoting the exact full plan ID.
-If Brownfield blocks because `CLAUDE.md` already exists, keep `CLAUDE.md` but
-make it exactly the one-line Claude Code bridge `@AGENTS.md`. Preserve the old
-content in a project-owned document, rerun `/conductor:brownfield`, and apply only
-the new exact plan ID.
+If the repository already has a project `CLAUDE.md`, Brownfield previews a
+`migrate_bridge` action: the guide's content moves into the project-owned body
+of `AGENTS.md` (under the Conductor managed block, or appended as "Migrated from
+CLAUDE.md" when an `AGENTS.md` already exists) and `CLAUDE.md` becomes exactly
+the one-line bridge `@AGENTS.md`. Review the preview and apply by exact plan ID;
+nothing is deleted.
 
 After BMAD bootstrap applies, close and open a fresh Claude Code session before
 trying an installed BMAD skill. Then run `/conductor-bmad:doctor` again and follow

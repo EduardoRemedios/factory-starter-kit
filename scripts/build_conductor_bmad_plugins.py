@@ -19,7 +19,8 @@ PACKAGE_ROOTS = {
     "codex": REPO_ROOT / "plugins/conductor-bmad",
     "claude": REPO_ROOT / "plugins/conductor-bmad-claude",
 }
-SKILL_IDS = {"doctor", "bootstrap", "audit", "promote", "intake"}
+SKILL_IDS = {"doctor", "bootstrap", "audit", "promote", "intake", "seed-contracts"}
+ADAPTER_CONTRACTS_ROOT = REPO_ROOT / "docs/adapters/bmad"
 
 
 def json_text(value: Any) -> str:
@@ -89,6 +90,12 @@ def write_package(root: Path, platform: str, manifest: dict[str, Any]) -> None:
         SOURCE_ROOT / "runtime/conductor_bmad_policy.py",
         root / "assets/project-adapter/conductor_bmad_policy.py",
     )
+    # Inert adapter contracts (schemas, lane policy) seeded by `seed-contracts`; the authored
+    # source is docs/adapters/bmad so the published contract and the shipped copy cannot drift.
+    (root / "assets/project-adapter/contracts").mkdir()
+    for source in sorted((ADAPTER_CONTRACTS_ROOT / "contracts").glob("*.schema.json")):
+        shutil.copy2(source, root / "assets/project-adapter/contracts" / source.name)
+    shutil.copy2(ADAPTER_CONTRACTS_ROOT / "lane_policy.json", root / "assets/project-adapter/lane_policy.json")
     if platform == "codex":
         plugin = {
             "name": manifest["name"], "version": manifest["version"],

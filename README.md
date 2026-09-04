@@ -7,7 +7,7 @@
 Turn rough product intent into an execution-ready contract, with scope, risk,
 verification, human approval, and delivery evidence built into the workflow.
 
-[![Release candidate](https://img.shields.io/badge/release-0.3.0--conductor--pilot-4f46e5)](#release-status)
+[![Release candidate](https://img.shields.io/badge/release-0.3.1--conductor--pilot-4f46e5)](#release-status)
 [![Codex](https://img.shields.io/badge/Codex-supported-111827?logo=openai&logoColor=white)](#chatgpt--codex-desktop-app-on-macos)
 [![Claude Code CLI](https://img.shields.io/badge/Claude_Code_CLI-pilot_supported-D97757)](#claude-code-cli)
 [![License](https://img.shields.io/badge/license-Apache--2.0-0f766e)](LICENSE)
@@ -47,7 +47,7 @@ authorization layer that coordinates those capabilities.
 
 ## Release Status
 
-The current pilot candidate is Conductor `0.3.0` on branch `conductor/design-pack`; Factory `0.2.5` (tag `factory-lineage-v0.2.5`) is the last Factory-lineage release.
+The current pilot candidate is Conductor `0.3.1` on branch `conductor/design-pack`; Factory `0.2.5` (tag `factory-lineage-v0.2.5`) is the last Factory-lineage release.
 
 - Factory Core is the existing, portable process.
 - The plugin is a distribution and lifecycle layer around that core.
@@ -233,7 +233,7 @@ has intentionally chosen a project-scoped plugin declaration.
 ### Claude Code CLI with BMAD and Factory
 
 For teams using BMAD and Factory together, install only the companion. It
-declares Conductor `~0.3.0` as its protected dependency.
+declares Conductor `~0.3.1` as its protected dependency.
 
 For self-service setup, start with the
 [Factory BMAD quick start](docs/adapters/bmad/CONDUCTOR_BMAD_QUICK_START.md).

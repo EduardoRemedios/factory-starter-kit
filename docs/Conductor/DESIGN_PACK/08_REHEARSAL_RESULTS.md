@@ -21,9 +21,9 @@ Acceptance criteria: AC-L1 (PRD helpers allowed), AC-L2 (party mode allowed, dev
 
 | # | Finding | Fix |
 |---|---|---|
-| F-1 | An existing project `CLAUDE.md` conflicts with the pinned bridge; manual conversion to `@AGENTS.md` plus moving the guide into `AGENTS.md` was required | Treat `CLAUDE.md` like `AGENTS.md`: migrate its content into the project-owned `AGENTS.md` body and write the bridge, as one previewed action |
+| F-1 (**fixed 0.3.1**) | An existing project `CLAUDE.md` conflicts with the pinned bridge; manual conversion to `@AGENTS.md` plus moving the guide into `AGENTS.md` was required | Treat `CLAUDE.md` like `AGENTS.md`: migrate its content into the project-owned `AGENTS.md` body and write the bridge, as one previewed action |
 | F-3 | With a declared non-root BMAD installation, the pinned-profile check looks for IDE skills at the repo-root `.claude/skills`, which the split installation does not have; harnesses only load root skills anyway | Document the limitation: a declared root supports discovery and helpers; solution-context authoring needs root-level skills (copy or symlink, then digests apply). Decide with the pilot team |
-| F-6 | Declaring `adapters.bmad` makes G1 lint demand the adapter schema, which only `intake` seeds, and intake can be blocked (bmad-loop) | Companion seeds its inert contract files (schemas, lane policy, policy doc) on `doctor`, independent of intake |
+| F-6 (**fixed 0.3.1**, `seed-contracts`) | Declaring `adapters.bmad` makes G1 lint demand the adapter schema, which only `intake` seeds, and intake can be blocked (bmad-loop) | Companion seeds its inert contract files (schemas, lane policy, policy doc) on `doctor`, independent of intake |
 | F-7 | Update from a Factory 0.2.5 install is BLOCKED: legacy state path and managed paths are not discovered | Rename-aware update: discover `docs/Factory/installation/INSTALLATION_STATE.json`, plan the `docs/Factory` → `docs/Conductor` managed-set migration |
 | F-9 | Constraint `source` paths are not validated; the verifier caught a dangling reference | contract-lint intent: repo-relative constraint sources must resolve |
 
@@ -37,4 +37,4 @@ Findings 2, 4, 5, 8 are correct behaviour or environment facts, not defects. The
 
 ## Handover readiness
 
-Ready to hand to the pilot team after the F-1 and F-6 fixes land, because both hit any real repository on day one. F-3 needs a decision from the pilot team about where their BMAD IDE skills live. F-7 and F-9 can follow in 0.3.1 without blocking the handover.
+F-1 and F-6 landed in 0.3.1 (re-test recorded below). Ready to hand to the pilot team, because both hit any real repository on day one. F-3 needs a decision from the pilot team about where their BMAD IDE skills live. F-7 and F-9 can follow in 0.3.1 without blocking the handover.

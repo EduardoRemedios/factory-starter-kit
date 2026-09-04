@@ -68,15 +68,16 @@ class FactoryPluginAdapterTests(unittest.TestCase):
             self.assertNotIn("CLAUDE.md", plan["conflicts"])
             self.assertEqual(before, inventory(root))
 
-    def test_conflicting_claude_instructions_halt_without_mutation(self):
+    def test_project_claude_instructions_are_migrated_not_conflicted_and_preview_is_read_only(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             write(root / "CLAUDE.md", "project-specific Claude rules\n")
             before = inventory(root)
             plan = claude_plan(root)
-            self.assertEqual("BLOCKED", plan["state"])
-            self.assertEqual("CONDUCTOR_CONFLICT_USER_OWNED", plan["reason_code"])
-            self.assertIn("CLAUDE.md", plan["conflicts"])
+            self.assertEqual("PLAN_READY", plan["state"], plan)
+            self.assertEqual([], plan["conflicts"])
+            actions = {item["path"]: item["action"] for item in plan["planned_files"]}
+            self.assertEqual(("compose", "migrate_bridge"), (actions["AGENTS.md"], actions["CLAUDE.md"]))
             self.assertEqual(before, inventory(root))
 
     def test_existing_factory_role_skills_coexist(self):

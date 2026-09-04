@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "policy_version": "2.0.0",
+  "bmad_version": "6.10.0",
+  "lanes": {
+    "product_context": {
+      "workflows": [
+        "bmad-brainstorming", "bmad-forge-idea", "bmad-product-brief", "bmad-prfaq",
+        "bmad-market-research", "bmad-domain-research", "bmad-technical-research",
+        "bmad-prd", "bmad-create-prd", "bmad-edit-prd", "bmad-validate-prd",
+        "bmad-document-project", "bmad-help",
+        "bmad-architecture", "bmad-spec", "bmad-ux",
+        "bmad-agent-analyst", "bmad-agent-pm", "bmad-agent-ux-designer", "bmad-agent-architect", "bmad-agent-tech-writer"
+      ],
+      "write_roots": ["_bmad-output"]
+    },
+    "delivery": {
+      "workflows": [
+        "bmad-create-epics-and-stories", "bmad-create-story", "bmad-dev-story", "bmad-dev-auto", "bmad-quick-dev",
+        "bmad-sprint-planning", "bmad-sprint-status", "bmad-code-review", "bmad-correct-course",
+        "bmad-check-implementation-readiness", "bmad-retrospective", "bmad-qa-generate-e2e-tests",
+        "bmad-testarch-automate", "bmad-testarch-ci", "bmad-testarch-atdd", "bmad-testarch-framework",
+        "bmad-generate-project-context", "bmad-create-architecture", "bmad-agent-dev", "bmad-tea", "bmad-loop"
+      ]
+    }
+  },
+  "helpers": [
+    "bmad-review-adversarial-general", "bmad-review-edge-case-hunter",
+    "bmad-editorial-review-prose", "bmad-editorial-review-structure",
+    "bmad-advanced-elicitation", "bmad-party-mode", "bmad-shard-doc", "bmad-index-docs"
+  ],
+  "evidence_only": [
+    "bmad-testarch-test-design", "bmad-testarch-nfr", "bmad-testarch-trace", "bmad-testarch-test-review", "bmad-teach-me-testing"
+  ],
+  "unknown_default": "deny",
+  "unsafe_layout_blocks": ["intake", "promote", "solution_context_authoring"],
+  "profiles": {
+    "bmad-architecture": {
+      "logical_path": "bmm/3-solutioning/bmad-architecture/SKILL.md",
+      "skill_sha256": "a56c7a0abc45e1dba719ae5e66b7169a1098b403e7fd69b30c19f16c12cddc6a",
+      "customize_sha256": "137b418e1bb940411a6e77460a7c74af66a6ad732edcc7c7363746995b89e65d"
+    },
+    "bmad-spec": {
+      "logical_path": "core/bmad-spec/SKILL.md",
+      "skill_sha256": "a2baaf6b6bf000403a3b309b3dae48d328ece922e726541924585afbaf131b16",
+      "customize_sha256": "b0181ba5d4038feb779a7a082a265df753220f868b66b5adb0fb2ed18401c763"
+    },
+    "bmad-ux": {
+      "logical_path": "bmm/2-plan-workflows/bmad-ux/SKILL.md",
+      "skill_sha256": "250d2794f2b8e316bb1ba4666f0728970afd8a5d2707ac1cceac6c21e63730b6",
+      "customize_sha256": "c6f94676004a24eed7ff1d546d5b7e7b3889b84d9bab6bbb56bc297d6eabaeb8"
+    }
+  }
+}

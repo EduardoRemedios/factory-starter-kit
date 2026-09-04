@@ -11,6 +11,14 @@
   migration, qualification, decided open questions).
 - Migration step 1: golden-pack regression fixtures under `tests/golden_packs/`
   with `tests/test_golden_packs.py`.
+- Conductor 0.3.1: Brownfield adoption migrates an existing project `CLAUDE.md`
+  into the project-owned body of `AGENTS.md` and writes the `@AGENTS.md` bridge
+  as one previewed `migrate_bridge` action (rehearsal finding F-1). The BMAD
+  companion gains `seed-contracts`, which previews and seeds the inert adapter
+  contracts (adapter config schema, lane policy schema and JSON, authority
+  policy) independently of intake, so a declared BMAD adapter is lintable before
+  the capability audit is READY (finding F-6). Contracts are packaged from the
+  published `docs/adapters/bmad` source.
 - Conductor 0.3.0 merged to `main` (tag `conductor-v0.3.0-pilot`) after
   MERGE_READY preflight and explicit authorization. Rehearsal pass one on the
   pilot repository's sandbox branch completed G1→G2→G3 to `REVIEW_READY` using

@@ -17,13 +17,13 @@ class FactoryBmadPluginBuildTests(unittest.TestCase):
 
     def test_manifest_and_skill_contract(self):
         source = json.loads((SOURCE / "manifest.json").read_text(encoding="utf-8"))
-        expected = {"doctor", "bootstrap", "audit", "promote", "intake"}
+        expected = {"doctor", "bootstrap", "audit", "promote", "intake", "seed-contracts"}
         self.assertEqual(expected, {item["id"] for item in source["skills"]})
         codex = json.loads((PACKAGES["codex"] / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
         claude = json.loads((PACKAGES["claude"] / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
         self.assertEqual("conductor-bmad", codex["name"])
-        self.assertEqual([{"name": "conductor", "version": "~0.3.0"}], claude["dependencies"])
-        self.assertEqual("0.3.0", claude["version"])
+        self.assertEqual([{"name": "conductor", "version": "~0.3.1"}], claude["dependencies"])
+        self.assertEqual("0.3.1", claude["version"])
         self.assertEqual({f"conductor-bmad-{name}" for name in expected}, {path.name for path in (PACKAGES["codex"] / "skills").iterdir()})
         self.assertEqual(expected, {path.name for path in (PACKAGES["claude"] / "skills").iterdir()})
 

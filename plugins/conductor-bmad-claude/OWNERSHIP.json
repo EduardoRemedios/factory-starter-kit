@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "package": "conductor-bmad",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "generated_from": "plugin-src/conductor-bmad",
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "2c8606cd190be884b4c9bab0beb9d4910b887f1eb573f71bf261612183fe3c50",
+      "sha256": "92793dbd9c7905b07a9c1e8fc2a5a00f3b1eb934b24fc0ff672338d8b6ea144b",
       "classification": "release-owned"
     },
     {
@@ -40,13 +40,28 @@
       "classification": "release-owned"
     },
     {
+      "path": "assets/project-adapter/contracts/bmad_adapter_config.schema.json",
+      "sha256": "91030200b0c02e8f502f742d3c59c4ed22009b814159bcbbb9ab47eae2059409",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/contracts/lane_policy.schema.json",
+      "sha256": "8c56fe26b86c9d445774313e85a6f0ef3631c41a697a0f38f5a9a57246ef272a",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/lane_policy.json",
+      "sha256": "a1d8427ef4df1e8639ea156db3aedb851cafb73c0ac7a59362672419df91d7a1",
+      "classification": "release-owned"
+    },
+    {
       "path": "hooks/hooks.json",
       "sha256": "24ad9c6d6da3d66bfe0fba339c3529b1b3fd55667b513e6b0b459f41555883d8",
       "classification": "release-owned"
     },
     {
       "path": "scripts/conductor_bmad.py",
-      "sha256": "efb3b0ca2c4902d5e1ab2cfdbae290bd1b5c9d7f784a0b5d621f4166a53a20ff",
+      "sha256": "737a1a2e7baba0b123670953f357191dbbfbd57e0d6c79824d6eb0bc0f88f91f",
       "classification": "release-owned"
     },
     {
@@ -77,6 +92,11 @@
     {
       "path": "skills/promote/SKILL.md",
       "sha256": "4c7db626691031178580d963ccc247aff5c85b3482b877477212637ccb454b92",
+      "classification": "release-owned"
+    },
+    {
+      "path": "skills/seed-contracts/SKILL.md",
+      "sha256": "7dcea3a4daa96d380f34720593a3b5d58476ccbc1e14f1119abb1c69a33d441f",
       "classification": "release-owned"
     }
   ]

@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.0"
+PLUGIN_VERSION = "0.3.1"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"
@@ -288,6 +288,26 @@ def compose_agents_md(existing: bytes, payload_agents: bytes) -> bytes:
             separator = b"" if rest.startswith(b"\n") else b"\n"
             return head + b"\n" + block + separator + rest
     return block + b"\n" + existing
+
+
+def merge_migrated_claude(existing_agents: bytes, claude_md: bytes) -> bytes:
+    """Fold a project's pre-Conductor CLAUDE.md into the project-owned body of AGENTS.md."""
+    if not existing_agents.strip():
+        return claude_md
+    return existing_agents.rstrip(b"\n") + b"\n\n## Migrated from CLAUDE.md\n\n" + claude_md
+
+
+def claude_migration_source(root: Path, *, harness: str, installed_files: dict[str, Any]) -> bytes | None:
+    """Bytes of a project CLAUDE.md that must be migrated into AGENTS.md before the bridge is written, else None."""
+    if harness != "claude" or "CLAUDE.md" in installed_files:
+        return None
+    claude_md = root / "CLAUDE.md"
+    if not claude_md.is_file() or claude_md.is_symlink():
+        return None
+    data = claude_md.read_bytes()
+    if data == CLAUDE_BRIDGE:
+        return None
+    return data
 
 
 def select_run(root: Path, run_id: str | None) -> Path | None:
@@ -1207,10 +1227,29 @@ def evaluate_setup_plan(
         entries = effective_payload_entries(raw_entries, harness=harness)
         planned_files: list[dict[str, str]] = []
         conflicts: list[str] = []
+        migrated_claude = claude_migration_source(root, harness=harness, installed_files=installed_files)
+        migrated_sha256 = hashlib.sha256(migrated_claude).hexdigest() if migrated_claude is not None else None
         for entry in entries:
             target = safe_target(root, entry["path"])
             composed_sha256: str | None = None
-            if not target.exists():
+            is_agents = entry["path"] == "AGENTS.md" and entry["classification"] == "project-owned"
+            if is_agents and (migrated_claude is not None or (target.is_file() and file_sha256(target) != entry["sha256"] and entry["path"] not in installed_files)):
+                # An existing project AGENTS.md (or a project CLAUDE.md being migrated) is composed,
+                # not conflicted: the managed block is inserted or refreshed, every other byte preserved.
+                existing = target.read_bytes() if target.is_file() else b""
+                if migrated_claude is not None:
+                    existing = merge_migrated_claude(existing, migrated_claude)
+                composed = compose_agents_md(existing, payload_bytes(payload_root, entry["path"], harness=harness))
+                if target.is_file() and composed == target.read_bytes():
+                    action = "no_change"
+                else:
+                    action = "compose"
+                    composed_sha256 = hashlib.sha256(composed).hexdigest()
+            elif entry["path"] == "CLAUDE.md" and migrated_claude is not None:
+                # The project guide moves into AGENTS.md above; CLAUDE.md becomes the one-line bridge.
+                action = "migrate_bridge"
+                composed_sha256 = hashlib.sha256(CLAUDE_BRIDGE).hexdigest()
+            elif not target.exists():
                 action = "create"
             elif not target.is_file():
                 action = "conflict"
@@ -1222,18 +1261,6 @@ def evaluate_setup_plan(
                 and entry["path"] in installed_files
             ):
                 action = "preserve"
-            elif entry["path"] == "AGENTS.md" and entry["classification"] == "project-owned":
-                # An existing project AGENTS.md is composed, not conflicted: the Conductor
-                # managed block is inserted (or refreshed) and every other byte is preserved.
-                composed = compose_agents_md(
-                    target.read_bytes(),
-                    payload_bytes(payload_root, entry["path"], harness=harness),
-                )
-                if composed == target.read_bytes():
-                    action = "no_change"
-                else:
-                    action = "compose"
-                    composed_sha256 = hashlib.sha256(composed).hexdigest()
             else:
                 action = "conflict"
                 conflicts.append(entry["path"])
@@ -1245,6 +1272,8 @@ def evaluate_setup_plan(
             }
             if composed_sha256:
                 planned["composed_sha256"] = composed_sha256
+            if action in {"compose", "migrate_bridge"} and migrated_sha256:
+                planned["migrated_from_sha256"] = migrated_sha256
             planned_files.append(planned)
     except (OSError, json.JSONDecodeError, ValueError) as error:
         reason_code = (
@@ -1408,7 +1437,7 @@ def managed_files_from_plan(
                 )
             continue
         target = root / item["path"]
-        if item["action"] == "compose":
+        if item["action"] in {"compose", "migrate_bridge"}:
             digest = item["composed_sha256"]
         elif item["action"] in {"create", "modify"}:
             digest = item["source_sha256"]
@@ -1539,21 +1568,31 @@ def apply_setup_plan(
             plan_id=plan["plan_id"],
             mutations=[],
         )
+    stale = result(
+        state="BLOCKED",
+        reason_code="CONDUCTOR_PLAN_STALE",
+        next_legal_action="preview_and_approve_a_fresh_plan",
+        plan_id=plan["plan_id"],
+        mutations=[],
+    )
+    claude_md = safe_target(root, "CLAUDE.md")
     for item in plan["planned_files"]:
-        if item["action"] == "compose":
+        if item["action"] in {"compose", "migrate_bridge"}:
+            migrated: bytes | None = None
+            if item.get("migrated_from_sha256"):
+                if not claude_md.is_file() or hashlib.sha256(claude_md.read_bytes()).hexdigest() != item["migrated_from_sha256"]:
+                    return stale
+                migrated = claude_md.read_bytes()
+            if item["action"] == "migrate_bridge":
+                changes.append({"path": item["path"], "action": "write", "data": CLAUDE_BRIDGE, "mode": 0o644})
+                continue
             target = safe_target(root, item["path"])
-            composed = compose_agents_md(
-                target.read_bytes(),
-                payload_bytes(payload_root, item["path"], harness=plan["harness"]),
-            )
+            existing = target.read_bytes() if target.is_file() else b""
+            if migrated is not None:
+                existing = merge_migrated_claude(existing, migrated)
+            composed = compose_agents_md(existing, payload_bytes(payload_root, item["path"], harness=plan["harness"]))
             if hashlib.sha256(composed).hexdigest() != item.get("composed_sha256"):
-                return result(
-                    state="BLOCKED",
-                    reason_code="CONDUCTOR_PLAN_STALE",
-                    next_legal_action="preview_and_approve_a_fresh_plan",
-                    plan_id=plan["plan_id"],
-                    mutations=[],
-                )
+                return stale
             changes.append({"path": item["path"], "action": "write", "data": composed, "mode": 0o644})
             continue
         if item["action"] != "create":

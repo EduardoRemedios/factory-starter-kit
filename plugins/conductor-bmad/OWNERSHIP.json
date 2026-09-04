@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "package": "conductor-bmad",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "generated_from": "plugin-src/conductor-bmad",
   "files": [
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "8f56b8971e8754f14bc92f4c1707dd823de81965c3712e11c3f396ba4c155108",
+      "sha256": "b193486b5972ad87badfd54b8454809d5ad25b6c3442ea38517618ac3c10efb8",
       "classification": "release-owned"
     },
     {
@@ -40,8 +40,23 @@
       "classification": "release-owned"
     },
     {
+      "path": "assets/project-adapter/contracts/bmad_adapter_config.schema.json",
+      "sha256": "91030200b0c02e8f502f742d3c59c4ed22009b814159bcbbb9ab47eae2059409",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/contracts/lane_policy.schema.json",
+      "sha256": "8c56fe26b86c9d445774313e85a6f0ef3631c41a697a0f38f5a9a57246ef272a",
+      "classification": "release-owned"
+    },
+    {
+      "path": "assets/project-adapter/lane_policy.json",
+      "sha256": "a1d8427ef4df1e8639ea156db3aedb851cafb73c0ac7a59362672419df91d7a1",
+      "classification": "release-owned"
+    },
+    {
       "path": "scripts/conductor_bmad.py",
-      "sha256": "efb3b0ca2c4902d5e1ab2cfdbae290bd1b5c9d7f784a0b5d621f4166a53a20ff",
+      "sha256": "737a1a2e7baba0b123670953f357191dbbfbd57e0d6c79824d6eb0bc0f88f91f",
       "classification": "release-owned"
     },
     {
@@ -97,6 +112,16 @@
     {
       "path": "skills/conductor-bmad-promote/agents/openai.yaml",
       "sha256": "d72f7796888c1872e460ad950e1eb5519ebaefbc7c035dc7a0ae393cf370a645",
+      "classification": "release-owned"
+    },
+    {
+      "path": "skills/conductor-bmad-seed-contracts/SKILL.md",
+      "sha256": "55263968317e2ae638c8524bc0d135b32d6d4b480794e09129879b70306a07e7",
+      "classification": "release-owned"
+    },
+    {
+      "path": "skills/conductor-bmad-seed-contracts/agents/openai.yaml",
+      "sha256": "dc253eb22ed710534c20dea33c7bc014cbc41d574fd51f5709088e5a55ba1ade",
       "classification": "release-owned"
     }
   ]

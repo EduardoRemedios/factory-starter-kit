@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.0"
+PLUGIN_VERSION = "0.3.1"
 BMAD_VERSION = "6.10.0"
 SNAPSHOT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{2,63}")
 RESERVED_SNAPSHOT_IDS = frozenset({"latest", "receipts", "install-receipts"})
@@ -747,6 +747,67 @@ def intake(root: Path, harness: str, approval: str | None) -> dict[str, Any]:
     return result("APPLIED", "CONDUCTOR_BMAD_INTAKE_APPLIED", "draft_raw_brief_from_template", receipt=receipt.relative_to(root).as_posix(), mutations=mutations)
 
 
+def _contract_asset_root() -> Path:
+    """Packaged plugins carry the contracts under assets/project-adapter; the authored source tree keeps
+    them at docs/adapters/bmad (the published contract), two levels above plugin-src/conductor-bmad."""
+    if (ADAPTER_ROOT / "contracts").is_dir():
+        return ADAPTER_ROOT
+    return PLUGIN_ROOT.parent.parent / "docs" / "adapters" / "bmad"
+
+
+def contract_sources() -> dict[Path, Path]:
+    """Inert adapter contract files: schemas, lane policy, authority policy. No authority, no enforcement change."""
+    assets = _contract_asset_root()
+    return {
+        Path("docs/adapters/bmad/contracts/bmad_adapter_config.schema.json"): assets / "contracts" / "bmad_adapter_config.schema.json",
+        Path("docs/adapters/bmad/contracts/lane_policy.schema.json"): assets / "contracts" / "lane_policy.schema.json",
+        Path("docs/adapters/bmad/lane_policy.json"): assets / "lane_policy.json",
+        Path("docs/adapters/bmad/BMAD_POLICY.md"): ADAPTER_ROOT / "BMAD_POLICY.md",
+    }
+
+
+def seed_contracts(root: Path, approval: str | None) -> dict[str, Any]:
+    """Preview or apply the inert contract seed. Does not depend on the capability audit."""
+    root = root.resolve()
+    if policy.git_root(root) is None:
+        return result("BLOCKED", "CONDUCTOR_BMAD_SEED_NO_GIT", "run_inside_a_git_worktree")
+    files: list[dict[str, Any]] = []
+    conflicts: list[str] = []
+    for destination, source in contract_sources().items():
+        if not source.is_file():
+            return result("BLOCKED", "CONDUCTOR_BMAD_PACKAGE_INCOMPLETE", "repair_companion_package", missing=source.name)
+        target = root / destination
+        action = "create"
+        if target.exists() or target.is_symlink():
+            action = "present" if target.is_file() and not target.is_symlink() and digest_file(target) == digest_file(source) else "conflict"
+        if action == "conflict":
+            conflicts.append(destination.as_posix())
+        files.append({"path": destination.as_posix(), "action": action, "sha256": digest_file(source), "executable": False})
+    if conflicts:
+        return result("BLOCKED", "CONDUCTOR_BMAD_SEED_CONFLICT", "reconcile_user_owned_files", conflicts=conflicts, files=files)
+    base = {"schema_version": 1, "operation": "seed-contracts", "plugin_version": PLUGIN_VERSION, "target": str(root), "files": files}
+    plan = {**base, "plan_id": plan_id(base)}
+    creates = [item for item in files if item["action"] == "create"]
+    if not creates:
+        return result("READY", "CONDUCTOR_BMAD_SEED_CURRENT", "run_contract_lint_intent")
+    if approval is None:
+        return result("PLAN_READY", "CONDUCTOR_BMAD_SEED_PLAN_READY", "review_and_exactly_approve_plan", plan=plan)
+    if approval != plan["plan_id"]:
+        return result("BLOCKED", "CONDUCTOR_BMAD_PLAN_APPROVAL_MISMATCH", "review_current_plan", plan=plan)
+    mutations: list[str] = []
+    for item in creates:
+        destination = root / item["path"]
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(contract_sources()[Path(item["path"])], destination)
+        mutations.append(item["path"])
+    receipt_dir = root / "docs/adapters/bmad/receipts"
+    receipt_dir.mkdir(parents=True, exist_ok=True)
+    receipt = receipt_dir / f"seed-contracts-{plan['plan_id']}.json"
+    receipt.write_text(json.dumps({"schema_version": 1, "operation": "seed-contracts", "plan_id": plan["plan_id"], "outcome": "APPLIED", "created_files": mutations}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    mutations.append(receipt.relative_to(root).as_posix())
+    return result("APPLIED", "CONDUCTOR_BMAD_SEED_APPLIED", "run_contract_lint_intent", receipt=receipt.relative_to(root).as_posix(), mutations=mutations)
+
+
 def concise(payload: dict[str, Any]) -> str:
     lines = [f"Factory BMAD: {payload['state']}", f"Reason: {payload['reason_code']}"]
     evidence = payload.get("evidence")
@@ -803,6 +864,8 @@ def parser() -> argparse.ArgumentParser:
     intake_parser = sub.add_parser("intake")
     intake_parser.add_argument("--harness", choices=("claude", "codex"), default="claude")
     intake_parser.add_argument("--approve-plan")
+    seed_parser = sub.add_parser("seed-contracts")
+    seed_parser.add_argument("--approve-plan")
     rollback_parser = sub.add_parser("rollback")
     rollback_parser.add_argument("--receipt", required=True)
     rollback_parser.add_argument("--approve-plan")
@@ -841,6 +904,8 @@ def main() -> int:
             payload = promote(root, args)
         elif args.command == "intake":
             payload = intake(root, args.harness, args.approve_plan)
+        elif args.command == "seed-contracts":
+            payload = seed_contracts(root, args.approve_plan)
         else:
             payload = rollback(root, args.receipt, args.approve_plan)
     except (OSError, UnicodeError, subprocess.SubprocessError) as error:

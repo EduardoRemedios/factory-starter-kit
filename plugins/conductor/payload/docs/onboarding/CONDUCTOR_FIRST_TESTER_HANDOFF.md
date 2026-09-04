@@ -6,7 +6,7 @@ repository, not to test optional upstream companions or a production project.
 
 ## Scope
 
-- Conductor plugin pilot candidate: `0.3.0` on `conductor/design-pack` (Factory `0.2.5` is the last Factory-lineage release)
+- Conductor plugin pilot candidate: `0.3.1` on `conductor/design-pack` (Factory `0.2.5` is the last Factory-lineage release)
 - Surface: Claude Code CLI on macOS
 - Test target: disposable empty Git repository
 - Out of scope: optional upstream companions, Claude Desktop, production code changes,
