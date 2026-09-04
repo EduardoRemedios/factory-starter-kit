@@ -1,5 +1,17 @@
 # AGENTS.md — Repository Context Map
 
+<!-- conductor:managed:start v=0.3.0-dev sha256=068bdb48464b4fa9c42c9c80098f71a4421c1a509dac8e68de2068978a951a7a -->
+## Conductor (managed block)
+Read order (mandatory): `docs/PROJECT_STATE.md`, then `docs/Conductor/INVARIANTS.md`. Everything else on demand.
+
+Conductor governs authority, outcomes, and write boundaries; it does not govern steps. Three gates: G1 Intent Lock (human countersign), G2 Governed Execution (autonomous, receipt-audited), G3 Adversarial Review and Completion (fresh-context verifier, Statement of Completion, human countersign). Merge authorization follows `docs/Conductor/MERGE_PROTOCOL.md`.
+
+Autonomy contract (applies inside any G2 run):
+You are operating under Conductor governance. The Intent Pack sets the scope and the scope is the deliverable: do not narrow, widen, or swap it. For reversible actions inside the locked intent, proceed without asking. Stop only for a destructive action, a genuine scope change, or input only a human can provide; record such a stop as a Gap Request, not as a question in chat. Before reporting progress, audit each claim against a receipt from this run; report only what a receipt proves, and say explicitly what is not yet verified. Before ending your turn, check your last paragraph: if it is a plan, a question, or a promise, do that work now. Implement the smallest clear change (SIMPLE-CODE-GATE v2 applies). Do not write tests for reversible, low-impact changes beyond what the verification manifest requires.
+
+Everything below this block is project-owned and preserved byte for byte by Conductor adoption and update.
+<!-- conductor:managed:end -->
+
 Purpose:
 - Give any agent a short, authoritative repo map so work starts with correct context and stable commands.
 

@@ -26,7 +26,7 @@
     {
       "path": "AGENTS.md",
       "classification": "project-owned",
-      "sha256": "dd11570dc6e1a2b72ed32dd66cba86f4af5683be3215da54859be9184bed0777"
+      "sha256": "65825558a0aa130a4d6c4dab0296a9e5e7bb2bd46f52875a4ac17b58f8fdbec8"
     },
     {
       "path": "docs/CHANGELOG.md",
@@ -67,6 +67,11 @@
       "path": "docs/Conductor/Harnesses/README.md",
       "classification": "release-owned",
       "sha256": "2ecca330d8052e2bf50896a54740cd9ddd00d3714e020048d36c83d73d99eb98"
+    },
+    {
+      "path": "docs/Conductor/INVARIANTS.md",
+      "classification": "release-owned",
+      "sha256": "5bd6970fd18b3ba69c5d42f8bdcebe50d5b9fd3794c0d5df3ffb947d1700e500"
     },
     {
       "path": "docs/Conductor/MERGE_PROTOCOL.md",
