@@ -11,6 +11,12 @@
   migration, qualification, decided open questions).
 - Migration step 1: golden-pack regression fixtures under `tests/golden_packs/`
   with `tests/test_golden_packs.py`.
+- Conductor 0.3.0 merged to `main` (tag `conductor-v0.3.0-pilot`) after
+  MERGE_READY preflight and explicit authorization. Rehearsal pass one on the
+  pilot repository's sandbox branch completed G1→G2→G3 to `REVIEW_READY` using
+  the plugins installed from the GitHub marketplace; pass two (update from a
+  Factory 0.2.5 install) failed closed. Results and the 0.3.1 fix list are in
+  `docs/Conductor/DESIGN_PACK/08_REHEARSAL_RESULTS.md`.
 - Migration step 14: self-serve onboarding replaces the workshop.
   `docs/Conductor/onboarding/` carries INSTALL (one command per harness),
   GUIDE (one page), FIRST_EXERCISE (45-minute run through all three gates with

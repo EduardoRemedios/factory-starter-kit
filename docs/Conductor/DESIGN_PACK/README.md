@@ -11,7 +11,8 @@ Design-only output for the Conductor lineage (successor to Factory V2). Produced
 | `04_LANE_POLICY.md` | BMAD lane model, workflow classification, invoked-skill hook rule, layout rule, declared root, deny message, AC-L1..L6 → qualification |
 | `05_DISPOSITION.md` | Per-file keep / rewrite / demote / delete / archive / create |
 | `06_MIGRATION_AND_QUALIFICATION.md` | 14 mergeable steps, pilot scope guard, ablation note, Q1–Q8 qualification, onboarding deliverable |
-| `07_OPEN_QUESTIONS.md` | Ten human decisions with the defaults assumed |
+| `07_OPEN_QUESTIONS.md` | Ten human decisions, all decided 2026-09-04 |
+| `08_REHEARSAL_RESULTS.md` | Spike-1 rehearsal outcome, qualification table results, 0.3.1 fix list; evidence copies in `rehearsal/` |
 
 ## Acceptance against brief §14
 

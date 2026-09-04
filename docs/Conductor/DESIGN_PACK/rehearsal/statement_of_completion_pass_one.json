@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "run_id": "RUN_20260904_1712_conductor_rehearsal_pass_one",
+  "intent_pack_sha256": "2458c09f5ad52bad9d1cf388ca49111074e9cfc3662111e7daf1c19529a66752",
+  "rows": [
+    {
+      "requirement_id": "R-001",
+      "status": "verified",
+      "evidence": [
+        {
+          "check_id": "VM-001",
+          "receipt_path": "receipts/VM-001.json",
+          "receipt_sha256": "3634b37c9dc7abfa1bf6f4cf3f06cd44a4275754b0df6e53ff8898495882be02"
+        }
+      ],
+      "limitation": "Proves the README references the infra environment path; does not prove the infra README's deploy/teardown steps are current."
+    },
+    {
+      "requirement_id": "R-002",
+      "status": "verified",
+      "evidence": [
+        {
+          "check_id": "VM-002",
+          "receipt_path": "receipts/VM-002.json",
+          "receipt_sha256": "b69049ba19e2e55736f0747c6525f9ed101d299a42c6eab61c5c6ed2ff597af3"
+        }
+      ],
+      "limitation": "Front-matter status only; the verifier additionally confirmed every result cell is TBD."
+    },
+    {
+      "requirement_id": "R-003",
+      "status": "verified",
+      "evidence": [
+        {
+          "check_id": "VM-003",
+          "receipt_path": "receipts/VM-003.json",
+          "receipt_sha256": "f4b7d5402bf817332b33dfafe1fea17d6483b5db3b3bde670ab7cbf3ed570389"
+        }
+      ],
+      "limitation": "Human attestation recorded from a chat review; conformance to the spec's Success signal cannot be cited because the spec is unpromoted (GAP-001).",
+      "residual_gap": "gap_requests/GAP-001.json"
+    }
+  ],
+  "verifier": {
+    "report_path": "notes/verifier.md",
+    "report_sha256": "4b97f51023f10a8e2bef615c04d3a79d2a578f381704340373b56b3e7d56243a",
+    "fresh_context": true
+  },
+  "derived_state": "READY",
+  "handoff_state": "REVIEW_READY"
+}

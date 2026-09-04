@@ -20,8 +20,11 @@
   pull requests. Self-serve onboarding is under `docs/Conductor/onboarding/`.
   Migration steps 1-11 and 14 of the design pack are done; steps 12-13
   (module demotion, read-order trim, manifest mandatory) are post-pilot.
-  Pilot qualification (Q2-Q8 in the design pack) and the spike-1 rehearsal
-  have not run yet.
+  0.3.0 is merged to `main` (tag `conductor-v0.3.0-pilot`). Rehearsal pass one
+  on the pilot sandbox branch reached `REVIEW_READY` through all three gates;
+  pass two (update from a Factory 0.2.5 install) fails closed. Five 0.3.1 fixes
+  are listed in `docs/Conductor/DESIGN_PACK/08_REHEARSAL_RESULTS.md`; F-1 and
+  F-6 gate the handover.
 - Factory V2 remains the canonical planning process in this repository.
 - Mission Mode exists as an additive wrapper for ordered multi-sprint chains.
 - Context recall, stage-lint, pack-lint, verification manifest, mission lint, mission cursor lint, task memory, Repo Cartographer, and Agent Loop Bridge helpers remain available.
