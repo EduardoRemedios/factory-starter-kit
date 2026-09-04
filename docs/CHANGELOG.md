@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-04
+
+- Began the Conductor lineage. Merged the qualified Factory-BMAD 0.2.5
+  candidate to `main` as the last Factory-lineage release (tag
+  `factory-lineage-v0.2.5`) and archived the MS-06 planning run as V2
+  qualification evidence; MS-06 execution was not performed.
+- Added the Conductor design brief and design pack under `docs/Conductor/`
+  (three gates, contracts with JSON Schemas, BMAD lane policy, disposition,
+  migration, qualification, decided open questions).
+- Migration step 1: golden-pack regression fixtures under `tests/golden_packs/`
+  with `tests/test_golden_packs.py`.
+- Migration step 2: renamed internal identifiers from Factory to Conductor
+  (`docs/Factory` -> `docs/Conductor`, `factoryctl` -> `conductorctl`,
+  `factory_*` scripts and modules -> `conductor_*`, `FACTORY_*` reason codes
+  -> `CONDUCTOR_*`, plugin ids `factory`/`factory-bmad` ->
+  `conductor`/`conductor-bmad`, slash namespace `/conductor:`). Historical
+  run evidence and golden packs keep their original identifiers. Installation
+  state written by Factory <= 0.2.5 (`factory_version`) is still readable.
+
 ## 2026-09-03
 
 - Deterministically qualified the integrated Factory-BMAD 0.2.5 solution-context

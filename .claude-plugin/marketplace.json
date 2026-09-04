@@ -6,14 +6,14 @@
   "description": "Factory plugins for safe, evidence-backed repository planning and execution.",
   "plugins": [
     {
-      "name": "factory",
-      "source": "./plugins/factory-claude",
+      "name": "conductor",
+      "source": "./plugins/conductor-claude",
       "description": "Use Factory safely from Claude Code.",
       "version": "0.2.5"
     },
     {
-      "name": "factory-bmad",
-      "source": "./plugins/factory-bmad-claude",
+      "name": "conductor-bmad",
+      "source": "./plugins/conductor-bmad-claude",
       "description": "Adopt Factory and BMAD in one repository with upstream-only BMAD enforcement.",
       "version": "0.2.5"
     }

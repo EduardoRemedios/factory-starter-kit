@@ -7,7 +7,7 @@
       "installed_version": "0.1.0",
       "target_version": "0.2.1",
       "expected_result": "PLAN_READY",
-      "expected_reason_code": "FACTORY_UPDATE_REVIEW_REQUIRED",
+      "expected_reason_code": "CONDUCTOR_UPDATE_REVIEW_REQUIRED",
       "mutations_before_approval": []
     },
     {
@@ -16,7 +16,7 @@
       "target_version": "0.2.1",
       "interruption": "after_staging_before_commit",
       "expected_result": "ROLLED_BACK",
-      "expected_reason_code": "FACTORY_UPDATE_ABORTED",
+      "expected_reason_code": "CONDUCTOR_UPDATE_ABORTED",
       "final_version": "0.1.0"
     },
     {
@@ -24,7 +24,7 @@
       "installed_version": "0.2.1",
       "target_version": "0.1.0",
       "expected_result": "HALT",
-      "expected_reason_code": "FACTORY_DOWNGRADE_UNSUPPORTED",
+      "expected_reason_code": "CONDUCTOR_DOWNGRADE_UNSUPPORTED",
       "mutations": []
     },
     {
@@ -32,7 +32,7 @@
       "installed_version": "0.2.1",
       "target_version": "0.2.1",
       "expected_result": "NO_CHANGE",
-      "expected_reason_code": "FACTORY_ALREADY_CURRENT",
+      "expected_reason_code": "CONDUCTOR_ALREADY_CURRENT",
       "mutations": []
     }
   ]

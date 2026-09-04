@@ -44,7 +44,7 @@ conversation. Reinspect them first because other local work may have changed.
 ## Factory run state
 
 - Run: `RUN_20260813_1333_tripops`
-- Run root: `docs/Factory/runs/RUN_20260813_1333_tripops` in the pilot repository
+- Run root: `docs/Conductor/runs/RUN_20260813_1333_tripops` in the pilot repository
 - Execution mode: `PLANNING_ONLY`
 - Downstream fan-out: not approved
 - Completed and stage-lint-passed stages: A, B, C, D, E, F
@@ -97,7 +97,7 @@ than repairing the reusable companion defects.
 ## Persistent defect and UX record
 
 The authoritative working list is
-`docs/adapters/bmad/FACTORY_BMAD_PILOT_BACKLOG.md`.
+`docs/adapters/bmad/CONDUCTOR_BMAD_PILOT_BACKLOG.md`.
 
 P1 repairs before resume:
 

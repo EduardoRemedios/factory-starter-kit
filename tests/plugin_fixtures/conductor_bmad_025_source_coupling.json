@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "b48c2dc7993ce8f75dc1ba4906e7685947e9c9d9",
+  "release": "0.2.5",
+  "authored_runtime_candidates": [
+    "plugin-src/conductor-bmad/runtime/conductor_bmad.py"
+  ],
+  "runtime_regression_candidates": [
+    "tests/test_conductor_bmad_runtime_no_bytecode.py",
+    "tests/test_conductor_bmad_support.py"
+  ],
+  "live_verifier_candidates": [
+    "scripts/verify_conductor_bmad_claude_composition.sh",
+    "scripts/verify_conductor_bmad_live_preflight.py",
+    "tests/test_conductor_bmad_claude_live.py",
+    "tests/test_conductor_plugin_composition_live.py",
+    "tests/test_conductor_bmad_live_preflight.py"
+  ],
+  "version_alignment_candidates": [
+    ".claude-plugin/marketplace.json",
+    "plugin-src/conductor/manifest.json",
+    "plugin-src/conductor-bmad/manifest.json",
+    "plugin-src/conductor/runtime/conductor_plugin.py",
+    "plugin-src/conductor-bmad/runtime/conductor_bmad.py",
+    "tests/test_conductor_plugin_build.py",
+    "tests/test_conductor_bmad_plugin_build.py",
+    "tests/test_conductor_plugin_composition.py",
+    "tests/test_conductor_plugin_lifecycle.py",
+    "tests/test_conductor_plugin_setup_plan.py"
+  ],
+  "independent_fixture_candidates": [
+    "tests/plugin_fixtures/conductor_bmad_025_source_coupling.json",
+    "tests/plugin_fixtures/conductor_bmad_live_verifier_contract.json",
+    "tests/plugin_fixtures/conductor_bmad_solution_context_contract.json",
+    "tests/plugin_fixtures/protected_baseline.json"
+  ],
+  "verification_hygiene_candidates": [
+    "scripts/knowledge_lint.sh"
+  ],
+  "canonical_doc_candidates": [
+    "docs/PROJECT_STATE.md",
+    "docs/ROADMAP.md",
+    "docs/CHANGELOG.md",
+    "docs/adapters/bmad/CONDUCTOR_BMAD_ADAPTER.md",
+    "docs/adapters/bmad/CONDUCTOR_BMAD_QUICK_START.md",
+    "docs/adapters/bmad/CONDUCTOR_BMAD_PILOT_BACKLOG.md"
+  ],
+  "generated_package_roots": [
+    "plugins/conductor",
+    "plugins/conductor-claude",
+    "plugins/conductor-bmad",
+    "plugins/conductor-bmad-claude"
+  ],
+  "builders": [
+    "scripts/build_conductor_plugins.py",
+    "scripts/build_conductor_bmad_plugins.py"
+  ],
+  "excluded_from_commit": [
+    "artifacts",
+    "docs/Conductor/runs/RUN_20260815_0714_factory_bmad_023_live_recovery"
+  ]
+}

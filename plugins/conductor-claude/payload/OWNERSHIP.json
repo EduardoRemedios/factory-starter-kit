@@ -1,0 +1,432 @@
+{
+  "schema_version": 1,
+  "package": "conductor",
+  "version": "0.2.5",
+  "files": [
+    {
+      "path": ".agents/skills/conductor-execution-closeout/SKILL.md",
+      "classification": "release-owned",
+      "sha256": "7bd8e041df7ddf52ff7de8dec1197508afb106e2cdbd332e3007828100894af9"
+    },
+    {
+      "path": ".agents/skills/conductor-pack-consolidator/SKILL.md",
+      "classification": "release-owned",
+      "sha256": "0af7cd2ee561327e03ef527162cc365faf0be86236deb94e684819c778a403e6"
+    },
+    {
+      "path": ".agents/skills/conductor-purple-gate/SKILL.md",
+      "classification": "release-owned",
+      "sha256": "9b3ed3a143b181b69af8ec85c06a69a4d40d934a23e1a18aa140f098a523e218"
+    },
+    {
+      "path": ".agents/skills/conductor-root-planner/SKILL.md",
+      "classification": "release-owned",
+      "sha256": "faee7f8b62c021ba58fcc7f0b6a0d4ad662b63339eda08147d933a516d09fd7f"
+    },
+    {
+      "path": "AGENTS.md",
+      "classification": "project-owned",
+      "sha256": "dd11570dc6e1a2b72ed32dd66cba86f4af5683be3215da54859be9184bed0777"
+    },
+    {
+      "path": "docs/CHANGELOG.md",
+      "classification": "project-owned",
+      "sha256": "6953d1f80a318cbb0666b28190e0f453c4ee6354e33124079373a0428e8c7a58"
+    },
+    {
+      "path": "docs/Conductor/ARCHITECTURE.md",
+      "classification": "release-owned",
+      "sha256": "84972cec317efad7650fe9dc24a0e30c2917a25122bd1d8c86b2207fe701360e"
+    },
+    {
+      "path": "docs/Conductor/Harnesses/AGENT_LOOP_BRIDGE.md",
+      "classification": "release-owned",
+      "sha256": "8637d84f88fc8646ec4c1257fb577b0a74d6d8963e9f134d09387941b08cf913"
+    },
+    {
+      "path": "docs/Conductor/Harnesses/AGENT_LOOP_BRIDGE_MANUAL_RUNBOOK.md",
+      "classification": "release-owned",
+      "sha256": "514dc650f6ea0b39ca4d8e0e92faad698cf2a6ffb41ae8bb25628c3188edf1dd"
+    },
+    {
+      "path": "docs/Conductor/Harnesses/CODEX.md",
+      "classification": "release-owned",
+      "sha256": "7145321e7f8c5b48377d892ead0f7ea25eda757b89c54a30d48bee95cc0ce366"
+    },
+    {
+      "path": "docs/Conductor/Harnesses/KILO.md",
+      "classification": "release-owned",
+      "sha256": "6fd1503715f70e9374a6315d0a80d8f04a8488b3aa92796b610e1039aa9ed838"
+    },
+    {
+      "path": "docs/Conductor/Harnesses/KILO_EXTERNAL_LANE_PROMPT.md",
+      "classification": "release-owned",
+      "sha256": "9df8e9577d991e14e95c3b7e9890a6ac6c399ba5053488873975d43d0b0a156a"
+    },
+    {
+      "path": "docs/Conductor/Harnesses/README.md",
+      "classification": "release-owned",
+      "sha256": "2ecca330d8052e2bf50896a54740cd9ddd00d3714e020048d36c83d73d99eb98"
+    },
+    {
+      "path": "docs/Conductor/MERGE_PROTOCOL.md",
+      "classification": "release-owned",
+      "sha256": "01eadc7b125d140d4555c056035d2b042bc16c676ef56a3c04bc515429e00a8f"
+    },
+    {
+      "path": "docs/Conductor/MISSION_MODE.md",
+      "classification": "release-owned",
+      "sha256": "9098d7a762598690404b09c0eaa40accb77b1762460cd197077fd7195f26b5ab"
+    },
+    {
+      "path": "docs/Conductor/ORCHESTRATION.md",
+      "classification": "release-owned",
+      "sha256": "b400aa81160d25e7f91734f22fe3af5b5bbfd3d1ceab74a070e993b8a556a734"
+    },
+    {
+      "path": "docs/Conductor/ProductOwner/BRIEF_REVIEW_CHECKLIST.md",
+      "classification": "release-owned",
+      "sha256": "deb513f642a222472962104ee04020baeaaa8076500757c8b1c024bcd3e6df02"
+    },
+    {
+      "path": "docs/Conductor/ProductOwner/PHASE_INTENT_REVIEW_CHECKLIST.md",
+      "classification": "release-owned",
+      "sha256": "bb258205a2bf960cfab686a9d699fcbe5556b7ccb233c05402a44b52a3ab8b73"
+    },
+    {
+      "path": "docs/Conductor/ProductOwner/PO_PROCESS.md",
+      "classification": "release-owned",
+      "sha256": "c6a9d9d8875d4fdf5384f93f7863158965f44682bd624b1a274680bcf82ca5e8"
+    },
+    {
+      "path": "docs/Conductor/ProductOwner/PO_ROLE_DEFINITION.md",
+      "classification": "release-owned",
+      "sha256": "1108908d2cf9b736e53f676dc1a0e8b81c2595c707a28b7269af95bac4b099a4"
+    },
+    {
+      "path": "docs/Conductor/ProductOwner/templates/PHASE_BRIEF_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "8b3f8b3e2b5c6536f8828879ddcecff35cf10eb33a07b0e66535c01f350510a2"
+    },
+    {
+      "path": "docs/Conductor/ProductOwner/templates/PHASE_INTENT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "cbfa0f4136b2ffbee7cdb8a9b44e3cf2aa586497d8762b58aafab2ac4eefcf7e"
+    },
+    {
+      "path": "docs/Conductor/ProductOwner/templates/PHASE_STATE_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "3fe35d5977db7c81e3418657bee93f3bd8de5aed7be784bb2934591943a27eb3"
+    },
+    {
+      "path": "docs/Conductor/SCRATCHPAD.md",
+      "classification": "project-owned",
+      "sha256": "1c81dca471bbc965b8e24e79fd4ba7fe021d6b4f544a8a3a3550824081c7d4c2"
+    },
+    {
+      "path": "docs/Conductor/SIMPLE_CODE_GATE_SEVERITY_POLICY.md",
+      "classification": "release-owned",
+      "sha256": "5f5c173cd488529326f45564ff0a5b5c83fe451eb13420e1472e2a2b9061e487"
+    },
+    {
+      "path": "docs/Conductor/Spec/DEFINITIONS.md",
+      "classification": "release-owned",
+      "sha256": "e6d17c080736fc8df28f62728b83f50de957243a7acece3fc1b5a2eaec46e2f8"
+    },
+    {
+      "path": "docs/Conductor/Spec/NAMING_CONVENTIONS.md",
+      "classification": "release-owned",
+      "sha256": "b90b4b7c19cef21f3d38cb54a6acc320902cd1bbcb601152af6b6ece197c73b6"
+    },
+    {
+      "path": "docs/Conductor/Spec/PURPLE_GATE_CHECKLIST.md",
+      "classification": "release-owned",
+      "sha256": "fc4bf9b70f70daf56da4963b0b21273cf5ab2fd8a12c36f5e5e03ffa968dc633"
+    },
+    {
+      "path": "docs/Conductor/Spec/STAGE_CONTRACTS.md",
+      "classification": "release-owned",
+      "sha256": "0fe5bab980ebfaf1b9191af310447dfd301b623f49632cde02109195be7d8b6e"
+    },
+    {
+      "path": "docs/Conductor/TASK_MEMORY.md",
+      "classification": "release-owned",
+      "sha256": "41669f478efa40b258dd7fe4b8a0155ebfb38d6289f6046f156a5130040d4f59"
+    },
+    {
+      "path": "docs/Conductor/templates/CONTEXT_RECALL_REPORT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "e62775b86de7c038323389d58cc057fae458bbfccde796d968546a1c33269f84"
+    },
+    {
+      "path": "docs/Conductor/templates/EXECUTION_AUTHORIZATION_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "f9c9d3a026ee212844ed748b4951bf869138d8ed33060f9127d63b2efe77ab1c"
+    },
+    {
+      "path": "docs/Conductor/templates/EXECUTION_CLOSEOUT_TEMPLATE.json",
+      "classification": "release-owned",
+      "sha256": "4074e9ed0d899e4a8f393d626cacce456bc832f0b1bab36916250b811b1ffd09"
+    },
+    {
+      "path": "docs/Conductor/templates/EXECUTION_PROMPT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "0f76ea80d34e245087fde81c924ea3d4e64d2bcd040b7b28c92a1ed3d35c845b"
+    },
+    {
+      "path": "docs/Conductor/templates/HANDOFF_STAGE_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "4a5af3428c2bf4a587a881c03c6a3a71152c3a707326e2c7ae2f9bbbcff3ddf4"
+    },
+    {
+      "path": "docs/Conductor/templates/HOST_CAPABILITIES_TEMPLATE.json",
+      "classification": "release-owned",
+      "sha256": "df059f60a43586789efa3044d2251ba2a6be3e19e2ccf8df8c5ae121e1f95478"
+    },
+    {
+      "path": "docs/Conductor/templates/INTENT_LOCK_REPORT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "edfffcca03a0c0043b226a6afe8353c0ecc32421c1f29ab778c69589f9e3ee73"
+    },
+    {
+      "path": "docs/Conductor/templates/MISSION_CHECKPOINT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "f248d749075c70d3fed54b358fd08f608bcb3d6e379ab440bf03e9782a3e3b83"
+    },
+    {
+      "path": "docs/Conductor/templates/MISSION_COMPLETION_REPORT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "d5e0b2420ded71364afb0d19e9ada0d509b0b8f0af3c91f7e6236c8d144db119"
+    },
+    {
+      "path": "docs/Conductor/templates/MISSION_CURSOR_TEMPLATE.json",
+      "classification": "release-owned",
+      "sha256": "ed9fb2a1fccc34cfa239392001975fd5471f6daf8fca9cbae0e88d1c7baafdfa"
+    },
+    {
+      "path": "docs/Conductor/templates/MISSION_EXECUTION_PROMPT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "92a2a61bdaa4bc86ef4d289fc38e166afc53f7ded9a88e2286bfec41630cfae2"
+    },
+    {
+      "path": "docs/Conductor/templates/MISSION_MANIFEST_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "e228fd714210aa37ccead4008c50e8ffda5ec7086a7e644fccdc17117758f114"
+    },
+    {
+      "path": "docs/Conductor/templates/PACK_AUDIT_REPORT_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "f18dd535f19a07bbb9e57c25a56aec1e87452c55212569f4450d974782400ead"
+    },
+    {
+      "path": "docs/Conductor/templates/PACK_CHECKLIST_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "82bd1c69251adbe2878a760dae82e46544145bf63023448d50f7661159935fbd"
+    },
+    {
+      "path": "docs/Conductor/templates/PACK_MANIFEST_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "47bedb2ca97a8a3cac2a6c9467ea75d92751f4cadf8aa43622502a2292e75e8d"
+    },
+    {
+      "path": "docs/Conductor/templates/RUN_METRICS_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "078f797645a70c495b115603bfb31be903aaac8e78a686cc3e1b2c3ca4045d48"
+    },
+    {
+      "path": "docs/Conductor/templates/SPRINT_ENVELOPE_REDTEAM_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "59298ac54ecad3a350afde313b1324516d6912b3b8525a8e424a9e23d0eb738c"
+    },
+    {
+      "path": "docs/Conductor/templates/SPRINT_ENVELOPE_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "ddd1a91c735f7af0cb0f4cab59907cfd9ceb747609cd2001e1c4b5ada99b558f"
+    },
+    {
+      "path": "docs/Conductor/templates/TRACEABILITY_MATRIX_TEMPLATE.md",
+      "classification": "release-owned",
+      "sha256": "d3fd8d7e3f3fc47d3236d0194ded816d188098d1907c819eec4ef7493d604c80"
+    },
+    {
+      "path": "docs/Conductor/templates/VERIFICATION_MANIFEST_TEMPLATE.yaml",
+      "classification": "release-owned",
+      "sha256": "79cc6b890a767398a81cc99705c4fbfd5f9469b30e1382f51b7ab7ef35a84926"
+    },
+    {
+      "path": "docs/PROJECT_STATE.md",
+      "classification": "project-owned",
+      "sha256": "e76b759465b19a7a4d831a332c4bd49f219d9903155245381c1e35c3f71f5933"
+    },
+    {
+      "path": "docs/ROADMAP.md",
+      "classification": "project-owned",
+      "sha256": "55e17a26f8e41f43bf5b7bdda581aad218fa9aa67436efc33c16087e952da45f"
+    },
+    {
+      "path": "docs/onboarding/CONDUCTOR_FIRST_TESTER_HANDOFF.md",
+      "classification": "release-owned",
+      "sha256": "f2c9bc8387f4175fa47cad60aebc2b74dfc0bcb1d5a90cd295338c3f9b6fc3fc"
+    },
+    {
+      "path": "docs/onboarding/CONDUCTOR_PLUGIN_CLI_ROLLOUT_PLAYBOOK.md",
+      "classification": "release-owned",
+      "sha256": "195e972f8e9f120f2fdf31c51a43dd14fe569c19d5502c03e8059f58acd55ab0"
+    },
+    {
+      "path": "docs/onboarding/CONDUCTOR_PLUGIN_PILOT_RUNBOOK.md",
+      "classification": "release-owned",
+      "sha256": "2bb2834111afdc46a51ed711c79708572195c5a76b9152eb1f56e2aeb28c1bb5"
+    },
+    {
+      "path": "docs/onboarding/CONDUCTOR_PLUGIN_QUICK_START.md",
+      "classification": "release-owned",
+      "sha256": "08b95faf67ef142231b613fc0b48b3ca00f32189c4d0718bf12bf4c674361374"
+    },
+    {
+      "path": "docs/onboarding/CONDUCTOR_PLUGIN_REFERENCE.md",
+      "classification": "release-owned",
+      "sha256": "694e000dda8948202084d8d9e6726f3f612e5f7b55a82ad583d288e9b5351368"
+    },
+    {
+      "path": "docs/onboarding/CONDUCTOR_PLUGIN_ROLLBACK.md",
+      "classification": "release-owned",
+      "sha256": "f949e288299728f1a2ba0c74ee9a33b9b6440193728f0519efc8ea8618b152be"
+    },
+    {
+      "path": "docs/onboarding/CONDUCTOR_PLUGIN_TROUBLESHOOTING.md",
+      "classification": "release-owned",
+      "sha256": "ffacf6505e56f6152f432bc4be20c4a816109695a28303b405d1f9419af72110"
+    },
+    {
+      "path": "docs/onboarding/NON_TECHNICAL_STARTER_GUIDE.md",
+      "classification": "release-owned",
+      "sha256": "94546a93a85f2873be41cdaa88fc16834a24fb2d61e699ed647ac01b702fbcc6"
+    },
+    {
+      "path": "docs/onboarding/ONBOARDING_GUIDE.md",
+      "classification": "release-owned",
+      "sha256": "9879e6f4aeb87ae95508e23e81b2d08f07efe471fce6bad9768d3addeaf27469"
+    },
+    {
+      "path": "requirements.txt",
+      "classification": "release-owned",
+      "sha256": "8cfc3197b86bf23f2454918d3a0e212585c9cc70f8eee9ee36518311a93c7eb9"
+    },
+    {
+      "path": "scripts/agent_loop_bridge_validate.py",
+      "classification": "release-owned",
+      "sha256": "17a39fa02d8b383bd723e3c09683eea2c39b9fcebbdc64b0b9bfd19a86daf42e"
+    },
+    {
+      "path": "scripts/cartographer",
+      "classification": "release-owned",
+      "sha256": "04ead5e618c8a6871a747d0f5e2bd1273e039057bd6b9dc078c691303704e0c0"
+    },
+    {
+      "path": "scripts/conductor-python",
+      "classification": "release-owned",
+      "sha256": "e5f60333c1833d04eb55de3bdf0c970b2debb7067f2c3c4a6b3a0ab38f07fc84"
+    },
+    {
+      "path": "scripts/conductor_context_index.py",
+      "classification": "release-owned",
+      "sha256": "e0a5232121354c6bac9c350960971e60c7b0218602e0b1534c4983ae74c54fa4"
+    },
+    {
+      "path": "scripts/conductor_execution_closeout.py",
+      "classification": "release-owned",
+      "sha256": "27e7eda46786ded7dbac1d4d9ae4a1b76408fd8aefbfbe37e64769d25301cb3c"
+    },
+    {
+      "path": "scripts/conductor_host_capability.py",
+      "classification": "release-owned",
+      "sha256": "d1eb15eaddc312dafe2a8c2d75fda31977e17f93018634fc0a2fff86a7713fe4"
+    },
+    {
+      "path": "scripts/conductor_kilo_stage.py",
+      "classification": "release-owned",
+      "sha256": "bfaf2fb20f357aed7112860d1058436448e9f7921661133798ddac379e7e9dc5"
+    },
+    {
+      "path": "scripts/conductor_pack_lint.py",
+      "classification": "release-owned",
+      "sha256": "179edf17cd5437a19585f09b4213a7ebdb35bd21dab6e2ba4e7edefeacac390c"
+    },
+    {
+      "path": "scripts/conductor_project_preflight.py",
+      "classification": "release-owned",
+      "sha256": "cd4d97df2aa6f15fabe00900d3bf57c7f296ec0566d9b5a4288d5cf2ad4221d6"
+    },
+    {
+      "path": "scripts/conductor_run_metrics.py",
+      "classification": "release-owned",
+      "sha256": "7027e619945c0635514797ab5925e9ef2e12bf9cf84bedd5b4cb0f274c7d85c7"
+    },
+    {
+      "path": "scripts/conductor_stage_lint.py",
+      "classification": "release-owned",
+      "sha256": "ada1b3171299fc5cde7b580fa538bd89237bec154eb2b045864fa8c89ca883ad"
+    },
+    {
+      "path": "scripts/conductor_task_memory.py",
+      "classification": "release-owned",
+      "sha256": "ce490d06c4873440ee4dd069b791642ff90474e16a346b8c2305894ad34aefa7"
+    },
+    {
+      "path": "scripts/conductorctl",
+      "classification": "release-owned",
+      "sha256": "619ddf12849402ea937118574ab4c7ff57e47f8979e3a769e02e0453ed0af400"
+    },
+    {
+      "path": "scripts/knowledge_lint.sh",
+      "classification": "release-owned",
+      "sha256": "6923c333a9d4d65abda5192e148cacd64d9dd4874fdd64ac75131b66379ec8af"
+    },
+    {
+      "path": "scripts/merge_preflight.sh",
+      "classification": "release-owned",
+      "sha256": "8a0b188446b6b13755c1a3a249580a3d1c02a8c163dbe8564393facf82001118"
+    },
+    {
+      "path": "scripts/mission_cursor_lint.sh",
+      "classification": "release-owned",
+      "sha256": "ef1c6897414e07565d9d37cf8a65dbabe75dd5fe39f3a33a94f08a0b9efb2646"
+    },
+    {
+      "path": "scripts/mission_lint.sh",
+      "classification": "release-owned",
+      "sha256": "6b4fecd80525418e59645901e4c64aee2ce19dcd73bf8fa0e21ec2f9a7c83ca4"
+    },
+    {
+      "path": "scripts/verify_conductor_cli_rollout.py",
+      "classification": "release-owned",
+      "sha256": "5e925d59d2df5ace4db649d14bef038a92f6437a0173c6e0ad24e6b468e0e682"
+    },
+    {
+      "path": "tests/fixtures/agent_loop_bridge/valid_handoff.json",
+      "classification": "release-owned",
+      "sha256": "e517a9f28691e6fb406ec058a8dd8ddd42d9745e31fdd3a1a037c5a913f2e304"
+    },
+    {
+      "path": "tests/test_context_recall_repair.py",
+      "classification": "release-owned",
+      "sha256": "733f86ca0ca600b355da7d9266b1d8de208ac21f271164c17aba00a0d9eead64"
+    },
+    {
+      "path": "tools/repo_cartographer/README.md",
+      "classification": "release-owned",
+      "sha256": "d2446e58782b5433ac32a044f1a33b27a32abec8a17240f2d4a17c7bce29dcd1"
+    },
+    {
+      "path": "tools/repo_cartographer/__init__.py",
+      "classification": "release-owned",
+      "sha256": "5cba0efbed98485936580733baf2632f24181124a9fad0f6460c9e5b0b3d5364"
+    },
+    {
+      "path": "tools/repo_cartographer/run.py",
+      "classification": "release-owned",
+      "sha256": "bb00a488ae061d6fb69cacb9cf974d58e5e6a4f2ef37bbf25beb93ef45acf39f"
+    }
+  ]
+}

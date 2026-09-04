@@ -21,7 +21,7 @@
       "existing_claude_md": true,
       "existing_content_lines": ["project_specific_claude_rules"],
       "expected_result": "HALT",
-      "expected_reason_code": "FACTORY_CONFLICT_USER_OWNED",
+      "expected_reason_code": "CONDUCTOR_CONFLICT_USER_OWNED",
       "mutations": []
     }
   ]

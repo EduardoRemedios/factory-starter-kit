@@ -1,4 +1,0 @@
-interface:
-  display_name: "Factory BMAD Promote"
-  short_description: "Promote immutable BMAD evidence"
-  default_prompt: "Use $factory-bmad-promote to preview an immutable BMAD evidence snapshot."

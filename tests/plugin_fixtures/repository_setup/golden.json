@@ -7,9 +7,9 @@
       "state": "empty_git_repository",
       "operation": "greenfield_preview_then_apply",
       "expected_result": "PASS",
-      "expected_reason_code": "FACTORY_SETUP_APPLIED",
+      "expected_reason_code": "CONDUCTOR_SETUP_APPLIED",
       "must_preserve": [".git"],
-      "must_create": ["AGENTS.md", "docs/Factory", "scripts/factoryctl"],
+      "must_create": ["AGENTS.md", "docs/Conductor", "scripts/conductorctl"],
       "second_run_mutations": []
     },
     {
@@ -17,7 +17,7 @@
       "state": "existing_project_with_user_files",
       "operation": "brownfield_preview",
       "expected_result": "PASS",
-      "expected_reason_code": "FACTORY_PLAN_READY",
+      "expected_reason_code": "CONDUCTOR_PLAN_READY",
       "mutations": [],
       "must_preserve": ["README.md", "src", "tests", "package.json"]
     },
@@ -26,16 +26,16 @@
       "state": "existing_conflicting_agents_and_factory_files",
       "operation": "brownfield_apply",
       "expected_result": "HALT",
-      "expected_reason_code": "FACTORY_CONFLICT_USER_OWNED",
+      "expected_reason_code": "CONDUCTOR_CONFLICT_USER_OWNED",
       "mutations": [],
-      "must_preserve": ["AGENTS.md", "docs/Factory/ORCHESTRATION.md"]
+      "must_preserve": ["AGENTS.md", "docs/Conductor/ORCHESTRATION.md"]
     },
     {
       "case_id": "PATH-SYMLINK",
       "state": "target_path_escapes_repository_via_symlink",
       "operation": "brownfield_apply",
       "expected_result": "HALT",
-      "expected_reason_code": "FACTORY_UNSAFE_PATH",
+      "expected_reason_code": "CONDUCTOR_UNSAFE_PATH",
       "mutations": []
     }
   ]

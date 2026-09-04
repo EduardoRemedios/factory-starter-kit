@@ -118,9 +118,9 @@ Choose your client:
 
 | Client | Installation surface | First repository check |
 | --- | --- | --- |
-| ChatGPT / Codex desktop | macOS Terminal, then a new Codex task | `$factory-doctor` |
-| Claude Code CLI, Factory only | Terminal | `/factory:doctor` |
-| Claude Code CLI, BMAD + Factory | Terminal | `/factory-bmad:doctor` |
+| ChatGPT / Codex desktop | macOS Terminal, then a new Codex task | `$conductor-doctor` |
+| Claude Code CLI, Factory only | Terminal | `/conductor:doctor` |
+| Claude Code CLI, BMAD + Factory | Terminal | `/conductor-bmad:doctor` |
 | Claude Desktop | Pending validation | Do not pilot yet |
 
 ### ChatGPT / Codex desktop app on macOS
@@ -142,7 +142,7 @@ Chat conversation.
      plugin marketplace add "$PWD"
 
    /Applications/ChatGPT.app/Contents/Resources/codex \
-     plugin add factory@factory-starter-kit
+     plugin add conductor@factory-starter-kit
    ```
 
 4. Quit and reopen the ChatGPT app so it loads the installed skills.
@@ -150,12 +150,12 @@ Chat conversation.
 6. In the agent prompt, type:
 
    ```text
-   $factory-doctor
+   $conductor-doctor
    ```
 
 7. Follow Doctor's `next_legal_action`. For an existing repository this will
-   normally lead to `$factory-brownfield`; for an empty repository it will lead
-   to `$factory-greenfield`.
+   normally lead to `$conductor-brownfield`; for an empty repository it will lead
+   to `$conductor-greenfield`.
 
 The app-bundled executable is used above because a different, older `codex`
 binary may appear earlier on `PATH`. If `codex plugin --help` works in your
@@ -164,7 +164,7 @@ terminal, the shorter equivalent is:
 ```bash
 codex plugin marketplace add EduardoRemedios/factory-starter-kit \
   --ref main
-codex plugin add factory@factory-starter-kit
+codex plugin add conductor@factory-starter-kit
 ```
 
 You can inspect installed plugins in the desktop app under **Plugins**. Plugin
@@ -198,7 +198,7 @@ validation lane passes.
 3. Run the read-only rollout preflight:
 
    ```bash
-   ./scripts/factory-python scripts/verify_factory_cli_rollout.py \
+   ./scripts/conductor-python scripts/verify_conductor_cli_rollout.py \
      --marketplace-root "$PWD" \
      --target-root /path/to/your/repository \
      --json
@@ -210,7 +210,7 @@ validation lane passes.
 
    ```bash
    claude plugin marketplace add "$PWD"
-   claude plugin install factory@factory-starter-kit --scope user
+   claude plugin install conductor@factory-starter-kit --scope user
    ```
 
 5. Change to the repository you want to use and start Claude Code:
@@ -224,7 +224,7 @@ validation lane passes.
 
    ```text
    /reload-plugins
-   /factory:doctor
+   /conductor:doctor
    ```
 
 Use `--scope project` instead of `--scope user` only when the repository team
@@ -236,7 +236,7 @@ For teams using BMAD and Factory together, install only the companion. It
 declares Factory `~0.2.5` as its protected dependency.
 
 For self-service setup, start with the
-[Factory BMAD quick start](docs/adapters/bmad/FACTORY_BMAD_QUICK_START.md).
+[Factory BMAD quick start](docs/adapters/bmad/CONDUCTOR_BMAD_QUICK_START.md).
 It explains how to run the preflight script from Terminal and how to find the
 project path.
 
@@ -247,15 +247,15 @@ PROJECT_ROOT="/absolute/path/to/team/repository"
 claude plugin marketplace list
 # If factory-starter-kit points at an old or missing path:
 # claude plugin marketplace remove factory-starter-kit
-claude plugin uninstall factory-bmad@factory-starter-kit
-claude plugin uninstall factory@factory-starter-kit
+claude plugin uninstall conductor-bmad@factory-starter-kit
+claude plugin uninstall conductor@factory-starter-kit
 claude plugin prune
 claude plugin marketplace add "$PWD"
-./scripts/factory-python scripts/verify_factory_bmad_cli_rollout.py \
+./scripts/conductor-python scripts/verify_conductor_bmad_cli_rollout.py \
   --marketplace-root "$PWD" \
   --target-root "$PROJECT_ROOT" \
   --json
-claude plugin install factory-bmad@factory-starter-kit --scope user
+claude plugin install conductor-bmad@factory-starter-kit --scope user
 ```
 
 If the rollout preflight reports a `claude_cache_*` blocker, remove only the
@@ -267,7 +267,7 @@ Start Claude Code in the target repository and run:
 
 ```text
 /reload-plugins
-/factory-bmad:doctor
+/conductor-bmad:doctor
 ```
 
 Follow only the single `next_legal_action` returned by Doctor. Every setup or
@@ -281,10 +281,10 @@ read-only compatibility check for the current repository:
 
 ```text
 # Codex
-$factory-doctor
+$conductor-doctor
 
 # Claude Code CLI
-/factory:doctor
+/conductor:doctor
 ```
 
 Do not start by copying Factory files manually. Let Greenfield or Brownfield
@@ -297,15 +297,15 @@ scope deliberately small. The goal is to validate installation, discovery,
 Greenfield setup, Doctor, Validate, Progress, and the human approval flow.
 
 Use the handoff checklist in
-[`docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md`](docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md).
+[`docs/onboarding/CONDUCTOR_FIRST_TESTER_HANDOFF.md`](docs/onboarding/CONDUCTOR_FIRST_TESTER_HANDOFF.md).
 The tester should preserve the preflight JSON, Claude version, plugin list,
 Doctor/Validate/Progress output, final `git status --short`, and a short
 friction log.
 
 For BMAD + Factory testing, use
-[`docs/adapters/bmad/FACTORY_BMAD_FIRST_TESTER_HANDOFF.md`](docs/adapters/bmad/FACTORY_BMAD_FIRST_TESTER_HANDOFF.md)
+[`docs/adapters/bmad/CONDUCTOR_BMAD_FIRST_TESTER_HANDOFF.md`](docs/adapters/bmad/CONDUCTOR_BMAD_FIRST_TESTER_HANDOFF.md)
 and
-[`docs/adapters/bmad/FACTORY_BMAD_CLI_ROLLOUT_PLAYBOOK.md`](docs/adapters/bmad/FACTORY_BMAD_CLI_ROLLOUT_PLAYBOOK.md).
+[`docs/adapters/bmad/CONDUCTOR_BMAD_CLI_ROLLOUT_PLAYBOOK.md`](docs/adapters/bmad/CONDUCTOR_BMAD_CLI_ROLLOUT_PLAYBOOK.md).
 
 ## Quick Start: Your First Repository
 
@@ -316,24 +316,24 @@ Start with Doctor:
 
 ```text
 # Codex
-$factory-doctor
+$conductor-doctor
 
 # Claude
-/factory:doctor
+/conductor:doctor
 ```
 
 For a new repository containing nothing except `.git`:
 
 ```text
-$factory-greenfield
-/factory:greenfield
+$conductor-greenfield
+/conductor:greenfield
 ```
 
 For any existing repository:
 
 ```text
-$factory-brownfield
-/factory:brownfield
+$conductor-brownfield
+/conductor:brownfield
 ```
 
 Greenfield and brownfield return an exact per-file plan before writing. Review
@@ -342,24 +342,24 @@ that plan and approve its full plan ID. A generic "approve" is not sufficient.
 After setup:
 
 ```text
-$factory-validate
-$factory-progress
-$factory-run
+$conductor-validate
+$conductor-progress
+$conductor-run
 ```
 
-Use the `/factory:...` equivalents in Claude Code.
+Use the `/conductor:...` equivalents in Claude Code.
 
 ## Plugin Commands
 
 | Journey | Codex | Claude Code | Repository writes |
 | --- | --- | --- | --- |
-| Diagnose installation | `$factory-doctor` | `/factory:doctor` | Never |
-| Set up an empty repository | `$factory-greenfield` | `/factory:greenfield` | Preview and exact approval |
-| Adopt an existing repository | `$factory-brownfield` | `/factory:brownfield` | Preview and exact approval |
-| Inspect run state | `$factory-progress` | `/factory:progress` | Never |
-| Continue the next legal action | `$factory-run` | `/factory:run` | State-dependent |
-| Run applicable validators | `$factory-validate` | `/factory:validate` | Validator evidence only |
-| Update or roll back | `$factory-update` | `/factory:update` | Preview and exact approval |
+| Diagnose installation | `$conductor-doctor` | `/conductor:doctor` | Never |
+| Set up an empty repository | `$conductor-greenfield` | `/conductor:greenfield` | Preview and exact approval |
+| Adopt an existing repository | `$conductor-brownfield` | `/conductor:brownfield` | Preview and exact approval |
+| Inspect run state | `$conductor-progress` | `/conductor:progress` | Never |
+| Continue the next legal action | `$conductor-run` | `/conductor:run` | State-dependent |
+| Run applicable validators | `$conductor-validate` | `/conductor:validate` | Validator evidence only |
+| Update or roll back | `$conductor-update` | `/conductor:update` | Preview and exact approval |
 
 ## Design Principles
 
@@ -387,7 +387,7 @@ validators, and authorization rules. The Codex and Claude plugins add
 installation, discovery, safe project adoption, update, rollback, and
 human-friendly entry points.
 
-The packages are deterministically generated from `plugin-src/factory/`.
+The packages are deterministically generated from `plugin-src/conductor/`.
 
 ### Does Factory have skills, agents, and orchestration?
 
@@ -632,7 +632,7 @@ Factory separates reusable process from project-specific state:
 5. **Project adapters** — repository-owned instructions, tests, domain rules,
    state, roadmap, and change history.
 
-See [`docs/Factory/ARCHITECTURE.md`](docs/Factory/ARCHITECTURE.md).
+See [`docs/Conductor/ARCHITECTURE.md`](docs/Conductor/ARCHITECTURE.md).
 
 ## Repository Map
 
@@ -640,10 +640,10 @@ See [`docs/Factory/ARCHITECTURE.md`](docs/Factory/ARCHITECTURE.md).
 factory-starter-kit/
 ├── .agents/plugins/                 # Codex marketplace
 ├── .claude-plugin/                  # Claude marketplace
-├── plugin-src/factory/              # authored plugin source
+├── plugin-src/conductor/              # authored plugin source
 ├── plugins/
 │   ├── factory/                     # generated Codex package
-│   └── factory-claude/              # generated Claude package
+│   └── conductor-claude/              # generated Claude package
 ├── AGENTS.md                        # authoritative repository instructions
 ├── docs/
 │   ├── PROJECT_STATE.md
@@ -658,10 +658,10 @@ factory-starter-kit/
 │       ├── Spec/
 │       └── templates/
 ├── scripts/
-│   ├── build_factory_plugins.py
-│   ├── factoryctl
-│   ├── factory_stage_lint.py
-│   ├── factory_pack_lint.py
+│   ├── build_conductor_plugins.py
+│   ├── conductorctl
+│   ├── conductor_stage_lint.py
+│   ├── conductor_pack_lint.py
 │   └── knowledge_lint.sh
 ├── tests/
 └── tools/repo_cartographer/
@@ -683,7 +683,7 @@ Run the full repository test suite and package checks:
 ```bash
 bash scripts/knowledge_lint.sh
 python3 -m unittest discover -s tests
-python3 scripts/build_factory_plugins.py --check
+python3 scripts/build_conductor_plugins.py --check
 python3 scripts/agent_loop_bridge_validate.py \
   tests/fixtures/agent_loop_bridge/valid_handoff.json --json
 ```
@@ -693,9 +693,9 @@ Validate the platform packages:
 ```bash
 python3 \
   ~/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py \
-  plugins/factory
+  plugins/conductor
 
-claude plugin validate --strict plugins/factory-claude
+claude plugin validate --strict plugins/conductor-claude
 claude plugin validate --strict .claude-plugin/marketplace.json
 ```
 
@@ -704,17 +704,17 @@ claude plugin validate --strict .claude-plugin/marketplace.json
 - [OpenAI plugins](https://learn.chatgpt.com/docs/plugins)
 - [Claude Desktop docs - pending Factory validation](https://code.claude.com/docs/en/desktop)
 - [Claude Code plugin installation](https://code.claude.com/docs/en/discover-plugins)
-- [Plugin quick start](docs/onboarding/FACTORY_PLUGIN_QUICK_START.md)
-- [First tester handoff](docs/onboarding/FACTORY_FIRST_TESTER_HANDOFF.md)
-- [Plugin reference](docs/onboarding/FACTORY_PLUGIN_REFERENCE.md)
-- [Pilot runbook](docs/onboarding/FACTORY_PLUGIN_PILOT_RUNBOOK.md)
-- [Troubleshooting](docs/onboarding/FACTORY_PLUGIN_TROUBLESHOOTING.md)
-- [Rollback](docs/onboarding/FACTORY_PLUGIN_ROLLBACK.md)
-- [Factory architecture](docs/Factory/ARCHITECTURE.md)
-- [Orchestration](docs/Factory/ORCHESTRATION.md)
-- [Stage contracts](docs/Factory/Spec/STAGE_CONTRACTS.md)
-- [Coding-quality severity policy](docs/Factory/SIMPLE_CODE_GATE_SEVERITY_POLICY.md)
-- [Merge protocol](docs/Factory/MERGE_PROTOCOL.md)
+- [Plugin quick start](docs/onboarding/CONDUCTOR_PLUGIN_QUICK_START.md)
+- [First tester handoff](docs/onboarding/CONDUCTOR_FIRST_TESTER_HANDOFF.md)
+- [Plugin reference](docs/onboarding/CONDUCTOR_PLUGIN_REFERENCE.md)
+- [Pilot runbook](docs/onboarding/CONDUCTOR_PLUGIN_PILOT_RUNBOOK.md)
+- [Troubleshooting](docs/onboarding/CONDUCTOR_PLUGIN_TROUBLESHOOTING.md)
+- [Rollback](docs/onboarding/CONDUCTOR_PLUGIN_ROLLBACK.md)
+- [Factory architecture](docs/Conductor/ARCHITECTURE.md)
+- [Orchestration](docs/Conductor/ORCHESTRATION.md)
+- [Stage contracts](docs/Conductor/Spec/STAGE_CONTRACTS.md)
+- [Coding-quality severity policy](docs/Conductor/SIMPLE_CODE_GATE_SEVERITY_POLICY.md)
+- [Merge protocol](docs/Conductor/MERGE_PROTOCOL.md)
 
 ## License
 

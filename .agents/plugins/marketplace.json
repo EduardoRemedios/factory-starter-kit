@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "factory",
+      "name": "conductor",
       "source": {
         "source": "local",
-        "path": "./plugins/factory"
+        "path": "./plugins/conductor"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -17,10 +17,10 @@
       "category": "Developer Tools"
     },
     {
-      "name": "factory-bmad",
+      "name": "conductor-bmad",
       "source": {
         "source": "local",
-        "path": "./plugins/factory-bmad"
+        "path": "./plugins/conductor-bmad"
       },
       "policy": {
         "installation": "AVAILABLE",

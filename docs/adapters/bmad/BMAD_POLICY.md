@@ -41,7 +41,7 @@ or quality gate.
 
 Factory-BMAD supports the canonical root BMAD layout. A nested install such as
 `bmad/_bmad`, `bmad/_bmad-output`, or `bmad/.claude/skills` is not silently
-treated as absent. It blocks as `FACTORY_BMAD_NON_CANONICAL_LAYOUT` until a
+treated as absent. It blocks as `CONDUCTOR_BMAD_NON_CANONICAL_LAYOUT` until a
 human reviews whether to migrate, isolate, or authorize a separate configured
 path flow.
 

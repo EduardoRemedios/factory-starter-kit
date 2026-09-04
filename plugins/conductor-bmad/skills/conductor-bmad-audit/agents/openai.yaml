@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory BMAD Audit"
+  short_description: "Audit BMAD authority and modules"
+  default_prompt: "Use $conductor-bmad-audit to audit BMAD modules and Factory authority boundaries."

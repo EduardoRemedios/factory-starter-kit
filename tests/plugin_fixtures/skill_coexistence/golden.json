@@ -4,17 +4,17 @@
   "cases": [
     {
       "case_id": "SKILL-COEXIST",
-      "repo_skills": ["factory-root-planner", "factory-purple-gate"],
-      "plugin_skills": ["factory-doctor", "factory-progress"],
+      "repo_skills": ["conductor-root-planner", "conductor-purple-gate"],
+      "plugin_skills": ["conductor-doctor", "conductor-progress"],
       "expected_result": "PASS",
-      "expected_reason_code": "FACTORY_SKILLS_COMPATIBLE"
+      "expected_reason_code": "CONDUCTOR_SKILLS_COMPATIBLE"
     },
     {
       "case_id": "SKILL-COLLISION",
-      "repo_skills": ["factory-root-planner"],
-      "plugin_skills": ["factory-root-planner"],
+      "repo_skills": ["conductor-root-planner"],
+      "plugin_skills": ["conductor-root-planner"],
       "expected_result": "HALT",
-      "expected_reason_code": "FACTORY_SKILL_COLLISION",
+      "expected_reason_code": "CONDUCTOR_SKILL_COLLISION",
       "mutations": [],
       "automatic_deletions": []
     }

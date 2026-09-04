@@ -1,15 +1,15 @@
 {
-  "captured_at": "2026-07-24T15:50:00+01:00",
+  "captured_at": "2026-09-04T15:54:48Z",
   "files": {
-    "docs/Factory/Spec/DEFINITIONS.md": "04c0888bda4d88d26dd13b3915bff3faee8bacbab8225e7bc7aa0804daef1b0f",
-    "docs/Factory/Spec/NAMING_CONVENTIONS.md": "a8f7c4791cffddddb56dde5f8668f8f7e69bbd02b51c9f807e025023a9718748",
-    "docs/Factory/Spec/PURPLE_GATE_CHECKLIST.md": "ab42046da62d1aa03d783ec7512c388ea54476eadf38ac01b72406e504e5dd74",
-    "docs/Factory/Spec/STAGE_CONTRACTS.md": "3f0338a8fdce7f38b3845a736d9996418f05aab6b044bbfc3ecf4d17fadc4d04",
-    "scripts/factory_pack_lint.py": "c7c7005bb0d36385f291233af839d809a366e49471549072a6586da969792a8c",
-    "scripts/factory_stage_lint.py": "905e94cec5653ae4a109b440f1388cca9adb86e27d35ca4e6694658f67300b43",
-    "scripts/knowledge_lint.sh": "40ad5164a5930c5796e329985093e3d4e30f9dc373b44f3b469e1fbda6888081",
-    "tests/test_factory_plugin_composition_live.py": "52dd40a7cc0c374ac477299c642222796515ca592942e8f1c312f345a31c27a4"
+    "docs/Conductor/Spec/DEFINITIONS.md": "e6d17c080736fc8df28f62728b83f50de957243a7acece3fc1b5a2eaec46e2f8",
+    "docs/Conductor/Spec/NAMING_CONVENTIONS.md": "b90b4b7c19cef21f3d38cb54a6acc320902cd1bbcb601152af6b6ece197c73b6",
+    "docs/Conductor/Spec/PURPLE_GATE_CHECKLIST.md": "fc4bf9b70f70daf56da4963b0b21273cf5ab2fd8a12c36f5e5e03ffa968dc633",
+    "docs/Conductor/Spec/STAGE_CONTRACTS.md": "0fe5bab980ebfaf1b9191af310447dfd301b623f49632cde02109195be7d8b6e",
+    "scripts/conductor_pack_lint.py": "179edf17cd5437a19585f09b4213a7ebdb35bd21dab6e2ba4e7edefeacac390c",
+    "scripts/conductor_stage_lint.py": "ada1b3171299fc5cde7b580fa538bd89237bec154eb2b045864fa8c89ca883ad",
+    "scripts/knowledge_lint.sh": "6923c333a9d4d65abda5192e148cacd64d9dd4874fdd64ac75131b66379ec8af",
+    "tests/test_conductor_plugin_composition_live.py": "63bc9ccb2327f27b9d1d7a5264e0a97511a9325646a2df08b2fdc2237ae90715"
   },
-  "run_id": "RUN_20260724_1448_factory_plugin",
+  "run_id": "CONDUCTOR_RENAME_20260904",
   "schema_version": 1
 }

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory BMAD Doctor"
+  short_description: "Diagnose Factory and BMAD adoption state"
+  default_prompt: "Use $conductor-bmad-doctor to diagnose this repository's Factory and BMAD state."

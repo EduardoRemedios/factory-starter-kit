@@ -33,7 +33,7 @@ def make_repo(root: Path) -> Path:
         executable=True,
     )
     write(
-        repo / "scripts/factory-python",
+        repo / "scripts/conductor-python",
         '#!/usr/bin/env bash\nexec python3 "$@"\n',
         executable=True,
     )

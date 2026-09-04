@@ -20,7 +20,7 @@ SCRIPTS_DIR = REPO_ROOT / "scripts"
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
-import factory_pack_lint as pack_lint  # noqa: E402
+import conductor_pack_lint as pack_lint  # noqa: E402
 
 GOLDEN_ROOT = REPO_ROOT / "tests" / "golden_packs"
 GOLDEN_RUNS: dict[str, int] = {

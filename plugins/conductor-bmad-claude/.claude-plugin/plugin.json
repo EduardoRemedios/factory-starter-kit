@@ -1,0 +1,14 @@
+{
+  "name": "conductor-bmad",
+  "version": "0.2.5",
+  "description": "Adopt Factory and BMAD in one repository with upstream-only BMAD enforcement and immutable Factory intake.",
+  "author": {
+    "name": "Eduardo dos Remedios"
+  },
+  "dependencies": [
+    {
+      "name": "conductor",
+      "version": "~0.2.5"
+    }
+  ]
+}

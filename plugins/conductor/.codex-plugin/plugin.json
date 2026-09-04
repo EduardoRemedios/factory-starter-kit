@@ -1,0 +1,18 @@
+{
+  "name": "conductor",
+  "version": "0.2.5",
+  "description": "Install, inspect, plan, run, validate, and update Factory workflows without weakening Factory Core gates.",
+  "author": {
+    "name": "Eduardo dos Remedios"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Conductor",
+    "shortDescription": "Run Factory safely from Codex.",
+    "longDescription": "Factory provides guarded setup, diagnosis, progress, continuation, validation, and update workflows for repositories using Factory Core.",
+    "developerName": "Eduardo dos Remedios",
+    "category": "Developer Tools",
+    "defaultPrompt": "Inspect this repository with Factory and tell me the next legal action.",
+    "capabilities": []
+  }
+}

@@ -24,7 +24,7 @@
       "case_id": "UNSUPPORTED-ENVIRONMENT",
       "repository_shape": "environment_not_in_compatibility_matrix",
       "expected_result": "HALT",
-      "expected_reason_code": "FACTORY_ENVIRONMENT_UNVERIFIED",
+      "expected_reason_code": "CONDUCTOR_ENVIRONMENT_UNVERIFIED",
       "mutations": []
     }
   ]
