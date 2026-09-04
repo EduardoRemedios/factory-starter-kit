@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "authored_modified_max": 20,
+  "authored_created_max": 1,
+  "authored_deleted_max": 0,
+  "generated_modified_exact": 18,
+  "generated_created_exact": 0,
+  "generated_deleted_exact": 0,
+  "replacement_builder_invocations": 1,
+  "check_only_builder_invocations": 1,
+  "dependency_changes": 0,
+  "factory_core_changes": 0,
+  "donor_changes": 0,
+  "unexpected_write_action": "HALT"
+}

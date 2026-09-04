@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "base": {
+    "repository": "/Users/eduardodosremedios/factory-bmad-0.2.5-solution-context",
+    "commit": "7f4b6b15c96eb1c7fbbf330f1b0f3855cce5abf6",
+    "plugin_version": "0.2.5"
+  },
+  "donors": [
+    {
+      "role": "0.2.5-later-safeguards",
+      "root": "/Users/eduardodosremedios/factory-starter-kit-0.2.3-uplift",
+      "mode": "READ_ONLY"
+    },
+    {
+      "role": "qualified-solution-context-evidence",
+      "root": "/Users/eduardodosremedios/factory-bmad-0.2.2-repair",
+      "mode": "READ_ONLY"
+    }
+  ]
+}

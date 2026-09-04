@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "candidate_requirements": {
+    "bmad_version": "6.10.0",
+    "exact_skill_digest": true,
+    "exact_customization_digest": true,
+    "inactive_overrides": true,
+    "authority": "EVIDENCE_ONLY",
+    "binding_factory_effect": false
+  },
+  "permanent_denials_block_before_sentinel": true,
+  "unknown_default_denies": true,
+  "unsafe_layout_denies_all_bmad_workflows": true,
+  "workflow_invocation_in_this_run": false
+}

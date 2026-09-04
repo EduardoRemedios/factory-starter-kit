@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "resolutions": {
+    "identity": "retain-0.2.5-and-factory-dependency-0.2.5",
+    "command_passthrough": ["factory", "factory-bmad"],
+    "doctor_audit_public_reason": "FACTORY_BMAD_NON_CANONICAL_LAYOUT",
+    "layout_detail_field": "layout_reason_code",
+    "enforcement_activation_reason": "FACTORY_BMAD_ENFORCEMENT_ACTIVE_UNSAFE_LAYOUT",
+    "unsafe_layout_order": "deny-before-allowlist",
+    "solution_authority": "EVIDENCE_ONLY",
+    "generated_resolution": "regenerate-from-authored-source"
+  },
+  "required_test_policy": "union-without-semantic-deletion"
+}

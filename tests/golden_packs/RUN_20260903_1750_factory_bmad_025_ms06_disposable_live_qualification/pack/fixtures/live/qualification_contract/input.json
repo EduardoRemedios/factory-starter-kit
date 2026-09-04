@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "candidate_commit": "c23be98034215c17c9c49a7e9b6302cb2ad1f18d",
+  "allowed_workflows": ["architecture", "ux", "spec"],
+  "allowed_output": {
+    "type": "SOLUTION_CONTEXT",
+    "authority": "EVIDENCE_ONLY",
+    "binding": false
+  },
+  "denial_families": [
+    "prohibited_workflow",
+    "unknown_workflow",
+    "malformed_invocation",
+    "unsafe_layout"
+  ],
+  "hook_paths": ["packaged_pretooluse", "cli_hook_entrypoint"],
+  "live_drivers": [
+    "scripts/verify_factory_bmad_claude_composition.sh",
+    "scripts/verify_factory_bmad_live_pilot.sh",
+    "scripts/verify_factory_bmad_live_preflight.py"
+  ],
+  "promotion": {
+    "human_review_required": true,
+    "missing_review_behavior": "halt",
+    "snapshot": "hash_pinned_immutable",
+    "claim_dispositions_required": true
+  },
+  "teardown": {
+    "export_before_teardown": true,
+    "residue_inventory": [
+      "protected_paths",
+      "harness_plugin_caches",
+      "worktree_registrations"
+    ]
+  }
+}

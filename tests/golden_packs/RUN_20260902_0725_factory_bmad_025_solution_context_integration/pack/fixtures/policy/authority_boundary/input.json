@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "allowed_candidates": ["bmad-architecture", "bmad-spec", "bmad-ux"],
+  "permanent_denials": [
+    "bmad-loop",
+    "bmad-loop-sweep",
+    "bmad-quick-dev",
+    "bmad-build",
+    "bmad-dev-story",
+    "bmad-sprint-planning",
+    "bmad-code-review",
+    "bmad-correct-course",
+    "bmad-testarch-automate",
+    "bmad-testarch-ci",
+    "bmad-testarch-test-design"
+  ],
+  "fabricated_unknown": "bmad-future-delivery"
+}
