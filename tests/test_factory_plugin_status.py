@@ -209,6 +209,39 @@ class FactoryPluginStatusTests(unittest.TestCase):
                 output["next_legal_action"],
             )
 
+    def test_inline_intent_lock_format_is_accepted_when_digest_matches(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            run_root = create_run(root)
+            for stage in ("A", "B", "C", "D"):
+                passing_handoff(run_root, stage)
+            intent = run_root / "pack/intent.md"
+            write(intent, "# Intent\n")
+            write(
+                run_root / "pack/intent_lock_report.md",
+                "- Verdict: PASS\n"
+                f"- `intent.md` v2, SHA-256 `{RUNTIME.file_sha256(intent)}`\n",
+            )
+            output = RUNTIME.evaluate_progress(root)
+            self.assertEqual("PLANNING_IN_PROGRESS", output["state"])
+            self.assertEqual("run_stage_e", output["next_legal_action"])
+
+    def test_inline_intent_lock_format_still_blocks_on_digest_mismatch(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            run_root = create_run(root)
+            for stage in ("A", "B", "C", "D"):
+                passing_handoff(run_root, stage)
+            write(run_root / "pack/intent.md", "# Intent\n")
+            write(
+                run_root / "pack/intent_lock_report.md",
+                "- Verdict: PASS\n"
+                f"- `intent.md` v2, SHA-256 `{'0' * 64}`\n",
+            )
+            output = RUNTIME.evaluate_progress(root)
+            self.assertEqual("BLOCKED", output["state"])
+            self.assertEqual("FACTORY_INTENT_NOT_LOCKED", output["reason_code"])
+
     def test_valid_intent_lock_allows_stage_e(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

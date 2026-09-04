@@ -271,6 +271,19 @@ def select_run(root: Path, run_id: str | None) -> Path | None:
     return candidates[-1] if candidates else None
 
 
+def inline_intent_lock_digest(report: Path) -> str | None:
+    # Some packs record the locked digest inline, e.g.
+    # "- `intent.md` v2, SHA-256 `<64 hex>`", instead of a Locked SHA-256 field.
+    if not report.is_file():
+        return None
+    matches = re.findall(
+        r"^\s*-\s*`intent\.md`.*SHA-256[:\s]+`?([0-9a-f]{64})`?\s*$",
+        report.read_text(encoding="utf-8"),
+        flags=re.MULTILINE,
+    )
+    return matches[0] if len(matches) == 1 else None
+
+
 def field_value(path: Path, label: str) -> str | None:
     if not path.is_file():
         return None
@@ -386,6 +399,8 @@ def intent_lock_problem(run_root: Path, stages: list[str]) -> str | None:
     if field_value(report, "Verdict") != "PASS":
         return "intent_purple_verdict_not_pass"
     digest = field_value(report, "Locked SHA-256")
+    if digest is None:
+        digest = inline_intent_lock_digest(report)
     if digest is None:
         return "intent_lock_digest_missing"
     digest = digest.strip("`")
