@@ -6,7 +6,7 @@ greenfield repository, not to build a production application.
 
 ## Scope
 
-- Candidate: coordinated Factory and Factory-BMAD `0.3.3` (plugin ids `conductor`, `conductor-bmad`). The stage-era steps below still describe the 0.2 pack flow; in 0.3 the run ends at a countersigned Statement of Completion rather than a pack, see `FIRST_EXERCISE_WITH_BMAD.md`.
+- Candidate: coordinated Factory and Factory-BMAD `0.3.4` (plugin ids `conductor`, `conductor-bmad`). The stage-era steps below still describe the 0.2 pack flow; in 0.3 the run ends at a countersigned Statement of Completion rather than a pack, see `FIRST_EXERCISE_WITH_BMAD.md`.
 - Surface: Claude Code CLI on macOS
 - Primary test target: disposable Greenfield repository
 - Follow-up rehearsal targets before team rollout:

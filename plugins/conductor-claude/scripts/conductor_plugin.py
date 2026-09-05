@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.3"
+PLUGIN_VERSION = "0.3.4"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"

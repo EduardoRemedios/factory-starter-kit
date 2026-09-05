@@ -160,7 +160,7 @@ class FactoryPluginSetupPlanTests(unittest.TestCase):
             self.assertEqual(output["plan_id"], change_plan["transaction_id"])
             self.assertEqual("greenfield", change_plan["operation"])
             self.assertIsNone(change_plan["source_version"])
-            self.assertEqual("0.3.3", change_plan["target_version"])
+            self.assertEqual("0.3.4", change_plan["target_version"])
             self.assertEqual("REVIEW_REQUIRED", change_plan["approval_state"])
             self.assertEqual(
                 ["root", "git"],
@@ -293,7 +293,7 @@ class FactoryPluginSetupPlanTests(unittest.TestCase):
         claude_version, claude_entries = RUNTIME.load_payload(
             REPO_ROOT / "plugins/conductor-claude/payload"
         )
-        self.assertEqual("0.3.3", codex_version)
+        self.assertEqual("0.3.4", codex_version)
         self.assertEqual(codex_entries, claude_entries)
         self.assertTrue(codex_entries)
         self.assertTrue(

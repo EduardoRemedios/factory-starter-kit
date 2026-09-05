@@ -6,7 +6,7 @@ repository, not to test optional upstream companions or a production project.
 
 ## Scope
 
-- Factory plugin pilot candidate: `0.3.3` on `main`, tag `conductor-v0.3.3-pilot` (plugin id `conductor`; `0.2.5` closed the 0.2 line)
+- Factory plugin pilot candidate: `0.3.4` on `main`, tag `conductor-v0.3.4-pilot` (plugin id `conductor`; `0.2.5` closed the 0.2 line)
 - Surface: Claude Code CLI on macOS
 - Test target: disposable empty Git repository
 - Out of scope: optional upstream companions, Claude Desktop, production code changes,

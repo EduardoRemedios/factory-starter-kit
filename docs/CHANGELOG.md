@@ -2,6 +2,14 @@
 
 ## 2026-09-05
 
+- 0.3.4: the `validate` skill is trimmed from the 0.2-era anti-fabrication
+  choreography (double inventory captures, settings digests, evidence-path
+  rules spelled out step by step) to the hard layer it now delegates to:
+  `contract-lint`, runner-only receipts and postimage, exit statuses, and a
+  before/after `git status`. The `run` skill description names the three
+  gates and countersigns instead of stage order and human Go. Tests that
+  pinned the removed prose now pin the essentials. No runtime change.
+
 - 0.3.3 (housekeeping, no runtime behaviour change): bannered the 43 0.2-era
   process documents and the 0.2-era `AGENTS.md` body as legacy; README,
   PROJECT_STATE, ROADMAP, root CHANGELOG, routing matrix, and the BMAD adapter

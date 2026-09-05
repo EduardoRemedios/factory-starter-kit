@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.3"
+PLUGIN_VERSION = "0.3.4"
 BMAD_VERSION = "6.10.0"
 SNAPSHOT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{2,63}")
 RESERVED_SNAPSHOT_IDS = frozenset({"latest", "receipts", "install-receipts"})

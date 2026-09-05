@@ -1,6 +1,6 @@
 {
   "name": "conductor",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "Install, inspect, plan, run, validate, and update Factory workflows without weakening Factory Core gates.",
   "author": {
     "name": "Eduardo dos Remedios"
@@ -32,7 +32,7 @@
     },
     {
       "id": "run",
-      "description": "Continue a Factory run through the next legal planning or execution action while preserving stage order and human Go gates."
+      "description": "Continue a Factory run through the next legal action at G1 Intent Lock, G2 Governed Execution, or G3 Review and Completion, stopping at every human countersign."
     },
     {
       "id": "validate",

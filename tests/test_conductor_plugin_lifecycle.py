@@ -121,7 +121,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
                  + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
                  + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
         payload = make_payload(
-            self.base, "0.3.3",
+            self.base, "0.3.4",
             {
                 "AGENTS.md": ("# Starter\n\n" + block + "\n## Kit section\n", "project-owned"),
                 "docs/Conductor/core.md": ("factory v3\n", "release-owned"),
@@ -155,7 +155,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
                  + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
                  + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
         payload = make_payload(
-            self.base, "0.3.3",
+            self.base, "0.3.4",
             {
                 "AGENTS.md": ("# Starter\n\n" + block + "\n## Kit section\n", "project-owned"),
                 "docs/Conductor/core.md": ("factory v3\n", "release-owned"),
@@ -189,7 +189,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         block = ("<!-- conductor:managed:start v=0.3.1-test sha256="
                  + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
                  + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
-        payload = make_payload(self.base, "0.3.3", {
+        payload = make_payload(self.base, "0.3.4", {
             "AGENTS.md": ("# Starter\n\n" + block, "project-owned"),
             "docs/Conductor/core.md": ("v\n", "release-owned"),
             "scripts/conductorctl": ("#!/bin/sh\n", "release-owned"),
@@ -230,10 +230,10 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         return legacy
 
     def conductor_payload(self) -> Path:
-        block = ("<!-- conductor:managed:start v=0.3.3-test sha256="
+        block = ("<!-- conductor:managed:start v=0.3.4-test sha256="
                  + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
                  + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
-        return make_payload(self.base, "0.3.3", {
+        return make_payload(self.base, "0.3.4", {
             "AGENTS.md": ("# Starter\n\n" + block + "\nnew conductor instructions\n", "project-owned"),
             "docs/Conductor/INVARIANTS.md": ("# invariants\n", "release-owned"),
             "scripts/conductorctl": ("#!/bin/sh\nconductor\n", "release-owned"),
@@ -247,7 +247,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         plan = update_plan(self.root, target)
         self.assertEqual("PLAN_READY", plan["state"], plan)
         self.assertEqual("factory_lineage_to_conductor", plan["migration"])
-        self.assertEqual(("0.2.5", "0.3.3"), (plan["installed_version"], plan["plugin_version"]))
+        self.assertEqual(("0.2.5", "0.3.4"), (plan["installed_version"], plan["plugin_version"]))
         actions = {item["path"]: item["action"] for item in plan["planned_files"]}
         self.assertEqual("delete", actions["docs/Factory/ARCHITECTURE.md"])
         self.assertEqual("delete", actions["scripts/factoryctl"])
@@ -264,7 +264,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         self.assertTrue((self.root / "docs/Conductor/INVARIANTS.md").is_file())
         self.assertIn("conductor:managed:start", (self.root / "AGENTS.md").read_text())
         state = json.loads((self.root / RUNTIME.INSTALLATION_STATE_PATH).read_text())
-        self.assertEqual("0.3.3", state["conductor_version"])
+        self.assertEqual("0.3.4", state["conductor_version"])
         self.assertEqual(RUNTIME.INSTALLATION_STATE_PATH, RUNTIME.installation_state_path(self.root))
         rollback = RUNTIME.apply_rollback(self.root, approved=True)
         self.assertEqual("CONDUCTOR_ROLLBACK_APPLIED", rollback["reason_code"], rollback)
@@ -751,7 +751,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         new_payload = make_payload(
             self.base,
-            "0.3.3",
+            "0.3.4",
             {
                 "docs/Conductor/SCRATCHPAD.md": (
                     "neutral scratchpad seed\n",
@@ -804,7 +804,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         )
         self.assertEqual("project-owned", managed["ownership_class"])
         self.assertEqual(expected_digest, managed["expected_digest"])
-        self.assertEqual("0.3.3", managed["source_version"])
+        self.assertEqual("0.3.4", managed["source_version"])
 
         rollback = RUNTIME.apply_rollback(self.root, approved=True)
         self.assertEqual("CONDUCTOR_ROLLBACK_APPLIED", rollback["reason_code"])

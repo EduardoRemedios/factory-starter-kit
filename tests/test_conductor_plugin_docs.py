@@ -218,19 +218,14 @@ class FactoryPluginDocumentationTests(unittest.TestCase):
             REPO_ROOT / "plugin-src/conductor/skills/validate.md"
         ).read_text(encoding="utf-8")
         for required in (
-            "same first read-only tool command",
-            "same final read-only tool command",
-            "Do not reuse a digest from an earlier checkpoint",
-            "`UNKNOWN`",
-            "bounded tool output",
+            "conductorctl contract-lint intent|execution|completion",
+            "never from you",
             "explicit exit status",
-            "pipe-safe failure propagation",
-            "Do not use shell redirection",
             "`|| true`",
             "`/tmp`",
             "`/private/tmp`",
-            "guessed scratch directory",
-            "explicitly authorize the exact evidence path",
+            "explicitly\n  authorized",
+            "narrative judgment",
         ):
             self.assertIn(required, validation)
 

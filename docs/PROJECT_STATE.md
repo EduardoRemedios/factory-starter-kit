@@ -6,7 +6,7 @@
 
 ## What Exists
 
-- **Factory 0.3.3 (pilot candidate, `main`, tag `conductor-v0.3.3-pilot`;
+- **Factory 0.3.4 (pilot candidate, `main`, tag `conductor-v0.3.4-pilot`;
   working name Conductor).** The 0.2 line closed at tag
   `factory-lineage-v0.2.5` (`7d0d20e`). Factory 0.3 governs authority, outcomes, and write boundaries through three
   gates (G1 Intent Lock, G2 Governed Execution, G3 Adversarial Review and
@@ -24,9 +24,10 @@
   on the pilot sandbox branch reached `REVIEW_READY` through all three gates.
   0.3.1 fixed CLAUDE.md migration on adoption and added `seed-contracts`;
   0.3.2 made `update` migrate 0.2-era installs (legacy state path, deletes,
-  seed refresh, AGENTS.md composition, exact rollback). 0.3.3 is the documentation
+  seed refresh, AGENTS.md composition, exact rollback). 0.3.3 was the documentation
   housekeeping release (legacy banners, GitHub-marketplace install text, 0.3
-  wording in the BMAD skills). Handover to the pilot team is done. Remaining from `08_REHEARSAL_RESULTS.md`: F-3 (pilot-team
+  wording in the BMAD skills); 0.3.4 trims the `validate` skill to the hard
+  layer and fixes the `run` description. Handover to the pilot team is done. Remaining from `08_REHEARSAL_RESULTS.md`: F-3 (pilot-team
   decision), F-9 (constraint source validation).
 - The 0.2-era stage process (stage-lint, pack-lint, handoffs, Purple Gate, Mission Mode, mission lints, context recall as a hard preflight, task memory, Repo Cartographer, Agent Loop Bridge) remains in the tree, bannered as legacy, for the archived runs and golden-pack tests; it is scheduled for retirement after the pilot (design pack steps 12-13).
 - SIMPLE-CODE-GATE v2 remains the implementation guardrail for Factory-controlled code-changing work.

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Decide whether the Conductor plugin 0.3.3 is ready for a team rollout using named
+Decide whether the Conductor plugin 0.3.4 is ready for a team rollout using named
 journeys, recovery evidence, and Product Owner sign-off.
 
 ## Entry Gates

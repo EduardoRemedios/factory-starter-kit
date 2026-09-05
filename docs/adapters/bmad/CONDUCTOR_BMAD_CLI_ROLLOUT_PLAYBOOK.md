@@ -15,7 +15,7 @@ Before using this team playbook, run one trusted-colleague full-flow test with
   `python3` on the Claude hook PATH.
 - `npx` available for the pinned BMAD bootstrap.
 - Local Claude Code session, not Claude Desktop, cloud session, WSL, or Cowork.
-- Factory and Factory-BMAD (`conductor`, `conductor-bmad`) `0.3.3` installed from
+- Factory and Factory-BMAD (`conductor`, `conductor-bmad`) `0.3.4` installed from
   the GitHub marketplace `EduardoRemedios/factory-starter-kit`, or from the same
   checked-out marketplace root when working offline.
 - The marketplace root is a durable local checkout, not `/tmp`, a scratchpad, an

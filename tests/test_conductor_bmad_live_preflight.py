@@ -27,18 +27,18 @@ class FactoryBmadLivePreflightTests(unittest.TestCase):
         (candidate / "plugin-src/conductor-bmad").mkdir(parents=True)
         (candidate / ".claude-plugin").mkdir()
         (candidate / "plugin-src/conductor/manifest.json").write_text(
-            json.dumps({"version": "0.3.3"}), encoding="utf-8"
+            json.dumps({"version": "0.3.4"}), encoding="utf-8"
         )
         (candidate / "plugin-src/conductor-bmad/manifest.json").write_text(
-            json.dumps({"version": "0.3.3", "conductor_dependency": "~0.3.3"}),
+            json.dumps({"version": "0.3.4", "conductor_dependency": "~0.3.4"}),
             encoding="utf-8",
         )
         (candidate / ".claude-plugin/marketplace.json").write_text(
             json.dumps(
                 {
                     "plugins": [
-                        {"name": "conductor", "version": "0.3.3"},
-                        {"name": "conductor-bmad", "version": "0.3.3"},
+                        {"name": "conductor", "version": "0.3.4"},
+                        {"name": "conductor-bmad", "version": "0.3.4"},
                     ]
                 }
             ),
@@ -91,7 +91,7 @@ class FactoryBmadLivePreflightTests(unittest.TestCase):
             "--permission-rule",
             permission_rule,
             "--release-version",
-            "0.3.3",
+            "0.3.4",
             "--bmad-version",
             "6.10.0",
             "--config-root",
@@ -149,7 +149,7 @@ class FactoryBmadLivePreflightTests(unittest.TestCase):
                     "--expected-permission-rule",
                     "Bash(python3 *)",
                     "--expected-release-version",
-                    "0.3.3",
+                    "0.3.4",
                 ],
                 text=True,
                 capture_output=True,

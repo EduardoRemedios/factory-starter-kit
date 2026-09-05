@@ -2,6 +2,10 @@
 
 The detailed, dated changelog lives in `docs/CHANGELOG.md`. This file keeps release-level entries.
 
+## 0.3.4 - 2026-09-05
+
+- `validate` skill trimmed to the hard layer it delegates to; `run` description names the gates and countersigns. No runtime change.
+
 ## 0.3.3 - 2026-09-05
 
 - Documentation housekeeping for the 0.3 line: legacy banners on 0.2-era process documents, GitHub-marketplace install text, 0.3 wording in the BMAD and lifecycle skills. No runtime behaviour change.
