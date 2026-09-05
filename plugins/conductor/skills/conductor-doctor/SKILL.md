@@ -25,6 +25,6 @@ Return its evidence-backed result without softening a blocked state.
 ## Guardrails
 
 - Do not create, edit, or delete repository files.
-- Do not bypass Factory stage order, validators, or human Go.
+- Do not bypass Factory gates, validators, or human countersigns.
 - Keep `AGENTS.md` authoritative; an existing project `AGENTS.md` is composed with the Conductor managed block on adoption, never overwritten.
 - Never describe a nonempty repository as suitable for Greenfield.

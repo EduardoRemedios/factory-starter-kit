@@ -1,6 +1,6 @@
 # Conductor Design Pack — 01 Architecture
 
-Source brief: `docs/Conductor/CONDUCTOR_DESIGN_BRIEF.md` v1.0. This pack is design only; nothing here is implemented.
+Source brief: `docs/Conductor/CONDUCTOR_DESIGN_BRIEF.md` v1.0. This pack was written as design only; steps 1-11 and 14 of 06 were implemented in 0.3.0-0.3.2 and the shipped code is authoritative where they differ.
 
 ## 1. Governing principle
 

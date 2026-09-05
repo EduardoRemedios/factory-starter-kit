@@ -6,9 +6,9 @@
 
 ## What Exists
 
-- **Conductor 0.3.0 (pilot candidate, branch `conductor/design-pack`).** The
-  Factory lineage closed at tag `factory-lineage-v0.2.5` (main `7d0d20e`).
-  Conductor governs authority, outcomes, and write boundaries through three
+- **Factory 0.3.3 (pilot candidate, `main`, tag `conductor-v0.3.3-pilot`;
+  working name Conductor).** The 0.2 line closed at tag
+  `factory-lineage-v0.2.5` (`7d0d20e`). Factory 0.3 governs authority, outcomes, and write boundaries through three
   gates (G1 Intent Lock, G2 Governed Execution, G3 Adversarial Review and
   Completion) enforced by `conductorctl contract-lint`, signed evidence
   receipts (`conductorctl receipts`), protected-postimage compare, Gap Requests,
@@ -21,13 +21,14 @@
   Migration steps 1-11 and 14 of the design pack are done; steps 12-13
   (module demotion, read-order trim, manifest mandatory) are post-pilot.
   0.3.0 is merged to `main` (tag `conductor-v0.3.0-pilot`). Rehearsal pass one
-  on the pilot sandbox branch reached `REVIEW_READY` through all three gates;
-  pass two (update from a Factory 0.2.5 install) fails closed. Five 0.3.1 fixes
-  are listed in `docs/Conductor/DESIGN_PACK/08_REHEARSAL_RESULTS.md`; F-1 and
-  F-6 gate the handover.
-- Factory V2 remains the canonical planning process in this repository.
-- Mission Mode exists as an additive wrapper for ordered multi-sprint chains.
-- Context recall, stage-lint, pack-lint, verification manifest, mission lint, mission cursor lint, task memory, Repo Cartographer, and Agent Loop Bridge helpers remain available.
+  on the pilot sandbox branch reached `REVIEW_READY` through all three gates.
+  0.3.1 fixed CLAUDE.md migration on adoption and added `seed-contracts`;
+  0.3.2 made `update` migrate 0.2-era installs (legacy state path, deletes,
+  seed refresh, AGENTS.md composition, exact rollback). 0.3.3 is the documentation
+  housekeeping release (legacy banners, GitHub-marketplace install text, 0.3
+  wording in the BMAD skills). Handover to the pilot team is done. Remaining from `08_REHEARSAL_RESULTS.md`: F-3 (pilot-team
+  decision), F-9 (constraint source validation).
+- The 0.2-era stage process (stage-lint, pack-lint, handoffs, Purple Gate, Mission Mode, mission lints, context recall as a hard preflight, task memory, Repo Cartographer, Agent Loop Bridge) remains in the tree, bannered as legacy, for the archived runs and golden-pack tests; it is scheduled for retirement after the pilot (design pack steps 12-13).
 - SIMPLE-CODE-GATE v2 remains the implementation guardrail for Factory-controlled code-changing work.
 - Merge handoff discipline now separates `REVIEW_READY` from `MERGE_READY` repository handoffs, with final sync window guidance in `docs/Conductor/MERGE_PROTOCOL.md`.
 - Product Owner process docs and templates remain available under `docs/Conductor/ProductOwner/`.

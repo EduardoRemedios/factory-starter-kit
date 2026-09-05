@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-09-05
+
+- 0.3.3 (housekeeping, no runtime behaviour change): bannered the 43 0.2-era
+  process documents and the 0.2-era `AGENTS.md` body as legacy; README,
+  PROJECT_STATE, ROADMAP, root CHANGELOG, routing matrix, and the BMAD adapter
+  documents now describe the 0.3 line; the BMAD `intake`, `promote`, and
+  `audit` skills describe the Intent Pack / G1 handover instead of Stage A and
+  Purple Gate; `update` and `validate` skills document 0.2-era migration and the
+  0.3 validators; quick starts lead with the GitHub marketplace install and keep
+  the local checkout as the offline path; the protected-path baseline was
+  re-captured for the bannered Spec files. Public name is Factory; Conductor is
+  the working name kept as plugin id, command namespace, and `docs/Conductor/`.
+
 ## 2026-09-04
 
 - Began the Conductor lineage. Merged the qualified Factory-BMAD 0.2.5

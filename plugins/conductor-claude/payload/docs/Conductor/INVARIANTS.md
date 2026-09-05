@@ -1,6 +1,6 @@
-# Conductor Invariants
+# Factory 0.3 Invariants
 
-Read this file and `docs/PROJECT_STATE.md` before any Conductor-governed work. Everything else is on demand. This file states what Conductor governs and the rules that never bend; it does not tell you how to sequence your work.
+Conductor is the working name of this line; it survives as the plugin id, the `/conductor:` command namespace, `conductorctl`, and this directory. Read this file and `docs/PROJECT_STATE.md` before any Conductor-governed work. Everything else is on demand. This file states what Conductor governs and the rules that never bend; it does not tell you how to sequence your work.
 
 ## 0) Governing principle
 

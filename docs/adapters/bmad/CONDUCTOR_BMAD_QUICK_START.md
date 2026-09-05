@@ -37,9 +37,19 @@ npx --version
 If any command says `command not found`, stop and ask the maintainer for that
 tool to be installed.
 
-## Clone the Factory Starter Kit
+## Install From the GitHub Marketplace (recommended)
 
-Run:
+```bash
+claude plugin marketplace add EduardoRemedios/factory-starter-kit
+claude plugin install conductor-bmad@factory-starter-kit --scope user
+```
+
+That is the whole install; `conductor` arrives as a dependency. Skip to
+"Start" below unless you need the offline path.
+
+## Offline Path: Clone the Factory Starter Kit
+
+Use this only when the GitHub marketplace is not reachable. Run:
 
 ```bash
 mkdir -p "$HOME/Code"
@@ -108,7 +118,7 @@ Read the `"state"` line near the end:
 - `"state": "BLOCKED"` means stop and send the full Terminal output to the
   maintainer.
 
-## Install From the Starter Kit Checkout
+## Offline Path: Install From the Starter Kit Checkout
 
 If either uninstall command reports that the plugin is not installed, continue
 to prune and preflight. `claude plugin prune` may leave cached payload
@@ -137,7 +147,7 @@ Use the durable checkout path above; do not register a temporary or scratchpad
 path as the marketplace source.
 
 This is one explicit user installation. The companion declares Factory
-`~0.3.2` as an automatic dependency, so users do not separately install or
+`~0.3.3` as an automatic dependency, so users do not separately install or
 manage Factory. Missing, disabled, or incompatible dependency state halts
 instead of duplicating Factory Core.
 
@@ -225,6 +235,8 @@ snapshot ID and aggregate hash; never cite `_bmad-output/` directly.
   control to Factory.
 
 ## Handover map
+
+(0.2-era wording kept because the plugin tests pin it. In 0.3 the promoted snapshot enters the Intent Pack as an `upstream_snapshot` source and G1 Intent Lock replaces Stage A recall and Purple Gate PASS.)
 
 - Snapshot manifest → project preflight: validates review evidence, inventory,
   modes, and aggregate integrity.

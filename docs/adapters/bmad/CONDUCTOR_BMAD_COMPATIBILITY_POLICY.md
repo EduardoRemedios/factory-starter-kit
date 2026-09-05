@@ -5,8 +5,8 @@ rollout.
 
 ## Pinned Surfaces
 
-- Factory: `0.2.5`
-- Factory-BMAD: `0.2.5`
+- Factory (plugin id `conductor`): `0.3.3`
+- Factory-BMAD (plugin id `conductor-bmad`): `0.3.3`
 - BMAD installer: `bmad-method@6.10.0`
 - BMAD modules: Core and BMM only
 - Claude surface: Claude Code CLI local macOS session

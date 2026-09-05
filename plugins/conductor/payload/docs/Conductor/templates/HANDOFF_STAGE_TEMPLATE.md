@@ -1,5 +1,7 @@
 # docs/Conductor/templates/HANDOFF_STAGE_TEMPLATE.md
 
+> **Legacy (0.2 line).** This document describes the stage-based process that Factory 0.3 replaced with three gates enforced by `conductorctl contract-lint`; see `docs/Conductor/onboarding/GUIDE.md`. It is kept for the archived 0.2-era runs and the golden-pack tests and will be retired after the pilot. Do not use it to run new work.
+
 <!--
 VALIDATION:
 - Each stage MUST create: docs/Conductor/runs/<RUN_ID>/pack/HANDOFF/HANDOFF_STAGE_<STAGE_ID>.md

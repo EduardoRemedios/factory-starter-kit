@@ -30,10 +30,10 @@ The deprecated `create-architecture` shim remains prohibited.
 
 When human review includes a material qualifier, add
 `--review-qualifier "exact qualifier"`. The qualifier is plan-bound, stored in
-the immutable snapshot manifest, and must be copied exactly into the Factory
-raw brief.
+the immutable snapshot manifest, and must be carried exactly into the Intent
+Pack that cites the snapshot.
 
-Apply only after exact approval with `--approve-plan <FULL_PLAN_ID>`. Cite the resulting snapshot ID and aggregate digest in the raw brief, never the draft path. Use `rollback --receipt <path>` only when every created snapshot byte still matches the receipt.
+Apply only after exact approval with `--approve-plan <FULL_PLAN_ID>`. Cite the resulting snapshot ID and aggregate digest as an `upstream_snapshot` source in the Intent Pack, never the draft path. Use `rollback --receipt <path>` only when every created snapshot byte still matches the receipt.
 
 When a new snapshot intentionally supersedes an older one, supply both
 `--supersedes-snapshot-id <ID>` and `--supersedes-sha256 <DIGEST>`. The prior
@@ -41,9 +41,9 @@ snapshot remains immutable and independently citable; there is no floating
 "current" snapshot.
 
 `SOLUTION_CONTEXT` is authoring evidence, never implementation authority. Its
-claims remain unaccepted until Factory records claim-level dispositions during
-Stage A-D, and even accepted claims do not authorize execution. Stage D locks
-intent; only later human Go against the exact I2 pack authorizes implementation.
+claims remain unaccepted until a human locks intent at G1, and even accepted
+claims do not authorize execution. G1 locks intent; only a human `EXECUTION_GO`
+countersign against that exact Intent Pack authorizes implementation.
 
 Reject traversal, symlinks, stale inputs, downstream workflows, and existing different snapshots. Never edit a promoted snapshot.
 

@@ -17,11 +17,12 @@ template, or evidence files are conflicts requiring human reconciliation. The
 seed includes the byte-identical shared policy module plus a point-in-time
 capability audit and immutable brownfield reconciliation record. Project
 preflight re-runs policy lint and fails on policy, coverage, citation, or
-authority drift. This uses the existing Stage A preflight seam; it does not add
-a Factory gate or grant execution.
+authority drift. The preflight is consumed at G1 Intent Lock; it does not add a gate or grant
+execution. If intake is blocked (for example by `bmad-loop`), `seed-contracts`
+still seeds the inert contracts a declared adapter needs.
 
 Explain the handover contract when presenting the intake result: project
-preflight validates `SNAPSHOT_MANIFEST.json` integrity and human review; Stage A
-recall resolves the promoted `artifact.md`; only Factory intent after Purple
-Gate PASS becomes authoritative. Never recommend the JSON manifest as a recall
-required reference.
+preflight validates `SNAPSHOT_MANIFEST.json` integrity and human review; the
+Intent Pack cites the promoted snapshot as an `upstream_snapshot` source with its
+digest; only the intent a human locks at G1 is authoritative, and it may accept,
+reject, or defer the snapshot's claims.

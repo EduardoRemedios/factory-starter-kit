@@ -9,9 +9,9 @@ Claude Desktop only after a separate Desktop validation lane passes.
 
 | Starting state | Desired outcome | First command path |
 |---|---|---|
-| New or empty target | Factory only | Install `factory`, then run `/conductor:greenfield`. |
-| New or empty target | Factory plus BMAD | Install `conductor-bmad` from the companion marketplace, let its Factory dependency resolve, then follow `/conductor-bmad:doctor`. |
-| Existing repository, neither Factory nor BMAD | Factory only | Install `factory`, run `/conductor:doctor`, then `/conductor:brownfield`. |
+| New or empty target | Factory only | Install `conductor`, then run `/conductor:greenfield`. |
+| New or empty target | Factory plus BMAD | Install `conductor-bmad` from the `factory-starter-kit` marketplace (it pulls `conductor` as a dependency), then follow `/conductor-bmad:doctor`. |
+| Existing repository, neither Factory nor BMAD | Factory only | Install `conductor`, run `/conductor:doctor`, then `/conductor:brownfield`. |
 | Existing repository, neither Factory nor BMAD | Factory plus BMAD | Adopt Factory first with Brownfield, then run the companion Doctor and BMAD bootstrap. |
 | Existing repository, BMAD only | Factory plus BMAD | Install the companion, run `/conductor-bmad:doctor`; Factory Brownfield is the first mutation before audit/intake. |
 | Existing repository, Factory only | Add BMAD upstream discovery | Install the companion, run `/conductor-bmad:doctor`, then bootstrap/audit/intake as directed. |
@@ -19,7 +19,7 @@ Claude Desktop only after a separate Desktop validation lane passes.
 
 ## Boundaries
 
-- Installing `factory` must never require BMAD.
+- Installing `conductor` must never require BMAD.
 - Installing `conductor-bmad` may depend on Factory, but it must not duplicate or
   replace Factory Core.
 - BMAD output is upstream evidence only; Factory owns intent lock, architecture,

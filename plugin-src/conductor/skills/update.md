@@ -18,6 +18,7 @@ after separate explicit rollback approval.
 4. Halt on downgrade, unsafe path, ambiguous ownership, or user-owned conflict.
 5. Require explicit approval of the exact plan ID before a separate apply operation.
 6. After apply, run doctor and validation; retain the rollback evidence until release acceptance.
+7. A repository installed by Factory 0.2.x (state under `docs/Factory/installation/`) is migrated by the same plan: the old paths are deleted when unmodified, the `docs/Conductor` tree is created, never-edited seeds are refreshed, a customised `AGENTS.md` receives the managed block, and the legacy state file is removed. Rollback restores the 0.2 install byte for byte.
 
 ## Guardrails
 

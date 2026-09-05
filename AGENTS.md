@@ -12,6 +12,8 @@ You are operating under Conductor governance. The Intent Pack sets the scope and
 Everything below this block is project-owned and preserved byte for byte by Conductor adoption and update.
 <!-- conductor:managed:end -->
 
+> The sections below are the 0.2-era operating instructions, kept for archived runs and the golden-pack tests. For new work the managed block above is authoritative: read `docs/PROJECT_STATE.md` and `docs/Conductor/INVARIANTS.md`, then follow the three gates in `docs/Conductor/onboarding/GUIDE.md`.
+
 Purpose:
 - Give any agent a short, authoritative repo map so work starts with correct context and stable commands.
 

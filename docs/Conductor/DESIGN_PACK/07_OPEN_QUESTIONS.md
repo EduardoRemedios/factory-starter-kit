@@ -17,4 +17,4 @@ All ten questions were decided by Eduardo dos Remedios on 2026-09-04. Defaults t
 
 ## Decisions already closed (brief §0), restated for the build
 
-Conductor naming on user-facing surfaces · 0.2.5 candidate merged as last Factory-lineage release (`7d0d20e`, tag `factory-lineage-v0.2.5`) · MS-06 not executed, archived · party mode allowed in the product-context lane · no workshop; self-serve onboarding · rehearsal on the local AuditEdge clone before handover · brief and pack internal until after the pilot.
+Conductor naming on user-facing surfaces (**reversed 2026-09-04**: the public product name stays Factory; Conductor is the working name kept as plugin id, command namespace, and `docs/Conductor/` path) · 0.2.5 candidate merged as last Factory-lineage release (`7d0d20e`, tag `factory-lineage-v0.2.5`) · MS-06 not executed, archived · party mode allowed in the product-context lane · no workshop; self-serve onboarding · rehearsal on the local AuditEdge clone before handover · brief and pack internal until after the pilot.

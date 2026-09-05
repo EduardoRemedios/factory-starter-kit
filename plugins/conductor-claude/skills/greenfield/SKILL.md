@@ -44,7 +44,7 @@ absolute path for preview and apply. Never invent or silently select a target.
 
 - Halt on unsafe paths, symlink escapes, conflicts, or an unverified environment.
 - Never silently overwrite a user-owned file.
-- Do not begin Factory execution or imply human Go.
+- Do not begin Factory execution or imply a human countersign.
 - Remove transaction-created `.git` during recovery only when its exact unchanged
   post-initialization digest proves Factory ownership.
 - Approval must include the exact full current plan ID. Generic approval such as

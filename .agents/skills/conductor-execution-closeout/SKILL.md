@@ -3,6 +3,8 @@ name: conductor-execution-closeout
 description: Close implementation work against an approved Factory pack. Use when Codex is asked to verify execution after human Go, compare a code/doc diff to the approved envelope and micro-sprints, prepare execution completion notes, check residual risk, or decide whether a completed implementation is ready for project-specific merge gates.
 ---
 
+> **Legacy (0.2 line).** This document describes the stage-based process that Factory 0.3 replaced with three gates enforced by `conductorctl contract-lint`; see `docs/Conductor/onboarding/GUIDE.md`. It is kept for the archived 0.2-era runs and the golden-pack tests and will be retired after the pilot. Do not use it to run new work.
+
 # Factory Execution Closeout
 
 ## Workflow

@@ -1,5 +1,7 @@
 # docs/Conductor/Spec/NAMING_CONVENTIONS.md — Doc Factory (v4.6)
 
+> **Legacy (0.2 line).** This document describes the stage-based process that Factory 0.3 replaced with three gates enforced by `conductorctl contract-lint`; see `docs/Conductor/onboarding/GUIDE.md`. It is kept for the archived 0.2-era runs and the golden-pack tests and will be retired after the pilot. Do not use it to run new work.
+
 ## Version
 v4.7
 

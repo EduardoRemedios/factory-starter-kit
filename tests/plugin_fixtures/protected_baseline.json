@@ -1,15 +1,15 @@
 {
-  "captured_at": "2026-09-04T15:54:48Z",
+  "captured_at": "2026-09-05T06:43:49Z",
   "files": {
-    "docs/Conductor/Spec/DEFINITIONS.md": "e6d17c080736fc8df28f62728b83f50de957243a7acece3fc1b5a2eaec46e2f8",
-    "docs/Conductor/Spec/NAMING_CONVENTIONS.md": "b90b4b7c19cef21f3d38cb54a6acc320902cd1bbcb601152af6b6ece197c73b6",
-    "docs/Conductor/Spec/PURPLE_GATE_CHECKLIST.md": "fc4bf9b70f70daf56da4963b0b21273cf5ab2fd8a12c36f5e5e03ffa968dc633",
-    "docs/Conductor/Spec/STAGE_CONTRACTS.md": "0fe5bab980ebfaf1b9191af310447dfd301b623f49632cde02109195be7d8b6e",
+    "docs/Conductor/Spec/DEFINITIONS.md": "b5e9baadcf72df7e796b6e55d6bbce92bb89833ffc927096ae2b17bf2a910e17",
+    "docs/Conductor/Spec/NAMING_CONVENTIONS.md": "20984b07406b7f9b9b94b17221d8328dcb8bb8342fe4001bf8655288615440fb",
+    "docs/Conductor/Spec/PURPLE_GATE_CHECKLIST.md": "82eed3516524645067af3e07008a13fc1a3a70432f20869b537a7f0ba3a7960d",
+    "docs/Conductor/Spec/STAGE_CONTRACTS.md": "d86830d4e19dc2665d4890c6a81061c14d75cdc582d9124c9ecb7f0d688f6277",
     "scripts/conductor_pack_lint.py": "179edf17cd5437a19585f09b4213a7ebdb35bd21dab6e2ba4e7edefeacac390c",
     "scripts/conductor_stage_lint.py": "ada1b3171299fc5cde7b580fa538bd89237bec154eb2b045864fa8c89ca883ad",
     "scripts/knowledge_lint.sh": "6923c333a9d4d65abda5192e148cacd64d9dd4874fdd64ac75131b66379ec8af",
     "tests/test_conductor_plugin_composition_live.py": "63bc9ccb2327f27b9d1d7a5264e0a97511a9325646a2df08b2fdc2237ae90715"
   },
-  "run_id": "CONDUCTOR_RENAME_20260904",
+  "run_id": "CONDUCTOR_HOUSEKEEPING_20260905",
   "schema_version": 1
 }

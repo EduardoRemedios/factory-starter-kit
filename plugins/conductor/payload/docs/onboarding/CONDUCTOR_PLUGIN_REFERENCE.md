@@ -36,6 +36,10 @@ Doctor is read-only.
 
 ## Progress Evidence Order
 
+For a 0.3 run (`intent_pack.json` present) progress reports the gate state from
+`conductorctl contract-lint`: G1 intent, G2 execution, G3 completion, with the
+first failing check as the reason. The order below applies to 0.2-era runs.
+
 Progress uses disk evidence and fails closed:
 
 1. missing output claimed by a passing handoff is a contradiction
@@ -52,7 +56,7 @@ tag, publication, adapter, phase, or mission authority.
 
 Progress is read-only.
 
-## Stage A Project Preflight
+## Stage A Project Preflight (0.2-era runs)
 
 Projects may opt in with `docs/Conductor/PROJECT_PREFLIGHT.json`. When declared, the
 fixed `scripts/conductor_project_preflight --run RUN_ID --json` command runs after

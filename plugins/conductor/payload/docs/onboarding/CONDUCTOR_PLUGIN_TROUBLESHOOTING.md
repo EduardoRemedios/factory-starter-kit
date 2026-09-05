@@ -16,7 +16,7 @@ Treat a blocked state as a safety result, not as a prompt to force the operation
 | `CONDUCTOR_ROLLBACK_GIT_STATE_CHANGED` | Factory-created Git changed after setup | Preserve Git and project files; recover manually |
 | `CONDUCTOR_EVIDENCE_CONTRADICTION` | Passing prose disagrees with required disk evidence | Repair the named stage and rerun its validator |
 | `CONDUCTOR_WEAK_RECALL` | Recall is weak without a valid direct-source repair | Refresh recall and resolve material gaps |
-| `CONDUCTOR_HUMAN_GO_REQUIRED` | Planning is complete but execution is not authorized | Obtain explicit human Go |
+| `CONDUCTOR_HUMAN_GO_REQUIRED` | Planning is complete but execution is not authorized | Obtain the explicit human countersign (0.2-era runs: human Go) |
 | `CONDUCTOR_SKILL_COLLISION` | A repository skill declares the same name as a plugin skill | Rename or remove only with the skill owner's approval |
 | `CONDUCTOR_DOWNGRADE_UNSUPPORTED` | Update points to an older package | Use the separately approved rollback path |
 | `CONDUCTOR_ROLLBACK_UNAVAILABLE` | No recoverable update receipt is recorded | Stop and recover from version control or an owner-approved backup |
@@ -73,7 +73,7 @@ The transaction reports a blocker and restores its captured prior state. Preserv
 
 ## Greenfield Reports Git Root Required
 
-1. Confirm the installed plugin contains the current `0.3.2` pilot candidate.
+1. Confirm the installed plugin contains the current `0.3.3` pilot candidate.
 2. Start Claude Code from the intended empty directory and invoke
    `/conductor:greenfield`; Doctor is a post-setup check for new projects.
 3. For an absent or different target, provide the exact absolute path and require

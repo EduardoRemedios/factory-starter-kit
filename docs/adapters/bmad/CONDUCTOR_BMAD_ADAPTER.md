@@ -43,7 +43,7 @@ claude plugin install conductor-bmad@factory-starter-kit
 Claude resolves the separate Factory package automatically; users do not run a
 second install. `/conductor-bmad:doctor` remains the only adoption front door.
 
-The 0.2.5 Claude Code CLI pilot candidate includes plugin-bundled guards for
+The 0.3.x Claude Code CLI pilot candidate includes plugin-bundled guards for
 direct slash-command expansion and model-initiated Skill invocation.
 Enforcement activates only when Factory and present/partial BMAD coexist in the
 current Git worktree. Approved upstream `bmad-*` names are explicitly
@@ -60,10 +60,11 @@ package's exact `PreToolUse`/`Skill` command, submits the production event schem
 and proves denial prevents downstream sentinel execution. Retained direct
 expansion evidence and optional model-choice smoke are reported separately; a
 model choosing not to call a Skill is inconclusive, not a release failure. The
-amended 0.2.3 source passed isolated Claude Code CLI live requalification, and
-the 0.2.5 pilot candidate adds first-team rollout preflight, cache-integrity
-protection, and clearer approval-plan labels. That still grants no publication
-or organization rollout by itself.
+0.2 line passed isolated Claude Code CLI live requalification and added the
+first-team rollout preflight, cache-integrity protection, and approval-plan
+labels that 0.3.x keeps. 0.3 expresses policy by lane, supports a declared
+non-root BMAD installation, and seeds its contracts independently of intake.
+None of that grants publication or organization rollout by itself.
 
 ## Evidence flow
 
@@ -77,7 +78,9 @@ or organization rollout by itself.
 6. Factory's existing project-preflight seam re-runs the shared policy lint and
    validates policy version, capability coverage, reconciliation evidence,
    authority, provenance, and citation before
-   Stage A. Cited BMAD context freezes at Brief Purple PASS.
+   the Intent Pack cites it. In 0.3 a promoted snapshot enters a run as an
+   `upstream_snapshot` source and freezes at G1 Intent Lock (the 0.2-era
+   equivalent was Stage A recall and Brief Purple PASS).
 
 Snapshots are product-level, immutable, and reusable by multiple Factory runs.
 Receipts make setup and rollback auditable without silently touching user files.

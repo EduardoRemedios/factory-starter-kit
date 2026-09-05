@@ -1,8 +1,22 @@
 # ROADMAP.md - Development Roadmap
 
-> **Purpose:** Track starter-kit V2 and earlier process work.
+> **Purpose:** Track starter-kit process work across the 0.2 line and the 0.3 line.
 >
-> **Last updated:** 2026-08-24
+> **Last updated:** 2026-09-05
+
+## Current line (0.3, working name Conductor)
+
+| Item | Status | Evidence |
+|------|--------|----------|
+| 0.3.0 three gates, contract core, lane-model BMAD adapter, onboarding | Merged to `main`, tag `conductor-v0.3.0-pilot` | `docs/Conductor/DESIGN_PACK/` |
+| 0.3.1 CLAUDE.md migration on adoption; `seed-contracts` | Merged, tag `conductor-v0.3.1-pilot` | `docs/CHANGELOG.md` |
+| 0.3.2 `update` migrates 0.2-era installs; README for the 0.3 line | Merged, tag `conductor-v0.3.2-pilot` | `docs/CHANGELOG.md`; `tests/test_conductor_plugin_lifecycle.py` |
+| Pilot (Claude Code CLI) | Handed over; awaiting friction log | `docs/Conductor/DESIGN_PACK/08_REHEARSAL_RESULTS.md` |
+| F-9 constraint source validation | Queued | `08_REHEARSAL_RESULTS.md` |
+| Steps 12-13: retire 0.2-era docs, trim AGENTS.md read order, manifest mandatory | Post-pilot | `docs/Conductor/DESIGN_PACK/06_MIGRATION_AND_QUALIFICATION.md` |
+| Codex desktop app and Cursor surfaces | Next phase | `docs/Conductor/onboarding/INSTALL.md` |
+
+## 0.2 line (closed at `factory-lineage-v0.2.5`)
 
 ## Sprints
 

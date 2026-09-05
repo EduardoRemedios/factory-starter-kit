@@ -2,7 +2,7 @@
 
 > Audience: a contributor adopting the Factory pipeline in a repo that does not already have a governed planning framework.
 
-**Conductor 0.3.0 pilot path (self-serve, no workshop):** `docs/Conductor/onboarding/INSTALL.md`, then `docs/Conductor/onboarding/GUIDE.md` (one page), then `docs/Conductor/onboarding/FIRST_EXERCISE.md` with `docs/Conductor/onboarding/FRICTION_LOG_TEMPLATE.md` open. The sections below describe the Factory-lineage stage process and remain valid for legacy runs.
+**Factory 0.3 pilot path (self-serve, no workshop; working name Conductor):** `docs/Conductor/onboarding/INSTALL.md`, then `docs/Conductor/onboarding/GUIDE.md` (one page), then `docs/Conductor/onboarding/FIRST_EXERCISE.md` with `docs/Conductor/onboarding/FRICTION_LOG_TEMPLATE.md` open. The sections below describe the 0.2-era stage process and remain valid only for legacy runs.
 
 For the installable Codex/Claude pilot path, start with `docs/onboarding/CONDUCTOR_PLUGIN_QUICK_START.md`.
 
@@ -67,7 +67,7 @@ If you use Mission Mode:
 
 Use the Product Owner lane when:
 - you want a governed phase-level planning layer upstream of Factory runs
-- you want sprint-budget tracking and brief review before a brief enters Stage A
+- you want sprint-budget tracking and brief review before intent is locked at G1 (0.2-era runs: before a brief enters Stage A)
 
 If you use the PO lane:
 1. lock the Phase Intent

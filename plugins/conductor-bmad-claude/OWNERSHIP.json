@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
   "package": "conductor-bmad",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "generated_from": "plugin-src/conductor-bmad",
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "59d84c61001046ee47b7aacd27093a0f47ec1516e908a12ab527787832570c33",
+      "sha256": "b37753d387bb44b328c95edb560838af6f85b49163894dec31d23de6e47cb5bb",
       "classification": "release-owned"
     },
     {
       "path": "assets/project-adapter/BMAD_POLICY.md",
-      "sha256": "beb7ece946805b78a4280ceb3cd7083019db9542b19ca158df105433e6e2e494",
+      "sha256": "e3713dfbf2d879985a8f442120db802ebe2d554a83c20ff17947d43f8f8c453e",
       "classification": "release-owned"
     },
     {
@@ -61,7 +61,7 @@
     },
     {
       "path": "scripts/conductor_bmad.py",
-      "sha256": "548c2d93f830ec8310157998444d3dd278babaeb74e16f3a32f41078bad2ade8",
+      "sha256": "b9c0dca63236864d4c594d2bbe2d6e3b6f62bfe4d4a56d346e5be468313a7545",
       "classification": "release-owned"
     },
     {
@@ -71,7 +71,7 @@
     },
     {
       "path": "skills/audit/SKILL.md",
-      "sha256": "7750faa94619f2869ada3240a17e29cd4bc8eacc6496c54300c01899892d471b",
+      "sha256": "d3edaf7edf834a5de32c4d3b13059e5eb9364dc34f8d886505215acabb2629de",
       "classification": "release-owned"
     },
     {
@@ -86,12 +86,12 @@
     },
     {
       "path": "skills/intake/SKILL.md",
-      "sha256": "704db187f78dbbfac06d4d0be1b5cdb9eea83e7ec234a7d478889ee9325e4c2f",
+      "sha256": "1bdefff191d6ba7f31a82bef3cc7f0b77a3f282f772dfcd7c4c2a91d20175414",
       "classification": "release-owned"
     },
     {
       "path": "skills/promote/SKILL.md",
-      "sha256": "4c7db626691031178580d963ccc247aff5c85b3482b877477212637ccb454b92",
+      "sha256": "88e1a790ce1a6dc4e82d0e28f87ab04b1cf83175fee0abd988883e22b230fab6",
       "classification": "release-owned"
     },
     {

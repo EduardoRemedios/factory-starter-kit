@@ -4,7 +4,7 @@ Policy Version: `2.0.0`
 
 ## Rule
 
-Factory is the SDLC and sole downstream authority; Conductor is its current name. BMAD artifacts are mutable authoring drafts or non-binding evidence and become citable only after human promotion to an immutable snapshot. Conductor independently locks intent (G1), governs execution against receipts (G2), and requires a countersigned Statement of Completion (G3). No BMAD label (`canonical`, `binding`, `final`, `implementation-ready`, `release approved`) carries authority.
+Factory is the SDLC and sole downstream authority; Conductor is the working name of the 0.3 line and its command namespace. BMAD artifacts are mutable authoring drafts or non-binding evidence and become citable only after human promotion to an immutable snapshot. Conductor independently locks intent (G1), governs execution against receipts (G2), and requires a countersigned Statement of Completion (G3). No BMAD label (`canonical`, `binding`, `final`, `implementation-ready`, `release approved`) carries authority.
 
 ## Lanes, not per-workflow permissions
 

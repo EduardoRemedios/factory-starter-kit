@@ -3,6 +3,8 @@ name: conductor-purple-gate
 description: Perform Factory Purple Gate adjudication against evidence. Use when Codex is asked to review Stage D or Stage I2, decide PASS, CONDITIONAL PASS, or FAIL, evaluate PACK_CHECKLIST.md, resolve Red/Blue disputes, assess whether scope expansion remains unapproved, or produce PACK_AUDIT_REPORT.md from completed Factory artifacts.
 ---
 
+> **Legacy (0.2 line).** This document describes the stage-based process that Factory 0.3 replaced with three gates enforced by `conductorctl contract-lint`; see `docs/Conductor/onboarding/GUIDE.md`. It is kept for the archived 0.2-era runs and the golden-pack tests and will be retired after the pilot. Do not use it to run new work.
+
 # Factory Purple Gate
 
 ## Workflow

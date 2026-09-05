@@ -6,7 +6,7 @@
 
 This guide helps you create a local project folder, choose an AI coding tool, copy the Factory Starter Kit into the project, and start the first Factory planning run for a new application.
 
-Factory is the planning and control layer. The AI coding tool is the worker. Your job is to give clear goals, approve scope, and review the Factory pack before implementation starts.
+Factory is the planning and control layer. The AI coding tool is the worker. Your job is to give clear goals, approve scope, and countersign the intent before implementation starts and the completion afterwards. Factory 0.3 does this with three gates, described in one page in `docs/Conductor/onboarding/GUIDE.md`; the agent drafts, you lock intent, the agent builds, a second fresh agent audits, and you countersign the result.
 
 ## 2. What You Need
 
@@ -240,32 +240,30 @@ Guardrails:
 After the setup agent says the starter kit is installed and checks pass, paste this:
 
 ```text
-Start a new Factory planning run for this app idea.
-
-Execution Mode: PLANNING_ONLY
+Start a new Factory run for this app idea.
 
 App idea:
 [PASTE YOUR THREE SENTENCES HERE]
 
-Use the repo's Factory process. Read the required context first, create the run root, write raw_brief.md, run knowledge lint, refresh the context index, generate the Stage A recall report, and proceed through the Factory planning stages until the final pack is ready for human review.
+Follow docs/Conductor/onboarding/GUIDE.md. Read docs/PROJECT_STATE.md and docs/Conductor/INVARIANTS.md first, create the run directory, and draft intent_pack.json: goal, requirements with acceptance criteria in plain language, what is out of scope, constraints, risks, and how we will verify the result. Run `./scripts/conductorctl contract-lint intent` until it passes, then stop and show me the Intent Pack.
 
-Do not implement code yet. The output I want is a reviewed Factory pack that tells me what should be built, what is out of scope, what risks exist, and how we will verify the first implementation sprint.
+Do not implement code yet. I will lock the intent myself (the G1 countersign) once I agree with it.
 ```
 
-Use `PLANNING_ONLY` for the first run. Switch to `EXECUTION_ENABLED` only after you understand the pack and intentionally want the agent to build from it.
+Nothing is built until you write the intent countersign. Only add the execution countersign after you understand the Intent Pack and intentionally want the agent to build from it; the guide shows both files.
 
 ## 9. Human Review Checklist
 
 Before approving any implementation, check:
 
-- Does the pack describe the app you actually want?
+- Does the Intent Pack describe the app you actually want?
 - Is anything important listed as out of scope by mistake?
 - Are risky assumptions called out instead of hidden?
 - Are acceptance criteria written in plain language?
 - Are there verification steps, not just feature descriptions?
 - Did the agent avoid starting code before you approved implementation?
 
-If any answer is unclear, ask the agent to revise the Factory pack before coding starts.
+If any answer is unclear, ask the agent to revise the Intent Pack before you countersign it. After the build, a second agent that did not write the code audits every claim, and you countersign the Statement of Completion the same way.
 
 ## 10. Simple Safety Rules
 

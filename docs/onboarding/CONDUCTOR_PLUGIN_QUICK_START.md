@@ -1,6 +1,6 @@
 # Factory Plugin Quick Start
 
-Use this path for the initial macOS pilot. The plugin makes Factory installable and discoverable; it does not bypass repository review, Factory validators, or human Go.
+Use this path for the initial macOS pilot. The plugin makes Factory installable and discoverable; it does not bypass repository review, Factory validators, or the human countersigns at G1 and G3.
 
 For a one-person smoke test before team rollout, use
 [`CONDUCTOR_FIRST_TESTER_HANDOFF.md`](CONDUCTOR_FIRST_TESTER_HANDOFF.md).
@@ -61,7 +61,15 @@ claude plugin --help
 If more than one `claude` executable is installed, use the same supported
 executable for version checks, validation, installation, and the pilot.
 
-Then validate and install the local marketplace:
+Then install from the GitHub marketplace:
+
+```bash
+claude plugin marketplace add EduardoRemedios/factory-starter-kit
+claude plugin install conductor@factory-starter-kit
+```
+
+Offline, or when testing an unreleased build, validate and add a local checkout
+instead:
 
 ```bash
 cd <factory-starter-kit-root>
@@ -133,6 +141,11 @@ generic response such as `approve`, `apply`, or `approve and apply` is
 insufficient. A changed repository invalidates the plan.
 
 ## First Factory Run
+
+For a 0.3 run, follow `docs/Conductor/onboarding/FIRST_EXERCISE.md`: draft the
+Intent Pack, pass `contract-lint intent`, countersign, execute with receipts,
+then the fresh-context review and the completion countersign. The steps below
+are the 0.2-era run flow, kept for repositories that still carry archived runs.
 
 After setup and validation:
 

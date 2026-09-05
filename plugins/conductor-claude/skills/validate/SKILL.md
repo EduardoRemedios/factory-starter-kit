@@ -18,7 +18,8 @@ Run the deterministic checks applicable to the current Factory state.
 7. Compare the immediate captures and report every difference, including harness-created local settings.
 8. Record the command and exit status. Name an evidence path only when the active run explicitly authorizes that exact path; otherwise report that evidence was not persisted.
 9. Report pass or halt with the failing reason; do not replace evidence with a narrative judgment.
-10. If `EXECUTION_CLOSEOUT.json` exists, validate it on every progress read and
+10. For a 0.3 run (`intent_pack.json` present) the validators are `./scripts/conductorctl contract-lint intent|execution|completion --run <RUN_ID>`; receipts and the postimage compare are produced only by `conductorctl receipts` and `conductorctl postimage`, never by hand.
+11. For a 0.2-era run, if `EXECUTION_CLOSEOUT.json` exists, validate it on every progress read and
    report any identity, pin, coverage, path, outcome or digest failure as blocking.
 
 ## Guardrails

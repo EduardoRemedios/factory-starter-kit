@@ -2,7 +2,7 @@
 
 > **Purpose:** Keep a compact, governed list of active cross-run pitfalls. This file is not a run diary.
 >
-> **Mandatory read rule:** Read `## Active Pitfalls (Mandatory)` before any Factory run, sprint execution, or brief drafting.
+> **Read rule:** Optional. The mandatory reads are `docs/PROJECT_STATE.md` and `docs/Conductor/INVARIANTS.md`; consult `## Active Pitfalls (Mandatory)` when drafting an Intent Pack for an area that has bitten before.
 >
 > **Run diary rule:** Session narratives belong in `docs/Conductor/runs/<RUN_ID>/RETRO.md` and are optional reading.
 

@@ -7,7 +7,7 @@
 Lock intent with a human, let the agent run, and accept nothing as done
 without a receipt. Three gates, deterministic validators, no choreography.
 
-[![Release](https://img.shields.io/badge/release-0.3.2--pilot-4f46e5)](#release-status)
+[![Release](https://img.shields.io/badge/release-0.3.3--pilot-4f46e5)](#release-status)
 [![Claude Code CLI](https://img.shields.io/badge/Claude_Code_CLI-pilot-D97757)](#install)
 [![Codex](https://img.shields.io/badge/Codex-packaged-111827?logo=openai&logoColor=white)](#install)
 [![License](https://img.shields.io/badge/license-Apache--2.0-0f766e)](LICENSE)
@@ -143,8 +143,8 @@ defer it. Details: `docs/adapters/bmad/BMAD_POLICY.md` and
 
 ## Release status
 
-Current pilot candidate: **Factory 0.3.2** on `main`, tag
-`conductor-v0.3.2-pilot`. The 0.2 line closed at `factory-lineage-v0.2.5`.
+Current pilot candidate: **Factory 0.3.3** on `main`, tag
+`conductor-v0.3.3-pilot`. The 0.2 line closed at `factory-lineage-v0.2.5`.
 Repositories with a 0.2-era install migrate
 through `/conductor:update`, which plans the path move, refreshes untouched
 seeds, composes a customised `AGENTS.md`, and writes a rollback receipt.
