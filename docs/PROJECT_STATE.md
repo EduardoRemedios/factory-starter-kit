@@ -2,7 +2,7 @@
 
 ## Local 0.3.5 release candidate
 
-Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are locally qualified. Reusable source and generated packages are separated from private qualification evidence. Publication is pending; existing 0.3.4 pilot identities remain intact. See docs/onboarding/CONDUCTOR_035_SUPPORTED_ROUTES.md for scope and limitations.
+Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are locally qualified. Reusable source and generated packages are separated from private qualification evidence. Publication is pending; existing 0.3.4 pilot identities remain intact. See docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md for scope and limitations.
 
 > **Purpose:** Single source of truth for the current starter-kit state.
 >

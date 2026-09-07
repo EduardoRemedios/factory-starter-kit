@@ -94,8 +94,8 @@ upstream product-context tool.
 
 **Codex desktop app:** the repository ships `.agents/plugins/marketplace.json`;
 select the `factory-starter-kit` source in the Plugins Directory. Install
-`conductor` for core governance, or `conductor-bmad` for the guarded BMAD route
-in this 0.3.5 candidate. See [supported routes](docs/onboarding/CONDUCTOR_035_SUPPORTED_ROUTES.md).
+`conductor` for core governance and add `conductor-bmad` for the guarded BMAD route
+in this 0.3.5 candidate. See [supported routes](docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md).
 **Cursor:** reads the adopted `AGENTS.md`; separate qualification remains pending.
 
 Then, inside the repository: `/conductor:doctor` tells you the one next legal
@@ -158,7 +158,7 @@ local inventories or human approval transcripts.
 Codex audit reports guarded-route repository prerequisites, not active host
 enforcement. Native Codex BMAD invocation and Codex bootstrap remain unsupported.
 Claude uses its native Skill/hooks route. Cursor and organization rollout remain
-separate. See [supported routes and limits](docs/onboarding/CONDUCTOR_035_SUPPORTED_ROUTES.md).
+separate. See [supported routes and limits](docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md).
 
 Repositories with a 0.2-era install still migrate through `/conductor:update`.
 Existing plugin names, dependency and reviewed-plan adoption remain compatible.
