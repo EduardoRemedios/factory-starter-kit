@@ -83,6 +83,7 @@ def make_marketplace(base: Path) -> tuple[Path, Path, Path]:
     factory = marketplace / "plugins/conductor"
     companion = marketplace / "plugins/companion-fixture"
     shutil.copytree(CONDUCTOR_PACKAGE, factory)
+    package_version = json.loads((factory / ".claude-plugin/plugin.json").read_text())["version"]
     write(
         companion / ".claude-plugin/plugin.json",
         json.dumps(
@@ -91,7 +92,7 @@ def make_marketplace(base: Path) -> tuple[Path, Path, Path]:
                 "version": "1.0.0",
                 "description": "Adapter-neutral composition fixture.",
                 "author": {"name": "Factory Test"},
-                "dependencies": [{"name": "conductor", "version": "=0.3.4"}],
+                "dependencies": [{"name": "conductor", "version": f"={package_version}"}],
             },
             indent=2,
         )
@@ -113,7 +114,7 @@ def make_marketplace(base: Path) -> tuple[Path, Path, Path]:
                     {
                         "name": "conductor",
                         "source": "./plugins/conductor",
-                        "version": "0.3.4",
+                        "version": package_version,
                     },
                     {
                         "name": "companion-fixture",
@@ -144,7 +145,7 @@ def make_marketplace(base: Path) -> tuple[Path, Path, Path]:
         ],
         check=True,
     )
-    for tag in ("factory--v0.3.4", "companion-fixture--v1.0.0"):
+    for tag in (f"factory--v{package_version}", "companion-fixture--v1.0.0"):
         subprocess.run(["git", "-C", str(marketplace), "tag", tag], check=True)
     return marketplace, factory, companion
 
@@ -161,13 +162,14 @@ class FactoryPluginCompositionTests(unittest.TestCase):
         self.temp.cleanup()
 
     def test_cp01_exact_dependency_and_local_release_tag(self):
+        package_version = json.loads((self.factory / ".claude-plugin/plugin.json").read_text())["version"]
         manifest = json.loads(
             (self.companion / ".claude-plugin/plugin.json").read_text(
                 encoding="utf-8"
             )
         )
         self.assertEqual(
-            [{"name": "conductor", "version": "=0.3.4"}],
+            [{"name": "conductor", "version": f"={package_version}"}],
             manifest["dependencies"],
         )
         tags = subprocess.run(
@@ -176,7 +178,7 @@ class FactoryPluginCompositionTests(unittest.TestCase):
             capture_output=True,
             text=True,
         ).stdout.splitlines()
-        self.assertIn("factory--v0.3.4", tags)
+        self.assertIn(f"factory--v{package_version}", tags)
         self.assertEqual(
             {"outcome": "pass", "dependency_resolved": True, "enabled": True},
             dependency_result(conductor_version="0.3.4", enabled=True),

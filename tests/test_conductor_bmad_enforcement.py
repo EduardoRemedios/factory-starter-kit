@@ -1,4 +1,5 @@
 import tempfile
+import importlib.util
 import json
 import os
 import shlex
@@ -63,6 +64,81 @@ def packaged_pretooluse_command(package_root=CLAUDE_PACKAGE):
 
 
 class FactoryBmadEnforcementTests(unittest.TestCase):
+    def loader(self):
+        spec = importlib.util.spec_from_file_location("bmad_loader_test", REPO_ROOT / "plugin-src/conductor-bmad/runtime/conductor_bmad_mcp.py")
+        module = importlib.util.module_from_spec(spec)
+        with mock.patch.dict(sys.modules, {"conductor_bmad_policy": runtime.policy}):
+            spec.loader.exec_module(module)
+        return module
+
+    def test_guarded_loader_checks_each_child_without_parent_authority(self):
+        root, loader = self.root(), self.loader()
+        before = runtime.tree_inventory(root)
+        allowed = loader.load_workflow({"root": str(root), "name": "bmad-help"})
+        self.assertEqual("LOADED", allowed["state"])
+        self.assertEqual(runtime.digest_file(root / ".claude/skills/bmad-help/SKILL.md"), allowed["skill_sha256"])
+        self.assertIn("nested BMAD", allowed["route_constraint"])
+        for name in ("bmad-dev-story", "bmad-future-unknown"):
+            denied = loader.load_workflow({"root": str(root), "name": name})
+            self.assertEqual("BLOCKED", denied["state"])
+            self.assertEqual("CONDUCTOR_BMAD_WORKFLOW_PROHIBITED", denied["reason_code"])
+            self.assertNotIn("instructions", denied)
+        self.assertEqual(before, runtime.tree_inventory(root))
+
+    def test_guarded_loader_rejects_malformed_arguments(self):
+        root, loader = self.root(), self.loader()
+        for args in (None, [], {}, {"root": str(root), "name": "../bmad-help"},
+                     {"root": ".", "name": "bmad-help"},
+                     {"root": str(root), "name": "bmad-help", "parent_allowed": True}):
+            self.assertEqual("CONDUCTOR_BMAD_LOADER_INPUT_INVALID", loader.load_workflow(args)["reason_code"])
+
+    def test_guarded_loader_rechecks_solution_integrity_and_overrides(self):
+        for name in ("bmad-ux", "bmad-architecture", "bmad-spec"):
+            root, profile = self.exact_profile(name)
+            loader = self.loader()
+            with profile:
+                self.assertEqual("LOADED", loader.load_workflow({"root": str(root), "name": name})["state"])
+                (root / "_bmad/custom/config.user.toml").write_text('authority = "delivery"\n')
+                self.assertEqual("CONDUCTOR_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE", loader.load_workflow({"root": str(root), "name": name})["reason_code"])
+                (root / "_bmad/custom/config.user.toml").write_text("# inert\n")
+                (root / ".claude/skills" / name / "SKILL.md").write_text("changed\n")
+                self.assertEqual("CONDUCTOR_BMAD_SOLUTION_PROFILE_DIGEST_MISMATCH", loader.load_workflow({"root": str(root), "name": name})["reason_code"])
+
+    def test_guarded_loader_rejects_symlink_and_incomplete_inventory(self):
+        root, loader = self.root(), self.loader()
+        skill = root / ".claude/skills/bmad-help/SKILL.md"
+        skill.unlink()
+        skill.symlink_to(root / ".claude/skills/bmad-dev-story/SKILL.md")
+        self.assertEqual("BLOCKED", loader.load_workflow({"root": str(root), "name": "bmad-help"})["state"])
+        skill.unlink()
+        self.assertEqual("BLOCKED", loader.load_workflow({"root": str(root), "name": "bmad-product-brief"})["state"])
+
+    def test_packaged_mcp_stdio_lifecycle_and_policy_denial(self):
+        root = self.root()
+        requests = [
+            {"jsonrpc": "2.0", "id": 0, "method": "tools/list"},
+            {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-06-18", "capabilities": {}, "clientInfo": {"name": "test", "version": "1"}}},
+            {"jsonrpc": "2.0", "method": "notifications/initialized"},
+            {"jsonrpc": "2.0", "id": 2, "method": "tools/list"},
+            {"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "load_workflow", "arguments": {"root": str(root), "name": "bmad-help"}}},
+            {"jsonrpc": "2.0", "id": 4, "method": "tools/call", "params": {"name": "load_workflow", "arguments": {"root": str(root), "name": "bmad-dev-story"}}},
+        ]
+        package = REPO_ROOT / "plugins/conductor-bmad"
+        config = json.loads((package / ".mcp.json").read_text())["mcpServers"]["conductor-bmad"]
+        self.assertEqual("python3", config["command"])
+        command = [str(REPO_ROOT / "scripts/conductor-python"), *config["args"]]
+        malformed = "[" * 1500 + "0" + "]" * 1500 + "\n"
+        run = subprocess.run(command, cwd=package / config["cwd"], input=malformed + "\n".join(json.dumps(value) for value in requests) + "\n", capture_output=True, text=True, timeout=30)
+        self.assertEqual(0, run.returncode, run.stderr)
+        replies = [json.loads(line) for line in run.stdout.splitlines()]
+        self.assertEqual(-32700, replies.pop(0)["error"]["code"])
+        self.assertEqual(5, len(replies))
+        self.assertIn("error", replies[0])
+        self.assertEqual("load_workflow", replies[2]["result"]["tools"][0]["name"])
+        self.assertFalse(replies[3]["result"]["isError"])
+        self.assertTrue(replies[4]["result"]["isError"])
+        self.assertNotIn("instructions", json.loads(replies[4]["result"]["content"][0]["text"]))
+
     def root(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
@@ -106,10 +182,47 @@ class FactoryBmadEnforcementTests(unittest.TestCase):
             verdict = runtime.policy_classify(name)
             self.assertEqual("ALLOWED_DISCOVERY_AUTHORING", verdict["classification"], name)
             self.assertTrue(verdict["allowed"], name)
+
         for name in ("bmad-ux", "bmad-architecture", "bmad-spec"):
             verdict = runtime.policy_classify(name)
-            self.assertEqual("ALLOWED_SOLUTION_CONTEXT_AUTHORING", verdict["classification"], name)
+            self.assertEqual("ALLOWED_SOLUTION_CONTEXT_AUTHORING", verdict["classification"])
             self.assertTrue(verdict["allowed"], name)
+
+    def test_codex_readiness_is_route_scoped_and_bootstrap_stays_unsupported(self):
+        root = self.root()
+        before = runtime.tree_inventory(root)
+        claude = runtime.module_audit(root, "claude")
+        codex = runtime.module_audit(root, "codex")
+        self.assertEqual("READY", codex["state"])
+        self.assertEqual("guarded-mcp", codex["invocation_route"])
+        self.assertFalse(codex["host_enforcement_verified"])
+        self.assertEqual(claude["coverage_sha256"], codex["coverage_sha256"])
+        self.assertEqual("BLOCKED", runtime.module_audit(root, "codex", "native")["state"])
+        self.assertEqual("BLOCKED", runtime.module_audit(root, "claude", "guarded-mcp")["state"])
+        self.assertEqual("PLAN_READY", runtime.intake(root, "codex", None)["state"])
+        for approval in (None, "invented-plan-id"):
+            self.assertEqual("BLOCKED", runtime.bootstrap(root, "codex", approval)["state"])
+        self.assertEqual(before, runtime.tree_inventory(root))
+        skill = root / ".claude/skills/bmad-help/SKILL.md"
+        skill.unlink()
+        skill.symlink_to(root / ".claude/skills/bmad-dev-story/SKILL.md")
+        self.assertEqual("BLOCKED", runtime.module_audit(root, "codex")["state"])
+
+    def test_codex_intake_keeps_shared_claude_inventory_record(self):
+        root = self.root()
+        preview = runtime.intake(root, "claude", None)
+        self.assertEqual("APPLIED", runtime.intake(root, "claude", preview["plan"]["plan_id"])["state"])
+        before = runtime.tree_inventory(root)
+        self.assertEqual("READY", runtime.intake(root, "codex", None)["state"])
+        self.assertEqual(before, runtime.tree_inventory(root))
+
+    def test_codex_readiness_reports_solution_profile_denials(self):
+        root, profile = self.exact_profile("bmad-architecture")
+        with profile:
+            self.assertTrue(runtime.module_audit(root, "codex")["solution_authoring"]["bmad-architecture"]["allowed"])
+            (root / "_bmad/custom/config.user.toml").write_text('authority = "delivery"\n')
+            self.assertFalse(runtime.module_audit(root, "codex")["solution_authoring"]["bmad-architecture"]["allowed"])
+            self.assertEqual("BLOCKED", self.loader().load_workflow({"root": str(root), "name": "bmad-architecture"})["state"])
 
     def test_prohibited_and_unknown_default_deny(self):
         prohibited = runtime.policy_classify("bmad-create-architecture")

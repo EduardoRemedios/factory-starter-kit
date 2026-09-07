@@ -46,6 +46,21 @@ PROJECT_OWNED_SEEDS = {
     ),
 }
 
+# These are adopter integration points and optional legacy helpers, not the
+# Conductor validator/runtime. Existing implementations need explicit adoption
+# preservation rather than being replaced by the starter's generic examples.
+PROJECT_OWNED_INTEGRATIONS = {
+    Path(path) for path in (
+        "requirements.txt", "docs/onboarding/ONBOARDING_GUIDE.md",
+        "scripts/knowledge_lint.sh", "scripts/merge_preflight.sh",
+        "scripts/agent_loop_bridge_validate.py", "scripts/cartographer",
+        "scripts/mission_cursor_lint.sh", "scripts/mission_lint.sh",
+        "tests/fixtures/agent_loop_bridge/valid_handoff.json",
+        "tests/test_context_recall_repair.py", "tools/repo_cartographer/README.md",
+        "tools/repo_cartographer/__init__.py", "tools/repo_cartographer/run.py",
+    )
+}
+
 
 def load_manifest() -> dict[str, Any]:
     manifest = json.loads((SOURCE_ROOT / "manifest.json").read_text(encoding="utf-8"))
@@ -133,6 +148,9 @@ def payload_sources() -> list[tuple[Path, Path, str]]:
 
     recall_test = Path("tests/test_context_recall_repair.py")
     sources[recall_test] = (recall_test, "release-owned")
+    for path in PROJECT_OWNED_INTEGRATIONS:
+        source, _ = sources[path]
+        sources[path] = (source, "project-owned")
 
     missing = [source for source, _ in sources.values() if not (REPO_ROOT / source).is_file()]
     if missing:

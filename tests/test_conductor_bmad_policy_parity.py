@@ -53,7 +53,8 @@ class FactoryBmadPolicyParityTests(unittest.TestCase):
         )
         self.assertEqual(0, completed.returncode, completed.stderr)
         payload = json.loads(completed.stdout)
-        self.assertEqual(runtime.policy_lint(root, "claude")["reason_code"], payload["reason_code"])
+        self.assertEqual("repository", payload["harness"])
+        self.assertEqual(runtime.policy.inventory_audit(root, "repository")["reason_code"], payload["reason_code"])
 
     def test_seeded_project_lint_does_not_write_bytecode(self):
         root = self.root()

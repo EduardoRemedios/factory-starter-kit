@@ -97,10 +97,16 @@ def write_package(root: Path, platform: str, manifest: dict[str, Any]) -> None:
         shutil.copy2(source, root / "assets/project-adapter/contracts" / source.name)
     shutil.copy2(ADAPTER_CONTRACTS_ROOT / "lane_policy.json", root / "assets/project-adapter/lane_policy.json")
     if platform == "codex":
+        workflow = root / "skills/conductor-bmad-workflow"
+        workflow.mkdir()
+        shutil.copyfile(SOURCE_ROOT / "codex/workflow/SKILL.md", workflow / "SKILL.md")
+        shutil.copyfile(SOURCE_ROOT / "runtime/conductor_bmad_mcp.py", root / "scripts/conductor_bmad_mcp.py")
+        shutil.copyfile(SOURCE_ROOT / "codex/.mcp.json", root / ".mcp.json")
         plugin = {
             "name": manifest["name"], "version": manifest["version"],
             "description": manifest["description"], "author": manifest["author"],
-            "skills": "./skills/", "interface": {**manifest["interface"], "capabilities": []},
+            "skills": "./skills/", "mcpServers": "./.mcp.json",
+            "interface": {**manifest["interface"], "capabilities": []},
         }
         destination = root / ".codex-plugin/plugin.json"
     else:

@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.4"
+PLUGIN_VERSION = "0.3.5"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"
@@ -1150,6 +1150,7 @@ def evaluate_setup_plan(
     payload_root: Path,
     platform_name: str | None = None,
     python_version: tuple[int, ...] | None = None,
+    preserve_paths: tuple[str, ...] = (),
 ) -> dict[str, Any]:
     root = root.resolve()
     if mode not in {"greenfield", "brownfield"}:
@@ -1237,6 +1238,14 @@ def evaluate_setup_plan(
         } if installation_state else {}
         payload_version, raw_entries = load_payload(payload_root)
         entries = effective_payload_entries(raw_entries, harness=harness)
+        requested = set(preserve_paths)
+        preservable = {entry["path"] for entry in entries
+                       if entry["classification"] == "project-owned" and entry["path"] != "AGENTS.md"}
+        if requested and (mode != "brownfield" or not requested <= preservable):
+            raise ValueError("CONDUCTOR_PRESERVATION_PATH_INVALID")
+        for path in requested:
+            if not safe_target(root, path).is_file():
+                raise ValueError("CONDUCTOR_PRESERVATION_PATH_INVALID")
         planned_files: list[dict[str, str]] = []
         conflicts: list[str] = []
         migrated_claude = claude_migration_source(root, harness=harness, installed_files=installed_files)
@@ -1266,6 +1275,8 @@ def evaluate_setup_plan(
             elif not target.is_file():
                 action = "conflict"
                 conflicts.append(entry["path"])
+            elif entry["path"] in requested:
+                action = "preserve"
             elif file_sha256(target) == entry["sha256"]:
                 action = "no_change"
             elif (
@@ -1284,6 +1295,10 @@ def evaluate_setup_plan(
             }
             if composed_sha256:
                 planned["composed_sha256"] = composed_sha256
+            if action == "preserve":
+                planned["preserved_sha256"] = file_sha256(target)
+            if entry["path"] in requested:
+                planned["origin"] = "project"
             if action in {"compose", "migrate_bridge"} and migrated_sha256:
                 planned["migrated_from_sha256"] = migrated_sha256
             planned_files.append(planned)
@@ -1370,13 +1385,20 @@ def capture_snapshots(root: Path, paths: list[str]) -> dict[str, dict[str, Any]]
                 else None
             ),
             "mode": (target.stat().st_mode & 0o777) if target.is_file() else None,
+            "parent_directories": {
+                parent.relative_to(root).as_posix(): parent.stat().st_mode & 0o777
+                for parent in target.parents
+                if parent != root and parent.is_relative_to(root) and parent.is_dir()
+            },
         }
     return snapshots
 
 
-def remove_empty_parents(root: Path, path: Path) -> None:
+def remove_empty_parents(root: Path, path: Path, retained: set[str] | None = None) -> None:
     parent = path.parent
     while parent != root and parent.is_relative_to(root):
+        if retained and parent.relative_to(root).as_posix() in retained:
+            break
         try:
             parent.rmdir()
         except OSError:
@@ -1385,6 +1407,17 @@ def remove_empty_parents(root: Path, path: Path) -> None:
 
 
 def restore_snapshots(root: Path, snapshots: dict[str, dict[str, Any]]) -> None:
+    directories = {
+        path: mode for snapshot in snapshots.values()
+        for path, mode in snapshot.get("parent_directories", {}).items()
+    }
+    for relative in sorted(directories, key=lambda path: len(Path(path).parts)):
+        target = safe_target(root, relative)
+        if not target.exists():
+            target.mkdir()
+            target.chmod(directories[relative])
+        elif not target.is_dir():
+            raise RuntimeError(f"cannot restore directory: {relative}")
     for relative in sorted(snapshots, reverse=True):
         target = safe_target(root, relative)
         snapshot = snapshots[relative]
@@ -1398,7 +1431,7 @@ def restore_snapshots(root: Path, snapshots: dict[str, dict[str, Any]]) -> None:
             if not target.is_file():
                 raise RuntimeError(f"cannot restore non-file path: {relative}")
             target.unlink()
-            remove_empty_parents(root, target)
+            remove_empty_parents(root, target, set(directories))
 
 
 def apply_changes(
@@ -1436,7 +1469,10 @@ def managed_files_from_plan(
             continue
         if item["action"] == "preserve" and item["path"] in previous:
             prior = previous[item["path"]]
-            if prior.get("ownership_class") == item["classification"]:
+            if item.get("origin") == "project" or prior.get("origin") == "project":
+                files.append({**prior, "origin": "project",
+                              "expected_digest": file_sha256(root / item["path"])})
+            elif prior.get("ownership_class") == item["classification"]:
                 files.append(prior)
             else:
                 files.append(
@@ -1445,6 +1481,7 @@ def managed_files_from_plan(
                         "ownership_class": item["classification"],
                         "expected_digest": file_sha256(root / item["path"]),
                         "source_version": plan["plugin_version"],
+                        "origin": "project",
                     }
                 )
             continue
@@ -1461,6 +1498,7 @@ def managed_files_from_plan(
                 "ownership_class": item["classification"],
                 "expected_digest": digest,
                 "source_version": plan["plugin_version"],
+                **({"origin": "project"} if item.get("origin") == "project" else {}),
             }
         )
     return sorted(files, key=lambda entry: entry["path"])
@@ -1505,6 +1543,8 @@ def validate_plan_preconditions(
         ):
             raise ValueError("CONDUCTOR_PLAN_STALE")
         if action == "preserve" and not target.is_file():
+            raise ValueError("CONDUCTOR_PLAN_STALE")
+        if action == "preserve" and item.get("preserved_sha256") != file_sha256(target):
             raise ValueError("CONDUCTOR_PLAN_STALE")
         if action == "compose":
             # Composed from an existing AGENTS.md, or from a project CLAUDE.md being migrated.
@@ -1649,8 +1689,13 @@ def apply_setup_plan(
             entry["path"]: entry["expected_digest"] for entry in managed_files
         },
         "outcome": "APPLIED",
-        "recovery_status": "AVAILABLE" if plan["mode"] == "greenfield" else "NOT_REQUIRED",
+        "recovery_status": "AVAILABLE",
     }
+    if plan["mode"] == "brownfield":
+        transaction_receipt["rollback_snapshots"] = capture_snapshots(
+            root, [change["path"] for change in changes]
+            + [INSTALLATION_STATE_PATH, transaction_path],
+        )
     installation_state = {
         "schema_version": 1,
         "conductor_version": plan["plugin_version"],
@@ -1833,6 +1878,8 @@ def evaluate_update_plan(
                     action = "create"
                 elif not target_path.is_file():
                     action = "conflict"
+                elif prior and prior.get("origin") == "project":
+                    action = "preserve"
                 elif file_sha256(target_path) == entry["sha256"]:
                     action = "no_change"
                 elif prior and file_sha256(target_path) == prior.get("expected_digest"):
@@ -1868,6 +1915,8 @@ def evaluate_update_plan(
             }
             if composed_sha256:
                 planned["composed_sha256"] = composed_sha256
+            if action == "preserve":
+                planned["preserved_sha256"] = file_sha256(target_path)
             planned_files.append(planned)
         for path, prior in sorted(installed.items()):
             if path in target:
@@ -1890,6 +1939,8 @@ def evaluate_update_plan(
                     "classification": classification,
                     "action": action,
                     "source_sha256": "",
+                    **({"preserved_sha256": file_sha256(target_path)}
+                       if action == "preserve" and target_path.is_file() else {}),
                 }
             )
     except (KeyError, OSError, json.JSONDecodeError, ValueError) as error:
@@ -2125,7 +2176,7 @@ def apply_rollback(root: Path, *, approved: bool) -> dict[str, Any]:
                 approved=approved,
             )
         if (
-            transaction.get("operation") != "update"
+            transaction.get("operation") not in {"update", "brownfield"}
             or transaction.get("target_version")
             != installation_state["conductor_version"]
             or transaction.get("recovery_status") != "AVAILABLE"
@@ -2143,16 +2194,24 @@ def apply_rollback(root: Path, *, approved: bool) -> dict[str, Any]:
         snapshots = transaction["rollback_snapshots"]
         if not isinstance(snapshots, dict):
             raise ValueError("CONDUCTOR_ROLLBACK_EVIDENCE_MISMATCH")
+        if transaction["operation"] == "brownfield":
+            # Adoption restores existing instructions as well as removing newly
+            # created files. Refuse recovery if those outputs changed afterward.
+            for relative in snapshots.keys() - {transaction_path}:
+                target = safe_target(root, relative)
+                if not target.is_file() or file_sha256(target) != transaction["post_digests"].get(relative):
+                    raise ValueError("CONDUCTOR_ROLLBACK_EVIDENCE_MISMATCH")
         current = capture_snapshots(root, list(snapshots) + [transaction_path])
         try:
             restore_snapshots(root, snapshots)
-            transaction["recovery_status"] = "ROLLED_BACK"
-            transaction["recovery_outcome"] = "APPLIED"
-            atomic_write(
-                transaction_target,
-                (json.dumps(transaction, indent=2, sort_keys=True) + "\n").encode(),
-                0o600,
-            )
+            if transaction["operation"] == "update":
+                transaction["recovery_status"] = "ROLLED_BACK"
+                transaction["recovery_outcome"] = "APPLIED"
+                atomic_write(
+                    transaction_target,
+                    (json.dumps(transaction, indent=2, sort_keys=True) + "\n").encode(),
+                    0o600,
+                )
         except Exception:
             restore_snapshots(root, current)
             raise
@@ -2374,6 +2433,8 @@ def main() -> int:
         )
         setup_parser.add_argument("--apply", action="store_true")
         setup_parser.add_argument("--approve-plan")
+        setup_parser.add_argument("--preserve-path", action="append", default=[],
+                                  help="brownfield only: preserve an existing project-owned payload path (repeatable)")
     update_parser = subparsers.add_parser("update")
     update_parser.add_argument(
         "--harness", required=True, choices=sorted(SUPPORTED_HARNESSES)
@@ -2402,6 +2463,7 @@ def main() -> int:
                 mode=args.command,
                 harness=args.harness,
                 payload_root=payload_root,
+                preserve_paths=tuple(args.preserve_path),
             )
             if args.apply:
                 output = apply_setup_plan(

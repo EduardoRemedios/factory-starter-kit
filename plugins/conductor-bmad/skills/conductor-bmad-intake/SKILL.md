@@ -5,6 +5,11 @@ description: Preview or seed the Factory BMAD policy, embedded-checklist brief t
 
 # Factory BMAD Intake
 
+Use the actual harness identity. Codex intake supports an existing reviewed
+Core/BMM installation and the guarded MCP route. It seeds repository evidence
+and policy only; it does not activate or prove a host guard. Do not use Claude's
+audit to claim Codex readiness. Native Codex BMAD invocation remains blocked.
+
 Preview only:
 
 ```bash

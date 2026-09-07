@@ -235,7 +235,8 @@ def validate(root: Path, run_id: str) -> dict[str, object]:
     policy_module = load_policy()
     if policy_module is None:
         return result("FAIL", "CONDUCTOR_BMAD_POLICY_MISSING", evidence)
-    lint = policy_module.policy_lint(root, "claude")
+    # Snapshot preflight validates repository evidence, not host hook trust.
+    lint = policy_module.inventory_audit(root, "repository")
     if lint["state"] != "READY":
         return result("FAIL", lint["reason_code"], evidence)
     audit_path = root / "docs/adapters/bmad/CAPABILITY_AUDIT.json"
@@ -252,7 +253,7 @@ def validate(root: Path, run_id: str) -> dict[str, object]:
         return result("FAIL", "CONDUCTOR_BMAD_CAPABILITY_AUDIT_INVALID", evidence)
     if not isinstance(recorded_audit, dict) or recorded_audit.get("policy_version") != policy_module.POLICY_VERSION:
         return result("FAIL", "CONDUCTOR_BMAD_POLICY_VERSION_DRIFT", evidence)
-    if recorded_audit.get("status") != "READY" or recorded_audit.get("reason_code") != lint["reason_code"]:
+    if recorded_audit.get("status") != "READY" or recorded_audit.get("reason_code") != "CONDUCTOR_BMAD_POLICY_OK":
         return result("FAIL", "CONDUCTOR_BMAD_CAPABILITY_AUDIT_INVALID", evidence)
     if recorded_audit.get("coverage_sha256") != lint["coverage_sha256"]:
         return result("FAIL", "CONDUCTOR_BMAD_CAPABILITY_AUDIT_DRIFT", evidence)

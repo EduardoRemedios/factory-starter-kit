@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "conductor",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "files": [
     {
       "path": ".agents/skills/conductor-execution-closeout/SKILL.md",
@@ -410,22 +410,22 @@
     },
     {
       "path": "docs/onboarding/ONBOARDING_GUIDE.md",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "f13fedbed80afb93f2171cab5f029da3db177bf8f733ea45a3a317b77a931f21"
     },
     {
       "path": "requirements.txt",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "414ac2791ab5b1e6b3e90484fa384f4eb1ac3fa2bb163bdb0ea4a32914b91120"
     },
     {
       "path": "scripts/agent_loop_bridge_validate.py",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "17a39fa02d8b383bd723e3c09683eea2c39b9fcebbdc64b0b9bfd19a86daf42e"
     },
     {
       "path": "scripts/cartographer",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "04ead5e618c8a6871a747d0f5e2bd1273e039057bd6b9dc078c691303704e0c0"
     },
     {
@@ -505,22 +505,22 @@
     },
     {
       "path": "scripts/knowledge_lint.sh",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "6923c333a9d4d65abda5192e148cacd64d9dd4874fdd64ac75131b66379ec8af"
     },
     {
       "path": "scripts/merge_preflight.sh",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "8a0b188446b6b13755c1a3a249580a3d1c02a8c163dbe8564393facf82001118"
     },
     {
       "path": "scripts/mission_cursor_lint.sh",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "ef1c6897414e07565d9d37cf8a65dbabe75dd5fe39f3a33a94f08a0b9efb2646"
     },
     {
       "path": "scripts/mission_lint.sh",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "6b4fecd80525418e59645901e4c64aee2ce19dcd73bf8fa0e21ec2f9a7c83ca4"
     },
     {
@@ -530,27 +530,27 @@
     },
     {
       "path": "tests/fixtures/agent_loop_bridge/valid_handoff.json",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "e517a9f28691e6fb406ec058a8dd8ddd42d9745e31fdd3a1a037c5a913f2e304"
     },
     {
       "path": "tests/test_context_recall_repair.py",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "733f86ca0ca600b355da7d9266b1d8de208ac21f271164c17aba00a0d9eead64"
     },
     {
       "path": "tools/repo_cartographer/README.md",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "d2446e58782b5433ac32a044f1a33b27a32abec8a17240f2d4a17c7bce29dcd1"
     },
     {
       "path": "tools/repo_cartographer/__init__.py",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "5cba0efbed98485936580733baf2632f24181124a9fad0f6460c9e5b0b3d5364"
     },
     {
       "path": "tools/repo_cartographer/run.py",
-      "classification": "release-owned",
+      "classification": "project-owned",
       "sha256": "bb00a488ae061d6fb69cacb9cf974d58e5e6a4f2ef37bbf25beb93ef45acf39f"
     }
   ]

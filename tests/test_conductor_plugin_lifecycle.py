@@ -80,6 +80,113 @@ def update_plan(root: Path, payload: Path):
 
 
 class FactoryPluginLifecycleTests(unittest.TestCase):
+    def test_brownfield_rollback_restores_instruction_migration_and_refuses_drift(self):
+        write(self.root / "AGENTS.md", "# Project\n\nKeep project rules.\n")
+        write(self.root / "CLAUDE.md", "# Claude\n\nKeep harness rules.\n")
+        (self.root / "CLAUDE.md").chmod(0o640)
+        (self.root / "scripts").mkdir()
+        (self.root / "scripts").chmod(0o700)
+        before = inventory(self.root)
+        payload = REPO_ROOT / "plugins/conductor-claude/payload"
+        plan = RUNTIME.evaluate_setup_plan(self.root, mode="brownfield", harness="claude",
+            payload_root=payload, platform_name="darwin")
+        applied = RUNTIME.apply_setup_plan(self.root, plan=plan,
+            approved_plan_id=plan["plan_id"], payload_root=payload)
+        self.assertEqual("CONDUCTOR_SETUP_APPLIED", applied["reason_code"])
+        changed = self.root / "scripts/conductorctl"
+        original = changed.read_bytes()
+        changed.write_bytes(original + b"\n# subsequent user edit\n")
+        drifted = inventory(self.root)
+        blocked = RUNTIME.apply_rollback(self.root, approved=True)
+        self.assertEqual("CONDUCTOR_ROLLBACK_EVIDENCE_MISMATCH", blocked["reason_code"])
+        self.assertEqual(drifted, inventory(self.root))
+        changed.write_bytes(original)
+        self.assertEqual("CONDUCTOR_ROLLBACK_APPLIED",
+                         RUNTIME.apply_rollback(self.root, approved=True)["reason_code"])
+        self.assertEqual(before, inventory(self.root))
+        self.assertEqual(0o640, (self.root / "CLAUDE.md").stat().st_mode & 0o777)
+        self.assertTrue((self.root / "scripts").is_dir())
+        self.assertEqual(0o700, (self.root / "scripts").stat().st_mode & 0o777)
+
+    def test_reclassified_custom_integration_survives_consecutive_updates(self):
+        path = "scripts/merge_preflight.sh"
+        initial = make_payload(self.base, "0.3.4", {path: ("published gate\n", "release-owned")})
+        plan = setup_plan(self.root, initial)
+        applied = RUNTIME.apply_setup_plan(self.root, plan=plan,
+            approved_plan_id=plan["plan_id"], payload_root=initial)
+        self.assertEqual("APPLIED", applied["state"])
+        write(self.root / path, "custom project gate\n")
+        (self.root / path).chmod(0o700)
+        for version in ("0.3.5", "0.3.6"):
+            payload = make_payload(self.base, version, {path: ("new seed\n", "project-owned")})
+            plan = update_plan(self.root, payload)
+            self.assertEqual("preserve", plan["planned_files"][0]["action"])
+            applied = RUNTIME.apply_update_plan(self.root, plan=plan,
+                approved_plan_id=plan["plan_id"], payload_root=payload)
+            self.assertEqual("APPLIED", applied["state"])
+            self.assertEqual("custom project gate\n", (self.root / path).read_text())
+            self.assertEqual(0o700, (self.root / path).stat().st_mode & 0o777)
+
+    def test_explicit_project_preservation_survives_update_and_rollback(self):
+        custom = self.root / "docs/ROADMAP.md"
+        write(custom, "Product roadmap, not the generic seed.\n")
+        custom.chmod(0o640)
+        original = custom.read_bytes()
+        payload = make_payload(self.base, "0.3.5", {
+            "docs/ROADMAP.md": ("Generic roadmap\n", "project-owned"),
+            "core.txt": ("version one\n", "release-owned"),
+        })
+        blocked = setup_plan(self.root, payload)
+        self.assertEqual("CONDUCTOR_CONFLICT_USER_OWNED", blocked["reason_code"])
+        plan = RUNTIME.evaluate_setup_plan(
+            self.root, mode="brownfield", harness="codex", payload_root=payload,
+            preserve_paths=("docs/ROADMAP.md",), platform_name="darwin")
+        self.assertEqual("PLAN_READY", plan["state"])
+        applied = RUNTIME.apply_setup_plan(self.root, plan=plan,
+            approved_plan_id=plan["plan_id"], payload_root=payload)
+        self.assertEqual("CONDUCTOR_SETUP_APPLIED", applied["reason_code"])
+        next_payload = make_payload(self.base, "0.3.6", {
+            "docs/ROADMAP.md": ("A different generic roadmap\n", "project-owned"),
+            "core.txt": ("version two\n", "release-owned"),
+        })
+        update = update_plan(self.root, next_payload)
+        self.assertEqual("preserve", next(x for x in update["planned_files"]
+                         if x["path"] == "docs/ROADMAP.md")["action"])
+        result = RUNTIME.apply_update_plan(self.root, plan=update,
+            approved_plan_id=update["plan_id"], payload_root=next_payload)
+        self.assertEqual("CONDUCTOR_UPDATE_APPLIED", result["reason_code"])
+        self.assertEqual(original, custom.read_bytes())
+        self.assertEqual(0o640, custom.stat().st_mode & 0o777)
+        self.assertEqual("CONDUCTOR_ROLLBACK_APPLIED",
+                         RUNTIME.apply_rollback(self.root, approved=True)["reason_code"])
+        self.assertEqual(original, custom.read_bytes())
+        self.assertEqual("version one\n", (self.root / "core.txt").read_text())
+
+    def test_preservation_cannot_exempt_core_or_unknown_paths_and_stale_plan(self):
+        payload = make_payload(self.base, "0.3.5", {
+            "project.md": ("seed\n", "project-owned"),
+            "core.txt": ("core\n", "release-owned"),
+        })
+        write(self.root / "project.md", "custom\n")
+        for path in ("core.txt", "unknown", "../outside", "project.md/missing"):
+            with self.subTest(path=path):
+                result = RUNTIME.evaluate_setup_plan(self.root, mode="brownfield",
+                    harness="codex", payload_root=payload, preserve_paths=(path,),
+                    platform_name="darwin")
+                self.assertEqual("CONDUCTOR_PRESERVATION_PATH_INVALID", result["reason_code"])
+                self.assertEqual([], result["mutations"])
+        plan = RUNTIME.evaluate_setup_plan(self.root, mode="brownfield", harness="codex",
+            payload_root=payload, preserve_paths=("project.md",), platform_name="darwin")
+        write(self.root / "project.md", "changed after preview\n")
+        before = inventory(self.root)
+        result = RUNTIME.apply_setup_plan(self.root, plan=plan,
+            approved_plan_id=plan["plan_id"], payload_root=payload)
+        self.assertEqual("CONDUCTOR_PLAN_STALE", result["reason_code"])
+        self.assertEqual(before, inventory(self.root))
+        refreshed = RUNTIME.evaluate_setup_plan(self.root, mode="brownfield", harness="codex",
+            payload_root=payload, preserve_paths=("project.md",), platform_name="darwin")
+        self.assertNotEqual(plan["plan_id"], refreshed["plan_id"])
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.base = Path(self.temp.name)
@@ -373,7 +480,7 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         self.assertEqual("APPROVED", receipt["approval_state"])
         self.assertTrue(receipt["post_digests"])
         self.assertEqual("APPLIED", receipt["outcome"])
-        self.assertEqual("NOT_REQUIRED", receipt["recovery_status"])
+        self.assertEqual("AVAILABLE", receipt["recovery_status"])
         before = inventory(self.root)
         plan = setup_plan(self.root, self.v1)
         output = RUNTIME.apply_setup_plan(
