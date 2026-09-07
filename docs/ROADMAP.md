@@ -1,5 +1,9 @@
 # ROADMAP.md - Development Roadmap
 
+## 0.3.5 release preparation
+
+Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are locally qualified. Reusable source and generated packages are separated from private qualification evidence. Publication is pending; existing 0.3.4 pilot identities remain intact. See docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md for scope and limitations.
+
 > **Purpose:** Track starter-kit process work across the 0.2 line and the 0.3 line.
 >
 > **Last updated:** 2026-09-05

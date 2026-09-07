@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.4"
+PLUGIN_VERSION = "0.3.5"
 BMAD_VERSION = "6.10.0"
 SNAPSHOT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{2,63}")
 RESERVED_SNAPSHOT_IDS = frozenset({"latest", "receipts", "install-receipts"})
@@ -291,8 +291,8 @@ def doctor(root: Path, harness: str) -> dict[str, Any]:
     return result("NEITHER_GREENFIELD", "CONDUCTOR_BMAD_NEITHER_GREENFIELD", "run_factory_greenfield_preview", evidence=evidence)
 
 
-def module_audit(root: Path, harness: str) -> dict[str, Any]:
-    payload = capability_audit(root, harness)
+def module_audit(root: Path, harness: str, route: str | None = None) -> dict[str, Any]:
+    payload = capability_audit(root, harness, route)
     payload["classifications"] = payload["module_classifications"]
     if payload["state"] == "READY":
         payload["classifications"] = {
@@ -336,6 +336,8 @@ def canonical_workflow(value: str) -> str:
 
 def bootstrap_plan(root: Path, harness: str) -> dict[str, Any]:
     root = root.resolve()
+    if harness != "claude":
+        raise CompanionError("CONDUCTOR_BMAD_CODEX_BOOTSTRAP_UNSUPPORTED", "The pinned installer targets Claude Code. Use an existing reviewed Core/BMM installation for the Codex guarded MCP route.")
     state = doctor(root, harness)
     if state["state"] != "CONDUCTOR_ONLY":
         raise CompanionError("CONDUCTOR_BMAD_BOOTSTRAP_STATE_INVALID", state["state"])
@@ -668,7 +670,9 @@ def intake_generated(audit: dict[str, Any]) -> dict[Path, bytes]:
         "schema_version": 1,
         "policy_version": audit["policy_version"],
         "status": audit["state"],
-        "reason_code": audit["reason_code"],
+        # The retained record is repository policy coverage, shared by both hosts.
+        # Keep the existing wire identity; current invocation readiness is not persisted here.
+        "reason_code": "CONDUCTOR_BMAD_POLICY_OK",
         "installation_version": audit["installation_version"],
         "modules": audit["modules"],
         "module_classifications": audit["module_classifications"],
@@ -844,6 +848,8 @@ def parser() -> argparse.ArgumentParser:
     for name in ("doctor", "audit", "policy-lint"):
         command = sub.add_parser(name)
         command.add_argument("--harness", choices=("claude", "codex"), default="claude")
+        if name != "doctor":
+            command.add_argument("--route", choices=("native", "guarded-mcp"))
     sub.add_parser("hook")
     bootstrap_parser = sub.add_parser("bootstrap")
     bootstrap_parser.add_argument("--harness", choices=("claude", "codex"), default="claude")
@@ -879,9 +885,9 @@ def main() -> int:
         if args.command == "doctor":
             payload = doctor(root, args.harness)
         elif args.command == "audit":
-            payload = module_audit(root, args.harness)
+            payload = module_audit(root, args.harness, args.route)
         elif args.command == "policy-lint":
-            payload = policy_lint(root, args.harness)
+            payload = policy_lint(root, args.harness, args.route)
         elif args.command == "hook":
             try:
                 hook_input = json.load(sys.stdin)

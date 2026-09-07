@@ -5,6 +5,15 @@ description: Audit installed BMAD modules, commands, skills, agents, hooks, conf
 
 # Factory BMAD Audit
 
+Use the actual host identity. In Codex, resolve the plugin root and pass
+`--harness codex`; never substitute Claude to get a READY result. Codex defaults
+to the guarded MCP route. READY means repository prerequisites for that route,
+not verified host activation. Confirm the MCP tool is available and load every
+workflow through it. Inspect per-workflow `solution_authoring` verdicts; denied
+profiles remain denied. `--route native` stays BLOCKED.
+Claude READY proves inventory and policy coverage only; verify that the current
+plugin hooks are loaded and trusted before authoring.
+
 Run read-only:
 
 ```bash

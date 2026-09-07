@@ -996,7 +996,8 @@ def reconcile_brownfield(root: Path) -> dict[str, Any]:
     return {**core, "aggregate_sha256": digest_bytes(canonical(core))}
 
 
-def capability_audit(root: Path, harness: str) -> dict[str, Any]:
+def inventory_audit(root: Path, harness: str) -> dict[str, Any]:
+    """Check installed bytes and policy coverage, without asserting host enforcement."""
     root = root.resolve()
     layout = assess_bmad_layout(root)
     manifest, ambiguous = _manifest_path(root)
@@ -1069,8 +1070,42 @@ def capability_audit(root: Path, harness: str) -> dict[str, Any]:
         return result("BLOCKED", "CONDUCTOR_BMAD_CAPABILITY_UNRECOGNIZED", "review_or_remove_unrecognized_bmad_capabilities", **base)
     if missing:
         return result("BLOCKED", "CONDUCTOR_BMAD_CAPABILITY_INCOMPLETE", "repair_or_reinstall_supported_bmad_with_human_approval", **base)
+    return result("READY", "CONDUCTOR_BMAD_INVENTORY_OK", "qualify_harness_enforcement", **base)
+
+
+def capability_audit(root: Path, harness: str, route: str | None = None) -> dict[str, Any]:
+    audit = inventory_audit(root, harness)
+    if audit["state"] != "READY":
+        return audit
+    base = {key: value for key, value in audit.items() if key not in {"state", "reason_code", "next_action"}}
+    if harness == "codex" and route in (None, "guarded-mcp"):
+        # Readiness is scoped to this entry point; the host must actually expose it.
+        base.update({
+            "invocation_route": "guarded-mcp",
+            "readiness_scope": "repository_prerequisites_for_guarded_mcp",
+            "host_enforcement_verified": False,
+            "unsupported_routes": ["native-bmad", "raw-skill-read", "codex-bootstrap"],
+        })
+        if any(_regular_file(root, Path(".claude/skills") / name / "SKILL.md") is None
+               for name in SUPPORTED_BMAD_SKILLS):
+            return result("BLOCKED", "CONDUCTOR_BMAD_CAPABILITY_INCOMPLETE",
+                          "repair_or_reinstall_supported_bmad_with_human_approval", **base)
+        base["solution_authoring"] = {
+            name: solution_context_authorization(root, name)
+            for name in sorted(SOLUTION_CONTEXT_AUTHORING_WORKFLOWS)
+        }
+        return result("READY", "CONDUCTOR_BMAD_GUARDED_MCP_PREREQUISITES_OK",
+                      "verify_mcp_available_then_load_each_workflow_through_guard", **base)
+    # Native Codex BMAD invocation is not covered by the guarded MCP route.
+    if harness != "claude":
+        return result(
+            "BLOCKED", "CONDUCTOR_BMAD_HARNESS_ENFORCEMENT_UNQUALIFIED",
+            "qualify_native_invocation_guards_before_enabling_bmad", **base,
+        )
+    if route not in (None, "native"):
+        return result("BLOCKED", "CONDUCTOR_BMAD_ROUTE_UNSUPPORTED", "select_supported_harness_route", **base)
     return result("READY", "CONDUCTOR_BMAD_POLICY_OK", "preview_or_verify_project_intake", **base)
 
 
-def policy_lint(root: Path, harness: str) -> dict[str, Any]:
-    return capability_audit(root, harness)
+def policy_lint(root: Path, harness: str, route: str | None = None) -> dict[str, Any]:
+    return capability_audit(root, harness, route)

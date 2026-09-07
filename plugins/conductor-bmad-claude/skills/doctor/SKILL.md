@@ -17,6 +17,12 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/conductor_bmad.py" --root . doctor --harn
 
 For Codex, resolve this plugin root and use `--harness codex`. Return the stable state, reason code, essential evidence, and exactly one next legal action.
 
+`BOTH_PRESENT` is installation inventory, not permission to invoke BMAD. Run
+the audit with the actual harness. Codex audit checks prerequisites for the
+guarded MCP route; it does not verify that the current host loaded the tool.
+Native BMAD invocation and Codex bootstrap remain unsupported. For Claude, verify current hooks are
+loaded and trusted before using BMAD; installed files alone do not prove this.
+
 ## Guardrails
 
 - Do not create, edit, install, delete, or initialize Git.

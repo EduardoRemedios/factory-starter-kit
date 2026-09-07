@@ -22,9 +22,11 @@ class FactoryBmadPluginBuildTests(unittest.TestCase):
         codex = json.loads((PACKAGES["codex"] / ".codex-plugin/plugin.json").read_text(encoding="utf-8"))
         claude = json.loads((PACKAGES["claude"] / ".claude-plugin/plugin.json").read_text(encoding="utf-8"))
         self.assertEqual("conductor-bmad", codex["name"])
-        self.assertEqual([{"name": "conductor", "version": "~0.3.4"}], claude["dependencies"])
-        self.assertEqual("0.3.4", claude["version"])
-        self.assertEqual({f"conductor-bmad-{name}" for name in expected}, {path.name for path in (PACKAGES["codex"] / "skills").iterdir()})
+        self.assertEqual([{"name": "conductor", "version": "~0.3.5"}], claude["dependencies"])
+        self.assertEqual("0.3.5", claude["version"])
+        self.assertEqual({f"conductor-bmad-{name}" for name in expected | {"workflow"}}, {path.name for path in (PACKAGES["codex"] / "skills").iterdir()})
+        self.assertEqual("./.mcp.json", codex["mcpServers"])
+        self.assertTrue((PACKAGES["codex"] / "scripts/conductor_bmad_mcp.py").is_file())
         self.assertEqual(expected, {path.name for path in (PACKAGES["claude"] / "skills").iterdir()})
 
     def test_claude_package_has_both_hook_paths_without_manifest_hook_field(self):

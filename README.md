@@ -93,10 +93,10 @@ Install `conductor@factory-starter-kit` alone if your repository has no
 upstream product-context tool.
 
 **Codex desktop app:** the repository ships `.agents/plugins/marketplace.json`;
-select the `factory-starter-kit` source in the Plugins Directory and install
-`conductor`. **Cursor:** nothing to install; Cursor reads the `AGENTS.md`
-managed block that adoption writes. Both are packaged but not yet part of the
-pilot's verified surface.
+select the `factory-starter-kit` source in the Plugins Directory. Install
+`conductor` for core governance and add `conductor-bmad` for the guarded BMAD route
+in this 0.3.5 candidate. See [supported routes](docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md).
+**Cursor:** reads the adopted `AGENTS.md`; separate qualification remains pending.
 
 Then, inside the repository: `/conductor:doctor` tells you the one next legal
 action. Adoption (`/conductor:greenfield` or `/conductor:brownfield`) previews
@@ -143,18 +143,25 @@ defer it. Details: `docs/adapters/bmad/BMAD_POLICY.md` and
 
 ## Release status
 
-Current pilot candidate: **Factory 0.3.4** on `main`, tag
-`conductor-v0.3.4-pilot`. The 0.2 line closed at `factory-lineage-v0.2.5`.
-Repositories with a 0.2-era install migrate
-through `/conductor:update`, which plans the path move, refreshes untouched
-seeds, composes a customised `AGENTS.md`, and writes a rollback receipt.
+This branch prepares **Factory 0.3.5**. The last published pilot remains
+`conductor-v0.3.4-pilot`; this candidate has not been released. Merging this
+branch into public `main` makes its new marketplace package bytes available,
+even before a release tag is created.
 
-Verified so far: the full test suite (contracts, golden Factory packs, gate
-lints, receipts, lanes, adoption and update lifecycles), the GitHub
-marketplace install path, and a rehearsal on a real brownfield repository with
-a nested BMAD installation through all three gates. Not yet verified: live
-hook behaviour in an interactive Claude Code session, the Codex desktop app,
-and Cursor.
+The candidate adds explicit brownfield project-file preservation, ownership
+retention through updates, exact rollback, and a guarded Codex BMAD MCP route.
+A local qualification passed 421 starter tests (3 skips) and bounded Codex and
+Claude BMAD-to-Factory rehearsals through human completion. Full local evidence
+is retained privately; this repository does not publish customer project data,
+local inventories or human approval transcripts.
+
+Codex audit reports guarded-route repository prerequisites, not active host
+enforcement. Native Codex BMAD invocation and Codex bootstrap remain unsupported.
+Claude uses its native Skill/hooks route. Cursor and organization rollout remain
+separate. See [supported routes and limits](docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md).
+
+Repositories with a 0.2-era install still migrate through `/conductor:update`.
+Existing plugin names, dependency and reviewed-plan adoption remain compatible.
 
 ## Repository map
 

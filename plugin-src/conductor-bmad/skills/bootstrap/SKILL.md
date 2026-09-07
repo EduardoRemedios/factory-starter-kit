@@ -5,6 +5,12 @@ description: Preview or execute the pinned BMAD 6.10.0 Core+BMM Claude Code inst
 
 # Factory BMAD Bootstrap
 
+Use the actual harness identity. The pinned installer targets Claude Code,
+so `--harness codex` reports CODEX_BOOTSTRAP_UNSUPPORTED before writes. The
+Codex guarded MCP route can use an existing reviewed shared installation. Do not pass
+Claude to bypass that verdict. A separately authorized Claude qualification
+may install the shared workspace, but does not qualify Codex authoring.
+
 Preview first:
 
 ```bash

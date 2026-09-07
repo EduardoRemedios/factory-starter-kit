@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.5 candidate (unpublished)
+
+Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are locally qualified. Reusable source and generated packages are separated from private qualification evidence. Publication is pending; existing 0.3.4 pilot identities remain intact. See docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md for scope and limitations.
+
 ## 2026-09-05
 
 - 0.3.4: the `validate` skill is trimmed from the 0.2-era anti-fabrication
