@@ -22,8 +22,11 @@ import yaml
 
 from conductor_contract_lint import (
     ContractLintError,
+    check_countersign,
+    load_intent,
     read_yaml,
     receipt_payload_digest,
+    safe_relative,
     safe_run_root,
     schema_errors,
     sha256_bytes,
@@ -32,6 +35,27 @@ from conductor_contract_lint import (
 MAX_STREAM_BYTES = 64 * 1024
 RUNNABLE = {"static", "command", "test", "no_touch"}
 TARGET_BASED = {"artifact", "fixture", "source_revalidation"}
+
+
+def _check_intent_sources(root: Path, run_root: Path, run_id: str) -> None:
+    intent_path = run_root / "intent_pack.json"
+    definitions_path = run_root / "verification_definitions.json"
+    if not intent_path.exists() and not intent_path.is_symlink() and not definitions_path.exists() and not definitions_path.is_symlink():
+        return  # Legacy manifest-only receipt runs have no source pin to conflict.
+    errors: list[str] = []
+    intent = load_intent(root, run_root, run_id, errors)
+    if intent is not None and definitions_path.exists() and not errors:
+        # Snapshot equality proves consistency, not approval of the current bytes.
+        safe_relative(run_root, "intent_pack.json", "intent_pack.json", errors)
+        kinds = ["INTENT_LOCK"]
+        if intent["execution_mode"] == "EXECUTION_ENABLED":
+            kinds.append("EXECUTION_GO")
+        for kind in kinds:
+            path = safe_relative(run_root, f"countersign/{kind}.json", kind, errors)
+            if path is not None and not check_countersign(run_root, kind, intent_path, root, errors):
+                errors.append(f"CONDUCTOR_RECEIPT_APPROVAL_REQUIRED: {kind} must approve the current intent before using frozen definitions")
+    if errors:
+        raise ContractLintError("CONDUCTOR_RECEIPT_INTENT_INVALID", "; ".join(errors))
 
 
 def utc_now() -> str:
@@ -105,6 +129,7 @@ def _target_check(root: Path, check: dict[str, Any]) -> tuple[list[str], int, by
 def run_receipts(root: Path, run_id: str, check_ids: list[str] | None = None, timeout_seconds: int = 900) -> dict[str, Any]:
     root = root.resolve()
     run_root = safe_run_root(root, run_id)
+    _check_intent_sources(root, run_root, run_id)
     manifest_path = run_root / "verification_manifest.yaml"
     errors: list[str] = []
     manifest = read_yaml(manifest_path, "verification_manifest.yaml", errors)
@@ -121,6 +146,7 @@ def run_receipts(root: Path, run_id: str, check_ids: list[str] | None = None, ti
         check = by_id.get(check_id)
         if check is None or (wanted is not None and check_id not in wanted):
             continue
+        _check_intent_sources(root, run_root, run_id)
         started = utc_now()
         if check["type"] in RUNNABLE:
             argv, code, out, err = _execute(root, check, timeout_seconds)
@@ -137,6 +163,7 @@ def run_receipts(root: Path, run_id: str, check_ids: list[str] | None = None, ti
         outcomes[check_id] = receipt["status"]
         if receipt["status"] == "FAIL" and check["halt_on_failure"]:
             break
+    _check_intent_sources(root, run_root, run_id)
     manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False, allow_unicode=True), encoding="utf-8")
     return {"run_id": run_id, "outcomes": outcomes, "manifest": manifest_path.relative_to(root).as_posix()}
 
@@ -147,6 +174,7 @@ def attest(root: Path, run_id: str, check_id: str, signer: str, note: str = "") 
     if not signer.strip():
         raise ContractLintError("CONDUCTOR_RECEIPT_SIGNER_REQUIRED", "attestation needs a signer")
     run_root = safe_run_root(root, run_id)
+    _check_intent_sources(root, run_root, run_id)
     manifest_path = run_root / "verification_manifest.yaml"
     errors: list[str] = []
     manifest = read_yaml(manifest_path, "verification_manifest.yaml", errors)

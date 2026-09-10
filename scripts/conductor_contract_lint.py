@@ -211,11 +211,47 @@ def load_intent(root: Path, run_root: Path, run_id: str, errors: list[str]) -> d
         target = safe_relative(root, source["ref"], f"sources[{source['kind']}]", errors)
         if target is None:
             continue
+        mutable = run_root / "verification_manifest.yaml"
+        if target == mutable or (target.is_file() and mutable.is_file() and target.samefile(mutable)):
+            errors.append("CONDUCTOR_CONTRACT_MUTABLE_MANIFEST_SOURCE: verification_manifest.yaml is runner-owned; pin verification_definitions.json instead")
         if not target.is_file():
             errors.append(f"CONDUCTOR_CONTRACT_SOURCE_MISSING: {source['ref']}")
         elif sha256_file(target) != source["sha256"]:
             errors.append(f"CONDUCTOR_CONTRACT_SOURCE_DIGEST_MISMATCH: {source['ref']}")
+    check_verification_definitions(root, run_root, intent, errors)
     return intent
+
+
+def check_verification_definitions(root: Path, run_root: Path, intent: dict[str, Any], errors: list[str]) -> None:
+    """Opt-in immutable definitions: only runner-owned result blocks may differ."""
+    definitions_path = run_root / "verification_definitions.json"
+    pinned = any(
+        source["kind"] == "spec" and root / source["ref"] == definitions_path
+        for source in intent["sources"]
+    )
+    if not pinned and not definitions_path.exists() and not definitions_path.is_symlink():
+        return  # Existing runs without a definitions snapshot retain their contract.
+    if not pinned:
+        errors.append("CONDUCTOR_CONTRACT_DEFINITIONS_UNPINNED: verification_definitions.json needs a hash-pinned spec source")
+        return
+    local: list[str] = []
+    paths = [safe_relative(run_root, name, name, local) for name in ("verification_definitions.json", "verification_manifest.yaml")]
+    if any(path is None for path in paths):
+        errors.extend(local)
+        return
+    definitions = read_json(paths[0], "verification_definitions.json", local)
+    manifest = read_yaml(paths[1], "verification_manifest.yaml", local)
+    for label, document in (("definitions", definitions), ("manifest", manifest)):
+        local.extend(f"CONDUCTOR_CONTRACT_DEFINITIONS_INVALID: {label}: {problem}"
+                     for problem in schema_errors(root, "verification_manifest_v2", document))
+    if not local:
+        if any("result" in check for check in definitions["checks"]):
+            local.append("CONDUCTOR_CONTRACT_DEFINITIONS_INVALID: frozen definitions must not contain result blocks")
+        projection = {**manifest, "checks": [{key: value for key, value in check.items() if key != "result"}
+                                             for check in manifest["checks"]]}
+        if canonical_json(definitions) != canonical_json(projection):
+            local.append("CONDUCTOR_CONTRACT_DEFINITIONS_MISMATCH: verification_manifest.yaml definitions differ from the approved snapshot")
+    errors.extend(local)
 
 
 def check_project_config(root: Path, errors: list[str], warnings: list[str]) -> dict[str, Any] | None:

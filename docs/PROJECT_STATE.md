@@ -1,5 +1,9 @@
 # PROJECT_STATE.md - Canonical Build State
 
+## Unreleased verification-definition repair
+
+The receipt entry points reject mutable verification-manifest source pins. An optional hash-pinned definitions snapshot permits result updates while enforcing current G1 and Execution Go approvals. Legacy no-snapshot behavior remains supported. See `tests/test_verification_definitions.py` and the onboarding guide. This source change does not change the package version or installed caches.
+
 ## Local 0.3.5 release candidate
 
 Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are locally qualified. Reusable source and generated packages are separated from private qualification evidence. Publication is pending; existing 0.3.4 pilot identities remain intact. See docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md for scope and limitations.

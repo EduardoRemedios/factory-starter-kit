@@ -20,6 +20,28 @@ G1 Intent Lock ──(human countersign)──▶ G2 Governed Execution ──(r
 
 - **G1 Intent Lock.** The agent drafts `intent_pack.json` (goal, requirements with acceptance, constraints, scope in/out, sources with digests, verification requirements, budget). `conductorctl contract-lint intent` must pass. A human writes `countersign/INTENT_LOCK.json`. Nothing proceeds on a draft.
 - **G2 Governed Execution.** One autonomous run inside the locked scope. Checks are declared in `verification_manifest.yaml`; `conductorctl receipts run` executes them and writes signed receipts; `conductorctl postimage capture` and `compare` prove no protected file changed. `EXECUTION_ENABLED` runs also need `countersign/EXECUTION_GO.json`.
+
+Do not pin the current run's `verification_manifest.yaml` as an immutable intent
+source: the runner updates its `checks[].result` fields. G1 and both receipt
+entry points reject that conflicting setup before running a check or writing an
+attestation. A copied manifest from a prior run can still be pinned as evidence.
+
+To freeze approved check definitions, save the complete manifest as JSON in
+`verification_definitions.json` beside `verification_manifest.yaml`, removing
+only each check's `result` field. Add the snapshot's repository-relative path
+and SHA-256 to `intent_pack.json` as a `spec` source before obtaining the G1 lock.
+The snapshot must contain no results. Once present, it must be pinned; both G1
+and the receipt entry points compare all manifest definitions against it.
+Result updates and YAML/JSON formatting changes are allowed; changing commands,
+acceptance fields, mappings, order, or any other definition requires a reviewed
+snapshot amendment and renewed approval. Keep original receipts and approvals
+when amending an existing run. Runs without this optional snapshot retain their
+existing validation behavior; the snapshot is not retroactively required.
+For runs using this snapshot, the runner and attestation entry points also
+require a valid `INTENT_LOCK` for the current intent digest, plus `EXECUTION_GO`
+when execution is enabled. Re-pinning edited definitions without renewing these
+approvals does not authorize their execution. Missing, stale or rejected
+approvals block before effects; result updates do not require renewed approval.
 - **G3 Adversarial Review and Completion.** A fresh-context verifier that did not do the work audits every claim against its receipt. The Statement of Completion maps every requirement to evidence; `contract-lint completion` derives READY, BLOCKED, or NEEDS_HUMAN_DECISION. A human writes `countersign/COMPLETION.json`. Merge authorization then follows `MERGE_PROTOCOL.md` unchanged.
 
 Humans are involved at exactly two points per run, three when execution is enabled.
