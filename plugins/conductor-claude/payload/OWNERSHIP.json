@@ -216,7 +216,7 @@
     {
       "path": "docs/Conductor/onboarding/GUIDE.md",
       "classification": "release-owned",
-      "sha256": "8016594d6db1d83351eaf57097baf83236332c96af3a480520eb97c33370eabc"
+      "sha256": "7e48620722dbbbe2a61abf57c95b11b11150046dea63ff003ac0b0f15578dacc"
     },
     {
       "path": "docs/Conductor/onboarding/INSTALL.md",
@@ -326,7 +326,7 @@
     {
       "path": "docs/Conductor/templates/VERIFICATION_MANIFEST_TEMPLATE_V2.yaml",
       "classification": "release-owned",
-      "sha256": "5c37337d3ed2a22920aa9bca81c0049cb83002e6ac1d9f28eeead63c90d8dd6f"
+      "sha256": "43fcba423e86478384e3804ce1cc805f1d122943c541843a3440f2912d546475"
     },
     {
       "path": "docs/Conductor/templates/countersign.template.json",
@@ -441,7 +441,7 @@
     {
       "path": "scripts/conductor_contract_lint.py",
       "classification": "release-owned",
-      "sha256": "8ae410b0202f464e12d883bab8df5762f6e47f7fd09170ccfa8f0c5ee55674a4"
+      "sha256": "f235c66abd998e6d4d2b40c47f18580ba133cfb4453384c3c58b582527f2ef49"
     },
     {
       "path": "scripts/conductor_execution_closeout.py",
@@ -481,7 +481,7 @@
     {
       "path": "scripts/conductor_receipts.py",
       "classification": "release-owned",
-      "sha256": "8579193e53ab55abbfb9f15eb3e07cdcd49aeb602dca6849f46cb6f7c4787f99"
+      "sha256": "ed3e34a05dc2a4163548ab945ffc9fed8cc9c566adc40f3a6973f9221a8feecf"
     },
     {
       "path": "scripts/conductor_run_metrics.py",

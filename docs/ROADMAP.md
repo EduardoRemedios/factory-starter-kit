@@ -1,5 +1,9 @@
 # ROADMAP.md - Development Roadmap
 
+## Unreleased maintenance
+
+- Verification-definition integrity: implemented with regression coverage for legitimate results, declaration changes and stale approvals. Release packaging and installed-cache updates remain separate.
+
 ## 0.3.5 release preparation
 
 Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are locally qualified. Reusable source and generated packages are separated from private qualification evidence. Publication is pending; existing 0.3.4 pilot identities remain intact. See docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md for scope and limitations.

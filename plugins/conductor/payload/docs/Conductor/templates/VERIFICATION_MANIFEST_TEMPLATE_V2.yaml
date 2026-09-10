@@ -2,6 +2,12 @@
 #
 # Create at: docs/Conductor/runs/<RUN_ID>/verification_manifest.yaml
 # Schema:    docs/Conductor/contracts/verification_manifest_v2.schema.json
+# Never pin this mutable file in intent_pack.json.sources.
+# To freeze definitions, save the complete manifest without checks[].result as
+# run-local verification_definitions.json and hash-pin it as a spec source at G1.
+# Its presence requires that pin. Only results and serialization may then differ.
+# Frozen-definition execution also needs current INTENT_LOCK and, when enabled,
+# EXECUTION_GO countersigns. Re-pinning definitions alone grants no authority.
 #
 # v2 is a superset of the Factory v1 manifest. New in v2:
 #   - checks[].requirement_ids  links each check to Intent Pack requirement ids
