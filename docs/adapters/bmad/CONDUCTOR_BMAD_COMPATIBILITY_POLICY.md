@@ -5,10 +5,12 @@ rollout.
 
 ## Pinned Surfaces
 
-- Factory (plugin id `conductor`): `0.3.4`
-- Factory-BMAD (plugin id `conductor-bmad`): `0.3.4`
+- Factory (plugin id `conductor`): local `0.3.6` candidate; published baseline `0.3.5`
+- Factory-BMAD (plugin id `conductor-bmad`): local `0.3.6` candidate with `~0.3.6` dependency
 - BMAD installer: `bmad-method@6.10.0`
-- BMAD modules: Core and BMM only
+- BMAD compatibility: exact Core/BMM `6.10.0` and candidate `6.12.1-next.0` profiles; no floating versions
+- Optional TEA: legacy `v1.21.1` on the legacy profile; new `main` label only with commit `7ba2130193c473b53d2e323b4da9a80697eef88e` and matching public dependency bytes
+- New authoring profile requires Python 3.11+, complete supporting files, safe declared roots and checked effective configuration
 - Claude surface: Claude Code CLI local macOS session
 - Hook interpreter: `python3` resolving to Python 3.11 or newer
 
@@ -63,3 +65,7 @@ Requalify before continuing if any of these changes:
 
 These surfaces can become supported only after a separate validation lane and
 explicit documentation update.
+
+## New-version qualification boundary
+
+The 0.3.6 candidate adds version-specific inventories, checked internal skill aliases and Spec/companion closure. The legacy bootstrap pin is unchanged. Deterministic tests, guarded MCP protocol checks and authenticated Claude hooks are separate evidence lanes; none substitutes for another. See [the executable handoff](BMAD_6121_HANDOFF.md). No current publication, installation, native Codex or desktop activation claim is implied.

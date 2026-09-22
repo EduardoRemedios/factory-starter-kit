@@ -1,5 +1,22 @@
 # PROJECT_STATE.md - Canonical Build State
 
+## Local 0.3.7 repository-companion candidate
+
+The current local candidate adds exact opt-in repository Markdown companions to
+6.12.1 Spec intake, with root-bound approval and strict snapshot provenance.
+The earlier 0.3.6 compatibility candidate is preserved separately. Qualification
+uses deterministic tests, actual guarded MCP/hook subprocesses and isolated setup
+rehearsals; no new live model or desktop activation is claimed. Publication,
+installed caches and real-project adoption remain separate. See
+`docs/adapters/bmad/BMAD_REPOSITORY_COMPANIONS.md`.
+
+
+## Local 0.3.6 compatibility candidate
+
+Candidate implementation adds exact BMAD 6.12.1-next.0 profiles, dependency/configuration checks, nested-root mapping and complete Spec companion packaging while retaining 6.10.0. Deterministic, generated-package and harness qualification are tracked separately against exact candidate identities. A passing live attempt does not qualify a subsequently rebuilt package; completion requires current evidence for every required check. Nothing here claims publication, installation or adopter readiness. See docs/adapters/bmad/BMAD_6121_HANDOFF.md.
+
+The older release sections below are historical snapshots; published source baseline for this candidate is 0.3.5 plus the verification-definition repair.
+
 ## Unreleased verification-definition repair
 
 The receipt entry points reject mutable verification-manifest source pins. An optional hash-pinned definitions snapshot permits result updates while enforcing current G1 and Execution Go approvals. Legacy no-snapshot behavior remains supported. See `tests/test_verification_definitions.py` and the onboarding guide. This source change does not change the package version or installed caches.

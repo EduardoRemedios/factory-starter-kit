@@ -1,5 +1,18 @@
 # ROADMAP.md - Development Roadmap
 
+## Local 0.3.7 bounded intake repair
+
+Qualify explicit repository companions and provide repeatable written handoffs
+before extending the wider roadmap. Preserve current workflow authority and
+support pins. Real-project decisions, adoption, product execution and release
+remain separate from the intake repair. See
+`docs/adapters/bmad/BMAD_REPOSITORY_COMPANIONS.md`.
+
+
+## Unreleased 0.3.6 candidate
+
+Exact BMAD 6.12.1-next.0 compatibility, nested-layout guards and complete Spec intake are under qualification. Publication and adopter rollout remain separate. See docs/adapters/bmad/BMAD_6121_HANDOFF.md.
+
 ## Unreleased maintenance
 
 - Verification-definition integrity: implemented with regression coverage for legitimate results, declaration changes and stale approvals. Release packaging and installed-cache updates remain separate.

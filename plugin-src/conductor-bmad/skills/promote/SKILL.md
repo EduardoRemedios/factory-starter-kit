@@ -52,3 +52,14 @@ workflow identifiers represented by the shared exact-name policy. In
 particular, brownfield mining is `document-project`; `generate-project-context`,
 the deprecated architecture shim, stories, sprint, implementation, QA
 automation, review, TEA gates, and unknown workflows remain prohibited.
+
+For exact BMAD 6.12.1-next.0, selecting SPEC.md or its directory freezes the Spec, decision log and recursive declared companions beneath the declared output root, including external-to-Spec companions. Nested roots resolve from PROJECT_CONFIG.json. Source paths are preserved output-relative under content/. Review the entire package before exact-plan approval. Reconcile through the upstream memlog and Spec regeneration, never a manual edit of a derived Spec.
+
+For an exact 6.12.1 Spec that declares a repository-local Markdown companion
+outside BMAD output, add repeatable `--repo-companion docs/example.md` permissions.
+Each must be reached by the declared closure. No directories, globs, symlinks,
+hidden/configuration paths or unused permissions are accepted. With this opt-in,
+all snapshot source paths become repository-relative. The resolved repository
+root, permission list, bytes and modes are plan-bound; relocation needs fresh
+promotion/review. Show the complete package before requesting exact approval.
+The new option grants no additional BMAD workflow or implementation authority.

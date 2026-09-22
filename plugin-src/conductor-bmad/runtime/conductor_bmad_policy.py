@@ -81,6 +81,7 @@ SUPPORTED_TEA_SKILLS = frozenset({
 
 DISCOVERY_AUTHORING_WORKFLOWS = frozenset({
     "bmad-brainstorming",
+    "bmad-deep-recon",
     "bmad-create-prd",
     "bmad-document-project",
     "bmad-domain-research",
@@ -113,6 +114,9 @@ PERSONA_AGENT_WORKFLOWS = frozenset({
 })
 
 HELPER_WORKFLOWS = frozenset({
+    "bmad-review",
+    "bmad-editorial-review",
+    "bmad-review-verification-gap",
     "bmad-review-adversarial-general",
     "bmad-review-edge-case-hunter",
     "bmad-editorial-review-prose",
@@ -139,6 +143,10 @@ NEUTRAL_TOOLING_WORKFLOWS = frozenset({
 })
 
 DELIVERY_WORKFLOWS = frozenset({
+    "bmad-build",
+    "bmad-build-auto",
+    "bmad-project-context",
+    "bmad-walkthrough",
     "bmad-create-epics-and-stories",
     "bmad-create-story",
     "bmad-dev-story",
@@ -397,7 +405,7 @@ def assess_bmad_layout(root: Path) -> dict[str, Any]:
     installation_root = canonical_root.parent
     canonical_marker = canonical_root.exists() or canonical_root.is_symlink()
     canonical_manifests = _manifest_candidates(installation_root)
-    canonical_symlink = canonical_root.is_symlink() or any(path.is_symlink() for path in canonical_manifests)
+    canonical_symlink = any((root / Path(*active.parts[:i])).is_symlink() for i in range(1, len(active.parts) + 1)) or any(path.is_symlink() for path in canonical_manifests)
     nested = _nested_bmad_roots(root, active)
     nested_markers = [
         record for record in non_canonical_bmad_layouts(root)
@@ -587,6 +595,8 @@ def _inert_override(path: Path) -> bool:
 
 
 def solution_context_authorization(root: Path, name: str) -> dict[str, Any]:
+    if installed_bmad_version(root) == "6.12.1-next.0":
+        return qualified_6121_workflow(root, name)
     profile = SOLUTION_CONTEXT_CAPABILITY_PROFILES.get(name)
     if profile is None:
         return {"allowed": False, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_MISSING", "name": name}
@@ -610,7 +620,7 @@ def solution_context_authorization(root: Path, name: str) -> dict[str, Any]:
         return {"allowed": False, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_VERSION_MISMATCH", "name": name}
 
     active = active_bmad_root(root)
-    skill_root = Path(".claude/skills") / name
+    skill_root = skill_directory(root) / name
     skill = _regular_file(root, skill_root / "SKILL.md")
     customize = _regular_file(root, skill_root / "customize.toml")
     files_manifest = _regular_file(root, active / "_config/files-manifest.csv")
@@ -684,13 +694,24 @@ def hook_decision(root: Path, payload: dict[str, Any]) -> dict[str, Any] | None:
         verdict = policy_classify(name)
         lane = verdict["lane"]
         if verdict["allowed"]:
+            if installed_bmad_version(repository) == "6.12.1-next.0":
+                authorization = qualified_6121_workflow(repository, name)
+                if not authorization["allowed"]:
+                    reason = _deny_message(authorization["reason_code"], name, lane, layout)
+                    return ({"decision": "block", "reason": reason} if event == "UserPromptExpansion" else
+                            {"hookSpecificOutput": {"hookEventName": event, "permissionDecision": "deny", "permissionDecisionReason": reason}})
+                return _upstream_context(event, bound_context(repository, name))
+            if name in {"bmad-review", "bmad-editorial-review", "bmad-review-verification-gap", "bmad-deep-recon"}:
+                reason = _deny_message("CONDUCTOR_BMAD_SOLUTION_PROFILE_VERSION_MISMATCH", name, lane, layout)
+                return ({"decision": "block", "reason": reason} if event == "UserPromptExpansion" else
+                        {"hookSpecificOutput": {"hookEventName": event, "permissionDecision": "deny", "permissionDecisionReason": reason}})
             if verdict["classification"] == "NEUTRAL_TOOLING":
                 return None
             if name in SOLUTION_CONTEXT_AUTHORING_WORKFLOWS:
                 # Authority-bearing action: unsafe layouts and profile drift fail closed here.
                 authorization = solution_context_authorization(root, name)
                 if authorization["allowed"]:
-                    return _upstream_context(event, CONDUCTOR_BOUND_SOLUTION_CONTEXT)
+                    return _upstream_context(event, bound_context(repository, name))
                 code = authorization["reason_code"]
             else:
                 context = CONDUCTOR_BOUND_UPSTREAM_CONTEXT
@@ -821,7 +842,21 @@ def capability_inventory_for(root: Path, install_root: Path) -> dict[str, list[d
 
 def capability_inventory(root: Path) -> dict[str, list[dict[str, str]]]:
     root = root.resolve()
-    return capability_inventory_for(root, root)
+    if installed_bmad_version(root) != "6.12.1-next.0":
+        return capability_inventory_for(root, root)
+    install = root / active_bmad_root(root).parent
+    inventory = capability_inventory_for(root, install)
+    if install != root:
+        # A root alias is accepted only when it resolves to the declared skill tree.
+        alias = root / ".claude/skills"
+        if alias.exists() or alias.is_symlink():
+            if not alias.is_symlink() or alias.resolve() != root / skill_directory(root):
+                inventory["skills"].append(_path_record(root, alias, "bmad-skill-alias", "UNRECOGNIZED_BLOCKING"))
+        root_inventory = capability_inventory_for(root, root)
+        inventory["configuration"].extend(record for record in root_inventory["configuration"] if record["name"] != "bmad-manifest")
+        for kind in ("commands", "agents", "hooks"):
+            inventory[kind].extend(_named_capabilities(root, root / ".claude" / kind, kind))
+    return inventory
 
 
 def non_canonical_bmad_evidence(root: Path) -> list[dict[str, Any]]:
@@ -968,7 +1003,7 @@ def _remediation_previews(root: Path, layout: dict[str, Any]) -> list[dict[str, 
 def reconcile_brownfield(root: Path) -> dict[str, Any]:
     root = root.resolve()
     layout = assess_bmad_layout(root)
-    output = root / "_bmad-output"
+    output = root / output_directory(root)
     artifacts: list[dict[str, str]] = []
     if output.is_dir() and not output.is_symlink():
         for path in sorted(output.rglob("*")):
@@ -1037,16 +1072,19 @@ def inventory_audit(root: Path, harness: str) -> dict[str, Any]:
         return result("BLOCKED", "CONDUCTOR_BMAD_LOOP_INSTALLED", "human_remove_or_isolate_bmad_loop_before_intake", **base)
     if any(value == "UNRECOGNIZED_BLOCKING" for value in classifications.values()):
         return result("BLOCKED", "CONDUCTOR_BMAD_MODULE_REVIEW_REQUIRED", "classify_unrecognized_modules", **base)
-    versions_ok = installation_version == SUPPORTED_BMAD_VERSION and all(
-        modules.get(name) == SUPPORTED_BMAD_VERSION for name in ("core", "bmm")
+    versions_ok = installation_version in (SUPPORTED_BMAD_VERSION, "6.12.1-next.0") and all(
+        modules.get(name) == installation_version for name in ("core", "bmm")
     )
+    expected_skills = supported_skills(installation_version)
     tea_ok = "tea" not in modules or modules["tea"] == SUPPORTED_TEA_VERSION
+    if modules.get("tea") == "main" and installation_version == "6.12.1-next.0":
+        tea_ok = pinned_tea(root, manifest)
     if not versions_ok or not tea_ok:
         return result("BLOCKED", "CONDUCTOR_BMAD_VERSION_QUARANTINED", "review_supported_bmad_migration_without_mutation", **base)
 
     invocation = capabilities["skills"] + capabilities["commands"] + capabilities["agents"]
-    observed = {item["name"] for item in invocation if item["name"] in SUPPORTED_BMAD_SKILLS}
-    missing = sorted(SUPPORTED_BMAD_SKILLS - observed)
+    observed = {item["name"] for item in invocation if item["name"] in expected_skills}
+    missing = sorted(expected_skills - observed)
     if "tea" in modules:
         observed_tea = {item["name"] for item in invocation if item["name"] in SUPPORTED_TEA_SKILLS}
         missing.extend(sorted(SUPPORTED_TEA_SKILLS - observed_tea))
@@ -1070,6 +1108,10 @@ def inventory_audit(root: Path, harness: str) -> dict[str, Any]:
         return result("BLOCKED", "CONDUCTOR_BMAD_CAPABILITY_UNRECOGNIZED", "review_or_remove_unrecognized_bmad_capabilities", **base)
     if missing:
         return result("BLOCKED", "CONDUCTOR_BMAD_CAPABILITY_INCOMPLETE", "repair_or_reinstall_supported_bmad_with_human_approval", **base)
+    if installation_version == "6.12.1-next.0":
+        problem = profile_inventory_problem(root)
+        if problem:
+            return result("BLOCKED", problem, "restore_pinned_public_bytes_or_review_profile", **base)
     return result("READY", "CONDUCTOR_BMAD_INVENTORY_OK", "qualify_harness_enforcement", **base)
 
 
@@ -1086,8 +1128,8 @@ def capability_audit(root: Path, harness: str, route: str | None = None) -> dict
             "host_enforcement_verified": False,
             "unsupported_routes": ["native-bmad", "raw-skill-read", "codex-bootstrap"],
         })
-        if any(_regular_file(root, Path(".claude/skills") / name / "SKILL.md") is None
-               for name in SUPPORTED_BMAD_SKILLS):
+        if any(_regular_file(root, skill_directory(root) / name / "SKILL.md") is None
+               for name in supported_skills(audit["installation_version"])):
             return result("BLOCKED", "CONDUCTOR_BMAD_CAPABILITY_INCOMPLETE",
                           "repair_or_reinstall_supported_bmad_with_human_approval", **base)
         base["solution_authoring"] = {
@@ -1109,3 +1151,222 @@ def capability_audit(root: Path, harness: str, route: str | None = None) -> dict
 
 def policy_lint(root: Path, harness: str, route: str | None = None) -> dict[str, Any]:
     return capability_audit(root, harness, route)
+
+
+def profile_6121() -> dict[str, Any]:
+    """Public-source hashes, never trust an installation's self-reported file hashes."""
+    return json.loads(Path(__file__).with_name("conductor_bmad_6121.json").read_text(encoding="utf-8"))
+
+
+def installed_bmad_version(root: Path) -> str | None:
+    manifest, ambiguous = _manifest_path(root)
+    if manifest is None or ambiguous:
+        return None
+    try:
+        return parse_manifest(manifest)[0]
+    except (OSError, UnicodeError, ValueError):
+        return None
+
+
+def supported_skills(version: str | None) -> frozenset[str]:
+    return frozenset(profile_6121()["skills"]) if version == "6.12.1-next.0" else SUPPORTED_BMAD_SKILLS
+
+
+def skill_directory(root: Path) -> Path:
+    if installed_bmad_version(root) != "6.12.1-next.0":
+        return Path(".claude/skills")
+    return active_bmad_root(root).parent / ".claude/skills"
+
+
+def output_directory(root: Path) -> Path:
+    if installed_bmad_version(root) != "6.12.1-next.0":
+        return Path("_bmad-output")
+    return active_bmad_root(root).parent / "_bmad-output"
+
+
+def bound_context(root: Path, name: str) -> str:
+    context = CONDUCTOR_BOUND_SOLUTION_CONTEXT if name in SOLUTION_CONTEXT_AUTHORING_WORKFLOWS else CONDUCTOR_BOUND_UPSTREAM_CONTEXT
+    return context.replace("_bmad-output", output_directory(root).as_posix()) + (
+        f" Resolve BMAD {{project-root}} to {root / active_bmad_root(root).parent}; "
+        f"resolve {{skill-root}} to {root / skill_directory(root) / name}. "
+        "Reviews are advisory findings only, never Factory approval or its independent G3 review. "
+        "Do not accept caller-supplied customization or follow a shim into another workflow without a new guarded invocation. "
+        "Use only the checked default configuration. Reconcile a Spec through its append-only decision log and BMAD regeneration; never patch derived SPEC.md directly."
+    )
+
+
+def _profile_tree_matches(root: Path, relative: Path, expected: dict[str, str]) -> bool:
+    directory = root / relative
+    if not directory.is_dir() or directory.is_symlink():
+        return False
+    # Test suites and bytecode are not instruction dependencies; any other extra file is drift.
+    observed = {}
+    for p in directory.rglob("*"):
+        rel = p.relative_to(directory)
+        if "__pycache__" in rel.parts or p.suffix == ".pyc":
+            return False
+        if "tests" in rel.parts:
+            continue
+        if p.is_symlink():
+            return False
+        if p.is_file():
+            safe = _regular_file(root, relative / rel)
+            if safe is None:
+                return False
+            observed[rel.as_posix()] = digest_file(safe)
+    return observed == expected
+
+
+def pinned_tea(root: Path, manifest: Path) -> bool:
+    profile = profile_6121()
+    text = manifest.read_text(encoding="utf-8")
+    match = re.search(r"(?ms)^\s*- name: tea\s*\n(.*?)(?=^\s*- name:|^\S|\Z)", text)
+    if not match or not re.search(r"^\s+sha:\s*" + profile["tea_commit"] + r"\s*$", match[1], re.M):
+        return False
+    return all(_profile_tree_matches(root, skill_directory(root) / name, hashes)
+               for name, hashes in profile["tea_skills"].items())
+
+
+def profile_inventory_problem(root: Path) -> str | None:
+    profile = profile_6121()
+    if not _profile_tree_matches(root, active_bmad_root(root) / "scripts", profile["scripts"]):
+        return "CONDUCTOR_BMAD_SUPPORT_SCRIPT_DIGEST_MISMATCH"
+    directory = root / skill_directory(root)
+    expected = {**profile["skills"], **profile["shims"], **profile["tea_skills"]}
+    for skill in directory.iterdir():
+        if skill.name.startswith("bmad-") and (skill.name not in expected or not _profile_tree_matches(root, skill_directory(root) / skill.name, expected[skill.name])):
+            return "CONDUCTOR_BMAD_SOLUTION_PROFILE_DIGEST_MISMATCH"
+    catalog = _regular_file(root, active_bmad_root(root) / "_config/bmad-help.csv")
+    if catalog is None:
+        return "CONDUCTOR_BMAD_CATALOG_MISSING_OR_UNSAFE"
+    try:
+        _, modules = parse_manifest(_manifest_path(root)[0])
+        with catalog.open(newline="", encoding="utf-8") as stream:
+            actual = list(csv.DictReader(stream))
+        expected_rows = [row for module in modules for row in profile["catalog"].get(module, [])
+                         if row["skill"] == "_meta" or (directory / row["skill"]).is_dir()]
+        if sorted(canonical(row) for row in actual) != sorted(canonical(row) for row in expected_rows):
+            return "CONDUCTOR_BMAD_CATALOG_DIGEST_MISMATCH"
+    except (OSError, UnicodeError, ValueError, csv.Error):
+        return "CONDUCTOR_BMAD_CATALOG_MISSING_OR_UNSAFE"
+    return None
+
+
+def _checked_toml(root: Path, relative: Path, *, required: bool = False) -> dict[str, Any]:
+    import tomllib
+    path = root / relative
+    if not path.exists() and not path.is_symlink() and not required:
+        return {}
+    safe = _regular_file(root, relative)
+    if safe is None:
+        raise ValueError("unsafe or missing TOML layer")
+    return tomllib.loads(safe.read_text(encoding="utf-8"))
+
+
+def _central_settings_valid(data: dict[str, Any], agents: dict[str, Any]) -> bool:
+    if set(data) - {"core", "modules", "agents"}:
+        return False
+    core = data.get("core", {})
+    for key, value in core.items():
+        if key == "output_folder":
+            if value != "{project-root}/_bmad-output":
+                return False
+        elif key not in {"user_name", "project_name", "communication_language", "document_output_language", "user_skill_level"} or not isinstance(value, str) or len(value) > 120 or any(c in value for c in '\n\r{}'):
+            return False
+    for name, descriptor in data.get("agents", {}).items():
+        if name not in agents or descriptor != agents[name]:
+            return False
+    for module, values in data.get("modules", {}).items():
+        if module not in {"bmm", "tea"} or not isinstance(values, dict):
+            return False
+        for key, value in values.items():
+            if key in {"user_skill_level"}:
+                if value not in {"beginner", "intermediate", "expert"}:
+                    return False
+            elif key in {"planning_artifacts", "implementation_artifacts", "test_artifacts"}:
+                suffix = {"planning_artifacts": "planning-artifacts", "implementation_artifacts": "implementation-artifacts", "test_artifacts": "test-artifacts"}[key]
+                if value != "{project-root}/_bmad-output/" + suffix:
+                    return False
+            elif key == "project_knowledge":
+                if value != "{project-root}/docs":
+                    return False
+            elif module == "tea" and key in {"tea_use_playwright_utils", "tea_use_pactjs_utils", "tea_capability_probe"}:
+                if not isinstance(value, bool):
+                    return False
+            elif module == "tea" and key in {"tea_pact_mcp", "tea_browser_automation", "tea_execution_mode", "test_stack_type", "ci_platform", "test_framework", "risk_threshold"}:
+                if value not in {"none", "auto", "fullstack", "playwright", "p1"}:
+                    return False
+            elif module == "tea" and key in {"test_design_output", "test_review_output", "trace_output"}:
+                if value not in {"_bmad-output/test-artifacts/test-design", "_bmad-output/test-artifacts/test-reviews", "_bmad-output/test-artifacts/traceability"}:
+                    return False
+            else:
+                return False
+    return True
+
+
+def qualified_6121_workflow(root: Path, name: str) -> dict[str, Any]:
+    root = root.resolve()
+    denied = {"allowed": False, "name": name}
+    if not assess_bmad_layout(root)["safe"]:
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID"}
+    try:
+        manifest, ambiguous = _manifest_path(root)
+        version, modules = parse_manifest(manifest) if manifest and not ambiguous else (None, {})
+        if version != "6.12.1-next.0" or any(modules.get(m) != version for m in ("core", "bmm")):
+            return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_VERSION_MISMATCH"}
+        audit = inventory_audit(root, "repository")
+        if audit["state"] != "READY":
+            return {**denied, "reason_code": audit["reason_code"]}
+        profile = profile_6121()
+        hashes = {**profile["skills"], **profile["shims"], **profile["tea_skills"]}.get(name)
+        if hashes is None or not _profile_tree_matches(root, skill_directory(root) / name, hashes):
+            return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_DIGEST_MISMATCH"}
+        problem = profile_inventory_problem(root)
+        if problem:
+            return {**denied, "reason_code": problem}
+        if modules.get("tea") == "main" and not pinned_tea(root, manifest):
+            return {**denied, "reason_code": "CONDUCTOR_BMAD_VERSION_QUARANTINED"}
+        active = active_bmad_root(root)
+        for layer in ["config.toml", "config.user.toml", "custom/config.toml", "custom/config.user.toml"]:
+            if not _central_settings_valid(_checked_toml(root, active / layer, required=layer == "config.toml"), profile["agents"]):
+                return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE"}
+        # Legacy YAML config is still read by several new skills. Validate its bounded scalar surface.
+        for module, filename in ((module, filename) for module in (("core", "bmm", "tea") if "tea" in modules else ("core", "bmm")) for filename in ("config.yaml", "config.user.yaml")):
+            relative = active / module / filename
+            if filename == "config.user.yaml" and not (root / relative).exists() and not (root / relative).is_symlink():
+                continue
+            yaml_file = _regular_file(root, relative)
+            if yaml_file is None:
+                return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID"}
+            data = {"core": {}, "modules": {module if module != "core" else "bmm": {}}}
+            for line in yaml_file.read_text(encoding="utf-8").splitlines():
+                if not line.strip() or line.lstrip().startswith("#"):
+                    continue
+                match = re.fullmatch(r"([a-z_]+):\s*(.*?)\s*", line)
+                if match is None:
+                    raise ValueError("Unsupported YAML configuration")
+                key, value = match.groups(); value = value.strip("\"'")
+                common = {"user_name", "project_name", "communication_language", "document_output_language", "output_folder"}
+                target = data["core"] if key in common else data["modules"][module if module != "core" else "bmm"]
+                if key in {"tea_use_playwright_utils", "tea_use_pactjs_utils", "tea_capability_probe"}:
+                    if value not in {"true", "false"}:
+                        raise ValueError("Expected boolean TEA setting")
+                    value = value == "true"
+                if key in target:
+                    raise ValueError("Duplicate YAML setting")
+                target[key] = value
+            if not _central_settings_valid(data, profile["agents"]):
+                return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE"}
+        # Per-skill workflow fields are executable instructions, including facts, lenses and callbacks.
+        for suffix in (".toml", ".user.toml"):
+            override = _checked_toml(root, active / "custom" / (name + suffix))
+            if any(value for value in override.values()):
+                return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE"}
+        alias = root / ".claude/skills"
+        if active.parent != Path('.') and (alias.exists() or alias.is_symlink()) and (not alias.is_symlink() or alias.resolve() != root / skill_directory(root)):
+            return {**denied, "reason_code": "CONDUCTOR_BMAD_SKILL_ALIAS_UNSAFE"}
+    except (OSError, UnicodeError, ValueError, TypeError, AttributeError, ImportError):
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID"}
+    return {"allowed": True, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_ALLOWED", "name": name,
+            "policy_version": POLICY_VERSION, "bmad_version": version, "skill_sha256": hashes["SKILL.md"],
+            "customize_sha256": hashes.get("customize.toml")}

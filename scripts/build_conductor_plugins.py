@@ -139,7 +139,7 @@ def payload_sources() -> list[tuple[Path, Path, str]]:
         if not (REPO_ROOT / base).is_dir():
             continue
         for source in sorted((REPO_ROOT / base).rglob("*")):
-            if source.is_file() and (
+            if source.is_file() and "bmad_6121" not in source.parts and (
                 base != Path(".agents/skills")
                 or source.parent.name.startswith("conductor-")
             ) and "__pycache__" not in source.parts:

@@ -7,7 +7,7 @@
 Lock intent with a human, let the agent run, and accept nothing as done
 without a receipt. Three gates, deterministic validators, no choreography.
 
-[![Release](https://img.shields.io/badge/release-0.3.4--pilot-4f46e5)](#release-status)
+[![Release](https://img.shields.io/badge/release-0.3.5-4f46e5)](#release-status)
 [![Claude Code CLI](https://img.shields.io/badge/Claude_Code_CLI-pilot-D97757)](#install)
 [![Codex](https://img.shields.io/badge/Codex-packaged-111827?logo=openai&logoColor=white)](#install)
 [![License](https://img.shields.io/badge/license-Apache--2.0-0f766e)](LICENSE)
@@ -20,6 +20,12 @@ without a receipt. Three gates, deterministic validators, no choreography.
 [Documentation](#documentation)
 
 </div>
+
+**Local candidate:** this checkout carries 0.3.7, extending the separately
+qualified 0.3.6 BMAD compatibility work with explicit repository companions.
+It is not published or globally installed. See the
+[handoff example and limits](docs/adapters/bmad/BMAD_REPOSITORY_COMPANIONS.md).
+
 
 Factory 0.3 is the third generation of this repository's governed delivery
 process. Earlier Factory releases took AI-assisted work through explicit scope,
@@ -143,12 +149,9 @@ defer it. Details: `docs/adapters/bmad/BMAD_POLICY.md` and
 
 ## Release status
 
-This branch prepares **Factory 0.3.5**. The last published pilot remains
-`conductor-v0.3.4-pilot`; this candidate has not been released. Merging this
-branch into public `main` makes its new marketplace package bytes available,
-even before a release tag is created.
+Published source includes **Factory 0.3.5** and the verification-definition repair. This branch prepares an **unreleased 0.3.6 candidate** for exact BMAD 6.12.1-next.0 compatibility. Qualification, publication and adopter installation are separate decisions. See the [written handoff and limits](docs/adapters/bmad/BMAD_6121_HANDOFF.md).
 
-The candidate adds explicit brownfield project-file preservation, ownership
+The preceding 0.3.5 qualification added explicit brownfield project-file preservation, ownership
 retention through updates, exact rollback, and a guarded Codex BMAD MCP route.
 A local qualification passed 421 starter tests (3 skips) and bounded Codex and
 Claude BMAD-to-Factory rehearsals through human completion. Full local evidence

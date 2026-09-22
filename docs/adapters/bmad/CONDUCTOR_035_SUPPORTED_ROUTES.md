@@ -1,6 +1,6 @@
 # Factory 0.3.5 candidate: supported routes
 
-Status: release preparation. The last published pilot is 0.3.4; 0.3.5 is available in this candidate branch only until publication is approved. Merging to the public marketplace main branch publishes the new package source. This document does not authorize that action.
+Historical 0.3.5 route qualification. Version 0.3.5 is present in published source; this checkout now prepares an unreleased 0.3.6 candidate. New BMAD version support and limits are in [the 6.12.1 handoff](BMAD_6121_HANDOFF.md). Existing 0.3.5 evidence does not qualify the new version.
 
 ## Existing pilot users
 

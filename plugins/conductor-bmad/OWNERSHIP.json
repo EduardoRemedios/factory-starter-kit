@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "package": "conductor-bmad",
-  "version": "0.3.5",
+  "version": "0.3.7",
   "generated_from": "plugin-src/conductor-bmad",
   "files": [
     {
       "path": ".codex-plugin/plugin.json",
-      "sha256": "dbfc4164d6288336f74b49fe13a169df9cc678f21ab8fd9209027cfa95fdb8fb",
+      "sha256": "565420bafa458fff812016c94d851e7e5296d98cb8a22677facbf9e1435f87c8",
       "classification": "release-owned"
     },
     {
@@ -16,7 +16,7 @@
     },
     {
       "path": "assets/project-adapter/BMAD_POLICY.md",
-      "sha256": "e3713dfbf2d879985a8f442120db802ebe2d554a83c20ff17947d43f8f8c453e",
+      "sha256": "0aee5d849f734da202685f07e5b52e42a80a3e54c48c531f86aa9f25a0434c70",
       "classification": "release-owned"
     },
     {
@@ -30,8 +30,13 @@
       "classification": "release-owned"
     },
     {
+      "path": "assets/project-adapter/conductor_bmad_6121.json",
+      "sha256": "ac7fcab660d828ad04c0d695b0a83358af01b7d94c40cfed914331c7a2ff4e86",
+      "classification": "release-owned"
+    },
+    {
       "path": "assets/project-adapter/conductor_bmad_policy.py",
-      "sha256": "3409226335ca2700ab21bd972792ab4e1b2151db0ae0cc361b6e6ff721f238b9",
+      "sha256": "d3209118bcd80d24a7a862c0e2f358239125573f4e8d38b47b19f54e8359de45",
       "classification": "release-owned"
     },
     {
@@ -41,7 +46,7 @@
     },
     {
       "path": "assets/project-adapter/conductor_project_preflight",
-      "sha256": "d16ae4d120398b8d47b5548402459de39a8ec6c215e3c8039ffd00d9364a7675",
+      "sha256": "fa3200e1b9c4fdf75d1ad9f85823c2d22d90e0c279f102fc0d71839e6f805f5a",
       "classification": "release-owned"
     },
     {
@@ -51,27 +56,32 @@
     },
     {
       "path": "assets/project-adapter/contracts/lane_policy.schema.json",
-      "sha256": "8c56fe26b86c9d445774313e85a6f0ef3631c41a697a0f38f5a9a57246ef272a",
+      "sha256": "2ae9a4eff5e510930fcf984721ec3e2ad36d4e6db34d45e36ab78bcd4394a7e8",
       "classification": "release-owned"
     },
     {
       "path": "assets/project-adapter/lane_policy.json",
-      "sha256": "a1d8427ef4df1e8639ea156db3aedb851cafb73c0ac7a59362672419df91d7a1",
+      "sha256": "08bc9c936bbe32b02981ff9de87dde7b797188e1da8bd39a8868fc07497df7cb",
       "classification": "release-owned"
     },
     {
       "path": "scripts/conductor_bmad.py",
-      "sha256": "f21dcfac59355a3530d4a26d8364fdec9faa0db47ff26d6165e3ef31e9a751e2",
+      "sha256": "8afcd57d1a9879c3490deeafd0d34f9eb7d11d42d35be5281ae21ddda5ae8e43",
+      "classification": "release-owned"
+    },
+    {
+      "path": "scripts/conductor_bmad_6121.json",
+      "sha256": "ac7fcab660d828ad04c0d695b0a83358af01b7d94c40cfed914331c7a2ff4e86",
       "classification": "release-owned"
     },
     {
       "path": "scripts/conductor_bmad_mcp.py",
-      "sha256": "d86c4ea93c62a54bfd724c14856dc3363ee2e6e656396b41fbd9b8bbc633ca81",
+      "sha256": "3faa9967b5e795366cad8a6195d4d18024ed68ad8c47dd4b062c22382986d24b",
       "classification": "release-owned"
     },
     {
       "path": "scripts/conductor_bmad_policy.py",
-      "sha256": "3409226335ca2700ab21bd972792ab4e1b2151db0ae0cc361b6e6ff721f238b9",
+      "sha256": "d3209118bcd80d24a7a862c0e2f358239125573f4e8d38b47b19f54e8359de45",
       "classification": "release-owned"
     },
     {
@@ -116,7 +126,7 @@
     },
     {
       "path": "skills/conductor-bmad-promote/SKILL.md",
-      "sha256": "fab3f3e4d1bb7ae75ac4a1707e8f3bc49d590e9570b5d0b81e9c9f3843409361",
+      "sha256": "ff4607fd775d680a220487f8b72f61910f6be3f50899247c1c107c5027fa74bb",
       "classification": "release-owned"
     },
     {
@@ -136,7 +146,7 @@
     },
     {
       "path": "skills/conductor-bmad-workflow/SKILL.md",
-      "sha256": "c56cf86dc07119e407564d0099d41045861747d7d2c62ff9e49196a4ef78a809",
+      "sha256": "4ae61f5e75f7ef5c7af3162a31f891921683b731d32a55a81fab4c1f24b44dd8",
       "classification": "release-owned"
     }
   ]

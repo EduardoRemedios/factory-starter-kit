@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.7 — local, unreleased
+
+- Add exact `--repo-companion` permissions for reached repository Markdown inputs
+  in a 6.12.1 Spec closure; bind source paths, bytes, modes and target root.
+- Preserve and validate the new explicit provenance representation while keeping
+  legacy snapshots valid. Cover stale approvals, tampering and lifecycle checks.
+- Rebuild coupled core/companion packages; retain existing workflow permissions.
+- Document practical handoff and qualification limits. No release or rollout.
+
+
+## Unreleased 0.3.6 candidate
+
+Exact BMAD 6.12.1-next.0 compatibility, nested-layout guards and complete Spec intake are under qualification. Publication and adopter rollout remain separate. See docs/adapters/bmad/BMAD_6121_HANDOFF.md.
+
 ## Unreleased — 2026-09-10
 
 - Reject current-run mutable verification manifests as immutable intent sources before execution or attestation.

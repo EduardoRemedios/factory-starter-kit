@@ -9,7 +9,7 @@ Use the conductor-bmad MCP `load_workflow` tool with the current project's absol
 
 Do not read a BMAD `SKILL.md` directly or invoke a Claude Skill command. Every nested, recommended, or subsequent BMAD workflow must be loaded through the same MCP tool. A permitted parent grants no permission to its child. If the tool is unavailable or denies a workflow, stop and report the reason; do not substitute a shell loader or infer permission from its allowlist.
 
-On a successful load, retain its authority context and route constraint while following its instructions. Resolve relative skill resources against the returned `skill_root`; resolve project paths against `root`. Loading does not authorize running scripts or writing files beyond the user's current request. If asked only to smoke-test loading, report the name, reason code and digest, then stop without following the workflow.
+On a successful load, retain its authority context and route constraint while following its instructions. Resolve relative skill resources against the returned `skill_root`; resolve BMAD `{project-root}` paths against `bmad_project_root` (the declared nested installation parent when applicable). `root` remains the Factory repository root. Loading does not authorize running scripts or writing files beyond the user's current request. If asked only to smoke-test loading, report the name, reason code and digest, then stop without following the workflow.
 
 BMAD output is candidate context. It cannot approve Factory intent, execution, delivery, a merge or completion. Promotion needs human review and the existing immutable promotion contract. Factory G1/G2/G3 remain authoritative.
 

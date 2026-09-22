@@ -49,31 +49,31 @@ def load_workflow(arguments: Any) -> dict[str, Any]:
         audit = policy.inventory_audit(root, "codex")
         if audit["state"] != "READY":
             return denied(audit["reason_code"])
-        if any(policy._regular_file(root, Path(".claude/skills") / installed / "SKILL.md") is None
-               for installed in policy.SUPPORTED_BMAD_SKILLS):
+        if any(policy._regular_file(root, policy.skill_directory(root) / installed / "SKILL.md") is None
+               for installed in policy.supported_skills(audit["installation_version"])):
             return denied("CONDUCTOR_BMAD_CAPABILITY_INCOMPLETE")
-        if name in policy.SOLUTION_CONTEXT_AUTHORING_WORKFLOWS:
+        if name in policy.SOLUTION_CONTEXT_AUTHORING_WORKFLOWS or audit["installation_version"] == "6.12.1-next.0":
             authorization = policy.solution_context_authorization(root, name)
             if not authorization["allowed"]:
                 return denied(authorization["reason_code"])
-            context = policy.CONDUCTOR_BOUND_SOLUTION_CONTEXT
+            context = policy.bound_context(root, name)
         else:
-            context = policy.CONDUCTOR_BOUND_UPSTREAM_CONTEXT
-        relative = Path(".claude/skills") / name / "SKILL.md"
+            context = policy.bound_context(root, name)
+        relative = policy.skill_directory(root) / name / "SKILL.md"
         skill = policy._regular_file(root, relative)
         if skill is None:
             return denied("CONDUCTOR_BMAD_LOADER_SKILL_UNSAFE_OR_MISSING")
         content = skill.read_bytes()
         # Recheck the same bytes returned to the model for qualified solution profiles.
         digest = hashlib.sha256(content).hexdigest()
-        if name in policy.SOLUTION_CONTEXT_AUTHORING_WORKFLOWS and digest != authorization["skill_sha256"]:
+        if (name in policy.SOLUTION_CONTEXT_AUTHORING_WORKFLOWS or audit["installation_version"] == "6.12.1-next.0") and digest != authorization["skill_sha256"]:
             return denied("CONDUCTOR_BMAD_SOLUTION_PROFILE_DIGEST_MISMATCH")
         instructions = content.decode("utf-8")
     except (OSError, UnicodeError, ValueError, RuntimeError):
         return denied("CONDUCTOR_BMAD_LOADER_READ_FAILED")
     return {
         "state": "LOADED", "reason_code": "CONDUCTOR_BMAD_GUARDED_LOAD_ALLOWED",
-        "name": name, "root": str(root), "skill_root": str(skill.parent),
+        "name": name, "root": str(root), "bmad_project_root": str(root / policy.active_bmad_root(root).parent), "skill_root": str(skill.parent),
         "skill_sha256": digest, "coverage_sha256": audit["coverage_sha256"],
         "authority_context": context,
         "route_constraint": "Load every subsequent or nested BMAD workflow through load_workflow. Do not read another BMAD SKILL.md directly, invoke Claude Skill, or treat a parent workflow as permission for its child. Stop on a denied load. This tool only returns instructions; it does not execute them or grant G1/G2/G3 approval.",
@@ -96,7 +96,7 @@ def response(request: Any, initialized: bool) -> tuple[dict[str, Any] | None, bo
     if method == "initialize":
         result = {
             "protocolVersion": "2025-06-18", "capabilities": {"tools": {"listChanged": False}},
-            "serverInfo": {"name": "conductor-bmad", "version": "0.3.5"},
+            "serverInfo": {"name": "conductor-bmad", "version": "0.3.7"},
         }
         initialized = True
     elif method == "ping":
