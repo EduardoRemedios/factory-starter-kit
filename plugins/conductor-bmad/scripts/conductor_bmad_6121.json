@@ -2,7 +2,7 @@
   "agents": {
     "bmad-agent-analyst": {
       "description": "Channels Porter's strategic rigor and Minto's Pyramid Principle, grounds every finding in verifiable evidence, represents every stakeholder voice. Speaks like a treasure hunter narrating the find: thrilled by every clue, precise once the pattern emerges.",
-      "icon": "\ud83d\udcca",
+      "icon": "📊",
       "module": "bmm",
       "name": "Mary",
       "team": "software-development",
@@ -10,15 +10,15 @@
     },
     "bmad-agent-architect": {
       "description": "Favors boring technology for stability, developer productivity as architecture, ties every decision to business value. Speaks like a seasoned engineer at the whiteboard: measured, always laying out trade-offs rather than verdicts.",
-      "icon": "\ud83c\udfd7\ufe0f",
+      "icon": "🏗️",
       "module": "bmm",
       "name": "Winston",
       "team": "software-development",
       "title": "System Architect"
     },
     "bmad-agent-dev": {
-      "description": "Test-first discipline (red, green, refactor), 100% pass before review, no fluff all precision. Speaks like a terminal prompt: exact file paths, AC IDs, and commit-message brevity \u2014 every statement citable.",
-      "icon": "\ud83d\udcbb",
+      "description": "Test-first discipline (red, green, refactor), 100% pass before review, no fluff all precision. Speaks like a terminal prompt: exact file paths, AC IDs, and commit-message brevity — every statement citable.",
+      "icon": "💻",
       "module": "bmm",
       "name": "Amelia",
       "team": "software-development",
@@ -26,7 +26,7 @@
     },
     "bmad-agent-pm": {
       "description": "Drives Jobs-to-be-Done over template filling, user value first, technical feasibility is a constraint not the driver. Speaks like a detective interrogating a cold case: short questions, sharper follow-ups, every 'why?' tightening the net.",
-      "icon": "\ud83d\udccb",
+      "icon": "📋",
       "module": "bmm",
       "name": "John",
       "team": "software-development",
@@ -34,7 +34,7 @@
     },
     "bmad-agent-ux-designer": {
       "description": "Balances empathy with edge-case rigor, starts simple and evolves through feedback, every decision serves a genuine user need. Speaks like a filmmaker pitching the scene before the code exists, painting user stories that make you feel the problem.",
-      "icon": "\ud83c\udfa8",
+      "icon": "🎨",
       "module": "bmm",
       "name": "Sally",
       "team": "software-development",
@@ -61,7 +61,7 @@
       {
         "action": "",
         "args": "",
-        "description": "Set up or refresh a repo's agent instructions so AI agents work well in it: verified commands, policy, conventions that differ from defaults, and known pitfalls. Setup, refresh, record, and audit \u2014 replaces document-project and generate-project-context.",
+        "description": "Set up or refresh a repo's agent instructions so AI agents work well in it: verified commands, policy, conventions that differ from defaults, and known pitfalls. Setup, refresh, record, and audit — replaces document-project and generate-project-context.",
         "display-name": "Project Context",
         "followed-by": "",
         "menu-code": "PC",
@@ -91,7 +91,7 @@
       {
         "action": "",
         "args": "[path]",
-        "description": "Condense any input (brief, PRD, transcript, brain dump, design folder, or several sources at once) into a short SPEC.md plus supporting files that later work builds from. Pins down what to build before deciding how. Works for software, game design, research, editorial, policy, business \u2014 anything with an intent behind it. Can also validate an existing spec.",
+        "description": "Condense any input (brief, PRD, transcript, brain dump, design folder, or several sources at once) into a short SPEC.md plus supporting files that later work builds from. Pins down what to build before deciding how. Works for software, game design, research, editorial, policy, business — anything with an intent behind it. Can also validate an existing spec.",
         "display-name": "Spec",
         "followed-by": "",
         "menu-code": "SPC",
@@ -286,7 +286,7 @@
       {
         "action": "",
         "args": "",
-        "description": "Generate automated API and end-to-end tests for implemented code. Not for code review or story validation \u2014 use Code Review for that.",
+        "description": "Generate automated API and end-to-end tests for implemented code. Not for code review or story validation — use Code Review for that.",
         "display-name": "QA Automation Test",
         "followed-by": "",
         "menu-code": "QA",
@@ -378,7 +378,7 @@
       {
         "action": "",
         "args": "",
-        "description": "Use when you want to change how an agent or workflow behaves \u2014 add persistent facts, swap templates, insert activation hooks, or customize menus. Scans what's customizable, picks the right scope (agent vs workflow), writes the override to _bmad/custom/, and verifies the merge. No TOML hand-authoring required.",
+        "description": "Use when you want to change how an agent or workflow behaves — add persistent facts, swap templates, insert activation hooks, or customize menus. Scans what's customizable, picks the right scope (agent vs workflow), writes the override to _bmad/custom/, and verifies the merge. No TOML hand-authoring required.",
         "display-name": "BMad Customize",
         "followed-by": "",
         "menu-code": "BC",
@@ -393,7 +393,7 @@
       {
         "action": "",
         "args": "",
-        "description": "Use at any checkpoint to push a just-produced draft, section, or plan past its first version \u2014 pick from a menu of elicitation methods (pre-mortem, first principles, red team, socratic) and apply the improvements.",
+        "description": "Use at any checkpoint to push a just-produced draft, section, or plan past its first version — pick from a menu of elicitation methods (pre-mortem, first principles, red team, socratic) and apply the improvements.",
         "display-name": "Advanced Elicitation",
         "followed-by": "",
         "menu-code": "AE",
@@ -408,7 +408,7 @@
       {
         "action": "",
         "args": "[path]",
-        "description": "Review anything before it ships: a diff, branch, or uncommitted changes; a PRD, spec, story, or architecture document; any prose. Applies whichever installed review methods (lenses) fit the content \u2014 shipped ones cover adversarial critique, edge cases, verification gaps, document structure, and prose editing \u2014 or exactly the ones you name. Code Review in other modules calls it automatically.",
+        "description": "Review anything before it ships: a diff, branch, or uncommitted changes; a PRD, spec, story, or architecture document; any prose. Applies whichever installed review methods (lenses) fit the content — shipped ones cover adversarial critique, edge cases, verification gaps, document structure, and prose editing — or exactly the ones you name. Code Review in other modules calls it automatically.",
         "display-name": "Review",
         "followed-by": "",
         "menu-code": "RV",
@@ -423,7 +423,7 @@
       {
         "action": "",
         "args": "",
-        "description": "Test an idea \u2014 software, business, creative, research, or personal \u2014 through probing questions from different personas until you can act on it or drop it with confidence. Can hand the result to bmad-spec or bmad-build.",
+        "description": "Test an idea — software, business, creative, research, or personal — through probing questions from different personas until you can act on it or drop it with confidence. Can hand the result to bmad-spec or bmad-build.",
         "display-name": "Forge Idea",
         "followed-by": "",
         "menu-code": "FI",
@@ -952,6 +952,16 @@
     }
   },
   "source": "https://registry.npmjs.org/bmad-method/-/bmad-method-6.12.1-next.0.tgz",
+  "tea_agents": {
+    "bmad-tea": {
+      "description": "Risk-based testing strategy, fixture architecture, ATDD, API and UI automation (Playwright, Cypress, pytest, JUnit, Go test, xUnit, RSpec), mobile native automation (Maestro), consumer-driven contract testing (Pact), and performance/load/chaos testing (k6). Speaks in risk calculations and impact assessments; strong opinions, weakly held.",
+      "icon": "🧪",
+      "module": "tea",
+      "name": "Murat",
+      "team": "software-development",
+      "title": "Master Test Architect and Quality Advisor"
+    }
+  },
   "tea_commit": "7ba2130193c473b53d2e323b4da9a80697eef88e",
   "tea_skills": {
     "bmad-tea": {

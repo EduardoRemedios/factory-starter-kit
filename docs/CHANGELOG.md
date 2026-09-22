@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.8 — local, unreleased
+
+- Recognise the exact pinned optional TEA agent descriptor without admitting
+  unknown descriptors or expanding workflow permissions.
+- Check shared TOML/YAML configuration in inventory readiness, using the same
+  qualification required by hooks and the guarded MCP route.
+- Include real installer agent descriptors in compatibility fixtures and test
+  canonical, altered, missing-module and unpinned-module cases.
+- Generate coupled core/companion candidate packages; publication and adoption
+  remain separate reviewed actions.
+
 ## 0.3.7 — local, unreleased
 
 - Add exact `--repo-companion` permissions for reached repository Markdown inputs

@@ -35,6 +35,15 @@ def seed(root: Path, *, nested=False, tea=False, shims=False):
     with (active/'_config/bmad-help.csv').open('w',newline='') as stream:
         writer=csv.DictWriter(stream,fieldnames=list(rows[0]));writer.writeheader();writer.writerows(rows)
     (active/'config.toml').write_text('[core]\nproject_name="Public fixture"\nuser_name="Test reviewer"\ncommunication_language="English"\ndocument_output_language="English"\noutput_folder="{project-root}/_bmad-output"\n[modules.bmm]\nplanning_artifacts="{project-root}/_bmad-output/planning-artifacts"\nimplementation_artifacts="{project-root}/_bmad-output/implementation-artifacts"\nproject_knowledge="{project-root}/docs"\n')
+    # Real installer output includes agent descriptors, including the optional TEA agent.
+    agents = dict(runtime.policy.profile_6121()['agents'])
+    if tea:
+        agents.update(runtime.policy.profile_6121()['tea_agents'])
+    with (active/'config.toml').open('a') as stream:
+        for name, descriptor in agents.items():
+            stream.write('\n[agents.' + name + ']\n')
+            for key, value in descriptor.items():
+                stream.write(key + '=' + json.dumps(value, ensure_ascii=False) + '\n')
     for module in ['core','bmm']:
         (active/module).mkdir()
         (active/module/'config.yaml').write_text('user_name: Test reviewer\nproject_name: Public fixture\ncommunication_language: English\ndocument_output_language: English\noutput_folder: "{project-root}/_bmad-output"\nplanning_artifacts: "{project-root}/_bmad-output/planning-artifacts"\nimplementation_artifacts: "{project-root}/_bmad-output/implementation-artifacts"\n')

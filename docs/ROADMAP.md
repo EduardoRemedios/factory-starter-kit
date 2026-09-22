@@ -1,5 +1,12 @@
 # ROADMAP.md - Development Roadmap
 
+## Local 0.3.8 AuditEdge first-use repair
+
+Qualify the canonical optional TEA configuration and surface readiness failures
+before invocation. Complete the written AUD-167 start and real Claude rehearsal
+before candidate publication/adoption review. This bounded pilot repair does not
+extend the wider roadmap or authorize AUD-167 implementation.
+
 ## Local 0.3.7 bounded intake repair
 
 Qualify explicit repository companions and provide repeatable written handoffs

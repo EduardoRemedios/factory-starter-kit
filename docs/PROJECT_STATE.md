@@ -1,5 +1,14 @@
 # PROJECT_STATE.md - Canonical Build State
 
+## Local 0.3.8 TEA readiness candidate
+
+The candidate recognises the exact optional TEA agent descriptor from the pinned
+6.12.1-next.0 installation and checks shared configuration before returning BMAD
+readiness. Unknown/altered descriptors, unpinned modules and prohibited delivery
+workflows remain denied. Qualification and the actual Claude first-session
+rehearsal are recorded separately; publication and adopter update are pending.
+See `docs/adapters/bmad/BMAD_TEA_READINESS.md`.
+
 ## Local 0.3.7 repository-companion candidate
 
 The current local candidate adds exact opt-in repository Markdown companions to

@@ -1077,8 +1077,8 @@ def inventory_audit(root: Path, harness: str) -> dict[str, Any]:
     )
     expected_skills = supported_skills(installation_version)
     tea_ok = "tea" not in modules or modules["tea"] == SUPPORTED_TEA_VERSION
-    if modules.get("tea") == "main" and installation_version == "6.12.1-next.0":
-        tea_ok = pinned_tea(root, manifest)
+    if "tea" in modules and installation_version == "6.12.1-next.0":
+        tea_ok = modules["tea"] == "main" and pinned_tea(root, manifest)
     if not versions_ok or not tea_ok:
         return result("BLOCKED", "CONDUCTOR_BMAD_VERSION_QUARANTINED", "review_supported_bmad_migration_without_mutation", **base)
 
@@ -1112,6 +1112,9 @@ def inventory_audit(root: Path, harness: str) -> dict[str, Any]:
         problem = profile_inventory_problem(root)
         if problem:
             return result("BLOCKED", problem, "restore_pinned_public_bytes_or_review_profile", **base)
+        problem = configuration_6121_problem(root, modules)
+        if problem:
+            return result("BLOCKED", problem, "review_supported_bmad_configuration", **base)
     return result("READY", "CONDUCTOR_BMAD_INVENTORY_OK", "qualify_harness_enforcement", **base)
 
 
@@ -1304,6 +1307,50 @@ def _central_settings_valid(data: dict[str, Any], agents: dict[str, Any]) -> boo
     return True
 
 
+def configuration_6121_problem(root: Path, modules: dict[str, str]) -> str | None:
+    """Qualify shared installer configuration before reporting repository readiness."""
+    profile = profile_6121()
+    agents = dict(profile["agents"])
+    if "tea" in modules:
+        # inventory_audit has already checked the installed TEA commit.
+        agents.update(profile["tea_agents"])
+    try:
+        active = active_bmad_root(root)
+        for layer in ["config.toml", "config.user.toml", "custom/config.toml", "custom/config.user.toml"]:
+            if not _central_settings_valid(_checked_toml(root, active / layer, required=layer == "config.toml"), agents):
+                return "CONDUCTOR_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE"
+        # Legacy YAML config is still read by several new skills. Validate its bounded scalar surface.
+        for module, filename in ((module, filename) for module in (("core", "bmm", "tea") if "tea" in modules else ("core", "bmm")) for filename in ("config.yaml", "config.user.yaml")):
+            relative = active / module / filename
+            if filename == "config.user.yaml" and not (root / relative).exists() and not (root / relative).is_symlink():
+                continue
+            yaml_file = _regular_file(root, relative)
+            if yaml_file is None:
+                return "CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID"
+            data = {"core": {}, "modules": {module if module != "core" else "bmm": {}}}
+            for line in yaml_file.read_text(encoding="utf-8").splitlines():
+                if not line.strip() or line.lstrip().startswith("#"):
+                    continue
+                match = re.fullmatch(r"([a-z_]+):\s*(.*?)\s*", line)
+                if match is None:
+                    raise ValueError("Unsupported YAML configuration")
+                key, value = match.groups(); value = value.strip("\"'")
+                common = {"user_name", "project_name", "communication_language", "document_output_language", "output_folder"}
+                target = data["core"] if key in common else data["modules"][module if module != "core" else "bmm"]
+                if key in {"tea_use_playwright_utils", "tea_use_pactjs_utils", "tea_capability_probe"}:
+                    if value not in {"true", "false"}:
+                        raise ValueError("Expected boolean TEA setting")
+                    value = value == "true"
+                if key in target:
+                    raise ValueError("Duplicate YAML setting")
+                target[key] = value
+            if not _central_settings_valid(data, agents):
+                return "CONDUCTOR_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE"
+    except (OSError, UnicodeError, ValueError, TypeError, AttributeError, ImportError):
+        return "CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID"
+    return None
+
+
 def qualified_6121_workflow(root: Path, name: str) -> dict[str, Any]:
     root = root.resolve()
     denied = {"allowed": False, "name": name}
@@ -1327,36 +1374,6 @@ def qualified_6121_workflow(root: Path, name: str) -> dict[str, Any]:
         if modules.get("tea") == "main" and not pinned_tea(root, manifest):
             return {**denied, "reason_code": "CONDUCTOR_BMAD_VERSION_QUARANTINED"}
         active = active_bmad_root(root)
-        for layer in ["config.toml", "config.user.toml", "custom/config.toml", "custom/config.user.toml"]:
-            if not _central_settings_valid(_checked_toml(root, active / layer, required=layer == "config.toml"), profile["agents"]):
-                return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE"}
-        # Legacy YAML config is still read by several new skills. Validate its bounded scalar surface.
-        for module, filename in ((module, filename) for module in (("core", "bmm", "tea") if "tea" in modules else ("core", "bmm")) for filename in ("config.yaml", "config.user.yaml")):
-            relative = active / module / filename
-            if filename == "config.user.yaml" and not (root / relative).exists() and not (root / relative).is_symlink():
-                continue
-            yaml_file = _regular_file(root, relative)
-            if yaml_file is None:
-                return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_STATE_INVALID"}
-            data = {"core": {}, "modules": {module if module != "core" else "bmm": {}}}
-            for line in yaml_file.read_text(encoding="utf-8").splitlines():
-                if not line.strip() or line.lstrip().startswith("#"):
-                    continue
-                match = re.fullmatch(r"([a-z_]+):\s*(.*?)\s*", line)
-                if match is None:
-                    raise ValueError("Unsupported YAML configuration")
-                key, value = match.groups(); value = value.strip("\"'")
-                common = {"user_name", "project_name", "communication_language", "document_output_language", "output_folder"}
-                target = data["core"] if key in common else data["modules"][module if module != "core" else "bmm"]
-                if key in {"tea_use_playwright_utils", "tea_use_pactjs_utils", "tea_capability_probe"}:
-                    if value not in {"true", "false"}:
-                        raise ValueError("Expected boolean TEA setting")
-                    value = value == "true"
-                if key in target:
-                    raise ValueError("Duplicate YAML setting")
-                target[key] = value
-            if not _central_settings_valid(data, profile["agents"]):
-                return {**denied, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_OVERRIDE_ACTIVE"}
         # Per-skill workflow fields are executable instructions, including facts, lenses and callbacks.
         for suffix in (".toml", ".user.toml"):
             override = _checked_toml(root, active / "custom" / (name + suffix))

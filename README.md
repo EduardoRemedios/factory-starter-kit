@@ -21,10 +21,11 @@ without a receipt. Three gates, deterministic validators, no choreography.
 
 </div>
 
-**Local candidate:** this checkout carries 0.3.7, extending the separately
-qualified 0.3.6 BMAD compatibility work with explicit repository companions.
-It is not published or globally installed. See the
-[handoff example and limits](docs/adapters/bmad/BMAD_REPOSITORY_COMPANIONS.md).
+**Local candidate:** this checkout carries 0.3.8, adding canonical optional TEA
+configuration support and earlier readiness diagnostics to the 0.3.7 intake work.
+Publication and adopter updates remain separate. See the
+[repair scope and limits](docs/adapters/bmad/BMAD_TEA_READINESS.md) and
+[repository-companion handoff](docs/adapters/bmad/BMAD_REPOSITORY_COMPANIONS.md).
 
 
 Factory 0.3 is the third generation of this repository's governed delivery

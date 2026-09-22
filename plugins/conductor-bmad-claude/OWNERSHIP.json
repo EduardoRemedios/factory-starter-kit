@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "package": "conductor-bmad",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "generated_from": "plugin-src/conductor-bmad",
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "211a06aeefefec3ee9c6447bdc9348b895482864beea79bc8371d50f817421b3",
+      "sha256": "83a9ec3b446ac7782f5d3cc8b650a6ca353cd5cf4c1252e411a6570f0c72d442",
       "classification": "release-owned"
     },
     {
@@ -26,12 +26,12 @@
     },
     {
       "path": "assets/project-adapter/conductor_bmad_6121.json",
-      "sha256": "ac7fcab660d828ad04c0d695b0a83358af01b7d94c40cfed914331c7a2ff4e86",
+      "sha256": "c71e67655862da31eb4a6152854e95f11d02bcbf2f6fd2ccded291c82fbfc771",
       "classification": "release-owned"
     },
     {
       "path": "assets/project-adapter/conductor_bmad_policy.py",
-      "sha256": "d3209118bcd80d24a7a862c0e2f358239125573f4e8d38b47b19f54e8359de45",
+      "sha256": "9f9d5fcd035600206dcba466734ae75b818c431275288060f649c8c99961cf6b",
       "classification": "release-owned"
     },
     {
@@ -66,17 +66,17 @@
     },
     {
       "path": "scripts/conductor_bmad.py",
-      "sha256": "8afcd57d1a9879c3490deeafd0d34f9eb7d11d42d35be5281ae21ddda5ae8e43",
+      "sha256": "2e9ec20bc8254a725d7ccacdb37714a27e2a19d619a1f5046c23d9c541d98468",
       "classification": "release-owned"
     },
     {
       "path": "scripts/conductor_bmad_6121.json",
-      "sha256": "ac7fcab660d828ad04c0d695b0a83358af01b7d94c40cfed914331c7a2ff4e86",
+      "sha256": "c71e67655862da31eb4a6152854e95f11d02bcbf2f6fd2ccded291c82fbfc771",
       "classification": "release-owned"
     },
     {
       "path": "scripts/conductor_bmad_policy.py",
-      "sha256": "d3209118bcd80d24a7a862c0e2f358239125573f4e8d38b47b19f54e8359de45",
+      "sha256": "9f9d5fcd035600206dcba466734ae75b818c431275288060f649c8c99961cf6b",
       "classification": "release-owned"
     },
     {
