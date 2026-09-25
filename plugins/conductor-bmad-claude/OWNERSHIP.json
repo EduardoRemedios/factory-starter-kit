@@ -1,17 +1,17 @@
 {
   "schema_version": 1,
   "package": "conductor-bmad",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "generated_from": "plugin-src/conductor-bmad",
   "files": [
     {
       "path": ".claude-plugin/plugin.json",
-      "sha256": "83a9ec3b446ac7782f5d3cc8b650a6ca353cd5cf4c1252e411a6570f0c72d442",
+      "sha256": "a92d46eff4f43b8d9f6d78dc73c200704138fc55848b86c5c4d62921c86c3fb5",
       "classification": "release-owned"
     },
     {
       "path": "assets/project-adapter/BMAD_POLICY.md",
-      "sha256": "0aee5d849f734da202685f07e5b52e42a80a3e54c48c531f86aa9f25a0434c70",
+      "sha256": "25a998d6a2597020e7fba7cc8aa926ed6fb45181ee27c355ac5faeafe38f66af",
       "classification": "release-owned"
     },
     {
@@ -31,7 +31,7 @@
     },
     {
       "path": "assets/project-adapter/conductor_bmad_policy.py",
-      "sha256": "9f9d5fcd035600206dcba466734ae75b818c431275288060f649c8c99961cf6b",
+      "sha256": "8ba99435d8b064379bb321e5d588abeb9f16bc9541ded754da1e13d04983cf6f",
       "classification": "release-owned"
     },
     {
@@ -41,7 +41,7 @@
     },
     {
       "path": "assets/project-adapter/conductor_project_preflight",
-      "sha256": "fa3200e1b9c4fdf75d1ad9f85823c2d22d90e0c279f102fc0d71839e6f805f5a",
+      "sha256": "8c6a7c43d4b9d1bdb3e2d7f40ad32d23a45a0f057527a9989a5fa2102ee26a04",
       "classification": "release-owned"
     },
     {
@@ -66,7 +66,7 @@
     },
     {
       "path": "scripts/conductor_bmad.py",
-      "sha256": "2e9ec20bc8254a725d7ccacdb37714a27e2a19d619a1f5046c23d9c541d98468",
+      "sha256": "711bfd697f3b85456d4e42dc016de1bb5bd4cf2690971db45524e954ebd67d08",
       "classification": "release-owned"
     },
     {
@@ -76,7 +76,7 @@
     },
     {
       "path": "scripts/conductor_bmad_policy.py",
-      "sha256": "9f9d5fcd035600206dcba466734ae75b818c431275288060f649c8c99961cf6b",
+      "sha256": "8ba99435d8b064379bb321e5d588abeb9f16bc9541ded754da1e13d04983cf6f",
       "classification": "release-owned"
     },
     {
@@ -101,7 +101,12 @@
     },
     {
       "path": "skills/promote/SKILL.md",
-      "sha256": "397aaa4134899bdf8c69a9e88c8599bb994fd02973f419aaa5d11aca452220c7",
+      "sha256": "954970acb88c34227909d2f842f4a25114cbc91b95693bca69ca3ac306f5cdc4",
+      "classification": "release-owned"
+    },
+    {
+      "path": "skills/reconcile/SKILL.md",
+      "sha256": "2b3c7bf5f87b96adcf1192b70185845c495f624e874285d4665b302b3ac44fee",
       "classification": "release-owned"
     },
     {

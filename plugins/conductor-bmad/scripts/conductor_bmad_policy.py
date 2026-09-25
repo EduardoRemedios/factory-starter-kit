@@ -8,6 +8,8 @@ import csv
 import json
 import os
 import re
+import subprocess
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -168,6 +170,25 @@ DELIVERY_WORKFLOWS = frozenset({
     "bmad-agent-dev",
     "bmad-tea",
     "bmad-loop",
+})
+
+# automate stays classified as delivery, so audits, coverage digests and snapshot citations are
+# unchanged. The hook admits it only under one run's G1-pinned authority inside an open write window.
+GOVERNED_AUTOMATION_WORKFLOWS = frozenset({"bmad-testarch-automate"})
+AUTOMATION_AUTHORITY_FILE = "bmad_automation_authority.json"
+AUTOMATION_WINDOWS_DIR = "automation"
+# One window per run. The compare always recomputes it, so a forged compare.json proves nothing.
+AUTOMATION_WINDOW = "window-001"
+# Runner-owned evidence inside the run, each validated by its own digests; everything else in the run is watched.
+AUTOMATION_RUNNER_EVIDENCE = ("automation", "receipts", "postimage")
+# Paths that govern the agent, the adapter or the evidence chain are never automation write roots.
+AUTOMATION_FORBIDDEN_ROOTS = (
+    ".claude", ".agents", ".codex", ".github", ".husky", ".tea", "docs/Conductor", "docs/upstream",
+    "docs/adapters", "scripts", "AGENTS.md", "CLAUDE.md",
+)
+# Dependency manifests change what runs, not what is tested; they are rejected even inside a root.
+AUTOMATION_FORBIDDEN_NAMES = frozenset({
+    "package.json", "package-lock.json", "npm-shrinkwrap.json", "yarn.lock", "pnpm-lock.yaml", ".npmrc",
 })
 
 PRODUCT_CONTEXT_WORKFLOWS = DISCOVERY_AUTHORING_WORKFLOWS | SOLUTION_CONTEXT_AUTHORING_WORKFLOWS | PERSONA_AGENT_WORKFLOWS
@@ -547,6 +568,10 @@ def _deny_message(code: str, name: str | None, lane: str = "unknown", layout: di
     layout_reason = layout["reason_code"] if layout else "CONDUCTOR_BMAD_LAYOUT_UNKNOWN"
     if code == "CONDUCTOR_BMAD_HOOK_INPUT_INVALID":
         allowed_here, next_step = "none", "repeat the invocation with exactly one BMAD skill name."
+    elif code.startswith("CONDUCTOR_BMAD_AUTOMATION_"):
+        allowed_here, next_step = "evidence-only TEA and helpers", (
+            "pin bmad_automation_authority.json and an automation-compare check in one execution-enabled run, "
+            "obtain INTENT_LOCK and EXECUTION_GO, then run automation-capture before invoking.")
     elif lane == "delivery":
         allowed_here, next_step = "product-context lane and helpers", "route delivery work through Conductor (/conductor:run)."
     elif lane == "unknown":
@@ -650,6 +675,255 @@ def solution_context_authorization(root: Path, name: str) -> dict[str, Any]:
     }
 
 
+def _automation_relative(value: object) -> Path | None:
+    if not isinstance(value, str) or not value or "\\" in value or any(c in value for c in "\n\r*?[]{}"):
+        return None
+    path = Path(value)
+    if path.is_absolute() or ".." in path.parts or path.as_posix() != value or value == ".":
+        return None
+    return path
+
+
+def automation_path_forbidden(root: Path, path: Path) -> bool:
+    # Compare case-insensitively: macOS resolves '.Claude' to '.claude'.
+    folded = Path(path.as_posix().lower())
+    forbidden = [Path(item.lower()) for item in AUTOMATION_FORBIDDEN_ROOTS] + [
+        Path(active_bmad_root(root).as_posix().lower()), Path(skill_directory(root).as_posix().lower())]
+    return path.name.lower() in AUTOMATION_FORBIDDEN_NAMES or any(
+        _path_is_within(folded, item) or _path_is_within(item, folded) for item in forbidden
+    )
+
+
+def _symlink_on_path(root: Path, path: Path) -> bool:
+    cursor = root
+    for part in path.parts:
+        cursor = cursor / part
+        if cursor.is_symlink():
+            return True
+    return False
+
+
+def _json_file(root: Path, relative: Path) -> Any:
+    safe = _regular_file(root, relative)
+    if safe is None:
+        raise ValueError(f"missing or unsafe: {relative.as_posix()}")
+    return json.loads(safe.read_text(encoding="utf-8"))
+
+
+def automation_run_authority(root: Path, run_id: str, name: str) -> dict[str, Any]:
+    """Validate one run's authority for a governed automation workflow; never trusts prose."""
+    root = root.resolve()
+    denied = {"allowed": False, "name": name, "run_id": run_id}
+    run_relative = Path("docs/Conductor/runs") / run_id
+    authority_relative = run_relative / AUTOMATION_AUTHORITY_FILE
+    try:
+        authority = _json_file(root, authority_relative)
+        intent_path = _regular_file(root, run_relative / "intent_pack.json")
+        intent = _json_file(root, run_relative / "intent_pack.json")
+    except (OSError, UnicodeError, ValueError):
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_AUTHORITY_INVALID"}
+    if (not isinstance(authority, dict) or set(authority) != {"schema_version", "run_id", "workflow", "inputs", "write_roots"}
+            or authority["schema_version"] != 1 or authority["run_id"] != run_id or authority["workflow"] != name):
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_AUTHORITY_INVALID"}
+    inputs, roots = authority["inputs"], authority["write_roots"]
+    if not isinstance(inputs, list) or not inputs or not isinstance(roots, list) or not roots:
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_AUTHORITY_INVALID"}
+    for value in inputs:
+        path = _automation_relative(value)
+        if path is None or _regular_file(root, path) is None:
+            return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_INPUT_INVALID", "path": value}
+    for value in roots:
+        path = _automation_relative(value)
+        if path is None or automation_path_forbidden(root, path) or _symlink_on_path(root, path):
+            return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_WRITE_ROOT_FORBIDDEN", "path": value}
+    if not isinstance(intent, dict) or intent.get("run_id") != run_id or intent.get("execution_mode") != "EXECUTION_ENABLED":
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_EXECUTION_NOT_ENABLED"}
+    pin = {"ref": authority_relative.as_posix(), "sha256": digest_file(root / authority_relative)}
+    if not any(isinstance(s, dict) and s.get("ref") == pin["ref"] and s.get("sha256") == pin["sha256"] for s in intent.get("sources", [])):
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_AUTHORITY_UNPINNED"}
+    intent_digest = digest_file(intent_path)
+    for kind in ("INTENT_LOCK", "EXECUTION_GO"):
+        try:
+            sign = _json_file(root, run_relative / "countersign" / f"{kind}.json")
+        except (OSError, UnicodeError, ValueError):
+            return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_NOT_AUTHORISED", "missing": kind}
+        if (not isinstance(sign, dict) or sign.get("kind") != kind or sign.get("decision") != "GO"
+                or sign.get("subject_path") != "intent_pack.json" or sign.get("subject_sha256") != intent_digest):
+            return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_NOT_AUTHORISED", "stale": kind}
+    run_root = root / run_relative
+    if (run_root / "countersign/COMPLETION.json").exists():
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_RUN_COMPLETED"}
+    try:
+        definitions = _json_file(root, run_relative / "verification_definitions.json")
+        commands = [check.get("command") for check in definitions.get("checks", [])]
+    except (OSError, UnicodeError, ValueError, AttributeError):
+        commands = []
+    # The pinned compare check is what makes the window's write containment a G2 receipt.
+    if not any(isinstance(c, list) and "automation-compare" in c and run_id in c for c in commands):
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_COMPARE_UNPINNED"}
+    window = run_root / AUTOMATION_WINDOWS_DIR / AUTOMATION_WINDOW
+    if (window / "compare.json").exists() or not (window / "preimage.json").is_file():
+        return {**denied, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_WINDOW_CLOSED"}
+    return {"allowed": True, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_AUTHORISED", "name": name, "run_id": run_id,
+            "inputs": inputs, "write_roots": roots, "window": window.relative_to(root).as_posix()}
+
+
+def automation_authorization(root: Path, name: str) -> dict[str, Any]:
+    """Exactly one run may hold authority; ambiguity and every invalid record fail closed."""
+    root = root.resolve()
+    runs = root / "docs/Conductor/runs"
+    candidates = sorted(p.name for p in runs.iterdir() if (p / AUTOMATION_AUTHORITY_FILE).exists()) if runs.is_dir() else []
+    if not candidates:
+        return {"allowed": False, "name": name, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_AUTHORITY_REQUIRED"}
+    verdicts = [automation_run_authority(root, run_id, name) for run_id in candidates]
+    allowed = [v for v in verdicts if v["allowed"]]
+    if len(allowed) > 1:
+        return {"allowed": False, "name": name, "reason_code": "CONDUCTOR_BMAD_AUTOMATION_AUTHORITY_AMBIGUOUS"}
+    return allowed[0] if allowed else verdicts[-1]
+
+
+def _automation_tree(root: Path, run_id: str) -> dict[str, str]:
+    """Git-visible files plus ignored governance files (local settings, git hooks), minus runner-owned run evidence."""
+    listing = subprocess.run(["git", "-C", str(root), "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+                             capture_output=True, check=True).stdout
+    paths = {Path(os.fsdecode(raw)) for raw in listing.split(b"\0") if raw}
+    install = active_bmad_root(root).parent
+    paths |= {p for p in (Path(".claude/settings.local.json"), install / ".claude/settings.local.json") if (root / p).exists() or (root / p).is_symlink()}
+    # .git/config can redirect hooks (core.hooksPath) or add filters, so it is watched like the hooks themselves.
+    if (root / ".git/config").is_file():
+        paths.add(Path(".git/config"))
+    hooks = root / ".git/hooks"
+    if hooks.is_dir():
+        paths |= {p.relative_to(root) for p in hooks.rglob("*") if p.is_file() or p.is_symlink()}
+    evidence = [Path("docs/Conductor/runs") / run_id / name for name in AUTOMATION_RUNNER_EVIDENCE]
+    tree: dict[str, str] = {}
+    for relative in sorted(paths):
+        path = root / relative
+        if any(_path_is_within(relative, item) for item in evidence):
+            continue
+        if path.is_symlink():
+            tree[relative.as_posix()] = "symlink:" + os.readlink(path)
+        elif path.is_file():
+            tree[relative.as_posix()] = digest_file(path)
+    return tree
+
+
+def automation_capture(root: Path, run_id: str) -> dict[str, Any]:
+    root = root.resolve()
+    verdict = automation_run_authority(root, run_id, "bmad-testarch-automate")
+    if verdict["allowed"]:
+        return result("BLOCKED", "CONDUCTOR_BMAD_AUTOMATION_WINDOW_ALREADY_OPEN", "invoke_automation_or_compare", window=verdict["window"])
+    if verdict["reason_code"] != "CONDUCTOR_BMAD_AUTOMATION_WINDOW_CLOSED":
+        return result("BLOCKED", verdict["reason_code"], "repair_run_authority_before_capture")
+    verdict = _json_file(root, Path("docs/Conductor/runs") / run_id / AUTOMATION_AUTHORITY_FILE)
+    window = root / "docs/Conductor/runs" / run_id / AUTOMATION_WINDOWS_DIR / AUTOMATION_WINDOW
+    if window.exists():
+        return result("BLOCKED", "CONDUCTOR_BMAD_AUTOMATION_WINDOW_USED", "use_a_new_run_for_another_automation_window")
+    window.mkdir(parents=True)
+    # The approved roots are frozen with the preimage, so editing the authority later cannot widen them.
+    preimage = {"schema_version": 1, "run_id": run_id, "captured_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "write_roots": verdict["write_roots"], "files": _automation_tree(root, run_id)}
+    (window / "preimage.json").write_text(json.dumps(preimage, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return {**result("CAPTURED", "CONDUCTOR_BMAD_AUTOMATION_WINDOW_OPEN", "invoke_bmad_testarch_automate",
+                     window=window.relative_to(root).as_posix(), file_count=len(preimage["files"])),
+            "mutations": [(window / "preimage.json").relative_to(root).as_posix()]}
+
+
+def automation_compare(root: Path, run_id: str) -> dict[str, Any]:
+    """Close the run's window, recomputing every time: all changes since capture must lie inside the approved roots."""
+    root = root.resolve()
+    window = root / "docs/Conductor/runs" / run_id / AUTOMATION_WINDOWS_DIR / AUTOMATION_WINDOW
+    try:
+        preimage = _json_file(root, window.relative_to(root) / "preimage.json")
+        before = preimage["files"]
+        roots = [Path(value) for value in preimage["write_roots"]]
+    except (OSError, UnicodeError, ValueError, KeyError, TypeError):
+        return result("FAIL", "CONDUCTOR_BMAD_AUTOMATION_NO_WINDOW", "capture_before_invoking_automation")
+    after = _automation_tree(root, run_id)
+    changed = sorted(p for p in set(before) & set(after) if before[p] != after[p])
+    added = sorted(set(after) - set(before))
+    removed = sorted(set(before) - set(after))
+    violations = sorted(p for p in changed + added + removed
+                        if automation_path_forbidden(root, Path(p)) or not any(_path_is_within(Path(p), r) for r in roots))
+    status = "FAIL" if violations else "PASS"
+    compare = {"schema_version": 1, "run_id": run_id, "status": status,
+               "changed": changed, "added": added, "removed": removed, "violations": violations}
+    (window / "compare.json").write_text(json.dumps(compare, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    code = "CONDUCTOR_BMAD_AUTOMATION_CONTAINED" if status == "PASS" else "CONDUCTOR_BMAD_AUTOMATION_WRITE_OUTSIDE_ROOTS"
+    return {**result(status, code, "cite_compare_receipt" if status == "PASS" else "open_gap_request_for_out_of_root_writes",
+                     violations=violations), "mutations": [(window / "compare.json").relative_to(root).as_posix()]}
+
+
+GIT_BOUND_COMPANION_KEYS = frozenset({"binding", "output_root", "selected_source", "paths", "approval_commit", "git_blobs"})
+ROOT_BOUND_COMPANION_KEYS = frozenset({"target_root", "output_root", "selected_source", "paths"})
+
+
+def _git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True)
+
+
+def git_approval_context(root: Path, source_paths: list[str]) -> dict[str, Any]:
+    """Bind approved inputs to committed Git content instead of to the checkout's absolute path."""
+    head = _git(root, "rev-parse", "--verify", "HEAD^{commit}")
+    if head.returncode != 0:
+        raise ValueError("CONDUCTOR_BMAD_GIT_CONTEXT_UNAVAILABLE")
+    commit = head.stdout.strip()
+    blobs = {}
+    for path in sorted(source_paths):
+        tracked = _git(root, "ls-files", "--error-unmatch", "--", path)
+        clean = _git(root, "diff", "--quiet", "HEAD", "--", path)
+        blob = _git(root, "rev-parse", "--verify", f"{commit}:{path}")
+        if tracked.returncode != 0 or clean.returncode != 0 or blob.returncode != 0:
+            raise ValueError(f"CONDUCTOR_BMAD_GIT_INPUT_UNCOMMITTED:{path}")
+        blobs[path] = blob.stdout.strip()
+    return {"approval_commit": commit, "git_blobs": blobs}
+
+
+def git_checkout_problem(root: Path, companions: dict[str, Any], artifacts: dict[str, Any]) -> dict[str, Any] | None:
+    """Local check for an implementation checkout: descendant base, unchanged history, unchanged inputs."""
+    commit = companions.get("approval_commit")
+    blobs = companions.get("git_blobs")
+    sources = sorted(a.get("source_path") for a in artifacts.values() if isinstance(a, dict))
+    if (companions.get("binding") != "git" or not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}|[0-9a-f]{64}", commit)
+            or not isinstance(blobs, dict) or sorted(blobs) != sources):
+        return {"reason_code": "CONDUCTOR_BMAD_PROVENANCE_INVALID"}
+    if _git(root, "cat-file", "-e", f"{commit}^{{commit}}").returncode != 0:
+        return {"reason_code": "CONDUCTOR_BMAD_CHECKOUT_BASE_UNKNOWN", "approval_commit": commit}
+    if _git(root, "merge-base", "--is-ancestor", commit, "HEAD").returncode != 0:
+        return {"reason_code": "CONDUCTOR_BMAD_CHECKOUT_BASE_INCOMPATIBLE", "approval_commit": commit}
+    for path, blob in blobs.items():
+        recorded = _git(root, "rev-parse", "--verify", f"{commit}:{path}")
+        if recorded.returncode != 0 or recorded.stdout.strip() != blob:
+            return {"reason_code": "CONDUCTOR_BMAD_PROVENANCE_INVALID", "path": path}
+    changed = []
+    for artifact in artifacts.values():
+        current = _regular_file(root, Path(artifact["source_path"]))
+        if current is None or digest_file(current) != artifact["sha256"]:
+            changed.append(artifact["source_path"])
+    if changed:
+        return {"reason_code": "CONDUCTOR_BMAD_CHECKOUT_INPUTS_CHANGED", "changed": sorted(changed)}
+    # Matching bytes are not enough: what gets committed from this checkout must be the approved content too.
+    uncommitted = sorted(path for path in blobs if _git(root, "ls-files", "--error-unmatch", "--", path).returncode != 0
+                         or _git(root, "diff", "--quiet", "HEAD", "--", path).returncode != 0)
+    if uncommitted:
+        return {"reason_code": "CONDUCTOR_BMAD_CHECKOUT_INPUT_UNCOMMITTED", "uncommitted": uncommitted}
+    return None
+
+
+def automation_context(root: Path, name: str, authority: dict[str, Any]) -> str:
+    return (
+        f"Conductor governed automation: {name} runs for {authority['run_id']} only. "
+        f"Inputs: {', '.join(authority['inputs'])}. Write only beneath: {', '.join(authority['write_roots'])}. "
+        f"Resolve BMAD {{project-root}} to {root / active_bmad_root(root).parent}; set test_dir to the approved test root; "
+        "no standalone auto-discovery beyond the inputs. Do not install packages, edit package manifests or lockfiles, "
+        "generate Pact or CI files, add hooks or settings, or invoke atdd, framework, ci or bmad-tea. "
+        "Coverage, gate or approval statements from TEA are advisory evidence only: they cannot change scope, waive a check "
+        "or grant completion. Generated tests count only through the run's pinned verification checks. "
+        "This gate is not a filesystem sandbox; the run's automation-compare proves containment, so stop and open a Gap "
+        "Request if the workflow needs to write anywhere else."
+    )
+
+
 def _skill_name(payload: dict[str, Any]) -> tuple[str | None, bool]:
     tool_input = payload.get("tool_input")
     if not isinstance(tool_input, dict):
@@ -693,7 +967,19 @@ def hook_decision(root: Path, payload: dict[str, Any]) -> dict[str, Any] | None:
         # The invoked skill decides, never its parent: same-lane nesting is permitted by construction.
         verdict = policy_classify(name)
         lane = verdict["lane"]
-        if verdict["allowed"]:
+        if name in GOVERNED_AUTOMATION_WORKFLOWS:
+            # Run-scoped exception to the delivery prohibition; the pinned profile checks still apply.
+            authorization = automation_authorization(repository, name)
+            if authorization["allowed"] and installed_bmad_version(repository) == "6.12.1-next.0":
+                profile = qualified_6121_workflow(repository, name)
+                if not profile["allowed"]:
+                    authorization = profile
+            elif authorization["allowed"]:
+                authorization = {"allowed": False, "reason_code": "CONDUCTOR_BMAD_SOLUTION_PROFILE_VERSION_MISMATCH"}
+            if authorization["allowed"]:
+                return _upstream_context(event, automation_context(repository, name, authorization))
+            code = authorization["reason_code"]
+        elif verdict["allowed"]:
             if installed_bmad_version(repository) == "6.12.1-next.0":
                 authorization = qualified_6121_workflow(repository, name)
                 if not authorization["allowed"]:

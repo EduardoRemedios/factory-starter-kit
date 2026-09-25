@@ -520,6 +520,11 @@ def lint_completion(root: Path, run_id: str) -> dict[str, Any]:
                     doc = read_json(target, row["decision_ref"], gap)
                     if doc is None or "resolution" not in doc:
                         errors.append(f"CONDUCTOR_CONTRACT_DECISION_UNRESOLVED: {rid} -> {row['decision_ref']} has no resolution")
+                    elif doc.get("supersession_impact") == "future_only" and row["status"] in {"out_of_scope", "not_done"}:
+                        # Every row is locked scope; deferring it is a scope change, not future work. Unknown-impact
+                        # decisions stay accepted for existing records and remain visible as NEEDS_HUMAN_DECISION.
+                        errors.append(f"CONDUCTOR_CONTRACT_SCOPE_RELABEL: {rid} is approved scope and cannot be closed by future_only "
+                                      f"{row['decision_ref']}; resolve it as active_scope or re-lock the intent without it")
         elif row["status"] == "not_done":
             warnings.append(f"CONDUCTOR_CONTRACT_NOT_DONE_UNDECIDED: {rid}")
 

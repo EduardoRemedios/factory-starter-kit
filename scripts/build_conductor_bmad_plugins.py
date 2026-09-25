@@ -19,7 +19,7 @@ PACKAGE_ROOTS = {
     "codex": REPO_ROOT / "plugins/conductor-bmad",
     "claude": REPO_ROOT / "plugins/conductor-bmad-claude",
 }
-SKILL_IDS = {"doctor", "bootstrap", "audit", "promote", "intake", "seed-contracts"}
+SKILL_IDS = {"doctor", "bootstrap", "audit", "promote", "intake", "seed-contracts", "reconcile"}
 ADAPTER_CONTRACTS_ROOT = REPO_ROOT / "docs/adapters/bmad"
 
 

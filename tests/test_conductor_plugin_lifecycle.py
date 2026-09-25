@@ -336,14 +336,14 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
             pass
         return legacy
 
-    def conductor_payload(self) -> Path:
+    def conductor_payload(self, version: str = "0.3.4", script: str = "#!/bin/sh\nconductor\n") -> Path:
         block = ("<!-- conductor:managed:start v=0.3.4-test sha256="
                  + hashlib.sha256(b"## Conductor (managed block)\nbody\n").hexdigest()
                  + " -->\n## Conductor (managed block)\nbody\n<!-- conductor:managed:end -->\n")
-        return make_payload(self.base, "0.3.4", {
+        return make_payload(self.base, version, {
             "AGENTS.md": ("# Starter\n\n" + block + "\nnew conductor instructions\n", "project-owned"),
             "docs/Conductor/INVARIANTS.md": ("# invariants\n", "release-owned"),
-            "scripts/conductorctl": ("#!/bin/sh\nconductor\n", "release-owned"),
+            "scripts/conductorctl": (script, "release-owned"),
         })
 
     def test_f7_update_migrates_a_factory_lineage_install_and_rolls_back(self):
@@ -395,6 +395,55 @@ class FactoryPluginLifecycleTests(unittest.TestCase):
         self.assertTrue(agents.startswith("# Team map\n\n<!-- conductor:managed:start"))
         self.assertIn("our own rules", agents)
         self.assertNotIn("new conductor instructions", agents)
+
+    def test_update_applies_when_edited_agents_md_already_carries_the_current_block(self):
+        # An adopter edits its composed AGENTS.md after adoption; a later update with the same managed block
+        # must plan no_change and apply, not roll back with CONDUCTOR_PLAN_STALE.
+        write(self.root / "AGENTS.md", "# Team map\n\nour own rules\n")
+        first = self.conductor_payload()
+        plan = setup_plan(self.root, first)
+        self.assertEqual("CONDUCTOR_SETUP_APPLIED", RUNTIME.apply_setup_plan(self.root, plan=plan,
+                         approved_plan_id=plan["plan_id"], payload_root=first)["reason_code"])
+        agents = self.root / "AGENTS.md"
+        write(agents, agents.read_text() + "\nA rule the team added after adoption.\n")
+        edited = agents.read_bytes()
+        second = self.conductor_payload("0.3.5", "#!/bin/sh\nconductor v2\n")
+        plan = update_plan(self.root, second)
+        self.assertEqual("no_change", {i["path"]: i["action"] for i in plan["planned_files"]}["AGENTS.md"])
+        output = RUNTIME.apply_update_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=second)
+        self.assertEqual("CONDUCTOR_UPDATE_APPLIED", output["reason_code"], output)
+        self.assertEqual(edited, agents.read_bytes())
+        self.assertEqual("#!/bin/sh\nconductor v2\n", (self.root / "scripts/conductorctl").read_text())
+
+    def test_update_keeps_project_text_in_an_unedited_composed_agents_md(self):
+        # D1: an AGENTS.md composed at adoption and untouched since must not be refreshed to the package seed.
+        write(self.root / "AGENTS.md", "# Team map\n\nour own rules\n")
+        first = self.conductor_payload()
+        plan = setup_plan(self.root, first)
+        RUNTIME.apply_setup_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=first)
+        second = self.conductor_payload("0.3.5", "#!/bin/sh\nconductor v2\n")
+        plan = update_plan(self.root, second)
+        self.assertNotEqual("modify", {i["path"]: i["action"] for i in plan["planned_files"]}["AGENTS.md"])
+        output = RUNTIME.apply_update_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=second)
+        self.assertEqual("CONDUCTOR_UPDATE_APPLIED", output["reason_code"], output)
+        agents = (self.root / "AGENTS.md").read_text()
+        self.assertIn("our own rules", agents)
+        self.assertIn("<!-- conductor:managed:start", agents)
+
+    def test_update_still_refuses_an_agents_md_edited_after_preview(self):
+        write(self.root / "AGENTS.md", "# Team map\n\nour own rules\n")
+        first = self.conductor_payload()
+        plan = setup_plan(self.root, first)
+        RUNTIME.apply_setup_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=first)
+        agents = self.root / "AGENTS.md"
+        write(agents, agents.read_text() + "\nA rule the team added after adoption.\n")
+        second = self.conductor_payload("0.3.5", "#!/bin/sh\nconductor v2\n")
+        plan = update_plan(self.root, second)
+        write(agents, agents.read_text() + "\nEdited after the update preview.\n")
+        before = inventory(self.root)
+        output = RUNTIME.apply_update_plan(self.root, plan=plan, approved_plan_id=plan["plan_id"], payload_root=second)
+        self.assertEqual("CONDUCTOR_PLAN_STALE", output["reason_code"])
+        self.assertEqual(before, inventory(self.root))
 
     def test_setup_requires_exact_plan_approval(self):
         plan = setup_plan(self.root, self.v1)

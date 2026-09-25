@@ -21,11 +21,12 @@ without a receipt. Three gates, deterministic validators, no choreography.
 
 </div>
 
-**Local candidate:** this checkout carries 0.3.8, adding canonical optional TEA
-configuration support and earlier readiness diagnostics to the 0.3.7 intake work.
-Publication and adopter updates remain separate. See the
-[repair scope and limits](docs/adapters/bmad/BMAD_TEA_READINESS.md) and
-[repository-companion handoff](docs/adapters/bmad/BMAD_REPOSITORY_COMPANIONS.md).
+**Local candidate:** this checkout carries 0.3.9 (on the 0.3.8 candidate): governed
+TEA automation, Git-bound Spec approval across checkouts, run creation and review
+packets, and completion feedback. Publication and adopter updates remain separate. See
+[Factory + BMAD actions](docs/adapters/bmad/BMAD_FACTORY_ACTIONS.md),
+[governed automation](docs/adapters/bmad/BMAD_GOVERNED_AUTOMATION.md) and the earlier
+[TEA readiness](docs/adapters/bmad/BMAD_TEA_READINESS.md) notes.
 
 
 Factory 0.3 is the third generation of this repository's governed delivery

@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.8"
+PLUGIN_VERSION = "0.3.9"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"
@@ -271,6 +271,15 @@ def managed_block_span(text: bytes) -> tuple[int, int] | None:
     if end == -1:
         return None
     return match.start(), end + len(MANAGED_END)
+
+
+def holds_project_text(path: str, current: bytes, payload: bytes) -> bool:
+    """A composed AGENTS.md (block present, other text differs from the seed's) carries project text."""
+    current_span, payload_span = managed_block_span(current), managed_block_span(payload)
+    if path != "AGENTS.md" or current_span is None or payload_span is None:
+        return False
+    outside = lambda data, span: data[:span[0]] + data[span[1]:]  # noqa: E731
+    return outside(current, current_span) != outside(payload, payload_span)
 
 
 def compose_agents_md(existing: bytes, payload_agents: bytes) -> bytes:
@@ -1262,7 +1271,9 @@ def evaluate_setup_plan(
                     existing = merge_migrated_claude(existing, migrated_claude)
                 composed = compose_agents_md(existing, payload_bytes(payload_root, entry["path"], harness=harness))
                 if target.is_file() and composed == target.read_bytes():
+                    # Already composed: pin the project's bytes, not the package seed, so apply can check them.
                     action = "no_change"
+                    composed_sha256 = file_sha256(target)
                 else:
                     action = "compose"
                     composed_sha256 = hashlib.sha256(composed).hexdigest()
@@ -1539,7 +1550,7 @@ def validate_plan_preconditions(
         if action == "create" and target.exists():
             raise ValueError("CONDUCTOR_PLAN_STALE")
         if action == "no_change" and (
-            not target.is_file() or file_sha256(target) != item["source_sha256"]
+            not target.is_file() or file_sha256(target) != item.get("composed_sha256", item["source_sha256"])
         ):
             raise ValueError("CONDUCTOR_PLAN_STALE")
         if action == "preserve" and not target.is_file():
@@ -1882,14 +1893,17 @@ def evaluate_update_plan(
                     action = "preserve"
                 elif file_sha256(target_path) == entry["sha256"]:
                     action = "no_change"
-                elif prior and file_sha256(target_path) == prior.get("expected_digest"):
+                elif prior and file_sha256(target_path) == prior.get("expected_digest") and not holds_project_text(
+                        path, target_path.read_bytes(), payload_bytes(payload_root, path, harness=harness)):
                     # Seeded by a previous release and never customised: refresh to the new seed.
                     action = "modify"
                 elif path == "AGENTS.md" and managed_block_span(payload_bytes(payload_root, path, harness=harness)) is not None:
-                    # Customised by the project: keep every byte, insert or refresh the managed block.
+                    # Customised by the project, or composed at adoption: keep every byte, insert or refresh the block.
                     composed = compose_agents_md(target_path.read_bytes(), payload_bytes(payload_root, path, harness=harness))
                     if composed == target_path.read_bytes():
+                        # Already composed: pin the project's bytes, not the package seed, so apply can check them.
                         action = "no_change"
+                        composed_sha256 = file_sha256(target_path)
                     else:
                         action = "compose"
                         composed_sha256 = hashlib.sha256(composed).hexdigest()

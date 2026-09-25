@@ -21,6 +21,7 @@
     "question": { "type": "string", "minLength": 1 },
     "proposed_resolution": { "type": "string" },
     "supersession_impact": { "enum": ["active_scope", "future_only", "unknown"] },
+    "owner": { "type": "string", "minLength": 1, "maxLength": 120, "description": "Named person or role who owns the answer or the backlog decision; required in practice for future_only findings." },
     "resolution": {
       "type": "object", "additionalProperties": false,
       "required": ["decided_by", "utc", "decision"],

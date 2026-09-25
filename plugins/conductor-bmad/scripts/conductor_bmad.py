@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import difflib
 import hashlib
 import importlib.util
 import json
@@ -17,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.8"
+PLUGIN_VERSION = "0.3.9"
 BMAD_VERSION = "6.10.0"
 SNAPSHOT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{2,63}")
 RESERVED_SNAPSHOT_IDS = frozenset({"latest", "receipts", "install-receipts"})
@@ -551,10 +552,11 @@ def promotion_plan(
     supersedes_snapshot_id: str | None = None,
     supersedes_sha256: str | None = None,
     repo_companions: list[str] | None = None,
+    git_binding: bool = False,
 ) -> dict[str, Any]:
     root = root.resolve()
     permitted = repository_companions(root, repo_companions or [])
-    if permitted and evidence_type != SOLUTION_CONTEXT_TYPE:
+    if (permitted and evidence_type != SOLUTION_CONTEXT_TYPE) or (git_binding and not permitted):
         raise CompanionError("CONDUCTOR_BMAD_PROMOTION_ARGUMENTS_INVALID")
     if workflow not in ALLOWED_WORKFLOWS:
         raise CompanionError("CONDUCTOR_BMAD_WORKFLOW_PROHIBITED", workflow)
@@ -624,10 +626,18 @@ def promotion_plan(
             base["source_base"] = policy.output_directory(root).as_posix()
         if permitted:
             base["source_base"] = "."
-            base["repository_companions"] = {
-                "target_root": str(root), "output_root": policy.output_directory(root).as_posix(),
-                "selected_source": relative.as_posix(), "paths": permitted,
-            }
+            companions = {"output_root": policy.output_directory(root).as_posix(),
+                          "selected_source": relative.as_posix(), "paths": permitted}
+            if git_binding:
+                # Approval covers committed content and its commit, so a descendant checkout needs no new approval.
+                try:
+                    companions.update(binding="git", **policy.git_approval_context(root, [a["source_path"] for a in artifacts.values()]))
+                except ValueError as error:
+                    code, _, detail = str(error).partition(":")
+                    raise CompanionError(code, detail) from error
+            else:
+                companions["target_root"] = str(root)
+            base["repository_companions"] = companions
         if policy.installed_bmad_version(root) == "6.12.1-next.0":
             base["bmad_version"] = "6.12.1-next.0"
         if supersedes is not None:
@@ -703,6 +713,7 @@ def promote(root: Path, args: argparse.Namespace) -> dict[str, Any]:
             supersedes_snapshot_id=getattr(args, "supersedes_snapshot_id", None),
             supersedes_sha256=getattr(args, "supersedes_sha256", None),
             repo_companions=getattr(args, "repo_companion", None),
+            git_binding=getattr(args, "git_binding", False),
         )
     except CompanionError as error:
         return result("BLOCKED", error.code, "correct_promotion_request", detail=error.detail)
@@ -817,6 +828,60 @@ def rollback(root: Path, receipt_value: str, approval: str | None) -> dict[str, 
     rollback_receipt = receipt_path.with_name(f"rollback-{plan['plan_id']}.json")
     rollback_receipt.write_text(json.dumps({"schema_version": 1, "operation": "rollback", "plan_id": plan["plan_id"], "source_receipt": plan["receipt"], "outcome": "APPLIED"}, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     return result("APPLIED", "CONDUCTOR_BMAD_ROLLBACK_APPLIED", "retain_receipts_for_audit", receipt=rollback_receipt.relative_to(root).as_posix(), mutations=[plan["snapshot_path"], rollback_receipt.relative_to(root).as_posix()])
+
+
+def verify_checkout(root: Path, snapshot_id: str, run_id: str | None = None) -> dict[str, Any]:
+    """Local, zero-write check that this checkout still holds what a human approved; grants nothing."""
+    root = root.resolve()
+    if not SNAPSHOT_RE.fullmatch(snapshot_id) or snapshot_id.casefold() in RESERVED_SNAPSHOT_IDS:
+        return result("BLOCKED", "CONDUCTOR_BMAD_SNAPSHOT_ID_INVALID", "correct_snapshot_id")
+    snapshot = root / "docs/upstream/bmad" / snapshot_id
+    manifest_path = snapshot / "SNAPSHOT_MANIFEST.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        core = {key: value for key, value in manifest.items() if key != "aggregate_sha256"}
+        if manifest.get("schema_version") != SOLUTION_CONTEXT_SCHEMA_VERSION or digest_bytes(canonical(core)) != manifest.get("aggregate_sha256"):
+            raise CompanionError("CONDUCTOR_BMAD_MANIFEST_HASH_MISMATCH")
+        solution_snapshot_inventory(snapshot, manifest["artifacts"])
+    except (OSError, UnicodeError, json.JSONDecodeError, AttributeError, KeyError) as error:
+        return result("BLOCKED", "CONDUCTOR_BMAD_SNAPSHOT_MISSING", "promote_or_restore_snapshot", detail=str(error))
+    except CompanionError as error:
+        return result("BLOCKED", error.code, "restore_exact_snapshot_bytes_or_repromote")
+    companions = manifest.get("provenance", {}).get("repository_companions")
+    identity = {"snapshot_id": snapshot_id, "aggregate_sha256": manifest["aggregate_sha256"]}
+    if not isinstance(companions, dict) or companions.get("binding") != "git":
+        # Root-bound and legacy snapshots keep their original contract unchanged.
+        bound_here = isinstance(companions, dict) and companions.get("target_root") == str(root)
+        if isinstance(companions, dict) and not bound_here:
+            return result("BLOCKED", "CONDUCTOR_BMAD_SNAPSHOT_ROOT_BOUND_ELSEWHERE", "repromote_with_git_binding_or_use_original_checkout", **identity)
+        binding = "root" if bound_here else "path"
+    else:
+        problem = policy.git_checkout_problem(root, companions, manifest["artifacts"])
+        if problem is not None and problem["reason_code"] == "CONDUCTOR_BMAD_CHECKOUT_INPUTS_CHANGED":
+            # Reviewers see what changed against the approved bytes, not only which file.
+            frozen = {a["source_path"]: snapshot / name for name, a in manifest["artifacts"].items()}
+            problem["diff"] = {path: "".join(list(difflib.unified_diff(
+                frozen[path].read_text(encoding="utf-8").splitlines(keepends=True),
+                (root / path).read_text(encoding="utf-8").splitlines(keepends=True) if (root / path).is_file() else [],
+                f"approved/{path}", f"current/{path}"))[:200]) for path in problem["changed"]}
+        if problem is not None:
+            action = "promote_superseding_snapshot_for_review" if problem["reason_code"] == "CONDUCTOR_BMAD_CHECKOUT_INPUTS_CHANGED" else "rebase_on_a_descendant_of_the_approval_commit"
+            return result("BLOCKED", problem.pop("reason_code"), action, **identity, **problem)
+        binding = "git"
+    if run_id is not None:
+        run_root = root / "docs/Conductor/runs" / run_id
+        try:
+            intent_path = run_root / "intent_pack.json"
+            intent = json.loads(intent_path.read_text(encoding="utf-8"))
+            lock = json.loads((run_root / "countersign/INTENT_LOCK.json").read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            return result("BLOCKED", "CONDUCTOR_BMAD_CHECKOUT_RUN_UNREADABLE", "lock_intent_before_verifying", detail=str(error), **identity)
+        cited = {"kind": "upstream_snapshot", "ref": manifest_path.relative_to(root).as_posix(), "sha256": digest_file(manifest_path)}
+        if cited not in intent.get("sources", []):
+            return result("BLOCKED", "CONDUCTOR_BMAD_CHECKOUT_SNAPSHOT_NOT_CITED", "cite_snapshot_in_intent_and_relock", **identity)
+        if lock.get("decision") != "GO" or lock.get("subject_sha256") != digest_file(intent_path):
+            return result("BLOCKED", "CONDUCTOR_BMAD_CHECKOUT_INTENT_STALE", "obtain_current_intent_lock", **identity)
+    return result("VERIFIED", "CONDUCTOR_BMAD_CHECKOUT_VERIFIED", "continue_under_existing_approval", binding=binding, **identity)
 
 
 def intake_sources() -> dict[Path, Path]:
@@ -1033,7 +1098,14 @@ def parser() -> argparse.ArgumentParser:
     promote_parser.add_argument("--plan-identity")
     promote_parser.add_argument("--supersedes-snapshot-id")
     promote_parser.add_argument("--supersedes-sha256")
+    promote_parser.add_argument("--git-binding", action="store_true", help="With --repo-companion: bind approval to committed content and its commit instead of this checkout's path")
     promote_parser.add_argument("--approve-plan")
+    verify_parser = sub.add_parser("verify-checkout", help="Check that this checkout holds an approved snapshot's exact inputs on a compatible base")
+    verify_parser.add_argument("--snapshot-id", required=True)
+    verify_parser.add_argument("--run", help="Also require this run's locked Intent Pack to cite the snapshot")
+    for name in ("automation-capture", "automation-compare"):
+        automation_parser = sub.add_parser(name, help="Open (capture) or close and prove (compare) a governed automation write window")
+        automation_parser.add_argument("--run", required=True)
     intake_parser = sub.add_parser("intake")
     intake_parser.add_argument("--harness", choices=("claude", "codex"), default="claude")
     intake_parser.add_argument("--approve-plan")
@@ -1079,12 +1151,18 @@ def main() -> int:
             payload = intake(root, args.harness, args.approve_plan)
         elif args.command == "seed-contracts":
             payload = seed_contracts(root, args.approve_plan)
+        elif args.command == "verify-checkout":
+            payload = verify_checkout(root, args.snapshot_id, args.run)
+        elif args.command == "automation-capture":
+            payload = policy.automation_capture(root, args.run)
+        elif args.command == "automation-compare":
+            payload = policy.automation_compare(root, args.run)
         else:
             payload = rollback(root, args.receipt, args.approve_plan)
     except (OSError, UnicodeError, subprocess.SubprocessError) as error:
         payload = result("BLOCKED", "CONDUCTOR_BMAD_IO_FAILURE", "inspect_error_and_retry_safely", detail=str(error))
     print(json.dumps(payload, indent=2, sort_keys=True) if args.json else concise(payload))
-    return 0 if payload["state"] not in {"BLOCKED"} else 2
+    return 0 if payload["state"] not in {"BLOCKED", "FAIL"} else 2
 
 
 if __name__ == "__main__":

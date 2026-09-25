@@ -20,7 +20,8 @@ from conductor_contract_lint import (  # noqa: E402
     lint_execution,
     lint_intent,
 )
-from conductor_gap import open_gap, resolve_gap  # noqa: E402
+from conductor_gap import export_questions, open_gap, resolve_gap  # noqa: E402
+from conductor_run_records import completion_feedback, init_run, write_review_packet  # noqa: E402
 from conductor_postimage import capture as postimage_capture, compare as postimage_compare  # noqa: E402
 from conductor_receipts import attest as receipts_attest, run_receipts  # noqa: E402
 from conductor_context_index import (  # noqa: E402
@@ -317,7 +318,7 @@ def build_parser() -> argparse.ArgumentParser:
         "gap",
         help="Open a Gap Request (agent) or record its human resolution.",
     )
-    gap_parser.add_argument("action", choices=["open", "resolve"])
+    gap_parser.add_argument("action", choices=["open", "resolve", "export"])
     gap_parser.add_argument("--run", required=True, help="Run ID under docs/Conductor/runs/.")
     gap_parser.add_argument("--requirement", help="open: Intent Pack requirement id the gap belongs to.")
     gap_parser.add_argument("--type", choices=["requirement", "architecture", "ux", "product_context", "constraint"], help="open: gap type.")
@@ -326,12 +327,32 @@ def build_parser() -> argparse.ArgumentParser:
     gap_parser.add_argument("--snapshot-id", help="open: originating upstream snapshot id.")
     gap_parser.add_argument("--snapshot-sha256", help="open: originating snapshot aggregate digest.")
     gap_parser.add_argument("--proposal", help="open: optional proposed resolution (decides nothing).")
+    gap_parser.add_argument("--owner", help="open: named person or role who owns the answer or backlog decision.")
     gap_parser.add_argument("--gap", help="resolve: gap id.")
     gap_parser.add_argument("--decided-by", default="", help="resolve: human decider.")
     gap_parser.add_argument("--decision", help="resolve: decision text.")
     gap_parser.add_argument("--new-snapshot-id", help="resolve: superseding snapshot id, if any.")
     gap_parser.add_argument("--new-snapshot-sha256", help="resolve: superseding snapshot digest.")
     gap_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    run_init_parser = subparsers.add_parser(
+        "run-init",
+        help="Create a planning-only run with a generated RUN_ID, or report the open run for this slug.",
+    )
+    run_init_parser.add_argument("--slug", required=True, help="Short lowercase name, e.g. spec042-header.")
+    run_init_parser.add_argument("--new", action="store_true", help="Create a separate run even when one is open for this slug.")
+    run_init_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    packet_parser = subparsers.add_parser("review-packet", help="Write REVIEW_PACKET.md for the run's current gate.")
+    packet_parser.add_argument("--run", required=True, help="Run ID under docs/Conductor/runs/.")
+    packet_parser.add_argument("--json", action="store_true", help="Print JSON output.")
+
+    feedback_parser = subparsers.add_parser(
+        "completion-feedback",
+        help="After a countersigned G3, write UPSTREAM_FEEDBACK.md/.json for PM/BA (not merge or deployment approval).",
+    )
+    feedback_parser.add_argument("--run", required=True, help="Run ID under docs/Conductor/runs/.")
+    feedback_parser.add_argument("--json", action="store_true", help="Print JSON output.")
 
     return parser
 
@@ -615,13 +636,45 @@ def main() -> int:
             failed = any(v == "FAIL" for v in payload.get("outcomes", {}).values())
             return 1 if failed else 0
 
+        if args.command == "run-init":
+            payload = init_run(root, args.slug, new=args.new)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"run-init: {payload['state']} {payload['run_id']} gate={payload['gate_state']} -> {payload['packet']}\nnext: {payload['next']}")
+            return 0
+
+        if args.command == "review-packet":
+            payload = write_review_packet(root, args.run)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"review-packet: gate={payload['gate_state']} ready_for_g1={payload['ready_for_g1']} -> {payload['path']}")
+            return 0
+
+        if args.command == "completion-feedback":
+            payload = completion_feedback(root, args.run)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"completion-feedback: {payload['deferred']} deferred findings -> {', '.join(payload['paths'])}")
+            return 0
+
+        if args.command == "gap" and args.action == "export":
+            payload = export_questions(root, args.run)
+            if args.json:
+                print(json.dumps(payload, indent=2, sort_keys=True))
+            else:
+                print(f"gap export: blocking={payload['blocking']} deferred={payload['deferred']} decided={payload['decided']} -> {payload['path']}")
+            return 0
+
         if args.command == "gap":
             if args.action == "open":
                 if not (args.requirement and args.type and args.question):
                     raise ContractLintError("CONDUCTOR_GAP_ARGUMENTS", "open needs --requirement, --type, and --question")
                 payload = open_gap(root, args.run, requirement_id=args.requirement, gap_type=args.type, question=args.question,
                                    supersession_impact=args.impact, snapshot_id=args.snapshot_id, snapshot_sha256=args.snapshot_sha256,
-                                   proposed_resolution=args.proposal)
+                                   proposed_resolution=args.proposal, owner=args.owner)
             else:
                 if not (args.gap and args.decision):
                     raise ContractLintError("CONDUCTOR_GAP_ARGUMENTS", "resolve needs --gap and --decision")

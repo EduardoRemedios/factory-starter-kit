@@ -1,5 +1,14 @@
 # ROADMAP.md - Development Roadmap
 
+## Local 0.3.9 pilot adoption candidate
+
+Addresses the pilot team's practical issues: governed TEA automation, main-to-feature
+approval portability, run creation and review packets, the BMAD reconciliation loop and
+completion feedback. Qualification (three countersigned runs) is
+retained privately, outside this repository. Publication, pilot adoption
+and the first pilot Spec delivery remain separate decisions. See
+`docs/adapters/bmad/BMAD_FACTORY_ACTIONS.md` and `docs/adapters/bmad/BMAD_GOVERNED_AUTOMATION.md`.
+
 ## Local 0.3.8 AuditEdge first-use repair
 
 Qualify the canonical optional TEA configuration and surface readiness failures

@@ -343,6 +343,35 @@ class ContractCoreTests(unittest.TestCase):
         summary.write_text("- Verdict: MERGE_READY\n", encoding="utf-8")
         self.assertEqual(cl.lint_completion(self.fx.root, RUN_ID)["status"], "PASS")
 
+    def test_g3_future_only_gap_cannot_close_approved_scope(self) -> None:
+        self.complete_g2()
+        base = {"schema_version": 1, "gap_id": "GAP-001", "run_id": RUN_ID, "intent_pack_sha256": sha(self.fx.run_root / "intent_pack.json"),
+                "requirement_id": "R-003", "gap_type": "requirement", "question": "Can review wait for a later slice?",
+                "resolution": {"decided_by": "Test Human", "utc": "2026-09-04T21:30:00Z", "decision": "later"}}
+        rows = self.all_verified_rows()
+        for status in ("out_of_scope", "not_done"):
+            with self.subTest(status=status):
+                write_json(self.fx.run_root / "gap_requests" / "GAP-001.json", {**base, "supersession_impact": "future_only", "owner": "PM"})
+                rows[2] = {"requirement_id": "R-003", "status": status, "evidence": [], "decision_ref": "gap_requests/GAP-001.json"}
+                self.fx.write_statement(rows, "NEEDS_HUMAN_DECISION")
+                self.assertIn("CONDUCTOR_CONTRACT_SCOPE_RELABEL", " ".join(cl.lint_completion(self.fx.root, RUN_ID)["errors"]))
+        # An explicit active-scope decision stays visible as NEEDS_HUMAN_DECISION rather than being relabelled.
+        write_json(self.fx.run_root / "gap_requests" / "GAP-001.json", {**base, "supersession_impact": "active_scope"})
+        rows[2] = {"requirement_id": "R-003", "status": "out_of_scope", "evidence": [], "decision_ref": "gap_requests/GAP-001.json"}
+        self.fx.write_statement(rows, "NEEDS_HUMAN_DECISION")
+        self.assertEqual(cl.lint_completion(self.fx.root, RUN_ID)["status"], "PASS")
+
+    def test_g3_future_only_finding_beside_verified_scope_does_not_block(self) -> None:
+        self.complete_g2()
+        write_json(self.fx.run_root / "gap_requests" / "GAP-001.json", {
+            "schema_version": 1, "gap_id": "GAP-001", "run_id": RUN_ID, "intent_pack_sha256": sha(self.fx.run_root / "intent_pack.json"),
+            "requirement_id": "R-002", "gap_type": "product_context", "question": "Add a second fixture next quarter?",
+            "supersession_impact": "future_only", "owner": "PM (backlog)"})
+        rows = self.all_verified_rows()
+        rows[1]["residual_gap"] = "gap_requests/GAP-001.json"
+        self.fx.write_statement(rows, "READY")
+        self.assertEqual(cl.lint_completion(self.fx.root, RUN_ID)["status"], "PASS")
+
 
 if __name__ == "__main__":
     unittest.main()

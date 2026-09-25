@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "conductor",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "files": [
     {
       "path": ".agents/skills/conductor-execution-closeout/SKILL.md",
@@ -181,7 +181,7 @@
     {
       "path": "docs/Conductor/contracts/gap_request.schema.json",
       "classification": "release-owned",
-      "sha256": "6b770b3395582783785499c483917bb345c0470a66216e60494c23735979384f"
+      "sha256": "687909b4848f163e552bd677d41f6eb665a7d50f04f549195ce3ee87c911b832"
     },
     {
       "path": "docs/Conductor/contracts/intent_pack.schema.json",
@@ -441,7 +441,7 @@
     {
       "path": "scripts/conductor_contract_lint.py",
       "classification": "release-owned",
-      "sha256": "f235c66abd998e6d4d2b40c47f18580ba133cfb4453384c3c58b582527f2ef49"
+      "sha256": "dfcce3b35bf9226c0866d73b7241651cf30774c80082af987bc204b55cfc589d"
     },
     {
       "path": "scripts/conductor_execution_closeout.py",
@@ -451,7 +451,7 @@
     {
       "path": "scripts/conductor_gap.py",
       "classification": "release-owned",
-      "sha256": "7f32686a510032a32e8ba4d46f007d8b5bb18d4f032a866052410ec4cfff490d"
+      "sha256": "4bf1434465d0a8259a1fa1861f6c615bb622d3af3a00830d85635eaefaf5b31f"
     },
     {
       "path": "scripts/conductor_host_capability.py",
@@ -489,6 +489,11 @@
       "sha256": "7027e619945c0635514797ab5925e9ef2e12bf9cf84bedd5b4cb0f274c7d85c7"
     },
     {
+      "path": "scripts/conductor_run_records.py",
+      "classification": "release-owned",
+      "sha256": "115653afbbfb7e04169264895a81c35341c6176589979ee756113eebd904d33c"
+    },
+    {
       "path": "scripts/conductor_stage_lint.py",
       "classification": "release-owned",
       "sha256": "ada1b3171299fc5cde7b580fa538bd89237bec154eb2b045864fa8c89ca883ad"
@@ -501,7 +506,7 @@
     {
       "path": "scripts/conductorctl",
       "classification": "release-owned",
-      "sha256": "13ee8a40b33380431e3b90bc44902431d648645b4cc43662a2e620f8d7eedd4e"
+      "sha256": "2c89a9e6b2c2ec5446f844d78f3e68c30851202840e368c7606d6fc77ed504a4"
     },
     {
       "path": "scripts/knowledge_lint.sh",

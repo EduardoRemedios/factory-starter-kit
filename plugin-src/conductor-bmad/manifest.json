@@ -1,11 +1,11 @@
 {
   "name": "conductor-bmad",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "Adopt Factory and BMAD in one repository with upstream-only BMAD enforcement and immutable Factory intake.",
   "author": {
     "name": "Eduardo dos Remedios"
   },
-  "conductor_dependency": "~0.3.8",
+  "conductor_dependency": "~0.3.9",
   "interface": {
     "displayName": "Factory BMAD Companion",
     "shortDescription": "Route BMAD evidence into Factory safely.",
@@ -38,6 +38,10 @@
     {
       "id": "seed-contracts",
       "description": "Preview or seed the inert adapter contracts (adapter config schema, lane policy schema and JSON, authority policy) so contract-lint can validate a declared BMAD adapter before intake."
+    },
+    {
+      "id": "reconcile",
+      "description": "Run the grooming loop for one Spec (inspect inputs, draft scope and questions, hand questions to BMAD, review changed inputs, refresh the draft) and stop at an objective G1 exit."
     }
   ]
 }

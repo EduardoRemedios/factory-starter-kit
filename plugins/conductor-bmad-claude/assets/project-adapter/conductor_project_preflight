@@ -158,10 +158,12 @@ def validate_solution_context(root: Path, run_id: str, manifest: dict[str, objec
         return "CONDUCTOR_BMAD_PROMOTION_IDENTITY_MISMATCH"
     source_root = provenance.get("source_root")
     if "repository_companions" in provenance:
-        if not isinstance(repo, dict) or set(repo) != {"target_root", "output_root", "selected_source", "paths"}:
+        git_bound = isinstance(repo, dict) and repo.get("binding") == "git"
+        expected_keys = getattr(policy_module, "GIT_BOUND_COMPANION_KEYS", None) if git_bound else {"target_root", "output_root", "selected_source", "paths"}
+        if not isinstance(repo, dict) or expected_keys is None or set(repo) != expected_keys:
             return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
         if (source_root != "." or provenance.get("bmad_version") != "6.12.1-next.0"
-                or repo["target_root"] != str(root.resolve())
+                or (not git_bound and repo["target_root"] != str(root.resolve()))
                 or repo["output_root"] != policy_module.output_directory(root).as_posix()):
             return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
         selected = repo["selected_source"]
@@ -215,6 +217,11 @@ def validate_solution_context(root: Path, run_id: str, manifest: dict[str, objec
         spec_path = selected if Path(selected).name == "SPEC.md" else selected + "/SPEC.md"
         if external_sources != set(repo["paths"]) or "content/" + spec_path not in artifacts:
             return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+        if repo.get("binding") == "git":
+            # Git-bound approval travels between checkouts; the local base and inputs are checked here.
+            problem = policy_module.git_checkout_problem(root, repo, artifacts)
+            if problem is not None:
+                return problem["reason_code"]
     try:
         actual: dict[str, object] = {}
         for path in snapshot.rglob("*"):

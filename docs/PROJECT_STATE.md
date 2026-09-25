@@ -1,5 +1,20 @@
 # PROJECT_STATE.md - Canonical Build State
 
+## Local 0.3.9 pilot adoption candidate
+
+Built on the published 0.3.8 candidate (`e37cf58`), not on `main`. It adds:
+- governed TEA `automate` under run-scoped authority and a write-window compare;
+- Git-bound Spec approval with local `verify-checkout`;
+- `run-init`, `review-packet`, `gap export` and `completion-feedback`;
+- the scope-relabel completion rule;
+- two core-update fixes for composed `AGENTS.md` (runs `RUN_20260925_0950_core-update-fix` and
+  `RUN_20260925_1416_agents-compose-fix`).
+
+The housekeeping reconciliation (local, on `17b2244`) is not integrated. Qualification
+evidence (three countersigned runs) is retained privately, outside this repository. Publication, installed
+caches, pilot adoption and the first pilot Spec delivery are separate. See
+`docs/adapters/bmad/BMAD_FACTORY_ACTIONS.md`.
+
 ## Local 0.3.8 TEA readiness candidate
 
 The candidate recognises the exact optional TEA agent descriptor from the pinned

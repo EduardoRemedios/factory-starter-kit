@@ -96,7 +96,7 @@ def response(request: Any, initialized: bool) -> tuple[dict[str, Any] | None, bo
     if method == "initialize":
         result = {
             "protocolVersion": "2025-06-18", "capabilities": {"tools": {"listChanged": False}},
-            "serverInfo": {"name": "conductor-bmad", "version": "0.3.8"},
+            "serverInfo": {"name": "conductor-bmad", "version": "0.3.9"},
         }
         initialized = True
     elif method == "ping":

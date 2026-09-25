@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.3.9 — local, unreleased
+
+- Governed TEA automation: `bmad-testarch-automate` is admitted only under one
+  execution-enabled run's G1-pinned authority, inside an `automation-capture`
+  window whose `automation-compare` checks that watched writes stayed under approved roots.
+  ATDD, framework, CI and the TEA agent remain prohibited; policy version unchanged.
+- Git-bound repository companions (`promote --git-binding`) approve committed
+  content plus its commit instead of an absolute checkout path;
+  `verify-checkout` checks a descendant checkout locally. Root-bound snapshots
+  keep their contract.
+- `conductorctl run-init`, `review-packet`, `gap export`, `completion-feedback`,
+  optional gap `owner`, and the `CONDUCTOR_CONTRACT_SCOPE_RELABEL` completion rule.
+- New `conductor-bmad:reconcile` skill for the grooming loop; `conductor:run`
+  uses the new commands.
+- Core update fixes: an already-composed `AGENTS.md` planned `no_change` no longer
+  rolls back with `CONDUCTOR_PLAN_STALE`, and an unedited composed `AGENTS.md` is
+  composed rather than overwritten by the package seed. A pure legacy seed is still refreshed.
+- Governed automation hardening after independent review: one window per run, the
+  compare always recomputes, and it watches the run's own records, local settings and git hooks.
+  Write roots may not be symlinks or case variants of governance paths. `verify-checkout`
+  rejects inputs that are untracked or differ from HEAD.
+
 ## 0.3.8 — local, unreleased
 
 - Recognise the exact pinned optional TEA agent descriptor without admitting
