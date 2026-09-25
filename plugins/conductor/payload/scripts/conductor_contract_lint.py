@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import shlex
 from pathlib import Path
 from typing import Any
 
@@ -378,7 +379,7 @@ def verify_receipt(root: Path, run_root: Path, run_id: str, check: dict[str, Any
         errors.extend(local)
         return None
     if receipt_payload_digest(receipt) != receipt["payload_sha256"]:
-        errors.append(f"CONDUCTOR_CONTRACT_RECEIPT_TAMPERED: {check['id']}: payload digest does not match (agent-authored or edited receipt)")
+        errors.append(f"CONDUCTOR_CONTRACT_RECEIPT_TAMPERED: {check['id']}: payload digest does not match")
         return None
     if receipt["run_id"] != run_id or receipt["check_id"] != check["id"]:
         errors.append(f"CONDUCTOR_CONTRACT_RECEIPT_IDENTITY_MISMATCH: {check['id']}")
@@ -386,10 +387,48 @@ def verify_receipt(root: Path, run_root: Path, run_id: str, check: dict[str, Any
     if receipt["status"] != res["status"]:
         errors.append(f"CONDUCTOR_CONTRACT_RESULT_MISMATCH: {check['id']}: manifest says {res['status']}, receipt says {receipt['status']}")
         return None
-    for stream in ("stdout_path", "stderr_path"):
-        log = safe_relative(run_root, receipt[stream], f"{check['id']}.{stream}", errors)
-        if log is not None and not log.is_file():
-            errors.append(f"CONDUCTOR_CONTRACT_FILE_MISSING: {check['id']} {stream}")
+    expected_exit = 0 if check["type"] == "manual" else check.get("expected_exit", 0)
+    expected_status = "PASS" if receipt["exit_code"] == expected_exit else "FAIL"
+    if receipt.get("expected_exit", 0) != expected_exit or receipt["status"] != expected_status:
+        local.append(f"CONDUCTOR_CONTRACT_RECEIPT_OUTCOME_MISMATCH: {check['id']}: exit code, expected exit and status disagree")
+    for field, receipt_field in (("exit_code", "exit_code"), ("utc", "finished_utc")):
+        if field in res and res[field] != receipt[receipt_field]:
+            local.append(f"CONDUCTOR_CONTRACT_RESULT_MISMATCH: {check['id']}: {field} differs from receipt")
+    if receipt["cwd"] != ".":
+        local.append(f"CONDUCTOR_CONTRACT_RECEIPT_COMMAND_MISMATCH: {check['id']}: runner working directory must be the repository root")
+    if check["type"] in {"static", "command", "test", "no_touch"}:
+        try:
+            command = check["command"] if isinstance(check["command"], list) else shlex.split(check["command"])
+        except ValueError:
+            local.append(f"CONDUCTOR_CONTRACT_RECEIPT_COMMAND_MISMATCH: {check['id']}: invalid command quoting")
+        else:
+            if receipt["command"] != command:
+                local.append(f"CONDUCTOR_CONTRACT_RECEIPT_COMMAND_MISMATCH: {check['id']}: command differs from manifest")
+    elif check["type"] == "manual":
+        command = receipt["command"]
+        if len(command) != 3 or command[:2] != ["conductor-receipts", "human-attestation"] or not command[2].strip():
+            local.append(f"CONDUCTOR_CONTRACT_RECEIPT_COMMAND_MISMATCH: {check['id']}: expected manual attestation")
+    elif receipt["command"] != ["conductor-receipts", "target-exists", check["target"]]:
+        local.append(f"CONDUCTOR_CONTRACT_RECEIPT_COMMAND_MISMATCH: {check['id']}: target differs from manifest")
+    for stream in ("stdout", "stderr"):
+        log = safe_relative(run_root, receipt[f"{stream}_path"], f"{check['id']}.{stream}_path", local)
+        if log is None:
+            continue
+        if not log.is_file():
+            local.append(f"CONDUCTOR_CONTRACT_FILE_MISSING: {check['id']} {stream}_path")
+            continue
+        try:
+            # Receipts retain at most 64 KiB per stream; do not load an unbounded replacement.
+            with log.open("rb") as handle:
+                content = handle.read(65537)
+        except OSError as exc:
+            local.append(f"CONDUCTOR_CONTRACT_RECEIPT_LOG_UNREADABLE: {check['id']} {stream}: {exc}")
+            continue
+        if len(content) != receipt[f"{stream}_bytes"] or sha256_bytes(content) != receipt[f"{stream}_sha256"]:
+            local.append(f"CONDUCTOR_CONTRACT_RECEIPT_LOG_MISMATCH: {check['id']} {stream}: retained bytes or digest differ")
+    if local:
+        errors.extend(local)
+        return None
     return receipt
 
 
@@ -520,6 +559,11 @@ def lint_completion(root: Path, run_id: str) -> dict[str, Any]:
                     doc = read_json(target, row["decision_ref"], gap)
                     if doc is None or "resolution" not in doc:
                         errors.append(f"CONDUCTOR_CONTRACT_DECISION_UNRESOLVED: {rid} -> {row['decision_ref']} has no resolution")
+                    elif doc.get("supersession_impact") == "future_only" and row["status"] in {"out_of_scope", "not_done"}:
+                        # Every row is locked scope; deferring it is a scope change, not future work. Unknown-impact
+                        # decisions stay accepted for existing records and remain visible as NEEDS_HUMAN_DECISION.
+                        errors.append(f"CONDUCTOR_CONTRACT_SCOPE_RELABEL: {rid} is approved scope and cannot be closed by future_only "
+                                      f"{row['decision_ref']}; resolve it as active_scope or re-lock the intent without it")
         elif row["status"] == "not_done":
             warnings.append(f"CONDUCTOR_CONTRACT_NOT_DONE_UNDECIDED: {rid}")
 

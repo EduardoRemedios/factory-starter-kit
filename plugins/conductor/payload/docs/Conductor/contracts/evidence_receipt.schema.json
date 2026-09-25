@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://conductor.dev/schemas/evidence_receipt.schema.json",
   "title": "Conductor Evidence Receipt",
-  "description": "Written only by the receipts runner. payload_sha256 is recomputed by contract-lint over every other field; a mismatch marks the receipt as agent-authored and invalid.",
+  "description": "Produced by the receipts runner. contract-lint checks payload_sha256, retained log bytes/digests and check/result consistency. Checksums do not independently authenticate authorship.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "run_id", "check_id", "command", "cwd", "exit_code", "stdout_sha256", "stderr_sha256", "stdout_bytes", "stderr_bytes", "stdout_path", "stderr_path", "started_utc", "finished_utc", "status", "payload_sha256"],

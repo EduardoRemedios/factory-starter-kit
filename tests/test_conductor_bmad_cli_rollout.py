@@ -1,4 +1,5 @@
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -12,6 +13,13 @@ SCRIPT = REPO_ROOT / "scripts/verify_conductor_bmad_cli_rollout.py"
 
 class FactoryBmadCliRolloutTests(unittest.TestCase):
     def run_preflight(self, *args: str) -> tuple[int, dict]:
+        # Cache-mismatch cases pass their own fixture below; never inspect a user's install.
+        cache = tempfile.TemporaryDirectory()
+        self.addCleanup(cache.cleanup)
+        for name in ("conductor", "conductor-bmad"):
+            source = REPO_ROOT / f"plugins/{name}-claude"
+            version = json.loads((source / ".claude-plugin/plugin.json").read_text())["version"]
+            shutil.copytree(source, Path(cache.name) / "factory-starter-kit" / name / version)
         completed = subprocess.run(
             [
                 sys.executable,
@@ -20,6 +28,8 @@ class FactoryBmadCliRolloutTests(unittest.TestCase):
                 str(REPO_ROOT),
                 "--skip-external",
                 "--json",
+                "--claude-cache-root",
+                cache.name,
                 *args,
             ],
             cwd=REPO_ROOT,

@@ -19,7 +19,7 @@ PACKAGE_ROOTS = {
     "codex": REPO_ROOT / "plugins/conductor-bmad",
     "claude": REPO_ROOT / "plugins/conductor-bmad-claude",
 }
-SKILL_IDS = {"doctor", "bootstrap", "audit", "promote", "intake", "seed-contracts"}
+SKILL_IDS = {"doctor", "bootstrap", "audit", "promote", "intake", "seed-contracts", "reconcile"}
 ADAPTER_CONTRACTS_ROOT = REPO_ROOT / "docs/adapters/bmad"
 
 
@@ -83,6 +83,8 @@ def write_package(root: Path, platform: str, manifest: dict[str, Any]) -> None:
             )
     shutil.copyfile(SOURCE_ROOT / "runtime/conductor_bmad.py", root / "scripts/conductor_bmad.py")
     shutil.copyfile(SOURCE_ROOT / "runtime/conductor_bmad_policy.py", root / "scripts/conductor_bmad_policy.py")
+    for destination in (root / "scripts", root / "assets/project-adapter"):
+        shutil.copyfile(SOURCE_ROOT / "runtime/conductor_bmad_6121.json", destination / "conductor_bmad_6121.json")
     for source in sorted((SOURCE_ROOT / "project-adapter").iterdir()):
         if source.is_file():
             shutil.copy2(source, root / "assets/project-adapter" / source.name)

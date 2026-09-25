@@ -1,0 +1,4 @@
+interface:
+  display_name: "Factory BMAD Reconcile"
+  short_description: "Groom one Spec to a G1-ready draft"
+  default_prompt: "Use $conductor-bmad-reconcile to prepare this Spec for Factory G1 review."

@@ -49,7 +49,7 @@ Write-boundary containment remains a separate check (postimage compare over `wri
 
 ## 6. Legacy trees
 
-Preserved only under `docs/adapters/bmad/legacy-evidence/`. Never under `docs/upstream/` (the context index scans it). The AuditEdge clone's `docs/upstream/bmad-legacy-spike-1/` is therefore non-compliant and is the "update from non-compliant layout" fixture in 06 §4. Audit's zero-write remediation preview remains the only path that proposes a move; the move itself needs exact-plan approval.
+Preserved only under `docs/adapters/bmad/legacy-evidence/`. Never under `docs/upstream/` (the context index scans it). The pilot clone's `docs/upstream/bmad-legacy-spike-1/` is therefore non-compliant and is the "update from non-compliant layout" fixture in 06 §4. Audit's zero-write remediation preview remains the only path that proposes a move; the move itself needs exact-plan approval.
 
 ## 7. Deny message specification
 

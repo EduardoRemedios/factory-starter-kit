@@ -82,6 +82,38 @@ class GapRequestTests(unittest.TestCase):
         result = cl.lint_completion(self.fx.root, RUN_ID)
         self.assertEqual(result["status"], "PASS", result)
 
+    def test_owner_is_optional_and_recorded(self) -> None:
+        gap.open_gap(self.fx.root, RUN_ID, requirement_id="R-001", gap_type="ux", question="Where do actions go?",
+                     supersession_impact="active_scope", owner="UX (Test Designer)")
+        gap.open_gap(self.fx.root, RUN_ID, requirement_id="R-002", gap_type="ux", question="Legacy shape?")
+        self.assertEqual("UX (Test Designer)", json.loads((self.fx.run_root / "gap_requests/GAP-001.json").read_text())["owner"])
+        self.assertNotIn("owner", json.loads((self.fx.run_root / "gap_requests/GAP-002.json").read_text()))
+        self.assertEqual(2, len(gap.load_gaps(self.fx.root, self.fx.run_root)))
+
+    def test_export_groups_blocking_deferred_and_decided_for_upstream(self) -> None:
+        gap.open_gap(self.fx.root, RUN_ID, requirement_id="R-001", gap_type="ux", question="Where do the page actions go?",
+                     supersession_impact="active_scope", owner="UX", proposed_resolution="Top of the content area")
+        gap.open_gap(self.fx.root, RUN_ID, requirement_id="R-002", gap_type="product_context", question="Breadcrumbs later?",
+                     supersession_impact="future_only", owner="PM")
+        gap.open_gap(self.fx.root, RUN_ID, requirement_id="R-003", gap_type="requirement", question="Include unauthorised page?")
+        gap.resolve_gap(self.fx.root, RUN_ID, "GAP-003", decided_by="Test Human", decision="Yes")
+        out = gap.export_questions(self.fx.root, RUN_ID)
+        self.assertEqual((1, 1, 1), (out["blocking"], out["deferred"], out["decided"]))
+        text = (self.fx.root / out["path"]).read_text()
+        blocking, deferred = text.split("## Deferred")[0], text.split("## Deferred")[1].split("## Already decided")[0]
+        self.assertIn("GAP-001", blocking)
+        self.assertIn("Agent's proposal (not a decision): Top of the content area", blocking)
+        self.assertIn("GAP-002", deferred)
+        self.assertIn("GAP-003 (R-003): Yes (decided by Test Human", text)
+        self.assertIn("Nothing in this file approves scope", text)
+
+    def test_invalid_gap_file_blocks_export(self) -> None:
+        (self.fx.run_root / "gap_requests").mkdir(exist_ok=True)
+        (self.fx.run_root / "gap_requests/GAP-001.json").write_text(json.dumps({"gap_id": "GAP-001"}))
+        with self.assertRaises(cl.ContractLintError) as ctx:
+            gap.export_questions(self.fx.root, RUN_ID)
+        self.assertEqual("CONDUCTOR_GAP_SCHEMA_INVALID", ctx.exception.reason_code)
+
 
 if __name__ == "__main__":
     unittest.main()

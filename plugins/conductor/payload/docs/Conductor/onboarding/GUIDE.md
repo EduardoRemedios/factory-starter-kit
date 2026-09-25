@@ -19,7 +19,7 @@ G1 Intent Lock ──(human countersign)──▶ G2 Governed Execution ──(r
 ```
 
 - **G1 Intent Lock.** The agent drafts `intent_pack.json` (goal, requirements with acceptance, constraints, scope in/out, sources with digests, verification requirements, budget). `conductorctl contract-lint intent` must pass. A human writes `countersign/INTENT_LOCK.json`. Nothing proceeds on a draft.
-- **G2 Governed Execution.** One autonomous run inside the locked scope. Checks are declared in `verification_manifest.yaml`; `conductorctl receipts run` executes them and writes signed receipts; `conductorctl postimage capture` and `compare` prove no protected file changed. `EXECUTION_ENABLED` runs also need `countersign/EXECUTION_GO.json`.
+- **G2 Governed Execution.** One autonomous run inside the locked scope. Checks are declared in `verification_manifest.yaml`; `conductorctl receipts run` executes them and writes digest-bound receipts; `conductorctl postimage capture` and `compare` compare protected files against the captured baseline. `EXECUTION_ENABLED` runs also need `countersign/EXECUTION_GO.json`.
 
 Do not pin the current run's `verification_manifest.yaml` as an immutable intent
 source: the runner updates its `checks[].result` fields. G1 and both receipt
@@ -45,6 +45,11 @@ approvals block before effects; result updates do not require renewed approval.
 - **G3 Adversarial Review and Completion.** A fresh-context verifier that did not do the work audits every claim against its receipt. The Statement of Completion maps every requirement to evidence; `contract-lint completion` derives READY, BLOCKED, or NEEDS_HUMAN_DECISION. A human writes `countersign/COMPLETION.json`. Merge authorization then follows `MERGE_PROTOCOL.md` unchanged.
 
 Humans are involved at exactly two points per run, three when execution is enabled.
+
+Receipt checksums detect inconsistent evidence; they do not authenticate the
+writer. Fresh review and human approval remain part of the proof. Existing v1
+receipts keep their format; see [receipt integrity](RECEIPT_INTEGRITY.md) if a
+retained log or result no longer agrees with its receipt.
 
 ## Two lanes for upstream tools
 

@@ -14,6 +14,13 @@ Conductor governs **authority, outcomes, and write boundaries**. It does not gov
 
 Instruction prose (this file, skills, guides) is soft: user instructions override it in every harness. Only schemas, validators, hooks, and CI are hard. A rule that must hold lives in the hard layer and is merely explained here.
 
+Receipts are digest-bound evidence, not cryptographic signatures. Lint checks
+payload and retained-log integrity and consistency with the declared check; it
+does not independently authenticate who ran the command or wrote the evidence.
+A writer controlling all evidence can recompute the checksums. Fresh-context
+review and human countersigns remain necessary, and their provenance must be
+reported honestly.
+
 ## 1) Three gates
 
 - **G1 Intent Lock** (human): the Intent Pack validates and a human countersigns its digest. Effort and model are declared.

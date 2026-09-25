@@ -11,17 +11,17 @@ Brief version: 1.0 · Date: 2026-09-04 · Author: Eduardo dos Remedios · Intern
 | Decision | Value |
 |---|---|
 | Product name | **Conductor** on every user-facing surface. Internal identifiers (`docs/Factory`, `factoryctl`, plugin ids) may keep `factory` until the contract core is rebuilt. |
-| Lineage | Factory 0.2.5 candidate `c23be98` (branch `codex/factory-bmad-0.2.5-solution-context`) is merged to `main` and tagged as the **last Factory-lineage release**. Conductor branches from it. MS-06 pilot qualification is **not** run; its evidence is archived as V2-lineage qualification. |
-| Pilot | Oleksii's team, AuditEdge repository, sandbox branch `spike-1`. Harnesses: Claude Code CLI (primary), Cursor, Codex desktop app. |
+| Lineage | Factory 0.2.5 candidate `c23be98` is merged to `main` and tagged as the **last Factory-lineage release**. Conductor branches from it. MS-06 pilot qualification is **not** run; its evidence is archived as V2-lineage qualification. |
+| Pilot | The pilot team's repository, sandbox branch `spike-1`. Harnesses: Claude Code CLI (primary), Cursor, Codex desktop app. |
 | Party mode | Allowed in the product-context lane under the lane rules in §6. |
 | Onboarding | No workshop. Self-serve: one-command install, a short guide, one practical exercise with a checkable result. |
-| Rehearsal | Eduardo rehearses on the local AuditEdge clone before handover (fresh adoption, then update from the existing non-compliant 0.2.5 layout). |
+| Rehearsal | The maintainer rehearses on a local clone of the pilot repository before handover (fresh adoption, then update from the existing non-compliant 0.2.5 layout). |
 
 ---
 
 ## 1. Mission
 
-Design Conductor: the successor to Factory V2, built for frontier models (Claude Fable 5.1, GPT-6 Astra) that need less procedural guidance but the same or stronger governance. Preserve the BMAD upstream companion capabilities Oleksii's team depends on. Produce a design pack that a build run can execute step by step.
+Design Conductor: the successor to Factory V2, built for frontier models (Claude Fable 5.1, GPT-6 Astra) that need less procedural guidance but the same or stronger governance. Preserve the BMAD upstream companion capabilities the pilot team depends on. Produce a design pack that a build run can execute step by step.
 
 ## 2. Governing principle
 
@@ -78,7 +78,7 @@ Stage letters A–I2 survive only as an internal checklist inside G2. Every exis
 7. **Evidence Receipt** — produced by the runner, not by agent prose: command, exit code, stdout digest, utc, run id.
 8. **AGENTS.md composition** — managed section markers; project-owned content preserved byte-for-byte; verified in Claude Code, Codex, Cursor.
 
-## 6. BMAD lane adapter (Oleksii's requirements → acceptance criteria)
+## 6. BMAD lane adapter (pilot team requirements → acceptance criteria)
 
 Policy is expressed by responsibility. Two lanes, default-deny for anything unclassified.
 
@@ -95,7 +95,7 @@ Acceptance criteria for the adapter design: AC-L1 PRD flow with review + elicita
 
 ## 7. Harness adapters and CI
 
-- Claude Code and Codex: plugins served from the GitHub marketplace (`EduardoRemedios/factory-starter-kit`), registered in the AuditEdge repo's project settings; versions pinned in the marketplace manifest.
+- Claude Code and Codex: plugins served from the GitHub marketplace (`EduardoRemedios/factory-starter-kit`), registered in the pilot repository's project settings; versions pinned in the marketplace manifest.
 - Cursor: no plugin; consumes the installed AGENTS.md and CLI. Verify Cursor Team Rules do not override the Conductor section.
 - **CI contract-lint action:** runs `contract-lint completion` on pull requests; requires receipts and a valid Statement of Completion for merge. Harness-neutral enforcement at the merge boundary; this is the primary answer to "we cannot block every tool".
 - Instruction-file audit: contract-lint inventories every instruction-bearing file (AGENTS.md, CLAUDE.md, skills, hooks) with digests, mirroring what the BMAD adapter already does for BMAD skills.

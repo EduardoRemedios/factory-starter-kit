@@ -1,24 +1,34 @@
-# PROJECT_STATE.md - Canonical Build State
+# PROJECT_STATE.md — Canonical Build State
 
-## Unreleased verification-definition repair
+Last updated: 25 September 2026.
 
-The receipt entry points reject mutable verification-manifest source pins. An optional hash-pinned definitions snapshot permits result updates while enforcing current G1 and Execution Go approvals. Legacy no-snapshot behavior remains supported. See `tests/test_verification_definitions.py` and the onboarding guide. This source change does not change the package version or installed caches.
+## Current source
 
-## Local 0.3.5 release candidate
+- **Factory 0.3.10** on `main`: one integration of the 0.3.7–0.3.9 BMAD line and the
+  receipt-integrity repair, on the 0.3.5 source and verification-definition guard.
+- 0.3.6–0.3.7: exact BMAD 6.12.1-next.0 profiles, nested-root mapping, complete Spec
+  intake and explicit repository companions. 0.3.8: pinned TEA readiness. 0.3.9:
+  governed TEA automation, Git-bound Spec approval with `verify-checkout`, `run-init`,
+  `review-packet`, `gap export`, `completion-feedback`, the scope-relabel completion
+  rule and two core-update fixes for composed `AGENTS.md`.
+- Receipts gain retained-log, command and outcome consistency checks; v1 fields stay
+  valid. Checksums establish consistency, not independent runner authentication.
+  Scope comparison is evidence of observed file differences, not an execution sandbox.
+- Qualification evidence is retained privately, outside this repository. Publication,
+  installed caches and adopter migration are separate decisions.
+- The [implementation roadmap](Conductor/IMPLEMENTATION_ROADMAP.md) puts the first real
+  pilot delivery slice first. Later phases are proposed; roadmap inclusion does not
+  authorise implementation.
 
-Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are locally qualified. Reusable source and generated packages are separated from private qualification evidence. Publication is pending; existing 0.3.4 pilot identities remain intact. See docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md for scope and limitations.
+The records below retain earlier pilot and 0.2-era history. Their pending-state and version language does not supersede the current candidate status above or qualify additional harnesses.
 
-> **Purpose:** Single source of truth for the current starter-kit state.
->
-> **Last updated:** 2026-09-04
-
-## What Exists
+## Retained history from the earlier pilot state
 
 - **Factory 0.3.4 (pilot candidate, `main`, tag `conductor-v0.3.4-pilot`;
   working name Conductor).** The 0.2 line closed at tag
   `factory-lineage-v0.2.5` (`7d0d20e`). Factory 0.3 governs authority, outcomes, and write boundaries through three
   gates (G1 Intent Lock, G2 Governed Execution, G3 Adversarial Review and
-  Completion) enforced by `conductorctl contract-lint`, signed evidence
+  Completion) enforced by `conductorctl contract-lint`, digest-bound evidence
   receipts (`conductorctl receipts`), protected-postimage compare, Gap Requests,
   and human countersign files. Contracts are JSON Schemas under
   `docs/Conductor/contracts/`; the BMAD adapter's lane policy (2.0.0) and
@@ -115,7 +125,7 @@ Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are 
   handoff. The two brownfield team states remain required follow-up rehearsal
   before rollout.
 
-## Current Tracking Snapshot
+## Historical 0.2 Tracking Snapshot (retained)
 
 - Current repository scope: Factory V2, starter-kit content, and the dual-platform Factory plugin release candidate.
 - Latest verified milestone: the coordinated Factory/Factory-BMAD 0.2.5 source
@@ -151,7 +161,7 @@ Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are 
   `EXECUTION_CLOSEOUT.json` records `REVIEW_READY` with human evidence review
   accepted on 2026-09-03. Achieved status is
   `CONDUCTOR_BMAD_025_INTEGRATION_DETERMINISTICALLY_QUALIFIED`; MS-06,
-  AuditEdge, and any rollout decision remain separately gated and unclaimed.
+  pilot-project use, and any rollout decision remain separately gated and unclaimed.
 - Publication-boundary source verification now protects every Git ref by
   default while allowing only disclosed rotation under the exact
   `refs/codex/turn-diffs/` prefix. Focused disposable-repository tests cover
@@ -172,8 +182,10 @@ Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are 
 
 - Product-specific run history for adopters.
 - Project-specific test commands beyond starter-kit validation helpers.
-- A released companion plugin; the technical `REVIEW_READY` candidate is
-  not merged, tagged, published, or approved for organization rollout.
+- General organisation-wide rollout qualification. Main and candidate availability
+  do not establish installed versions or successful delivery in every adopter.
+- Independent cryptographic authentication of receipt writers or protection
+  against an actor who can rewrite all evidence and its digests.
 - Enterprise
   managed-settings enforcement, project-scope installation compatibility,
   optional test-extension delivery, or intentional-bypass protection without CI/branch policy.
@@ -184,8 +196,8 @@ Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are 
 bash scripts/knowledge_lint.sh
 ./scripts/conductorctl context-index
 ./scripts/conductorctl kilo-stage --help
-python3 -m unittest tests.test_context_recall_repair
-python3 -m unittest discover -s tests -v
-python3 scripts/build_conductor_plugins.py --check
-python3 scripts/agent_loop_bridge_validate.py tests/fixtures/agent_loop_bridge/valid_handoff.json --json
+./scripts/conductor-python -m unittest tests.test_context_recall_repair
+./scripts/conductor-python -m unittest discover -s tests -v
+./scripts/conductor-python scripts/build_conductor_plugins.py --check
+./scripts/conductor-python scripts/agent_loop_bridge_validate.py tests/fixtures/agent_loop_bridge/valid_handoff.json --json
 ```

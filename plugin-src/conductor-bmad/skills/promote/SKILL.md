@@ -52,3 +52,27 @@ workflow identifiers represented by the shared exact-name policy. In
 particular, brownfield mining is `document-project`; `generate-project-context`,
 the deprecated architecture shim, stories, sprint, implementation, QA
 automation, review, TEA gates, and unknown workflows remain prohibited.
+
+For exact BMAD 6.12.1-next.0, selecting SPEC.md or its directory freezes the Spec, decision log and recursive declared companions beneath the declared output root, including external-to-Spec companions. Nested roots resolve from PROJECT_CONFIG.json. Source paths are preserved output-relative under content/. Review the entire package before exact-plan approval. Reconcile through the upstream memlog and Spec regeneration, never a manual edit of a derived Spec.
+
+For an exact 6.12.1 Spec that declares a repository-local Markdown companion
+outside BMAD output, add repeatable `--repo-companion docs/example.md` permissions.
+Each must be reached by the declared closure. No directories, globs, symlinks,
+hidden/configuration paths or unused permissions are accepted. With this opt-in,
+all snapshot source paths become repository-relative. The resolved repository
+root, permission list, bytes and modes are plan-bound; relocation needs fresh
+promotion/review. Show the complete package before requesting exact approval.
+The new option grants no additional BMAD workflow or implementation authority.
+
+To approve on one checkout (for example, grooming on `main`) and implement in
+another (a feature branch), add `--git-binding` to the `--repo-companion` form.
+The reviewed inputs must be committed and clean. The plan then records the
+approval commit and each input's Git blob instead of the absolute root, so the
+same content at the same commit gives the same plan ID in any folder. Commit the
+resulting snapshot with the grooming work. In the implementation checkout run
+`verify-checkout --snapshot-id SNAPSHOT_ID [--run RUN_ID]`: it writes nothing and
+reports `VERIFIED` only when the snapshot is intact, the approval commit is an
+ancestor of HEAD, every input is byte-identical and, with `--run`, the locked
+Intent Pack cites the snapshot. Changed inputs mean a superseding snapshot for
+review; an unrelated or older base means rebasing, not re-approving. Existing
+root-bound snapshots keep their original contract and are never rewritten.

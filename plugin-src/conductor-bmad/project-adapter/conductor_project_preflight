@@ -147,14 +147,42 @@ def validate_solution_context(root: Path, run_id: str, manifest: dict[str, objec
         return "CONDUCTOR_BMAD_REVIEW_QUALIFIER_MISMATCH"
     provenance = manifest.get("provenance")
     provenance_keys = {"system", "bmad_version", "workflow", "promotion_plan_id", "plan_identity", "source_root", "source_aggregate_sha256"}
+    repo = provenance.get("repository_companions") if isinstance(provenance, dict) else None
+    if isinstance(provenance, dict) and "repository_companions" in provenance:
+        provenance_keys.add("repository_companions")
     if not isinstance(provenance, dict) or set(provenance) != provenance_keys:
         return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
-    if provenance.get("system") != "BMAD" or provenance.get("bmad_version") != policy_module.SUPPORTED_BMAD_VERSION:
+    if provenance.get("system") != "BMAD" or provenance.get("bmad_version") not in {policy_module.SUPPORTED_BMAD_VERSION, "6.12.1-next.0"}:
         return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
     if provenance.get("promotion_plan_id") != promotion_plan_id or provenance.get("plan_identity") != plan_identity:
         return "CONDUCTOR_BMAD_PROMOTION_IDENTITY_MISMATCH"
     source_root = provenance.get("source_root")
-    if not isinstance(source_root, str) or Path(source_root).is_absolute() or ".." in Path(source_root).parts or Path(source_root).parts[:1] != ("_bmad-output",):
+    if "repository_companions" in provenance:
+        git_bound = isinstance(repo, dict) and repo.get("binding") == "git"
+        expected_keys = getattr(policy_module, "GIT_BOUND_COMPANION_KEYS", None) if git_bound else {"target_root", "output_root", "selected_source", "paths"}
+        if not isinstance(repo, dict) or expected_keys is None or set(repo) != expected_keys:
+            return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+        if (source_root != "." or provenance.get("bmad_version") != "6.12.1-next.0"
+                or (not git_bound and repo["target_root"] != str(root.resolve()))
+                or repo["output_root"] != policy_module.output_directory(root).as_posix()):
+            return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+        selected = repo["selected_source"]
+        if (not isinstance(selected, str) or Path(selected).is_absolute() or ".." in Path(selected).parts
+                or not Path(selected).is_relative_to(Path(repo["output_root"]))):
+            return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+        permissions = repo["paths"]
+        if not isinstance(permissions, list) or not permissions or any(not isinstance(p, str) for p in permissions):
+            return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+        if permissions != sorted(set(permissions)):
+            return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+        for value in permissions:
+            path = Path(value)
+            if (path.as_posix() != value or path.is_absolute() or path.suffix.lower() != ".md"
+                    or any(part.startswith(".") for part in path.parts)
+                    or any(c in value for c in "\\\n\r:#?*[]{}")
+                    or path.is_relative_to(Path(repo["output_root"]))):
+                return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+    elif not isinstance(source_root, str) or Path(source_root).is_absolute() or ".." in Path(source_root).parts or not policy_module._path_is_within(Path(source_root), policy_module.output_directory(root)):
         return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
     workflow = provenance.get("workflow")
     if not isinstance(workflow, str) or not policy_module.policy_classify(f"bmad-{workflow}")["allowed"]:
@@ -165,6 +193,7 @@ def validate_solution_context(root: Path, run_id: str, manifest: dict[str, objec
     if provenance.get("source_aggregate_sha256") != hashlib.sha256(json.dumps(artifacts, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest():
         return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
     expected_paths = {"SNAPSHOT_MANIFEST.json"}
+    external_sources = set()
     for name, artifact in artifacts.items():
         path = Path(name) if isinstance(name, str) else Path("/")
         artifact_keys = {"mode", "sha256", "source_path", "source_sha256"}
@@ -173,9 +202,26 @@ def validate_solution_context(root: Path, run_id: str, manifest: dict[str, objec
         source_path = artifact.get("source_path")
         if not isinstance(source_path, str) or Path(source_path).is_absolute() or ".." in Path(source_path).parts:
             return "CONDUCTOR_BMAD_ARTIFACT_INVALID"
+        if repo is not None:
+            if name != "content/" + source_path or Path(source_path).as_posix() != source_path:
+                return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+            if not Path(source_path).is_relative_to(Path(repo["output_root"])):
+                if source_path not in repo["paths"]:
+                    return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+                external_sources.add(source_path)
         if not isinstance(artifact.get("mode"), int) or not HEX_RE.fullmatch(str(artifact.get("sha256"))) or artifact.get("source_sha256") != artifact.get("sha256"):
             return "CONDUCTOR_BMAD_ARTIFACT_INVALID"
         expected_paths.add(name)
+    if repo is not None:
+        selected = repo["selected_source"]
+        spec_path = selected if Path(selected).name == "SPEC.md" else selected + "/SPEC.md"
+        if external_sources != set(repo["paths"]) or "content/" + spec_path not in artifacts:
+            return "CONDUCTOR_BMAD_PROVENANCE_INVALID"
+        if repo.get("binding") == "git":
+            # Git-bound approval travels between checkouts; the local base and inputs are checked here.
+            problem = policy_module.git_checkout_problem(root, repo, artifacts)
+            if problem is not None:
+                return problem["reason_code"]
     try:
         actual: dict[str, object] = {}
         for path in snapshot.rglob("*"):

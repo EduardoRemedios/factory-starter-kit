@@ -30,7 +30,7 @@ Existing v1 fields preserved. Additions:
 | Field | Type | Notes |
 |---|---|---|
 | `schema_version` | int = 2 | |
-| `checks[].result` | `{status ∈ {PASS, FAIL, SKIPPED, NOT_RUN}, receipt_path, exit_code?, utc?}` | written only by `conductorctl receipts run`; agent edits to `result` are detected by receipt digest mismatch |
+| `checks[].result` | `{status ∈ {PASS, FAIL, SKIPPED, NOT_RUN}, receipt_path, exit_code?, utc?}` | produced by the receipts runner; lint checks agreement with the receipt, not authorship |
 | `checks[].requirement_ids[]` | id[] | replaces `constraint_ids` naming; both accepted in v2 for golden-pack compatibility |
 
 Rule change: missing manifest on an `EXECUTION_ENABLED` run, or on any run whose Intent Pack has `verification_requirements`, is an **error**.
@@ -105,7 +105,12 @@ Single file `docs/Conductor/PROJECT_CONFIG.json`. Replaces `PROJECT_PREFLIGHT.js
 
 ## 7. Evidence Receipt — `schemas/evidence_receipt.schema.json`
 
-Written only by `conductorctl receipts run`. Agent-authored receipts are detectable: the runner signs `payload_sha256` over the fields and the manifest lint recomputes it.
+Produced by `conductorctl receipts run` or `receipts attest` for manual checks.
+`payload_sha256` is an unkeyed checksum over the fields, not a signature. Lint
+checks it and retained logs and manifest/result consistency. A writer controlling
+all evidence can recompute the hashes; fresh-context review and human approval
+remain necessary. See [receipt integrity](../onboarding/RECEIPT_INTEGRITY.md) for
+v1 compatibility and historical-evidence handling.
 
 | Field | Type |
 |---|---|

@@ -2,6 +2,10 @@
 
 The detailed, dated changelog lives in `docs/CHANGELOG.md`. This file keeps release-level entries.
 
+## 0.3.10 - 2026-09-25
+
+- Integrates the 0.3.6–0.3.9 BMAD line (BMAD 6.12.1-next.0 compatibility, repository companions, TEA readiness, governed TEA automation, Git-bound Spec approval, run and review commands) with the receipt-integrity repair: retained-log, command and outcome consistency checks, v1 receipts still valid. Adds a generic pilot implementation roadmap.
+
 ## 0.3.4 - 2026-09-05
 
 - `validate` skill trimmed to the hard layer it delegates to; `run` description names the gates and countersigns. No runtime change.
@@ -22,7 +26,7 @@ The detailed, dated changelog lives in `docs/CHANGELOG.md`. This file keeps rele
 
 ## 0.3.0 - 2026-09-04
 
-- Three gates (Intent Lock, Governed Execution, Adversarial Review and Completion) replace the eleven-stage process; contract schemas, `conductorctl contract-lint`, signed evidence receipts, protected-postimage compare, Gap Requests, human countersign files.
+- Three gates (Intent Lock, Governed Execution, Adversarial Review and Completion) replace the eleven-stage process; contract schemas, `conductorctl contract-lint`, digest-bound evidence receipts, protected-postimage compare, Gap Requests, human countersign files.
 - BMAD adapter expressed by lane; declared non-root BMAD installation; one-line denials.
 - Self-serve onboarding under `docs/Conductor/onboarding/`. The 0.2 line closed at tag `factory-lineage-v0.2.5`.
 

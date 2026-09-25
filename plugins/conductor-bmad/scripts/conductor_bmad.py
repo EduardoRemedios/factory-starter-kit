@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import difflib
 import hashlib
 import importlib.util
 import json
@@ -17,7 +18,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.5"
+PLUGIN_VERSION = "0.3.10"
 BMAD_VERSION = "6.10.0"
 SNAPSHOT_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{2,63}")
 RESERVED_SNAPSHOT_IDS = frozenset({"latest", "receipts", "install-receipts"})
@@ -393,6 +394,149 @@ def bootstrap(root: Path, harness: str, approval: str | None) -> dict[str, Any]:
     return result("APPLIED", "CONDUCTOR_BMAD_BOOTSTRAP_APPLIED", "restart_claude_then_run_factory_bmad_doctor", target=str(root), receipt=receipt.relative_to(root).as_posix(), mutations=changes)
 
 
+def parse_companion_list(value: str) -> list[str]:
+    if not value.startswith("[") or not value.endswith("]"):
+        raise ValueError("Expected a YAML flow list")
+    inner = value[1:-1].strip()
+    if not inner:
+        return []
+    result = []
+    for token in inner.split(","):
+        token = token.strip()
+        if token[:1] in {"'", '\"'}:
+            if len(token) < 2 or token[-1] != token[0]:
+                raise ValueError("Unmatched quote")
+            token = token[1:-1]
+        if not token or not re.fullmatch(r"[A-Za-z0-9_./ -]+", token):
+            raise ValueError("Expected a plain relative companion path")
+        result.append(token)
+    return result
+
+
+def repository_companions(root: Path, values: list[str]) -> list[str]:
+    """An exact opt-in list, never a repository-wide source permission."""
+    paths = []
+    for value in values:
+        path = Path(value)
+        if (not value or path.as_posix() != value or path.is_absolute()
+                or any(part.startswith(".") for part in path.parts)
+                or any(c in value for c in "\\\n\r:#?*[]{}") or path.suffix.lower() != ".md"):
+            raise CompanionError("CONDUCTOR_BMAD_REPO_COMPANION_INVALID", value)
+        safe, relative = safe_relative(root, value)
+        if relative.is_relative_to(policy.output_directory(root)) or not safe.exists() or not stat.S_ISREG(safe.lstat().st_mode):
+            raise CompanionError("CONDUCTOR_BMAD_REPO_COMPANION_INVALID", value)
+        paths.append(relative.as_posix())
+    if len(paths) != len(set(paths)):
+        raise CompanionError("CONDUCTOR_BMAD_REPO_COMPANION_INVALID", "Duplicate permission")
+    return sorted(paths)
+
+
+def spec_package_inventory(root: Path, selection: Path, repo_companions: list[str] | None = None) -> dict[str, dict[str, Any]]:
+    """Freeze the explicit Spec closure while preserving output-relative paths."""
+    permitted = set(repository_companions(root, repo_companions or []))
+    output = root / policy.output_directory(root)
+    source_base = root if permitted else output
+    used = set()
+    spec = selection / "SPEC.md" if selection.is_dir() else selection
+    if spec.name != "SPEC.md" or not spec.is_file():
+        raise CompanionError("CONDUCTOR_BMAD_SPEC_REQUIRED")
+    pending = [spec]
+    memlog = spec.parent / ".memlog.md"
+    if memlog.exists() or memlog.is_symlink():
+        pending.append(memlog)
+    inventory = {}
+    while pending:
+        path = pending.pop()
+        try:
+            relative = path.relative_to(source_base)
+        except ValueError as error:
+            raise CompanionError("CONDUCTOR_BMAD_COMPANION_ESCAPE", str(path)) from error
+        repo_path = path.relative_to(root).as_posix()
+        if not path.is_relative_to(output):
+            if repo_path not in permitted:
+                raise CompanionError("CONDUCTOR_BMAD_COMPANION_ESCAPE", repo_path)
+            used.add(repo_path)
+        safe, _ = safe_relative(root, repo_path)
+        if not safe.exists() or not stat.S_ISREG(safe.lstat().st_mode):
+            raise CompanionError("CONDUCTOR_BMAD_COMPANION_MISSING", relative.as_posix())
+        name = "content/" + relative.as_posix()
+        if name in inventory:
+            continue
+        if path.name == "SPEC.md":
+            log = path.parent / ".memlog.md"
+            if log.exists() or log.is_symlink():
+                pending.append(log)
+        digest = digest_file(safe)
+        inventory[name] = {"mode": stat.S_IMODE(safe.stat().st_mode), "sha256": digest,
+                           "source_path": relative.as_posix(), "source_sha256": digest}
+        if path.suffix.lower() != ".md" or path.name == ".memlog.md":
+            continue
+        text = path.read_text(encoding="utf-8")
+        if not text.startswith("---\n"):
+            continue
+        lines = text.splitlines()[1:]
+        try:
+            end = lines.index("---")
+        except ValueError as error:
+            raise CompanionError("CONDUCTOR_BMAD_COMPANIONS_INVALID", "Frontmatter must end on a delimiter line") from error
+        lines = lines[:end]
+        refs = []; found = False; collecting = False
+        for line in lines:
+            key = re.match(r"^(?:companions|\"companions\"|'companions'):\s*(.*?)\s*$", line)
+            if key:
+                if found:
+                    raise CompanionError("CONDUCTOR_BMAD_COMPANIONS_INVALID")
+                found = True; collecting = True
+                value = key[1]
+                if value:
+                    try:
+                        refs = parse_companion_list(value)
+                    except ValueError as error:
+                        raise CompanionError("CONDUCTOR_BMAD_COMPANIONS_INVALID", "Use a list of plain relative paths") from error
+                    collecting = False
+            elif collecting and re.match(r"^\s*- ", line):
+                try:
+                    refs.extend(parse_companion_list("[" + line.strip()[2:].strip() + "]"))
+                except ValueError as error:
+                    raise CompanionError("CONDUCTOR_BMAD_COMPANIONS_INVALID") from error
+            elif re.search(r"(?:companions['\"]?\s*:|^\s*<<\s*:)", line):
+                raise CompanionError("CONDUCTOR_BMAD_COMPANIONS_INVALID", "Unsupported companion mapping or YAML merge")
+            elif collecting and re.match(r"^[A-Za-z_][A-Za-z0-9_-]*:", line):
+                collecting = False
+            elif collecting and line.strip() and not line.lstrip().startswith("#"):
+                raise CompanionError("CONDUCTOR_BMAD_COMPANIONS_INVALID")
+        if not isinstance(refs, list) or any(not isinstance(ref, str) or not ref for ref in refs):
+            raise CompanionError("CONDUCTOR_BMAD_COMPANIONS_INVALID")
+        for ref in refs:
+            if Path(ref).is_absolute() or any(c in ref for c in "\\\n\r:#?*[]{}"):
+                raise CompanionError("CONDUCTOR_BMAD_COMPANION_ESCAPE", ref)
+            candidates = set()
+            for base in (path.parent, root / policy.active_bmad_root(root).parent):
+                # Normalize .. lexically, then reject every symlink before reading.
+                candidate = Path(os.path.abspath(base / ref))
+                if not candidate.is_relative_to(root):
+                    continue
+                # Opt-in mode must not resolve an ambiguous reference by filtering
+                # out its unapproved interpretation. Count paths before granting reads.
+                if not permitted and not candidate.is_relative_to(output):
+                    continue
+                # Check the unnormalised path too: link/../file must not hide a link.
+                cursor = base
+                for part in Path(ref).parts:
+                    cursor = cursor.parent if part == ".." else cursor / part
+                    if cursor.is_symlink():
+                        raise CompanionError("CONDUCTOR_BMAD_SYMLINK_REJECTED", ref)
+                if candidate.exists() or candidate.is_symlink():
+                    safe_relative(root, candidate.relative_to(root).as_posix())
+                    candidates.add(candidate)
+            if len(candidates) != 1:
+                raise CompanionError("CONDUCTOR_BMAD_COMPANION_AMBIGUOUS" if candidates else "CONDUCTOR_BMAD_COMPANION_MISSING", ref)
+            pending.extend(candidates)
+    if used != permitted:
+        raise CompanionError("CONDUCTOR_BMAD_REPO_COMPANION_UNUSED", ", ".join(sorted(permitted - used)))
+    return dict(sorted(inventory.items()))
+
+
 def promotion_plan(
     root: Path,
     source_value: str,
@@ -407,8 +551,13 @@ def promotion_plan(
     plan_identity: str | None = None,
     supersedes_snapshot_id: str | None = None,
     supersedes_sha256: str | None = None,
+    repo_companions: list[str] | None = None,
+    git_binding: bool = False,
 ) -> dict[str, Any]:
     root = root.resolve()
+    permitted = repository_companions(root, repo_companions or [])
+    if (permitted and evidence_type != SOLUTION_CONTEXT_TYPE) or (git_binding and not permitted):
+        raise CompanionError("CONDUCTOR_BMAD_PROMOTION_ARGUMENTS_INVALID")
     if workflow not in ALLOWED_WORKFLOWS:
         raise CompanionError("CONDUCTOR_BMAD_WORKFLOW_PROHIBITED", workflow)
     workflow = canonical_workflow(workflow)
@@ -418,7 +567,9 @@ def promotion_plan(
         raise CompanionError("CONDUCTOR_BMAD_SNAPSHOT_ID_INVALID", snapshot_id)
     if snapshot_id.casefold() in RESERVED_SNAPSHOT_IDS:
         raise CompanionError("CONDUCTOR_BMAD_SNAPSHOT_ID_RESERVED", snapshot_id)
-    source, relative = safe_relative(root, source_value, prefix=Path("_bmad-output"))
+    if policy.installed_bmad_version(root) == "6.12.1-next.0" and not policy.assess_bmad_layout(root)["safe"]:
+        raise CompanionError("CONDUCTOR_BMAD_NON_CANONICAL_LAYOUT")
+    source, relative = safe_relative(root, source_value, prefix=policy.output_directory(root))
     if not reviewer.strip() or not review_ref.strip():
         raise CompanionError("CONDUCTOR_BMAD_REVIEW_EVIDENCE_INVALID")
     qualifier = review_qualifier.strip() if review_qualifier is not None else None
@@ -432,7 +583,8 @@ def promotion_plan(
             raise CompanionError("CONDUCTOR_BMAD_AUTHORITY_INVALID", authority or "")
         if not isinstance(plan_identity, str) or not plan_identity.strip() or len(plan_identity.strip()) > 200:
             raise CompanionError("CONDUCTOR_BMAD_PLAN_IDENTITY_INVALID")
-        if not source.is_dir() or source.is_symlink():
+        spec_package = policy.installed_bmad_version(root) == "6.12.1-next.0" and (source.name == "SPEC.md" or (source / "SPEC.md").is_file())
+        if (not source.is_dir() and not spec_package) or source.is_symlink():
             raise CompanionError("CONDUCTOR_BMAD_SOURCE_TYPE_INVALID", source_value)
         if (supersedes_snapshot_id is None) != (supersedes_sha256 is None):
             raise CompanionError("CONDUCTOR_BMAD_SUPERSESSION_INVALID")
@@ -450,7 +602,9 @@ def promotion_plan(
             if not isinstance(prior, dict) or prior.get("aggregate_sha256") != supersedes_sha256:
                 raise CompanionError("CONDUCTOR_BMAD_SUPERSESSION_INVALID")
             supersedes = {"snapshot_id": supersedes_snapshot_id, "aggregate_sha256": supersedes_sha256}
-        artifacts = recursive_file_inventory(source, prefix="content")
+        if permitted and not spec_package:
+            raise CompanionError("CONDUCTOR_BMAD_SPEC_REQUIRED")
+        artifacts = spec_package_inventory(root, source, permitted) if spec_package else recursive_file_inventory(source, prefix="content")
         base = {
             "schema_version": SOLUTION_CONTEXT_SCHEMA_VERSION,
             "operation": "promote",
@@ -468,6 +622,24 @@ def promotion_plan(
             "reviewer": reviewer.strip(),
             "review_reference": review_ref.strip(),
         }
+        if spec_package:
+            base["source_base"] = policy.output_directory(root).as_posix()
+        if permitted:
+            base["source_base"] = "."
+            companions = {"output_root": policy.output_directory(root).as_posix(),
+                          "selected_source": relative.as_posix(), "paths": permitted}
+            if git_binding:
+                # Approval covers committed content and its commit, so a descendant checkout needs no new approval.
+                try:
+                    companions.update(binding="git", **policy.git_approval_context(root, [a["source_path"] for a in artifacts.values()]))
+                except ValueError as error:
+                    code, _, detail = str(error).partition(":")
+                    raise CompanionError(code, detail) from error
+            else:
+                companions["target_root"] = str(root)
+            base["repository_companions"] = companions
+        if policy.installed_bmad_version(root) == "6.12.1-next.0":
+            base["bmad_version"] = "6.12.1-next.0"
         if supersedes is not None:
             base["supersedes"] = supersedes
         if qualifier is not None:
@@ -503,14 +675,16 @@ def snapshot_manifest(plan: dict[str, Any]) -> dict[str, Any]:
             "review": {"decision": "APPROVED", "reviewer": plan["reviewer"], "reference": plan["review_reference"]},
             "provenance": {
                 "system": "BMAD",
-                "bmad_version": BMAD_VERSION,
+                "bmad_version": plan.get("bmad_version", BMAD_VERSION),
                 "workflow": plan["workflow"],
                 "promotion_plan_id": plan["plan_id"],
                 "plan_identity": plan["plan_identity"],
-                "source_root": plan["source"],
+                "source_root": plan.get("source_base", plan["source"]),
                 "source_aggregate_sha256": plan["source_aggregate_sha256"],
             },
         }
+        if "repository_companions" in plan:
+            core["provenance"]["repository_companions"] = plan["repository_companions"]
         if "supersedes" in plan:
             core["supersedes"] = plan["supersedes"]
         if "review_qualifier" in plan:
@@ -538,6 +712,8 @@ def promote(root: Path, args: argparse.Namespace) -> dict[str, Any]:
             plan_identity=getattr(args, "plan_identity", None),
             supersedes_snapshot_id=getattr(args, "supersedes_snapshot_id", None),
             supersedes_sha256=getattr(args, "supersedes_sha256", None),
+            repo_companions=getattr(args, "repo_companion", None),
+            git_binding=getattr(args, "git_binding", False),
         )
     except CompanionError as error:
         return result("BLOCKED", error.code, "correct_promotion_request", detail=error.detail)
@@ -569,7 +745,7 @@ def promote(root: Path, args: argparse.Namespace) -> dict[str, Any]:
     source = root / plan["source"]
     if plan["schema_version"] == SOLUTION_CONTEXT_SCHEMA_VERSION:
         try:
-            source_current = recursive_file_inventory(source, prefix="content")
+            source_current = spec_package_inventory(root, source, plan.get("repository_companions", {}).get("paths")) if "source_base" in plan else recursive_file_inventory(source, prefix="content")
         except CompanionError:
             source_current = {}
         source_stale = source_current != plan["source_artifacts"]
@@ -587,7 +763,7 @@ def promote(root: Path, args: argparse.Namespace) -> dict[str, Any]:
         for name, artifact in plan["source_artifacts"].items():
             artifact_path = temporary / name
             artifact_path.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(source / artifact["source_path"], artifact_path)
+            shutil.copyfile((root / plan.get("source_base", plan["source"])) / artifact["source_path"], artifact_path)
             artifact_path.chmod(artifact["mode"])
     else:
         artifact_path = temporary / plan["artifact_name"]
@@ -654,6 +830,60 @@ def rollback(root: Path, receipt_value: str, approval: str | None) -> dict[str, 
     return result("APPLIED", "CONDUCTOR_BMAD_ROLLBACK_APPLIED", "retain_receipts_for_audit", receipt=rollback_receipt.relative_to(root).as_posix(), mutations=[plan["snapshot_path"], rollback_receipt.relative_to(root).as_posix()])
 
 
+def verify_checkout(root: Path, snapshot_id: str, run_id: str | None = None) -> dict[str, Any]:
+    """Local, zero-write check that this checkout still holds what a human approved; grants nothing."""
+    root = root.resolve()
+    if not SNAPSHOT_RE.fullmatch(snapshot_id) or snapshot_id.casefold() in RESERVED_SNAPSHOT_IDS:
+        return result("BLOCKED", "CONDUCTOR_BMAD_SNAPSHOT_ID_INVALID", "correct_snapshot_id")
+    snapshot = root / "docs/upstream/bmad" / snapshot_id
+    manifest_path = snapshot / "SNAPSHOT_MANIFEST.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        core = {key: value for key, value in manifest.items() if key != "aggregate_sha256"}
+        if manifest.get("schema_version") != SOLUTION_CONTEXT_SCHEMA_VERSION or digest_bytes(canonical(core)) != manifest.get("aggregate_sha256"):
+            raise CompanionError("CONDUCTOR_BMAD_MANIFEST_HASH_MISMATCH")
+        solution_snapshot_inventory(snapshot, manifest["artifacts"])
+    except (OSError, UnicodeError, json.JSONDecodeError, AttributeError, KeyError) as error:
+        return result("BLOCKED", "CONDUCTOR_BMAD_SNAPSHOT_MISSING", "promote_or_restore_snapshot", detail=str(error))
+    except CompanionError as error:
+        return result("BLOCKED", error.code, "restore_exact_snapshot_bytes_or_repromote")
+    companions = manifest.get("provenance", {}).get("repository_companions")
+    identity = {"snapshot_id": snapshot_id, "aggregate_sha256": manifest["aggregate_sha256"]}
+    if not isinstance(companions, dict) or companions.get("binding") != "git":
+        # Root-bound and legacy snapshots keep their original contract unchanged.
+        bound_here = isinstance(companions, dict) and companions.get("target_root") == str(root)
+        if isinstance(companions, dict) and not bound_here:
+            return result("BLOCKED", "CONDUCTOR_BMAD_SNAPSHOT_ROOT_BOUND_ELSEWHERE", "repromote_with_git_binding_or_use_original_checkout", **identity)
+        binding = "root" if bound_here else "path"
+    else:
+        problem = policy.git_checkout_problem(root, companions, manifest["artifacts"])
+        if problem is not None and problem["reason_code"] == "CONDUCTOR_BMAD_CHECKOUT_INPUTS_CHANGED":
+            # Reviewers see what changed against the approved bytes, not only which file.
+            frozen = {a["source_path"]: snapshot / name for name, a in manifest["artifacts"].items()}
+            problem["diff"] = {path: "".join(list(difflib.unified_diff(
+                frozen[path].read_text(encoding="utf-8").splitlines(keepends=True),
+                (root / path).read_text(encoding="utf-8").splitlines(keepends=True) if (root / path).is_file() else [],
+                f"approved/{path}", f"current/{path}"))[:200]) for path in problem["changed"]}
+        if problem is not None:
+            action = "promote_superseding_snapshot_for_review" if problem["reason_code"] == "CONDUCTOR_BMAD_CHECKOUT_INPUTS_CHANGED" else "rebase_on_a_descendant_of_the_approval_commit"
+            return result("BLOCKED", problem.pop("reason_code"), action, **identity, **problem)
+        binding = "git"
+    if run_id is not None:
+        run_root = root / "docs/Conductor/runs" / run_id
+        try:
+            intent_path = run_root / "intent_pack.json"
+            intent = json.loads(intent_path.read_text(encoding="utf-8"))
+            lock = json.loads((run_root / "countersign/INTENT_LOCK.json").read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            return result("BLOCKED", "CONDUCTOR_BMAD_CHECKOUT_RUN_UNREADABLE", "lock_intent_before_verifying", detail=str(error), **identity)
+        cited = {"kind": "upstream_snapshot", "ref": manifest_path.relative_to(root).as_posix(), "sha256": digest_file(manifest_path)}
+        if cited not in intent.get("sources", []):
+            return result("BLOCKED", "CONDUCTOR_BMAD_CHECKOUT_SNAPSHOT_NOT_CITED", "cite_snapshot_in_intent_and_relock", **identity)
+        if lock.get("decision") != "GO" or lock.get("subject_sha256") != digest_file(intent_path):
+            return result("BLOCKED", "CONDUCTOR_BMAD_CHECKOUT_INTENT_STALE", "obtain_current_intent_lock", **identity)
+    return result("VERIFIED", "CONDUCTOR_BMAD_CHECKOUT_VERIFIED", "continue_under_existing_approval", binding=binding, **identity)
+
+
 def intake_sources() -> dict[Path, Path]:
     return {
         Path("docs/adapters/bmad/BMAD_POLICY.md"): ADAPTER_ROOT / "BMAD_POLICY.md",
@@ -662,6 +892,7 @@ def intake_sources() -> dict[Path, Path]:
         Path("scripts/conductor_project_preflight"): ADAPTER_ROOT / "conductor_project_preflight",
         Path("scripts/conductor_bmad_policy_lint"): ADAPTER_ROOT / "conductor_bmad_policy_lint",
         Path("scripts/conductor_bmad_policy.py"): Path(__file__).with_name("conductor_bmad_policy.py"),
+        Path("scripts/conductor_bmad_6121.json"): Path(__file__).with_name("conductor_bmad_6121.json"),
     }
 
 
@@ -856,6 +1087,7 @@ def parser() -> argparse.ArgumentParser:
     bootstrap_parser.add_argument("--approve-plan")
     promote_parser = sub.add_parser("promote")
     promote_parser.add_argument("--source", required=True)
+    promote_parser.add_argument("--repo-companion", action="append", default=[], metavar="PATH", help="Exact repository-relative Markdown companion outside BMAD output; repeatable, Spec closure only")
     promote_parser.add_argument("--snapshot-id", required=True)
     promote_parser.add_argument("--workflow", required=True)
     promote_parser.add_argument("--reviewer", required=True)
@@ -866,7 +1098,14 @@ def parser() -> argparse.ArgumentParser:
     promote_parser.add_argument("--plan-identity")
     promote_parser.add_argument("--supersedes-snapshot-id")
     promote_parser.add_argument("--supersedes-sha256")
+    promote_parser.add_argument("--git-binding", action="store_true", help="With --repo-companion: bind approval to committed content and its commit instead of this checkout's path")
     promote_parser.add_argument("--approve-plan")
+    verify_parser = sub.add_parser("verify-checkout", help="Check that this checkout holds an approved snapshot's exact inputs on a compatible base")
+    verify_parser.add_argument("--snapshot-id", required=True)
+    verify_parser.add_argument("--run", help="Also require this run's locked Intent Pack to cite the snapshot")
+    for name in ("automation-capture", "automation-compare"):
+        automation_parser = sub.add_parser(name, help="Open (capture) or close and prove (compare) a governed automation write window")
+        automation_parser.add_argument("--run", required=True)
     intake_parser = sub.add_parser("intake")
     intake_parser.add_argument("--harness", choices=("claude", "codex"), default="claude")
     intake_parser.add_argument("--approve-plan")
@@ -912,12 +1151,18 @@ def main() -> int:
             payload = intake(root, args.harness, args.approve_plan)
         elif args.command == "seed-contracts":
             payload = seed_contracts(root, args.approve_plan)
+        elif args.command == "verify-checkout":
+            payload = verify_checkout(root, args.snapshot_id, args.run)
+        elif args.command == "automation-capture":
+            payload = policy.automation_capture(root, args.run)
+        elif args.command == "automation-compare":
+            payload = policy.automation_compare(root, args.run)
         else:
             payload = rollback(root, args.receipt, args.approve_plan)
     except (OSError, UnicodeError, subprocess.SubprocessError) as error:
         payload = result("BLOCKED", "CONDUCTOR_BMAD_IO_FAILURE", "inspect_error_and_retry_safely", detail=str(error))
     print(json.dumps(payload, indent=2, sort_keys=True) if args.json else concise(payload))
-    return 0 if payload["state"] not in {"BLOCKED"} else 2
+    return 0 if payload["state"] not in {"BLOCKED", "FAIL"} else 2
 
 
 if __name__ == "__main__":

@@ -1,7 +1,8 @@
 """Conductor Gap Requests: the artifact that carries a question from a governed run back to the upstream lane.
 
-    gap open     --run RUN_ID --requirement R-ID --type TYPE --question TEXT [--impact ...] [--snapshot-id ID --snapshot-sha256 HEX] [--proposal TEXT]
+    gap open     --run RUN_ID --requirement R-ID --type TYPE --question TEXT [--impact ...] [--owner NAME] [--snapshot-id ID --snapshot-sha256 HEX] [--proposal TEXT]
     gap resolve  --run RUN_ID --gap GAP-ID --decided-by NAME --decision TEXT [--new-snapshot-id ID --new-snapshot-sha256 HEX]
+    gap export   --run RUN_ID   writes UPSTREAM_QUESTIONS.md, the file a human hands to the upstream Spec workflow
 
 The agent may open gaps; only a human resolves them. A resolution that introduces a new snapshot
 for an active_scope gap makes contract-lint completion demand a G1 re-lock.
@@ -28,7 +29,7 @@ def _next_gap_id(gaps_dir: Path) -> str:
 
 def open_gap(root: Path, run_id: str, *, requirement_id: str, gap_type: str, question: str,
              supersession_impact: str = "unknown", snapshot_id: str | None = None, snapshot_sha256: str | None = None,
-             proposed_resolution: str | None = None) -> dict[str, Any]:
+             proposed_resolution: str | None = None, owner: str | None = None) -> dict[str, Any]:
     root = root.resolve()
     run_root = safe_run_root(root, run_id)
     intent_path = run_root / "intent_pack.json"
@@ -57,6 +58,8 @@ def open_gap(root: Path, run_id: str, *, requirement_id: str, gap_type: str, que
         gap["origin_snapshot_sha256"] = snapshot_sha256
     if proposed_resolution:
         gap["proposed_resolution"] = proposed_resolution
+    if owner:
+        gap["owner"] = owner.strip()
     problems = schema_errors(root, "gap_request", gap)
     if problems:
         raise ContractLintError("CONDUCTOR_GAP_SCHEMA_INVALID", "; ".join(problems))
@@ -89,3 +92,63 @@ def resolve_gap(root: Path, run_id: str, gap_id: str, *, decided_by: str, decisi
     path.write_text(json.dumps(gap, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     reopens = gap["supersession_impact"] == "active_scope" and bool(new_snapshot_id)
     return {"run_id": run_id, "gap_id": gap_id, "path": path.relative_to(root).as_posix(), "g1_reopen_required": reopens}
+
+
+def load_gaps(root: Path, run_root: Path) -> list[dict[str, Any]]:
+    gaps = []
+    for path in sorted((run_root / "gap_requests").glob("GAP-*.json")):
+        errors: list[str] = []
+        gap = read_json(path, path.name, errors)
+        problems = errors or schema_errors(root, "gap_request", gap)
+        if problems:
+            raise ContractLintError("CONDUCTOR_GAP_SCHEMA_INVALID", "; ".join(problems))
+        gaps.append(gap)
+    return gaps
+
+
+def _question_block(gap: dict[str, Any]) -> list[str]:
+    lines = [f"### {gap['gap_id']}: {gap['gap_type']} question for {gap['requirement_id']}", "",
+             gap["question"], "",
+             f"- Impact on this slice: {gap['supersession_impact']}",
+             f"- Owner: {gap.get('owner', 'not named')}"]
+    if gap.get("origin_snapshot_id"):
+        lines.append(f"- Raised against snapshot: {gap['origin_snapshot_id']} ({gap['origin_snapshot_sha256']})")
+    if gap.get("proposed_resolution"):
+        lines.append(f"- Agent's proposal (not a decision): {gap['proposed_resolution']}")
+    return lines + [""]
+
+
+def export_questions(root: Path, run_id: str) -> dict[str, Any]:
+    """Render open gaps as one Markdown input for upstream reconciliation; answers belong in its decision log, not here."""
+    root = root.resolve()
+    run_root = safe_run_root(root, run_id)
+    gaps = load_gaps(root, run_root)
+    open_gaps = [g for g in gaps if "resolution" not in g]
+    blocking = [g for g in open_gaps if g["supersession_impact"] != "future_only"]
+    deferred = [g for g in open_gaps if g["supersession_impact"] == "future_only"]
+    decided = [g for g in gaps if "resolution" in g]
+    lines = [f"# Questions from Factory run {run_id}", "",
+             "Input for upstream reconciliation: give this file to the Spec workflow that owns the source Spec, as its input.",
+             "Record each answer as a decision in the Spec's own decision log and let that workflow re-derive the Spec; do not",
+             "edit the derived Spec or this file by hand. PRD, architecture and UX sources change only through their own workflows.",
+             "When reconciliation is done, a human reviews the changed inputs and Factory promotes a superseding snapshot.",
+             "Nothing in this file approves scope, implementation or completion.", "",
+             f"## Blocking this slice ({len(blocking)})", ""]
+    for gap in blocking:
+        lines += _question_block(gap)
+    if not blocking:
+        lines += ["None.", ""]
+    lines += [f"## Deferred, not blocking this slice ({len(deferred)})", ""]
+    for gap in deferred:
+        lines += _question_block(gap)
+    if not deferred:
+        lines += ["None.", ""]
+    lines += [f"## Already decided in this run ({len(decided)})", ""]
+    for gap in decided:
+        resolution = gap["resolution"]
+        lines.append(f"- {gap['gap_id']} ({gap['requirement_id']}): {resolution['decision']} (decided by {resolution['decided_by']}, {resolution['utc']})")
+    if not decided:
+        lines.append("None.")
+    path = run_root / "UPSTREAM_QUESTIONS.md"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return {"run_id": run_id, "path": path.relative_to(root).as_posix(), "blocking": len(blocking), "deferred": len(deferred), "decided": len(decided)}

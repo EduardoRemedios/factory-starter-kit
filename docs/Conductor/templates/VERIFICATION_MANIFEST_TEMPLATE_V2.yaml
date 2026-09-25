@@ -14,7 +14,7 @@
 #                               (constraint_ids is still accepted for v1 packs)
 #   - checks[].result           written ONLY by `conductorctl receipts run`;
 #                               contract-lint recomputes the receipt digest and
-#                               rejects agent-authored results
+#                               checks logs and result consistency, not authorship
 #   - checks[].command          may be an argv list (preferred, shell=False)
 #                               or a v1-style string
 # A run whose Intent Pack declares verification_requirements MUST have this file.

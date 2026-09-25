@@ -7,7 +7,7 @@
 Lock intent with a human, let the agent run, and accept nothing as done
 without a receipt. Three gates, deterministic validators, no choreography.
 
-[![Release](https://img.shields.io/badge/release-0.3.4--pilot-4f46e5)](#release-status)
+[![Release](https://img.shields.io/badge/candidate-0.3.10-4f46e5)](#release-status)
 [![Claude Code CLI](https://img.shields.io/badge/Claude_Code_CLI-pilot-D97757)](#install)
 [![Codex](https://img.shields.io/badge/Codex-packaged-111827?logo=openai&logoColor=white)](#install)
 [![License](https://img.shields.io/badge/license-Apache--2.0-0f766e)](LICENSE)
@@ -20,6 +20,14 @@ without a receipt. Three gates, deterministic validators, no choreography.
 [Documentation](#documentation)
 
 </div>
+
+**Local candidate:** this checkout carries 0.3.9 (on the 0.3.8 candidate): governed
+TEA automation, Git-bound Spec approval across checkouts, run creation and review
+packets, and completion feedback. Publication and adopter updates remain separate. See
+[Factory + BMAD actions](docs/adapters/bmad/BMAD_FACTORY_ACTIONS.md),
+[governed automation](docs/adapters/bmad/BMAD_GOVERNED_AUTOMATION.md) and the earlier
+[TEA readiness](docs/adapters/bmad/BMAD_TEA_READINESS.md) notes.
+
 
 Factory 0.3 is the third generation of this repository's governed delivery
 process. Earlier Factory releases took AI-assisted work through explicit scope,
@@ -65,7 +73,7 @@ G1 Intent Lock ──(human countersign)──▶ G2 Governed Execution ──(r
   verification requirements, model and effort. `conductorctl contract-lint
   intent` must pass. A human writes `countersign/INTENT_LOCK.json`.
 - **G2 Governed Execution.** One autonomous run inside the locked scope.
-  Declared checks run through `conductorctl receipts run`, which writes signed
+  Declared checks run through `conductorctl receipts run`, which writes digest-bound
   receipts; `conductorctl postimage capture` and `compare` prove no protected
   file changed. Manual checks are attested by a human.
 - **G3 Adversarial Review and Completion.** A fresh-context verifier that did
@@ -95,7 +103,7 @@ upstream product-context tool.
 **Codex desktop app:** the repository ships `.agents/plugins/marketplace.json`;
 select the `factory-starter-kit` source in the Plugins Directory. Install
 `conductor` for core governance and add `conductor-bmad` for the guarded BMAD route
-in this 0.3.5 candidate. See [supported routes](docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md).
+in the inherited 0.3.5 supported surface. See [supported routes](docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md).
 **Cursor:** reads the adopted `AGENTS.md`; separate qualification remains pending.
 
 Then, inside the repository: `/conductor:doctor` tells you the one next legal
@@ -143,25 +151,28 @@ defer it. Details: `docs/adapters/bmad/BMAD_POLICY.md` and
 
 ## Release status
 
-This branch prepares **Factory 0.3.5**. The last published pilot remains
-`conductor-v0.3.4-pilot`; this candidate has not been released. Merging this
-branch into public `main` makes its new marketplace package bytes available,
-even before a release tag is created.
+**Factory 0.3.10** integrates the 0.3.7–0.3.9 BMAD line with the receipt-integrity
+repair, on top of 0.3.5 and the verification-definition guard:
 
-The candidate adds explicit brownfield project-file preservation, ownership
-retention through updates, exact rollback, and a guarded Codex BMAD MCP route.
-A local qualification passed 421 starter tests (3 skips) and bounded Codex and
-Claude BMAD-to-Factory rehearsals through human completion. Full local evidence
-is retained privately; this repository does not publish customer project data,
-local inventories or human approval transcripts.
+- exact BMAD 6.12.1-next.0 compatibility and explicit repository companions (0.3.6–0.3.7);
+- pinned TEA readiness checks (0.3.8);
+- governed TEA automation, Git-bound Spec approval, `run-init`, `review-packet`,
+  `gap export` and `completion-feedback` (0.3.9);
+- retained-log, command and outcome consistency checks on receipts, preserving v1
+  receipt compatibility.
 
-Codex audit reports guarded-route repository prerequisites, not active host
-enforcement. Native Codex BMAD invocation and Codex bootstrap remain unsupported.
-Claude uses its native Skill/hooks route. Cursor and organization rollout remain
-separate. See [supported routes and limits](docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md).
+Checksums do not authenticate the writer: a party controlling all evidence can
+recompute them. Fresh-context review and human countersigns remain necessary.
+See the [BMAD 6.12.1 handoff](docs/adapters/bmad/BMAD_6121_HANDOFF.md) and
+[receipt integrity](docs/Conductor/onboarding/RECEIPT_INTEGRITY.md).
 
-Repositories with a 0.2-era install still migrate through `/conductor:update`.
-Existing plugin names, dependency and reviewed-plan adoption remain compatible.
+Qualification evidence is retained privately; this repository does not publish
+project data, local inventories or human approval transcripts. Candidate checks
+use disposable roots and caches; do not overwrite an installed same-version package.
+
+Existing marketplace commands and the BMAD companion are unchanged. Codex's
+guarded route, Claude's native hook route and their limits remain as documented
+in [supported routes](docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md).
 
 ## Repository map
 
@@ -185,11 +196,11 @@ for retirement after the pilot.
 ## Development and verification
 
 ```bash
-python3 -m pip install -r requirements.txt
-python3 -m unittest discover -s tests
+./scripts/conductor-python -m pip install -r requirements.txt
+./scripts/conductor-python -m unittest discover -s tests
 bash scripts/knowledge_lint.sh
-python3 scripts/build_conductor_plugins.py --check
-python3 scripts/build_conductor_bmad_plugins.py --check
+./scripts/conductor-python scripts/build_conductor_plugins.py --check
+./scripts/conductor-python scripts/build_conductor_bmad_plugins.py --check
 bash scripts/merge_preflight.sh
 ```
 

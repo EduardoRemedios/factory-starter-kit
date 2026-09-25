@@ -104,6 +104,9 @@ def payload_sources() -> list[tuple[Path, Path, str]]:
             relative = source.relative_to(REPO_ROOT)
             if relative in PROJECT_OWNED_SEEDS:
                 continue
+            # The maintainer roadmap is not a project adoption payload.
+            if relative == Path("docs/Conductor/IMPLEMENTATION_ROADMAP.md"):
+                continue
             if (
                 "runs" in relative.parts
                 or "Research" in relative.parts
@@ -139,7 +142,7 @@ def payload_sources() -> list[tuple[Path, Path, str]]:
         if not (REPO_ROOT / base).is_dir():
             continue
         for source in sorted((REPO_ROOT / base).rglob("*")):
-            if source.is_file() and (
+            if source.is_file() and "bmad_6121" not in source.parts and (
                 base != Path(".agents/skills")
                 or source.parent.name.startswith("conductor-")
             ) and "__pycache__" not in source.parts:

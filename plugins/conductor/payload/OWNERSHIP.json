@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package": "conductor",
-  "version": "0.3.5",
+  "version": "0.3.10",
   "files": [
     {
       "path": ".agents/skills/conductor-execution-closeout/SKILL.md",
@@ -71,7 +71,7 @@
     {
       "path": "docs/Conductor/INVARIANTS.md",
       "classification": "release-owned",
-      "sha256": "11e691057f7359587f25b0302da7a749e36a24abe67f9118485dcd71700d1ada"
+      "sha256": "f6bbffedb31725b65a34929d1156220857467e81086abc247c78c7aa4fb8e69b"
     },
     {
       "path": "docs/Conductor/MERGE_PROTOCOL.md",
@@ -176,12 +176,12 @@
     {
       "path": "docs/Conductor/contracts/evidence_receipt.schema.json",
       "classification": "release-owned",
-      "sha256": "12b79228d2ffd739e6805dbb1f5b3a98ca4fb967e94e0d6376d2be0a4a9dde54"
+      "sha256": "11928223980472d2b3ab8978f0f530f6f39d005cb78b99f1d430c6c8dc737c58"
     },
     {
       "path": "docs/Conductor/contracts/gap_request.schema.json",
       "classification": "release-owned",
-      "sha256": "6b770b3395582783785499c483917bb345c0470a66216e60494c23735979384f"
+      "sha256": "687909b4848f163e552bd677d41f6eb665a7d50f04f549195ce3ee87c911b832"
     },
     {
       "path": "docs/Conductor/contracts/intent_pack.schema.json",
@@ -201,12 +201,12 @@
     {
       "path": "docs/Conductor/contracts/verification_manifest_v2.schema.json",
       "classification": "release-owned",
-      "sha256": "d995ce3c5909997073812d066599187d0d67b1eedc0ac26f873b990ac18d1566"
+      "sha256": "54c9875b1cc4ede7d3c4312ef66fff888e5779278a81c7b17a109f0d54b921cc"
     },
     {
       "path": "docs/Conductor/onboarding/FIRST_EXERCISE.md",
       "classification": "release-owned",
-      "sha256": "f36ba7802ba2551398812e5074ee09c011cefdf9363c8291394ed55baae407f7"
+      "sha256": "a09405f38596376a97b1cbb3691390ad0c1c4c052abfffc76be6f0ba63ca39fa"
     },
     {
       "path": "docs/Conductor/onboarding/FRICTION_LOG_TEMPLATE.md",
@@ -216,12 +216,17 @@
     {
       "path": "docs/Conductor/onboarding/GUIDE.md",
       "classification": "release-owned",
-      "sha256": "7e48620722dbbbe2a61abf57c95b11b11150046dea63ff003ac0b0f15578dacc"
+      "sha256": "edb735a910ad00f74fc95033850e198897f198fecba9e70a2d50f27642ef5af7"
     },
     {
       "path": "docs/Conductor/onboarding/INSTALL.md",
       "classification": "release-owned",
       "sha256": "53f71dca7926e78a93d75c605739b5b76efaea1198d9027a369e2829e40f3021"
+    },
+    {
+      "path": "docs/Conductor/onboarding/RECEIPT_INTEGRITY.md",
+      "classification": "release-owned",
+      "sha256": "0be2635040b59ccb191ec341176846ecf31742d82c3bffef2ced49b93e158824"
     },
     {
       "path": "docs/Conductor/templates/CONTEXT_RECALL_REPORT_TEMPLATE.md",
@@ -326,7 +331,7 @@
     {
       "path": "docs/Conductor/templates/VERIFICATION_MANIFEST_TEMPLATE_V2.yaml",
       "classification": "release-owned",
-      "sha256": "43fcba423e86478384e3804ce1cc805f1d122943c541843a3440f2912d546475"
+      "sha256": "9d564f6e6fa69634d1bfb94afa1af029e3d343937cf8aed4648d77e2934f9b69"
     },
     {
       "path": "docs/Conductor/templates/countersign.template.json",
@@ -441,7 +446,7 @@
     {
       "path": "scripts/conductor_contract_lint.py",
       "classification": "release-owned",
-      "sha256": "f235c66abd998e6d4d2b40c47f18580ba133cfb4453384c3c58b582527f2ef49"
+      "sha256": "a6064ec90534c3a0fbbb32277102029f26651fa1b42c87c8c471064225257728"
     },
     {
       "path": "scripts/conductor_execution_closeout.py",
@@ -451,7 +456,7 @@
     {
       "path": "scripts/conductor_gap.py",
       "classification": "release-owned",
-      "sha256": "7f32686a510032a32e8ba4d46f007d8b5bb18d4f032a866052410ec4cfff490d"
+      "sha256": "4bf1434465d0a8259a1fa1861f6c615bb622d3af3a00830d85635eaefaf5b31f"
     },
     {
       "path": "scripts/conductor_host_capability.py",
@@ -481,12 +486,17 @@
     {
       "path": "scripts/conductor_receipts.py",
       "classification": "release-owned",
-      "sha256": "ed3e34a05dc2a4163548ab945ffc9fed8cc9c566adc40f3a6973f9221a8feecf"
+      "sha256": "5fc9f898194daae9c6aada300bfa1f53aed0ed91996fb1a328fb12c974e40a28"
     },
     {
       "path": "scripts/conductor_run_metrics.py",
       "classification": "release-owned",
       "sha256": "7027e619945c0635514797ab5925e9ef2e12bf9cf84bedd5b4cb0f274c7d85c7"
+    },
+    {
+      "path": "scripts/conductor_run_records.py",
+      "classification": "release-owned",
+      "sha256": "115653afbbfb7e04169264895a81c35341c6176589979ee756113eebd904d33c"
     },
     {
       "path": "scripts/conductor_stage_lint.py",
@@ -501,7 +511,7 @@
     {
       "path": "scripts/conductorctl",
       "classification": "release-owned",
-      "sha256": "13ee8a40b33380431e3b90bc44902431d648645b4cc43662a2e620f8d7eedd4e"
+      "sha256": "2c89a9e6b2c2ec5446f844d78f3e68c30851202840e368c7606d6fc77ed504a4"
     },
     {
       "path": "scripts/knowledge_lint.sh",

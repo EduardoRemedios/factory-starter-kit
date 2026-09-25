@@ -1,6 +1,6 @@
 # Verifier report — RUN_20260904_1712_conductor_rehearsal_pass_one
 
-Fresh-context verifier. I did not perform the work. Every claim below is checked against files on disk in `/Users/eduardodosremedios/Projects/Symphony/auditedge-spike-1` as of 2026-09-04; prose in the run directory was read but not trusted. The only file I wrote is this one.
+Fresh-context verifier. I did not perform the work. Every claim below is checked against files on disk in a local clone of the pilot repository (branch `spike-1`) as of 2026-09-04; prose in the run directory was read but not trusted. The only file I wrote is this one.
 
 ## Method
 

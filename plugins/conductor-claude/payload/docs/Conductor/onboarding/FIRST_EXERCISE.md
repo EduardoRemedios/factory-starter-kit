@@ -74,4 +74,8 @@ Push the branch and open a PR. The `conductor-contract-lint` action runs the sam
 
 ## What you have proven
 
-Intent was locked by a human before work. Every claim of completion is backed by a receipt you could not have forged. Nothing outside the protected roots changed. A human countersigned the outcome. That is the whole of Conductor; everything else is convenience.
+Intent was locked by a human before work. Every claim of completion is backed by
+a runner-produced receipt whose recorded content can be checked. The comparison
+found no changes within the protected roots against its captured baseline. A
+human countersigned the outcome. Checksums do not authenticate the writer or
+prevent coordinated rewrites; fresh-context review remains necessary.

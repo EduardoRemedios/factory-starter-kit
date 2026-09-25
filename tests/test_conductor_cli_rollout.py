@@ -1,4 +1,5 @@
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -12,6 +13,12 @@ SCRIPT = REPO_ROOT / "scripts/verify_conductor_cli_rollout.py"
 
 class FactoryCliRolloutTests(unittest.TestCase):
     def run_preflight(self, *args: str) -> tuple[int, dict]:
+        # Candidate bytes may differ from the maintainer's installed same-version cache.
+        cache = tempfile.TemporaryDirectory()
+        self.addCleanup(cache.cleanup)
+        source = REPO_ROOT / "plugins/conductor-claude"
+        version = json.loads((source / ".claude-plugin/plugin.json").read_text())["version"]
+        shutil.copytree(source, Path(cache.name) / "factory-starter-kit/conductor" / version)
         completed = subprocess.run(
             [
                 sys.executable,
@@ -20,6 +27,8 @@ class FactoryCliRolloutTests(unittest.TestCase):
                 str(REPO_ROOT),
                 "--skip-external",
                 "--json",
+                "--claude-cache-root",
+                cache.name,
                 *args,
             ],
             cwd=REPO_ROOT,

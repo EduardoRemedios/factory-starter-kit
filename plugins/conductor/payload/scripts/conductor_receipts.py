@@ -1,8 +1,9 @@
-"""Conductor receipts runner: executes verification-manifest checks and writes signed receipts.
+"""Conductor receipts runner: executes verification-manifest checks and writes digest-bound receipts.
 
 The runner is the only legitimate author of receipts and of checks[].result. A receipt's
-payload_sha256 covers every other field; contract-lint recomputes it, so a receipt written
-or edited by an agent is detected as tampered. Output streams are captured bounded
+payload_sha256 covers every other field; contract-lint checks that digest, retained logs,
+and manifest/result consistency. This checksum does not authenticate the writer: anyone
+with write access can recompute it. Fresh-context review remains necessary. Output streams are captured bounded
 (64 KiB each) to receipts/logs/ and only their digests and sizes enter the receipt.
 
     receipts run     --run RUN_ID [--check ID ...] [--timeout-seconds N]

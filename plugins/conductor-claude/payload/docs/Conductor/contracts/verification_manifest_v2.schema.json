@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://conductor.dev/schemas/verification_manifest_v2.schema.json",
   "title": "Conductor Verification Manifest v2",
-  "description": "Superset of the Factory v1 manifest (schema_version 1 fields all accepted). checks[].result is written only by the receipts runner; contract-lint recomputes the receipt payload digest and rejects agent-authored results.",
+  "description": "Superset of the Factory v1 manifest (schema_version 1 fields all accepted). checks[].result is produced by the receipts runner; contract-lint checks receipt and log integrity and consistency with the declared check. Checksums do not authenticate authorship.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "run_id", "execution_mode", "checks"],

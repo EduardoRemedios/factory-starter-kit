@@ -1,18 +1,27 @@
-# ROADMAP.md - Development Roadmap
+# ROADMAP.md — Development Roadmap
 
-## Unreleased maintenance
+## Strategic priority — 25 September 2026
 
-- Verification-definition integrity: implemented with regression coverage for legitimate results, declaration changes and stale approvals. Release packaging and installed-cache updates remain separate.
+**Unblock the pilot first; expand the implementation incrementally.** The
+[AI-native SDLC implementation roadmap](Conductor/IMPLEMENTATION_ROADMAP.md)
+preserves the agreed phases. The written real-Spec walkthrough and feedback
+from the team take priority over broad platform development. Only necessary
+compatibility, correctness and usability repairs should interrupt that path.
+Later phases need their own scope, evidence and approval.
 
-## 0.3.5 release preparation
+Current main is Factory 0.3.10: the 0.3.7–0.3.9 BMAD/TEA line integrated with the
+receipt-integrity repair. Publication, installation and pilot adoption remain
+separate decisions.
 
-Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are locally qualified. Reusable source and generated packages are separated from private qualification evidence. Publication is pending; existing 0.3.4 pilot identities remain intact. See docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md for scope and limitations.
+## Next
 
-> **Purpose:** Track starter-kit process work across the 0.2 line and the 0.3 line.
->
-> **Last updated:** 2026-09-05
+- Support the pilot team's first real Spec delivery on 0.3.10 (roadmap Phase 0).
+- F-9 constraint source validation; F-3 awaits the pilot team's decision.
 
-## Current line (0.3, working name Conductor)
+The following table and sprint list retain their historical status. They do not
+supersede this dated snapshot or authorise pending work.
+
+## Historical line (0.3, working name Conductor)
 
 | Item | Status | Evidence |
 |------|--------|----------|

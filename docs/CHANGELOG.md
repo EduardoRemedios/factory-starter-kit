@@ -1,14 +1,67 @@
 # Changelog
 
-## Unreleased — 2026-09-10
+## 0.3.10 — 2026-09-25
+
+- Integrate the 0.3.7, 0.3.8 and 0.3.9 BMAD line onto main in one reviewed change.
+- Receipt integrity: validate retained logs, command/target identity and
+  result/outcome consistency; preserve v1 compatibility and state that checksums
+  do not authenticate authors. The verification-definition guard is unchanged.
+- Refresh status prose and add a generic pilot implementation roadmap
+  (`docs/Conductor/IMPLEMENTATION_ROADMAP.md`). Rebuild all packages as 0.3.10.
+
+## 0.3.9 — candidate
+
+- Governed TEA automation: `bmad-testarch-automate` is admitted only under one
+  execution-enabled run's G1-pinned authority, inside an `automation-capture`
+  window whose `automation-compare` checks that watched writes stayed under approved roots.
+  ATDD, framework, CI and the TEA agent remain prohibited; policy version unchanged.
+- Git-bound repository companions (`promote --git-binding`) approve committed
+  content plus its commit instead of an absolute checkout path;
+  `verify-checkout` checks a descendant checkout locally. Root-bound snapshots
+  keep their contract.
+- `conductorctl run-init`, `review-packet`, `gap export`, `completion-feedback`,
+  optional gap `owner`, and the `CONDUCTOR_CONTRACT_SCOPE_RELABEL` completion rule.
+- New `conductor-bmad:reconcile` skill for the grooming loop; `conductor:run`
+  uses the new commands.
+- Core update fixes: an already-composed `AGENTS.md` planned `no_change` no longer
+  rolls back with `CONDUCTOR_PLAN_STALE`, and an unedited composed `AGENTS.md` is
+  composed rather than overwritten by the package seed. A pure legacy seed is still refreshed.
+- Governed automation hardening after independent review: one window per run, the
+  compare always recomputes, and it watches the run's own records, local settings and git hooks.
+  Write roots may not be symlinks or case variants of governance paths. `verify-checkout`
+  rejects inputs that are untracked or differ from HEAD.
+
+## 0.3.8 — candidate
+
+- Recognise the exact pinned optional TEA agent descriptor without admitting
+  unknown descriptors or expanding workflow permissions.
+- Check shared TOML/YAML configuration in inventory readiness, using the same
+  qualification required by hooks and the guarded MCP route.
+- Include real installer agent descriptors in compatibility fixtures and test
+  canonical, altered, missing-module and unpinned-module cases.
+- Generate coupled core/companion candidate packages.
+
+## 0.3.7 — candidate
+
+- Add exact `--repo-companion` permissions for reached repository Markdown inputs
+  in a 6.12.1 Spec closure; bind source paths, bytes, modes and target root.
+- Preserve and validate the new explicit provenance representation while keeping
+  legacy snapshots valid. Cover stale approvals, tampering and lifecycle checks.
+- Rebuild coupled core/companion packages; retain existing workflow permissions.
+
+## 0.3.6 — candidate
+
+Exact BMAD 6.12.1-next.0 compatibility, nested-layout guards and complete Spec intake. See docs/adapters/bmad/BMAD_6121_HANDOFF.md.
+
+## Verification-definition source — merged 2026-09-10
 
 - Reject current-run mutable verification manifests as immutable intent sources before execution or attestation.
 - Support pinned verification definitions with current digest-bound approvals; preserve result updates and legacy manifest-only behavior.
 - Retain receipts and reject further execution when a check changes definitions.
 
-## 0.3.5 candidate (unpublished)
+## 0.3.5 source — merged 2026-09-07
 
-Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are locally qualified. Reusable source and generated packages are separated from private qualification evidence. Publication is pending; existing 0.3.4 pilot identities remain intact. See docs/adapters/bmad/CONDUCTOR_035_SUPPORTED_ROUTES.md for scope and limitations.
+Upstream merge `ceb3f8d` incorporated the brownfield and guarded Codex source. The earlier publication-pending wording is superseded by that source history. Harness support retains its documented qualification limits.
 
 ## 2026-09-05
 
@@ -97,7 +150,7 @@ Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are 
   managed block; added `conductorctl contract-lint {intent,execution,completion}`
   (G1/G2/G3 deterministic validation over the contract schemas, countersign
   digests, receipts, postimage, Statement of Completion, gap requests),
-  `conductorctl receipts run|attest` (the only legitimate author of signed
+  `conductorctl receipts run|attest` (the only legitimate author of digest-bound
   evidence receipts and manifest results), and `conductorctl postimage
   capture|compare` (protected-root write-boundary proof). End-to-end tests
   in `tests/test_contract_lint.py` include tamper and stale-authority cases.
@@ -135,7 +188,7 @@ Brownfield preservation/ownership/rollback and the guarded Codex BMAD route are 
 - One ledgered corrective touch reconciled a stale bootstrap test expectation
   to the locked layout contract (public `FACTORY_BMAD_NON_CANONICAL_LAYOUT`
   with subordinate `layout_reason_code`). MS-06, BMAD workflow invocation,
-  AuditEdge, merge, publication, pilot, and rollout remain separately gated
+  pilot-project use, merge, publication, and rollout remain separately gated
   and unclaimed.
 
 ## 2026-08-27

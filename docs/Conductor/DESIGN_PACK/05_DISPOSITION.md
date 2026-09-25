@@ -91,7 +91,7 @@ Dispositions: **keep** (unchanged, possibly renamed) · **rewrite** (same respon
 | `build_factory_plugins.py`, `build_factory_bmad_plugins.py` | rewrite → `build_plugins.py` | One builder, Conductor names |
 | `verify_factory_cli_rollout.py`, `verify_factory_bmad_cli_rollout.py`, `verify_factory_bmad_live_preflight.py`, `verify_factory_bmad_publication.py` | keep (rename) | Maintainer preflights |
 | `verify_factory_bmad_*.sh` (6) | keep (rename); extend enforcement verifier with PT-09 | |
-| **new** `conductor_receipts.py` | create | Runner that executes manifest checks and writes signed receipts |
+| **new** `conductor_receipts.py` | create | Runner that executes manifest checks and writes digest-bound receipts |
 | **new** `conductor_postimage.py` | create | Harvested from MS-01 protected-postimage comparison |
 
 ## plugin-src

@@ -57,7 +57,7 @@ class FactoryPluginBuildTests(unittest.TestCase):
 
     def test_release_version_is_aligned_everywhere(self):
         version = self.manifest["version"]
-        self.assertEqual("0.3.5", version)
+        self.assertEqual("0.3.10", version)
         marketplace = json.loads(
             (REPO_ROOT / ".claude-plugin/marketplace.json").read_text(
                 encoding="utf-8"
@@ -186,6 +186,12 @@ class FactoryPluginBuildTests(unittest.TestCase):
                 ".codex-plugin" if platform == "codex" else ".claude-plugin",
             }
             self.assertEqual(expected, {path.name for path in package.iterdir()})
+
+    def test_repository_implementation_roadmap_is_not_packaged(self):
+        relative = Path("docs/Conductor/IMPLEMENTATION_ROADMAP.md")
+        self.assertTrue((REPO_ROOT / relative).is_file())
+        for package in PACKAGES.values():
+            self.assertFalse((package / "payload" / relative).exists())
 
     def test_generated_packages_are_customer_and_domain_neutral(self):
         prohibited = re.compile(r"Symphony|AuditEdge|BMAD|\bTEA\b", re.IGNORECASE)
