@@ -1,5 +1,11 @@
 # ROADMAP.md — Development Roadmap
 
+## Immediate repair candidate — 27 September 2026
+
+Prepare Factory 0.3.11 to unblock first-time Brownfield diagnosis when a project
+already has AGENTS.md. Require regression evidence and independent review before
+completion; merge, publication and rehearsal migration remain separate decisions.
+
 ## Strategic priority — 25 September 2026
 
 **Unblock the pilot first; expand the implementation incrementally.** The

@@ -1,6 +1,6 @@
 {
   "name": "conductor",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "description": "Install, inspect, plan, run, validate, and update Factory workflows without weakening Factory Core gates.",
   "author": {
     "name": "Eduardo dos Remedios"

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.11 — unreleased candidate
+
+- Distinguish ordinary project instructions from Factory adoption evidence in Doctor.
+- Preserve blocking for partial Core files, managed AGENTS markers and current or
+  legacy installation state; malformed state retains its existing failure reason.
+- Add read-only diagnosis regression coverage across Codex and Claude and rebuild
+  the coordinated core and BMAD companion packages as 0.3.11.
+- Merge, release and adopter migration remain pending.
+
 ## 0.3.10 — 2026-09-25
 
 - Integrate the 0.3.7, 0.3.8 and 0.3.9 BMAD line onto main in one reviewed change.

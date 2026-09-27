@@ -2,6 +2,14 @@
 
 Last updated: 25 September 2026.
 
+## Repair candidate — 27 September 2026
+
+Factory 0.3.11 is a local Doctor adoption-detection candidate. Plain project-owned
+AGENTS.md no longer implies partial adoption; Factory files, managed markers and
+installation-state evidence still prevent a false fresh-project result. Verification
+and G3 review are recorded in RUN_20260927_0844_doctor-adoption-detection.
+This entry does not claim release, installation or resumed rehearsal.
+
 ## Current source
 
 - **Factory 0.3.10** on `main`: one integration of the 0.3.7–0.3.9 BMAD line and the
