@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any
 
 
-PLUGIN_VERSION = "0.3.10"
+PLUGIN_VERSION = "0.3.11"
 STAGE_ORDER = ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "I2")
 SUPPORTED_HARNESSES = {"claude", "codex"}
 SUPPORTED_PLATFORM = "darwin"
@@ -85,9 +85,26 @@ def project_compatibility(root: Path) -> tuple[str, list[str]]:
         Path("scripts/conductorctl"),
     )
     missing = [path.as_posix() for path in required if not (root / path).is_file()]
-    if len(missing) == len(required):
-        return "NOT_CONFIGURED", missing
     if missing:
+        # Project-owned instructions alone do not establish Factory adoption.
+        factory_paths = (
+            *required[1:],
+            Path("docs/Conductor"),
+            Path("docs/Factory"),
+            Path("scripts/conductor-python"),
+            Path(INSTALLATION_STATE_PATH),
+            Path(LEGACY_INSTALLATION_STATE_PATH),
+        )
+        factory_present = any(
+            (root / path).exists() or (root / path).is_symlink()
+            for path in factory_paths
+        )
+        agents = root / "AGENTS.md"
+        if agents.is_file():
+            content = agents.read_bytes()
+            factory_present = factory_present or b"<!-- conductor:managed:" in content
+        if not factory_present:
+            return "NOT_CONFIGURED", missing
         return "INCOMPLETE", missing
     return "COMPATIBLE", []
 
